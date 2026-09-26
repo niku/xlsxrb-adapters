@@ -1,0 +1,52 @@
+name: Ruby
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    name: Lint, Types & Tests
+    strategy:
+      matrix:
+        ruby:
+          - '4.0.5'
+    steps:
+      - name: Checkout xlsxrb-adapters
+        uses: actions/checkout@v4
+        with:
+          path: xlsxrb-adapters
+
+      - name: Checkout sibling xlsxrb repository
+        uses: actions/checkout@v4
+        with:
+          repository: niku/xlsxrb
+          path: xlsxrb
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+          bundler-cache: true
+          working-directory: xlsxrb-adapters
+
+      - name: Run RuboCop
+        working-directory: xlsxrb-adapters
+        run: bundle exec rake rubocop
+
+      - name: Verify RBS signatures are in sync
+        working-directory: xlsxrb-adapters
+        run: |
+          bundle exec rake sig
+          git diff --exit-code sig/
+
+      - name: Run Steep Typecheck
+        working-directory: xlsxrb-adapters
+        run: bundle exec rake typecheck
+
+      - name: Run Tests
+        working-directory: xlsxrb-adapters
+        run: bundle exec rake test

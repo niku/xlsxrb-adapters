@@ -1,0 +1,7 @@
+# Generated from lib/xlsxrb/adapters.rb with RBS::Inline
+
+module Xlsxrb
+  # Namespace for compatibility adapters helping gradual migration to xlsxrb.
+  module Adapters
+  end
+end

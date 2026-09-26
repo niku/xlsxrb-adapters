@@ -1,0 +1,7 @@
+# Generated from lib/xlsxrb/adapters/version.rb with RBS::Inline
+
+module Xlsxrb
+  module Adapters
+    VERSION: String
+  end
+end
