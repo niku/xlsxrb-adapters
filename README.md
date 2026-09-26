@@ -23,6 +23,79 @@ Compatibility adapters for migrating from peer XLSX libraries (e.g. `rubyXL`) to
 3. **Native Bridge Conversion**:
    Supports seamless conversions between adapter structures and native `xlsxrb` objects via `adapter_wb.to_xlsxrb` and `Xlsxrb::Adapters::RubyXL.from_xlsxrb(xlsxrb_wb)`.
 
+## Supported Adapters
+
+### RubyXL (`Xlsxrb::Adapters::RubyXL`)
+
+- **Parser**:
+  - `Xlsxrb::Adapters::RubyXL::Parser.parse(filepath)`
+  - `Xlsxrb::Adapters::RubyXL::Parser.parse_buffer(buffer_or_string)`
+- **Workbook**:
+  - `wb[idx_or_name]`
+  - `wb.worksheets`
+  - `wb.add_worksheet(name)`
+  - `wb.write(filepath)`
+  - `wb.stream` (returns binary `StringIO`)
+  - `wb.to_xlsxrb`
+- **Worksheet**:
+  - `ws[row_idx]`
+  - `ws.add_cell(row_idx, col_idx, data, formula, overwrite)`
+  - `ws.each` (iterates rows)
+  - `ws.sheet_data[row_idx][col_idx]`
+- **Row**:
+  - `row[col_idx]`
+  - `row.cells`
+  - `row.each` (iterates cells)
+- **Cell**:
+  - `cell.value`
+  - `cell.raw_value`
+  - `cell.formula`
+  - `cell.change_contents(data, formula_expression)`
+  - `cell.remove_formula`
+
+## Compatibility (100% Test Pass)
+
+Thanks to the comprehensive and well-maintained RSpec suite provided by the `rubyXL` project, `Xlsxrb::Adapters::RubyXL` can systematically verify drop-in behavioral compatibility without monkey-patching:
+
+| Spec File | Total Examples | Passed | Failed | Pass Rate |
+| :--- | :--- | :--- | :--- | :--- |
+| `worksheet_spec.rb` | 233 | 233 | 0 | 100.0% |
+| `cell_spec.rb` | 75 | 75 | 0 | 100.0% |
+| `workbook_spec.rb` | 26 | 26 | 0 | 100.0% |
+| `reference_spec.rb` | 10 | 10 | 0 | 100.0% |
+| `parser_spec.rb` | 8 | 8 | 0 | 100.0% |
+| `stylesheet_spec.rb` | 4 | 4 | 0 | 100.0% |
+| `color_spec.rb` | 3 | 3 | 0 | 100.0% |
+| `rgb_color_spec.rb` | 2 | 2 | 0 | 100.0% |
+| `text_spec.rb` | 2 | 2 | 0 | 100.0% |
+| **Total** | **363** | **363** | **0** | **100.0%** |
+
+Run the official test suite yourself:
+```bash
+bundle exec rake compatibility
+```
+
+## Performance & Memory Footprint
+
+`rubyXL` is purposefully architected as a full Document Object Model (DOM) library, excelling at template preservation and complete XML-tree introspection.
+
+`xlsxrb-adapters` complements this by pairing `rubyXL`'s familiar mutable API with `xlsxrb`'s low-overhead streaming/SST pipeline. For data-intensive pipelines (100,000+ rows) where throughput and RAM usage dominate, `xlsxrb-adapters` achieves **~7–8x faster execution** and **~77–78% lower memory usage**:
+
+### Benchmark: 1,000,000 cells (100,000 rows × 10 cols)
+
+| Operation | Library | Time (Median) | Peak Memory (VmHWM) | vs. rubyXL Speed | vs. rubyXL Memory |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **Write** | `rubyXL` (3.4.38) | 35.01 s | 2,198.8 MB | 1.0x (baseline) | 100% (baseline) |
+| | **`xlsxrb-adapters`** | **4.70 s** | **489.0 MB** | **~7.5x faster** | **77.8% reduced** |
+| | `xlsxrb (In-Memory)` | 2.56 s | 240.6 MB | ~13.7x faster | 89.1% reduced |
+| | `xlsxrb (Streaming)` | 0.95 s | 74.9 MB | ~36.9x faster | 96.6% reduced |
+| **Read** | `rubyXL` (3.4.38) | 35.72 s | 2,469.5 MB | 1.0x (baseline) | 100% (baseline) |
+| | **`xlsxrb-adapters`** | **4.50 s** | **556.1 MB** | **~7.9x faster** | **77.5% reduced** |
+| | `xlsxrb (In-Memory)` | 2.31 s | 392.4 MB | ~15.5x faster | 84.1% reduced |
+| | `xlsxrb (Streaming)` | 1.97 s | 87.6 MB | ~18.1x faster | 96.5% reduced |
+
+Detailed scaling analysis across 10,000, 100,000, and 1,000,000 cells is documented in [docs/BENCHMARK.md](docs/BENCHMARK.md).
+
 ## Development & Dev Container
 
 The Dev Container configuration mounts the sibling `../xlsxrb` repository at `/workspaces/xlsxrb` inside the container:
@@ -33,12 +106,24 @@ The Dev Container configuration mounts the sibling `../xlsxrb` repository at `/w
 ]
 ```
 
-Run test suite with:
+Run test suite, compatibility harness, and benchmarks with:
 
 ```bash
 bundle install
+
+# Run unit tests
 bundle exec rake test
+
+# Run official rubyXL RSpec compatibility suite (363 tests)
+bundle exec rake compatibility
+
+# Run benchmarks
+bundle exec rake benchmark
 ```
+
+## Acknowledgements
+
+We extend our sincere respect and gratitude to Vivek Bhagwat, Wesha, and all contributors to [`rubyXL`](https://github.com/weshatheleopard/rubyXL). Their tireless dedication to building and maintaining such an expansive, full-featured XLSX library has served the Ruby community for over a decade. `xlsxrb-adapters` builds directly upon the ergonomic foundation and test specifications they pioneered.
 
 ## License
 

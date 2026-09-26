@@ -1,0 +1,33 @@
+# Generated from lib/xlsxrb/adapters/ruby_xl/merged_cells.rb with RBS::Inline
+
+module Xlsxrb
+  module Adapters
+    module RubyXL
+      # Represents a merged cell range.
+      class MergedCell
+        attr_accessor ref: Reference
+
+        # @param ref [Reference, String]
+        # : (?ref: (Reference | String)) -> void
+        def initialize: (?ref: Reference | String) -> void
+
+        # @param other [untyped]
+        # @return [bool]
+        # : (untyped other) -> bool
+        def ==: (untyped other) -> bool
+
+        # @return [String]
+        # : () -> String
+        def to_s: () -> String
+      end
+
+      # Collection of merged cells in a worksheet.
+      # @rbs inherits Array[MergedCell]
+      class MergedCells < Array[MergedCell]
+        # @param other_array [Array<MergedCell>]
+        # : (?Array[MergedCell] other_array) -> void
+        def initialize: (?Array[MergedCell] other_array) -> void
+      end
+    end
+  end
+end

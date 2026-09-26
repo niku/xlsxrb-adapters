@@ -1,0 +1,24 @@
+# Generated from lib/xlsxrb/adapters/ruby_xl/data_type.rb with RBS::Inline
+
+module Xlsxrb
+  module Adapters
+    module RubyXL
+      # Represents OpenXML cell data types compatible with RubyXL::DataType.
+      module DataType
+        SHARED_STRING: ::String
+
+        RAW_STRING: ::String
+
+        INLINE_STRING: ::String
+
+        ERROR: ::String
+
+        BOOLEAN: ::String
+
+        NUMBER: ::String
+
+        DATE: ::String
+      end
+    end
+  end
+end

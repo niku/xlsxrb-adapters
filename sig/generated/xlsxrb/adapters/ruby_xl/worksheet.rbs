@@ -1,0 +1,590 @@
+# Generated from lib/xlsxrb/adapters/ruby_xl/worksheet.rb with RBS::Inline
+
+module Xlsxrb
+  module Adapters
+    module RubyXL
+      # Represents a mutable worksheet wrapper compatible with RubyXL::Worksheet.
+      class Worksheet
+        NAME: ::Integer
+
+        SIZE: ::Integer
+
+        COLOR: ::Integer
+
+        ITALICS: ::Integer
+
+        BOLD: ::Integer
+
+        UNDERLINE: ::Integer
+
+        STRIKETHROUGH: ::Integer
+
+        attr_accessor workbook: Workbook?
+
+        attr_accessor sheet_name: String
+
+        attr_accessor rows: Array[Row?]
+
+        attr_accessor columns: Array[untyped]
+
+        attr_accessor charts: Array[untyped]
+
+        attr_accessor unmapped_data: Hash[untyped, untyped]
+
+        attr_accessor cols: ColumnRanges
+
+        attr_accessor merged_cells: MergedCells?
+
+        attr_accessor data_validations: Array[untyped]?
+
+        attr_accessor sheet_id: Integer?
+
+        # Proxy to support RubyXL's `worksheet.sheet_data[r][c]` and `sheet_data.rows` idiom.
+        class SheetDataProxy
+          # @param worksheet [Worksheet]
+          # : (Worksheet worksheet) -> void
+          def initialize: (Worksheet worksheet) -> void
+
+          # : (Integer row_index) -> Row?
+          def []: (Integer row_index) -> Row?
+
+          # : () -> Array[Row?]
+          def rows: () -> Array[Row?]
+
+          # : () -> Integer
+          def size: () -> Integer
+
+          # : () { (Row?) -> void } -> void
+          def each: () { (Row?) -> void } -> void
+        end
+
+        # @param workbook [Workbook, nil] Parent workbook.
+        # @param sheet_name [String] Worksheet name.
+        # @param rows [Array<Row, nil>] Initial list of rows.
+        # @param columns [Array] Column metadata.
+        # @param charts [Array] Charts metadata.
+        # @param unmapped_data [Hash] Additional metadata.
+        # : (?workbook: Workbook?, ?sheet_name: String, ?rows: Array[Row?], ?columns: Array[untyped], ?charts: Array[untyped], ?unmapped_data: Hash[untyped, untyped]) -> void
+        def initialize: (?workbook: Workbook?, ?sheet_name: String, ?rows: Array[Row?], ?columns: Array[untyped], ?charts: Array[untyped], ?unmapped_data: Hash[untyped, untyped]) -> void
+
+        alias name sheet_name
+
+        alias name= sheet_name=
+
+        # Accesses a row by 0-based row index.
+        #
+        # @param row_idx [Integer]
+        # @return [Row, nil]
+        # : (Integer row_idx) -> Row?
+        def []: (Integer row_idx) -> Row?
+
+        # Sets a row at 0-based row index.
+        #
+        # @param row_idx [Integer]
+        # @param row [Row, nil]
+        # @return [Row, nil]
+        # : (Integer row_idx, Row? row) -> Row?
+        def []=: (Integer row_idx, Row? row) -> Row?
+
+        # Accesses a cell by Excel reference string (e.g. "A1").
+        #
+        # @param ref [String] Excel reference string.
+        # @return [Cell, nil]
+        # : (String ref) -> Cell?
+        def cell_at: (String ref) -> Cell?
+
+        # Adds a new row at the given 0-based row index.
+        #
+        # @param row_index [Integer]
+        # @param params [Hash]
+        # @return [Row]
+        # : (?Integer row_index, **untyped params) -> Row
+        def add_row: (?Integer row_index, **untyped params) -> Row
+
+        # Adds a cell to the worksheet at specified (row, col) coordinates.
+        # Compatible with RubyXL::Worksheet#add_cell.
+        #
+        # @param row_index [Integer] 0-based row index.
+        # @param column_index [Integer] 0-based column index.
+        # @param data [Object] Cell value.
+        # @param formula [String, Formula, nil] Optional formula.
+        # @param overwrite [Boolean] Whether to overwrite existing cell if present.
+        # @return [Cell] The created or updated Cell.
+        # : (?Integer row_index, ?Integer column_index, ?untyped data, ?(String | Formula)? formula, ?bool overwrite) -> Cell
+        def add_cell: (?Integer row_index, ?Integer column_index, ?untyped data, ?(String | Formula)? formula, ?bool overwrite) -> Cell
+
+        # Iterates through rows in the worksheet.
+        #
+        # @yield [row]
+        # @yieldparam row [Row, nil]
+        # @return [Enumerator, void]
+        # : () { (Row?) -> void } -> void
+        # : () -> Enumerator[Row?, void]
+        def each: () { (Row?) -> void } -> void
+                | () -> Enumerator[Row?, void]
+
+        # SheetData compatibility proxy.
+        #
+        # @return [SheetDataProxy]
+        # : () -> SheetDataProxy
+        def sheet_data: () -> SheetDataProxy
+
+        # @return [void]
+        # : () -> void
+        def validate_workbook: () -> void
+
+        # @param index [Integer]
+        # @return [void]
+        # : (Integer index) -> void
+        def validate_nonnegative: (Integer index) -> void
+
+        # Ensures that a row (and optionally column) exists in the table.
+        #
+        # @param row_index [Integer]
+        # @param column_index [Integer]
+        # @return [void]
+        # : (Integer row_index, ?Integer column_index) -> void
+        def ensure_cell_exists: (Integer row_index, ?Integer column_index) -> void
+
+        # Inserts a row at row_index, pushing down subsequent rows and copying styles from the row above.
+        #
+        # @param row_index [Integer]
+        # @return [Row]
+        # : (?Integer row_index) -> Row
+        def insert_row: (?Integer row_index) -> Row
+
+        # Deletes a row at row_index, shifting following rows up.
+        #
+        # @param row_index [Integer]
+        # @return [Row, nil]
+        # : (?Integer row_index) -> Row?
+        def delete_row: (?Integer row_index) -> Row?
+
+        # Inserts a column at column_index, shifting following columns to the right.
+        #
+        # @param column_index [Integer]
+        # @return [void]
+        # : (?Integer column_index) -> void
+        def insert_column: (?Integer column_index) -> void
+
+        # Deletes a column at column_index, shifting following columns to the left.
+        #
+        # @param column_index [Integer]
+        # @return [void]
+        # : (?Integer column_index) -> void
+        def delete_column: (?Integer column_index) -> void
+
+        # Inserts a cell with optional shifting (:right or :down).
+        #
+        # @param row [Integer]
+        # @param col [Integer]
+        # @param data [Object]
+        # @param formula [String, nil]
+        # @param shift [Symbol, nil] :right or :down
+        # @return [Cell]
+        # : (?Integer row, ?Integer col, ?untyped data, ?(String | Formula)? formula, ?Symbol? shift) -> Cell
+        def insert_cell: (?Integer row, ?Integer col, ?untyped data, ?(String | Formula)? formula, ?Symbol? shift) -> Cell
+
+        # Deletes a cell with optional shifting (:left or :up).
+        #
+        # @param row_index [Integer]
+        # @param column_index [Integer]
+        # @param shift [Symbol, nil] :left or :up
+        # @return [Cell, nil]
+        # : (?Integer row_index, ?Integer column_index, ?Symbol? shift) -> Cell?
+        def delete_cell: (?Integer row_index, ?Integer column_index, ?Symbol? shift) -> Cell?
+
+        # Merges cells within a rectangular area.
+        #
+        # @param params [Array<untyped>]
+        # @return [MergedCell]
+        # : (*untyped params) -> MergedCell
+        def merge_cells: (*untyped params) -> MergedCell
+
+        # @param row_index [Integer]
+        # @return [Integer]
+        # : (Integer row_index) -> Integer
+        def get_row_style: (Integer row_index) -> Integer
+
+        # @param row_index [Integer]
+        # @return [XF]
+        # : (Integer row_index) -> XF
+        def get_row_xf: (Integer row_index) -> XF
+
+        # @param row [Integer]
+        # @return [String, nil]
+        # : (?Integer row) -> String?
+        def get_row_fill: (?Integer row) -> String?
+
+        # @param row [Integer]
+        # @param color_code [String]
+        # @return [void]
+        # : (Integer row, ?String color_code) -> void
+        def change_row_fill: (Integer row, ?String color_code) -> void
+
+        # @param row [Integer]
+        # @return [Font, nil]
+        # : (?Integer row) -> Font?
+        def row_font: (?Integer row) -> Font?
+
+        # @param row [Integer]
+        # @return [String, nil]
+        # : (?Integer row) -> String?
+        def get_row_font_name: (?Integer row) -> String?
+
+        # @param row [Integer]
+        # @return [Numeric, nil]
+        # : (?Integer row) -> (Float | Integer)?
+        def get_row_font_size: (?Integer row) -> (Float | Integer)?
+
+        # @param row [Integer]
+        # @return [String, nil]
+        # : (?Integer row) -> String?
+        def get_row_font_color: (?Integer row) -> String?
+
+        # @param row [Integer]
+        # @return [bool?]
+        # : (?Integer row) -> bool?
+        def is_row_italicized: (?Integer row) -> bool?
+
+        # @param row [Integer]
+        # @return [bool?]
+        # : (?Integer row) -> bool?
+        def is_row_bolded: (?Integer row) -> bool?
+
+        # @param row [Integer]
+        # @return [bool?]
+        # : (?Integer row) -> bool?
+        def is_row_underlined: (?Integer row) -> bool?
+
+        # @param row [Integer]
+        # @return [bool?]
+        # : (?Integer row) -> bool?
+        def is_row_struckthrough: (?Integer row) -> bool?
+
+        # @param row [Integer]
+        # @return [Numeric]
+        # : (?Integer row) -> (Float | Integer)
+        def get_row_height: (?Integer row) -> (Float | Integer)
+
+        # @param row [Integer]
+        # @param height [Numeric]
+        # @return [void]
+        # : (Integer row, Numeric height) -> void
+        def change_row_height: (Integer row, Numeric height) -> void
+
+        # @param row [Integer]
+        # @param direction [Symbol, String]
+        # @return [String, nil]
+        # : (Integer row, Symbol | String direction) -> String?
+        def get_row_border: (Integer row, Symbol | String direction) -> String?
+
+        # @param row [Integer]
+        # @param direction [Symbol, String]
+        # @return [String, nil]
+        # : (Integer row, Symbol | String direction) -> String?
+        def get_row_border_color: (Integer row, Symbol | String direction) -> String?
+
+        # @param row [Integer]
+        # @param is_horizontal [Boolean]
+        # @return [String, nil]
+        # : (Integer row, bool is_horizontal) -> String?
+        def get_row_alignment: (Integer row, bool is_horizontal) -> String?
+
+        # @param row [Integer]
+        # @yieldparam alignment [Alignment]
+        # @return [void]
+        # : (Integer row) { (Alignment) -> void } -> void
+        def change_row_alignment: (Integer row) { (Alignment) -> void } -> void
+
+        # @param row [Integer]
+        # @param alignment [String]
+        # @return [void]
+        # : (?Integer row, ?String alignment) -> void
+        def change_row_horizontal_alignment: (?Integer row, ?String alignment) -> void
+
+        # @param row [Integer]
+        # @param alignment [String]
+        # @return [void]
+        # : (?Integer row, ?String alignment) -> void
+        def change_row_vertical_alignment: (?Integer row, ?String alignment) -> void
+
+        # @param row [Integer]
+        # @param direction [Symbol, String]
+        # @param weight [String]
+        # @return [void]
+        # : (Integer row, Symbol | String direction, String weight) -> void
+        def change_row_border: (Integer row, Symbol | String direction, String weight) -> void
+
+        # @param row [Integer]
+        # @param direction [Symbol, String]
+        # @param color [String]
+        # @return [void]
+        # : (Integer row, Symbol | String direction, String color) -> void
+        def change_row_border_color: (Integer row, Symbol | String direction, String color) -> void
+
+        # @param row [Integer]
+        # @param change_type [Integer]
+        # @param arg [untyped]
+        # @param font [Font]
+        # @param xf [XF]
+        # @return [void]
+        # : (Integer row, Integer change_type, untyped arg, Font font, XF xf) -> void
+        def change_row_font: (Integer row, Integer change_type, untyped arg, Font font, XF xf) -> void
+
+        # @param row [Integer]
+        # @param font_name [String]
+        # @return [void]
+        # : (?Integer row, ?String font_name) -> void
+        def change_row_font_name: (?Integer row, ?String font_name) -> void
+
+        # @param row [Integer]
+        # @param font_size [Numeric]
+        # @return [void]
+        # : (?Integer row, ?Numeric font_size) -> void
+        def change_row_font_size: (?Integer row, ?Numeric font_size) -> void
+
+        # @param row [Integer]
+        # @param font_color [String]
+        # @return [void]
+        # : (?Integer row, ?String font_color) -> void
+        def change_row_font_color: (?Integer row, ?String font_color) -> void
+
+        # @param row [Integer]
+        # @param italicized [Boolean]
+        # @return [void]
+        # : (?Integer row, ?bool italicized) -> void
+        def change_row_italics: (?Integer row, ?bool italicized) -> void
+
+        # @param row [Integer]
+        # @param bolded [Boolean]
+        # @return [void]
+        # : (?Integer row, ?bool bolded) -> void
+        def change_row_bold: (?Integer row, ?bool bolded) -> void
+
+        # @param row [Integer]
+        # @param underlined [Boolean]
+        # @return [void]
+        # : (?Integer row, ?bool underlined) -> void
+        def change_row_underline: (?Integer row, ?bool underlined) -> void
+
+        # @param row [Integer]
+        # @param struckthrough [Boolean]
+        # @return [void]
+        # : (?Integer row, ?bool struckthrough) -> void
+        def change_row_strikethrough: (?Integer row, ?bool struckthrough) -> void
+
+        # @param column_index [Integer]
+        # @return [Integer]
+        # : (Integer column_index) -> Integer
+        def get_cols_style_index: (Integer column_index) -> Integer
+
+        # @param col [Integer]
+        # @return [XF]
+        # : (Integer col) -> XF
+        def get_col_xf: (Integer col) -> XF
+
+        # @param col [Integer]
+        # @return [Font]
+        # : (Integer col) -> Font
+        def column_font: (Integer col) -> Font
+
+        # @param col [Integer]
+        # @return [String]
+        # : (?Integer col) -> String
+        def get_column_fill: (?Integer col) -> String
+
+        # @param col [Integer]
+        # @return [String, nil]
+        # : (?Integer col) -> String?
+        def get_column_font_name: (?Integer col) -> String?
+
+        # @param col [Integer]
+        # @return [Numeric, nil]
+        # : (?Integer col) -> (Float | Integer)?
+        def get_column_font_size: (?Integer col) -> (Float | Integer)?
+
+        # @param col [Integer]
+        # @return [String]
+        # : (?Integer col) -> String
+        def get_column_font_color: (?Integer col) -> String
+
+        # @param col [Integer]
+        # @return [bool?]
+        # : (?Integer col) -> bool?
+        def is_column_italicized: (?Integer col) -> bool?
+
+        # @param col [Integer]
+        # @return [bool?]
+        # : (?Integer col) -> bool?
+        def is_column_bolded: (?Integer col) -> bool?
+
+        # @param col [Integer]
+        # @return [bool?]
+        # : (?Integer col) -> bool?
+        def is_column_underlined: (?Integer col) -> bool?
+
+        # @param col [Integer]
+        # @return [bool?]
+        # : (?Integer col) -> bool?
+        def is_column_struckthrough: (?Integer col) -> bool?
+
+        # @param column_index [Integer]
+        # @return [Float, nil]
+        # : (?Integer column_index) -> Float?
+        def get_column_width_raw: (?Integer column_index) -> Float?
+
+        # @param column_index [Integer]
+        # @return [Integer]
+        # : (?Integer column_index) -> Integer
+        def get_column_width: (?Integer column_index) -> Integer
+
+        # @param column_index [Integer]
+        # @param width [Numeric]
+        # @return [void]
+        # : (Integer column_index, Numeric width) -> void
+        def change_column_width_raw: (Integer column_index, Numeric width) -> void
+
+        # @param column_index [Integer]
+        # @param width_in_chars [Numeric]
+        # @return [void]
+        # : (Integer column_index, ?Numeric width_in_chars) -> void
+        def change_column_width: (Integer column_index, ?Numeric width_in_chars) -> void
+
+        # @param column_index [Integer]
+        # @param color_code [String]
+        # @return [void]
+        # : (Integer column_index, ?String color_code) -> void
+        def change_column_fill: (Integer column_index, ?String color_code) -> void
+
+        # @param column_index [Integer]
+        # @param change_type [Integer]
+        # @param arg [untyped]
+        # @param font [Font]
+        # @param xf [XF]
+        # @return [void]
+        # : (Integer column_index, Integer change_type, untyped arg, Font font, XF xf) -> void
+        def change_column_font: (Integer column_index, Integer change_type, untyped arg, Font font, XF xf) -> void
+
+        # @param column_index [Integer]
+        # @param font_name [String]
+        # @return [void]
+        # : (?Integer column_index, ?String font_name) -> void
+        def change_column_font_name: (?Integer column_index, ?String font_name) -> void
+
+        # @param column_index [Integer]
+        # @param font_size [Numeric]
+        # @return [void]
+        # : (Integer column_index, ?Numeric font_size) -> void
+        def change_column_font_size: (Integer column_index, ?Numeric font_size) -> void
+
+        # @param column_index [Integer]
+        # @param font_color [String]
+        # @return [void]
+        # : (Integer column_index, ?String font_color) -> void
+        def change_column_font_color: (Integer column_index, ?String font_color) -> void
+
+        # @param column_index [Integer]
+        # @param italicized [Boolean]
+        # @return [void]
+        # : (Integer column_index, ?bool italicized) -> void
+        def change_column_italics: (Integer column_index, ?bool italicized) -> void
+
+        # @param column_index [Integer]
+        # @param bolded [Boolean]
+        # @return [void]
+        # : (Integer column_index, ?bool bolded) -> void
+        def change_column_bold: (Integer column_index, ?bool bolded) -> void
+
+        # @param column_index [Integer]
+        # @param underlined [Boolean]
+        # @return [void]
+        # : (Integer column_index, ?bool underlined) -> void
+        def change_column_underline: (Integer column_index, ?bool underlined) -> void
+
+        # @param column_index [Integer]
+        # @param struckthrough [Boolean]
+        # @return [void]
+        # : (Integer column_index, ?bool struckthrough) -> void
+        def change_column_strikethrough: (Integer column_index, ?bool struckthrough) -> void
+
+        # @param column_index [Integer]
+        # @yieldparam alignment [Alignment]
+        # @return [void]
+        # : (Integer column_index) { (Alignment) -> void } -> void
+        def change_column_alignment: (Integer column_index) { (Alignment) -> void } -> void
+
+        # @param column_index [Integer]
+        # @param alignment [String]
+        # @return [void]
+        # : (Integer column_index, ?String alignment) -> void
+        def change_column_horizontal_alignment: (Integer column_index, ?String alignment) -> void
+
+        # @param column_index [Integer]
+        # @param alignment [String]
+        # @return [void]
+        # : (Integer column_index, ?String alignment) -> void
+        def change_column_vertical_alignment: (Integer column_index, ?String alignment) -> void
+
+        # @param column_index [Integer]
+        # @param direction [Symbol, String]
+        # @param weight [String]
+        # @return [void]
+        # : (Integer column_index, Symbol | String direction, String weight) -> void
+        def change_column_border: (Integer column_index, Symbol | String direction, String weight) -> void
+
+        # @param column_index [Integer]
+        # @param direction [Symbol, String]
+        # @param color [String]
+        # @return [void]
+        # : (Integer column_index, Symbol | String direction, String color) -> void
+        def change_column_border_color: (Integer column_index, Symbol | String direction, String color) -> void
+
+        # @param col [Integer]
+        # @param border_direction [Symbol, String]
+        # @return [String, nil]
+        # : (Integer col, Symbol | String border_direction) -> String?
+        def get_column_border: (Integer col, Symbol | String border_direction) -> String?
+
+        # @param col [Integer]
+        # @param border_direction [Symbol, String]
+        # @return [String, nil]
+        # : (Integer col, Symbol | String border_direction) -> String?
+        def get_column_border_color: (Integer col, Symbol | String border_direction) -> String?
+
+        # @param col [Integer]
+        # @param type [Symbol, String]
+        # @return [untyped]
+        # : (Integer col, Symbol | String type) -> untyped
+        def get_column_alignment: (Integer col, Symbol | String type) -> untyped
+
+        # Helper method to get the style index for a column.
+        #
+        # @param column_index [Integer]
+        # @return [Integer]
+        # : (Integer column_index) -> Integer
+        def get_col_style: (Integer column_index) -> Integer
+
+        # Adds data validation list.
+        #
+        # @param ref [String, Reference]
+        # @param list_arr [Array<String>]
+        # @return [void]
+        # : (String | Reference ref, Array[String] list_arr) -> void
+        def add_validation_list: (String | Reference ref, Array[String] list_arr) -> void
+
+        # Converts worksheet to an immutable Xlsxrb::Elements::Worksheet.
+        #
+        # @return [Xlsxrb::Elements::Worksheet]
+        # : () -> Xlsxrb::Elements::Worksheet
+        def to_xlsxrb: () -> Xlsxrb::Elements::Worksheet
+
+        # Inspect representation.
+        #
+        # @return [String]
+        # : () -> String
+        def inspect: () -> String
+      end
+    end
+  end
+end

@@ -1,0 +1,55 @@
+# Generated from lib/xlsxrb/adapters/ruby_xl/text.rb with RBS::Inline
+
+module Xlsxrb
+  module Adapters
+    module RubyXL
+      # Represents a text run.
+      class Text
+        attr_accessor value: String?
+
+        # @param params [Hash]
+        # : (?Hash[Symbol, untyped] params) -> void
+        def initialize: (?Hash[Symbol, untyped] params) -> void
+
+        # @return [String]
+        # : () -> String
+        def to_s: () -> String
+
+        # Writes XML representation of text node.
+        #
+        # @return [String]
+        # : () -> String
+        def write_xml: () -> String
+
+        # @param other [untyped]
+        # @return [bool]
+        # : (untyped other) -> bool
+        def ==: (untyped other) -> bool
+      end
+
+      # Represents rich formatted text.
+      class RichText
+        attr_accessor t: Text?
+
+        # @param params [Hash]
+        # : (?Hash[Symbol, untyped] params) -> void
+        def initialize: (?Hash[Symbol, untyped] params) -> void
+
+        # @return [String]
+        # : () -> String
+        def to_s: () -> String
+
+        # Writes XML representation of rich text node.
+        #
+        # @return [String]
+        # : () -> String
+        def write_xml: () -> String
+
+        # @param other [untyped]
+        # @return [bool]
+        # : (untyped other) -> bool
+        def ==: (untyped other) -> bool
+      end
+    end
+  end
+end

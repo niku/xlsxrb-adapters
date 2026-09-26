@@ -4,6 +4,7 @@
 
 require "xlsxrb"
 require_relative "adapters/version"
+require_relative "adapters/ruby_xl"
 
 module Xlsxrb
   # Namespace for compatibility adapters helping gradual migration to xlsxrb.
