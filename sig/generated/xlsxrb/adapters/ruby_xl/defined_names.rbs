@@ -1,0 +1,33 @@
+# Generated from lib/xlsxrb/adapters/ruby_xl/defined_names.rb with RBS::Inline
+
+module Xlsxrb
+  module Adapters
+    module RubyXL
+      # Represents a defined name in a workbook.
+      class DefinedName
+        attr_accessor name: String
+
+        attr_accessor reference: String
+
+        attr_accessor local_sheet_id: Integer?
+
+        # @param params [Hash]
+        # : (?Hash[Symbol, untyped] params) -> void
+        def initialize: (?Hash[Symbol, untyped] params) -> void
+
+        # @param other [untyped]
+        # @return [bool]
+        # : (untyped other) -> bool
+        def ==: (untyped other) -> bool
+      end
+
+      # Collection of defined names.
+      # @rbs inherits Array[DefinedName]
+      class DefinedNames < Array[DefinedName]
+        # @param other_array [Array<DefinedName>]
+        # : (?Array[DefinedName] other_array) -> void
+        def initialize: (?Array[DefinedName] other_array) -> void
+      end
+    end
+  end
+end

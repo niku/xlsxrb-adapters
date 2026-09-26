@@ -1,0 +1,45 @@
+# Generated from lib/xlsxrb/adapters/ruby_xl/formula.rb with RBS::Inline
+
+module Xlsxrb
+  module Adapters
+    module RubyXL
+      # Represents a formula in a cell, compatible with RubyXL::Formula interface.
+      class Formula
+        attr_accessor expression: String?
+
+        # @param expression [String, Hash, nil] The formula expression (e.g. "SUM(A1:B1)").
+        # : (?String | Hash[Symbol | String, untyped] | nil expression) -> void
+        def initialize: (?String | Hash[Symbol | String, untyped] | nil expression) -> void
+
+        # Compares formula with another Formula or String.
+        #
+        # @param other [Object]
+        # @return [Boolean]
+        # : (untyped other) -> bool
+        def ==: (untyped other) -> bool
+
+        alias eql? ==
+
+        # Returns hash of the formula expression.
+        #
+        # @return [Integer]
+        # : () -> Integer
+        def hash: () -> Integer
+
+        # Returns the formula expression string.
+        #
+        # @return [String]
+        # : () -> String
+        def to_s: () -> String
+
+        alias to_str to_s
+
+        # Inspect representation.
+        #
+        # @return [String]
+        # : () -> String
+        def inspect: () -> String
+      end
+    end
+  end
+end

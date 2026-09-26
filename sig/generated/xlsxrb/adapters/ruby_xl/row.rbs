@@ -1,0 +1,115 @@
+# Generated from lib/xlsxrb/adapters/ruby_xl/row.rb with RBS::Inline
+
+module Xlsxrb
+  module Adapters
+    module RubyXL
+      # Represents a mutable row wrapper compatible with RubyXL::Row.
+      class Row
+        DEFAULT_HEIGHT: ::Integer
+
+        attr_accessor worksheet: Worksheet?
+
+        attr_accessor index: Integer
+
+        attr_accessor cells: Array[Cell?]
+
+        attr_accessor height: (Float | Integer)?
+
+        attr_accessor hidden: bool
+
+        attr_accessor custom_height: bool
+
+        attr_accessor outline_level: Integer?
+
+        attr_accessor style_index: Integer?
+
+        alias ht height
+
+        alias ht= height=
+
+        # @param worksheet [Worksheet, nil] Parent worksheet.
+        # @param index [Integer] 0-based row index.
+        # @param cells [Array<Cell, nil>] Initial list of cells.
+        # @param height [Float, Integer, nil] Row height.
+        # @param hidden [Boolean] Whether row is hidden.
+        # @param custom_height [Boolean] Whether row has custom height.
+        # @param outline_level [Integer, nil] Outline level.
+        # @param style_index [Integer, nil] Style index.
+        # : (?worksheet: Worksheet?, ?index: Integer, ?cells: Array[Cell?], ?height: (Float | Integer)?, ?hidden: bool, ?custom_height: bool, ?outline_level: Integer?, ?style_index: Integer?) -> void
+        def initialize: (?worksheet: Worksheet?, ?index: Integer, ?cells: Array[Cell?], ?height: (Float | Integer)?, ?hidden: bool, ?custom_height: bool, ?outline_level: Integer?, ?style_index: Integer?) -> void
+
+        # Accesses a cell by 0-based column index.
+        #
+        # @param col_idx [Integer]
+        # @return [Cell, nil]
+        # : (Integer col_idx) -> Cell?
+        def []: (Integer col_idx) -> Cell?
+
+        # Sets a cell at 0-based column index.
+        #
+        # @param col_idx [Integer]
+        # @param cell [Cell, nil]
+        # @return [Cell, nil]
+        # : (Integer col_idx, Cell? cell) -> Cell?
+        def []=: (Integer col_idx, Cell? cell) -> Cell?
+
+        # Iterates over each cell in the row (including nil for sparse entries).
+        #
+        # @yield [cell]
+        # @yieldparam cell [Cell, nil]
+        # @return [Enumerator, void]
+        # : () { (Cell?) -> void } -> void
+        # : () -> Enumerator[Cell?, void]
+        def each: () { (Cell?) -> void } -> void
+                | () -> Enumerator[Cell?, void]
+
+        # Returns the number of cells up to the highest column index.
+        #
+        # @return [Integer]
+        # : () -> Integer
+        def size: () -> Integer
+
+        alias length size
+
+        # Inserts a cell and shifts following cells to the right.
+        #
+        # @param cell [Cell, nil]
+        # @param col_index [Integer]
+        # @return [void]
+        # : (Cell? cell, Integer col_index) -> void
+        def insert_cell_shift_right: (Cell? cell, Integer col_index) -> void
+
+        # Deletes a cell and shifts following cells to the left.
+        #
+        # @param col_index [Integer]
+        # @return [Cell, nil]
+        # : (Integer col_index) -> Cell?
+        def delete_cell_shift_left: (Integer col_index) -> Cell?
+
+        # @return [XF, nil]
+        # : () -> XF?
+        def get_row_xf: () -> XF?
+
+        # @return [Font, nil]
+        # : () -> Font?
+        def get_font: () -> Font?
+
+        # @return [String]
+        # : () -> String
+        def get_fill_color: () -> String
+
+        # Converts row to an immutable Xlsxrb::Elements::Row.
+        #
+        # @return [Xlsxrb::Elements::Row]
+        # : () -> Xlsxrb::Elements::Row
+        def to_xlsxrb: () -> Xlsxrb::Elements::Row
+
+        # Inspect representation.
+        #
+        # @return [String]
+        # : () -> String
+        def inspect: () -> String
+      end
+    end
+  end
+end

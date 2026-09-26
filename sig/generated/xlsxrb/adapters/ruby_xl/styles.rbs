@@ -1,0 +1,369 @@
+# Generated from lib/xlsxrb/adapters/ruby_xl/styles.rb with RBS::Inline
+
+module Xlsxrb
+  module Adapters
+    module RubyXL
+      # Represents a Font definition.
+      class Font
+        attr_accessor name: String
+
+        attr_accessor size: Float | Integer
+
+        attr_accessor color: Color?
+
+        attr_accessor bold: bool?
+
+        attr_accessor italic: bool?
+
+        attr_accessor underline: String | bool | nil
+
+        attr_accessor strikethrough: bool?
+
+        # @param name [String]
+        # @param size [Float, Integer]
+        # @param color [Color, String, nil]
+        # @param bold [Boolean, nil]
+        # @param italic [Boolean, nil]
+        # @param underline [String, Boolean, nil]
+        # @param strikethrough [Boolean, nil]
+        # : (?name: String, ?size: (Float | Integer), ?color: (Color | String)?, ?bold: bool?, ?italic: bool?, ?underline: (String | bool)?, ?strikethrough: bool?) -> void
+        def initialize: (?name: String, ?size: Float | Integer, ?color: (Color | String)?, ?bold: bool?, ?italic: bool?, ?underline: (String | bool)?, ?strikethrough: bool?) -> void
+
+        # : (String new_name) -> void
+        def set_name: (String new_name) -> void
+
+        # : () -> String
+        def get_name: () -> String
+
+        # : (Float | Integer new_size) -> void
+        def set_size: (Float | Integer new_size) -> void
+
+        # : () -> (Float | Integer)
+        def get_size: () -> (Float | Integer)
+
+        # : ((String | Color | Hash[untyped, untyped])? new_color) -> void
+        def set_rgb_color: ((String | Color | Hash[untyped, untyped])? new_color) -> void
+
+        # : () -> String?
+        def get_rgb_color: () -> String?
+
+        # : (bool? val) -> void
+        def set_bold: (bool? val) -> void
+
+        # : () -> bool?
+        def is_bold: () -> bool?
+
+        # : (bool? val) -> void
+        def set_italic: (bool? val) -> void
+
+        # : () -> bool?
+        def is_italic: () -> bool?
+
+        # : (String | bool | nil val) -> void
+        def set_underline: (String | bool | nil val) -> void
+
+        # : () -> bool?
+        def is_underlined: () -> bool?
+
+        # : (bool? val) -> void
+        def set_strikethrough: (bool? val) -> void
+
+        # : () -> bool?
+        def is_strikethrough: () -> bool?
+
+        # @return [Font]
+        # : () -> Font
+        def dup: () -> Font
+
+        # @param other [untyped]
+        # @return [bool]
+        # : (untyped other) -> bool
+        def ==: (untyped other) -> bool
+
+        # Converts to xlsxrb font Hash.
+        # @return [Hash]
+        # : () -> Hash[Symbol, untyped]
+        def to_xlsxrb_hash: () -> Hash[Symbol, untyped]
+      end
+
+      # Represents a Fill definition.
+      class Fill
+        attr_accessor pattern_type: String
+
+        attr_accessor fg_color: Color?
+
+        attr_accessor bg_color: Color?
+
+        # @param pattern_type [String]
+        # @param fg_color [Color, String, Hash, nil]
+        # @param bg_color [Color, String, Hash, nil]
+        # : (?pattern_type: String, ?fg_color: (Color | String | Hash[untyped, untyped])?, ?bg_color: (Color | String | Hash[untyped, untyped])?) -> void
+        def initialize: (?pattern_type: String, ?fg_color: (Color | String | Hash[untyped, untyped])?, ?bg_color: (Color | String | Hash[untyped, untyped])?) -> void
+
+        # Returns fill RGB color.
+        # @return [String?]
+        # : () -> String?
+        def fill_color: () -> String?
+
+        # @return [Fill]
+        # : () -> Fill
+        def dup: () -> Fill
+
+        # @param other [untyped]
+        # @return [bool]
+        # : (untyped other) -> bool
+        def ==: (untyped other) -> bool
+
+        # Converts to xlsxrb fill Hash.
+        # @return [Hash]
+        # : () -> Hash[Symbol, untyped]
+        def to_xlsxrb_hash: () -> Hash[Symbol, untyped]
+      end
+
+      # Represents a Border definition.
+      class Border
+        # Single border edge.
+        class Edge
+          attr_accessor style: String?
+
+          attr_accessor color: Color?
+
+          # @param style [String, nil]
+          # @param color [Color, String, Hash, nil]
+          # : (?style: String?, ?color: (Color | String | Hash[untyped, untyped])?) -> void
+          def initialize: (?style: String?, ?color: (Color | String | Hash[untyped, untyped])?) -> void
+
+          # @return [Edge]
+          # : () -> Edge
+          def dup: () -> Edge
+
+          # @param other [untyped]
+          # @return [bool]
+          # : (untyped other) -> bool
+          def ==: (untyped other) -> bool
+        end
+
+        attr_accessor left: Edge
+
+        attr_accessor right: Edge
+
+        attr_accessor top: Edge
+
+        attr_accessor bottom: Edge
+
+        attr_accessor diagonal: Edge
+
+        attr_accessor diagonal_up: bool?
+
+        attr_accessor diagonal_down: bool?
+
+        # : () -> void
+        def initialize: () -> void
+
+        # @param direction [Symbol, String]
+        # @return [Edge]
+        # : (Symbol | String direction) -> Edge
+        def edge: (Symbol | String direction) -> Edge
+
+        # @param direction [Symbol, String]
+        # @return [String?]
+        # : (Symbol | String direction) -> String?
+        def get_edge_style: (Symbol | String direction) -> String?
+
+        # @param direction [Symbol, String]
+        # @param weight [String]
+        # @param diagonals [untyped]
+        # @return [void]
+        # : (Symbol | String direction, String weight, ?untyped diagonals) -> void
+        def set_edge_style: (Symbol | String direction, String weight, ?untyped diagonals) -> void
+
+        # @param direction [Symbol, String]
+        # @return [String?]
+        # : (Symbol | String direction) -> String?
+        def get_edge_color: (Symbol | String direction) -> String?
+
+        # @param direction [Symbol, String]
+        # @param color [String, Color, Hash, nil]
+        # @return [void]
+        # : (Symbol | String direction, (String | Color | Hash[untyped, untyped])? color) -> void
+        def set_edge_color: (Symbol | String direction, (String | Color | Hash[untyped, untyped])? color) -> void
+
+        # @return [Border]
+        # : () -> Border
+        def dup: () -> Border
+
+        # @param other [untyped]
+        # @return [bool]
+        # : (untyped other) -> bool
+        def ==: (untyped other) -> bool
+
+        # Converts to xlsxrb border Hash.
+        # @return [Hash]
+        # : () -> Hash[Symbol, untyped]
+        def to_xlsxrb_hash: () -> Hash[Symbol, untyped]
+      end
+
+      # Represents cell alignment.
+      class Alignment
+        attr_accessor horizontal: String?
+
+        attr_accessor vertical: String?
+
+        attr_accessor wrap_text: bool?
+
+        attr_accessor shrink_to_fit: bool?
+
+        attr_accessor indent: Integer?
+
+        attr_accessor text_rotation: Integer?
+
+        # @param horizontal [String, nil]
+        # @param vertical [String, nil]
+        # @param wrap_text [Boolean, nil]
+        # @param shrink_to_fit [Boolean, nil]
+        # @param indent [Integer, nil]
+        # @param text_rotation [Integer, nil]
+        # : (?horizontal: String?, ?vertical: String?, ?wrap_text: bool?, ?shrink_to_fit: bool?, ?indent: Integer?, ?text_rotation: Integer?) -> void
+        def initialize: (?horizontal: String?, ?vertical: String?, ?wrap_text: bool?, ?shrink_to_fit: bool?, ?indent: Integer?, ?text_rotation: Integer?) -> void
+
+        # @return [Alignment]
+        # : () -> Alignment
+        def dup: () -> Alignment
+
+        # @param other [untyped]
+        # @return [bool]
+        # : (untyped other) -> bool
+        def ==: (untyped other) -> bool
+
+        # Converts to xlsxrb alignment Hash.
+        # @return [Hash]
+        # : () -> Hash[Symbol, untyped]
+        def to_xlsxrb_hash: () -> Hash[Symbol, untyped]
+      end
+
+      # Represents a format record (xf).
+      class XF
+        attr_accessor num_fmt_id: Integer
+
+        attr_accessor font_id: Integer
+
+        attr_accessor fill_id: Integer
+
+        attr_accessor border_id: Integer
+
+        attr_accessor xf_id: Integer
+
+        attr_accessor alignment: Alignment?
+
+        attr_accessor apply_number_format: bool?
+
+        attr_accessor apply_font: bool?
+
+        attr_accessor apply_fill: bool?
+
+        attr_accessor apply_border: bool?
+
+        attr_accessor apply_alignment: bool?
+
+        # @param num_fmt_id [Integer]
+        # @param font_id [Integer]
+        # @param fill_id [Integer]
+        # @param border_id [Integer]
+        # @param xf_id [Integer]
+        # @param alignment [Alignment, nil]
+        # : (?num_fmt_id: Integer, ?font_id: Integer, ?fill_id: Integer, ?border_id: Integer, ?xf_id: Integer, ?alignment: Alignment?) -> void
+        def initialize: (?num_fmt_id: Integer, ?font_id: Integer, ?fill_id: Integer, ?border_id: Integer, ?xf_id: Integer, ?alignment: Alignment?) -> void
+
+        # @return [XF]
+        # : () -> XF
+        def dup: () -> XF
+
+        # @param other [untyped]
+        # @return [bool]
+        # : (untyped other) -> bool
+        def ==: (untyped other) -> bool
+
+        # Converts to xlsxrb xf Hash.
+        # @return [Hash]
+        # : () -> Hash[Symbol, untyped]
+        def to_xlsxrb_hash: () -> Hash[Symbol, untyped]
+      end
+
+      # Represents a single number format definition.
+      class NumberFormat
+        attr_accessor num_fmt_id: Integer?
+
+        attr_accessor format_code: String?
+
+        # @param num_fmt_id [Integer, nil]
+        # @param format_code [String, nil]
+        # : (?num_fmt_id: Integer?, ?format_code: String?) -> void
+        def initialize: (?num_fmt_id: Integer?, ?format_code: String?) -> void
+
+        # @return [bool]
+        # : () -> bool
+        def is_date_format?: () -> bool
+      end
+
+      # Collection of number formats.
+      # @rbs inherits Array[NumberFormat]
+      class NumberFormats < Array[NumberFormat]
+        # @param format_id [Integer]
+        # @return [NumberFormat, nil]
+        # : (Integer format_id) -> NumberFormat?
+        def find_by_format_id: (Integer format_id) -> NumberFormat?
+
+        # Accesses format code by ID or index.
+        #
+        # @param key [Integer]
+        # @return [String, NumberFormat, nil]
+        # : (Integer key) -> untyped
+        def []: (Integer key) -> untyped
+
+        DEFAULT_NUMBER_FORMATS: untyped
+      end
+
+      # Stylesheet managing fonts, fills, borders, number formats, and XFs.
+      class Stylesheet
+        attr_accessor fonts: Array[Font]
+
+        attr_accessor fills: Array[Fill]
+
+        attr_accessor borders: Array[Border]
+
+        attr_accessor cell_xfs: Array[XF]
+
+        attr_accessor number_formats: NumberFormats
+
+        # : () -> void
+        def initialize: () -> void
+
+        # Returns number format by ID, checking default and custom formats.
+        #
+        # @param format_id [Integer]
+        # @return [NumberFormat, nil]
+        # : (Integer format_id) -> NumberFormat?
+        def get_number_format_by_id: (Integer format_id) -> NumberFormat?
+
+        # Registers a custom number format code and returns its ID.
+        #
+        # @param format_code [String]
+        # @return [Integer]
+        # : (String format_code) -> Integer
+        def register_number_format: (String format_code) -> Integer
+
+        # Builds a default Stylesheet from raw xlsxrb styles hash if present.
+        #
+        # @param raw_styles [Hash]
+        # @return [Stylesheet]
+        # : (Hash[untyped, untyped] raw_styles) -> Stylesheet
+        def self.from_xlsxrb: (Hash[untyped, untyped] raw_styles) -> Stylesheet
+
+        # Serializes into xlsxrb styles hash.
+        # @return [Hash]
+        # : () -> Hash[Symbol, untyped]
+        def to_xlsxrb_hash: () -> Hash[Symbol, untyped]
+      end
+    end
+  end
+end

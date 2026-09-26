@@ -1,0 +1,87 @@
+# Generated from lib/xlsxrb/adapters/ruby_xl/column_range.rb with RBS::Inline
+
+module Xlsxrb
+  module Adapters
+    module RubyXL
+      # Represents a column definition / range compatible with RubyXL::ColumnRange.
+      class ColumnRange
+        DEFAULT_WIDTH: ::Integer
+
+        MAX_DIGIT_WIDTH: ::Integer
+
+        attr_accessor min: Integer
+
+        attr_accessor max: Integer
+
+        attr_accessor width: Float?
+
+        attr_accessor style_index: Integer
+
+        attr_accessor hidden: bool
+
+        attr_accessor custom_width: bool
+
+        attr_accessor outline_level: Integer
+
+        attr_accessor collapsed: bool
+
+        # Converts character width to raw OOXML column width.
+        #
+        # @param width_in_chars [Numeric]
+        # @return [Float]
+        # : (Numeric width_in_chars) -> Float
+        def self.chars2raw: (Numeric width_in_chars) -> Float
+
+        # @param min [Integer]
+        # @param max [Integer]
+        # @param width [Float, nil]
+        # @param style_index [Integer]
+        # @param hidden [Boolean]
+        # @param custom_width [Boolean]
+        # @param outline_level [Integer]
+        # @param collapsed [Boolean]
+        # : (?min: Integer, ?max: Integer, ?width: Float?, ?style_index: Integer, ?hidden: bool, ?custom_width: bool, ?outline_level: Integer, ?collapsed: bool) -> void
+        def initialize: (?min: Integer, ?max: Integer, ?width: Float?, ?style_index: Integer, ?hidden: bool, ?custom_width: bool, ?outline_level: Integer, ?collapsed: bool) -> void
+
+        # @return [ColumnRange]
+        # : () -> ColumnRange
+        def dup: () -> ColumnRange
+
+        # @param col_index [Integer]
+        # : (Integer col_index) -> void
+        def delete_column: (Integer col_index) -> void
+
+        # @param col_index [Integer]
+        # : (Integer col_index) -> void
+        def insert_column: (Integer col_index) -> void
+
+        # @param col_index [Integer]
+        # @return [bool]
+        # : (Integer col_index) -> bool
+        def include?: (Integer col_index) -> bool
+      end
+
+      # Collection of column ranges compatible with RubyXL::ColumnRanges.
+      # @rbs inherits Array[ColumnRange]
+      class ColumnRanges < Array[ColumnRange]
+        # @param other_array [Array<ColumnRange>]
+        # : (?Array[ColumnRange] other_array) -> void
+        def initialize: (?Array[ColumnRange] other_array) -> void
+
+        # @param col_index [Integer]
+        # @return [ColumnRange]
+        # : (Integer col_index) -> ColumnRange
+        def get_range: (Integer col_index) -> ColumnRange
+
+        # @param col_index [Integer]
+        # @return [ColumnRange, nil]
+        # : (Integer col_index) -> ColumnRange?
+        def locate_range: (Integer col_index) -> ColumnRange?
+
+        # @param col_index [Integer]
+        # : (Integer col_index) -> void
+        def insert_column: (Integer col_index) -> void
+      end
+    end
+  end
+end

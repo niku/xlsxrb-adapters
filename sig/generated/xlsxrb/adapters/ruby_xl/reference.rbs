@@ -1,0 +1,110 @@
+# Generated from lib/xlsxrb/adapters/ruby_xl/reference.rb with RBS::Inline
+
+module Xlsxrb
+  module Adapters
+    module RubyXL
+      # Represents a cell or range reference in an Excel worksheet.
+      class Reference
+        ROW_MAX: untyped
+
+        COL_MAX: ::Integer
+
+        attr_reader row_range: Range[Integer]
+
+        attr_reader col_range: Range[Integer]
+
+        attr_reader sheet_name: String?
+
+        attr_reader row_from_absolute: bool
+
+        attr_reader row_to_absolute: bool
+
+        attr_reader col_from_absolute: bool
+
+        attr_reader col_to_absolute: bool
+
+        # Creates a new Reference.
+        # Can be initialized with:
+        # - Reference.new(row, col)
+        # - Reference.new(row_from, row_to, col_from, col_to)
+        # - Reference.new("A1") or Reference.new("A1:B2") or Reference.new("'Sheet 1'!A1:B2")
+        # - Reference.new(row_from: 0, row_to: 1, col_from: 0, col_to: 1)
+        #
+        # @param params [Array<untyped>]
+        # : (*untyped params) -> void
+        def initialize: (*untyped params) -> void
+
+        # @return [bool]
+        # : () -> bool
+        def single_cell?: () -> bool
+
+        # @return [bool]
+        # : () -> bool
+        def valid?: () -> bool
+
+        # @return [Integer]
+        # : () -> Integer
+        def first_row: () -> Integer
+
+        # @return [Integer]
+        # : () -> Integer
+        def last_row: () -> Integer
+
+        # @return [Integer]
+        # : () -> Integer
+        def first_col: () -> Integer
+
+        # @return [Integer]
+        # : () -> Integer
+        def last_col: () -> Integer
+
+        # @param other [untyped]
+        # @return [bool]
+        # : (untyped other) -> bool
+        def ==: (untyped other) -> bool
+
+        # @param other [untyped]
+        # @return [bool]
+        # : (untyped other) -> bool
+        def cover?: (untyped other) -> bool
+
+        # @return [String]
+        # : () -> String
+        def to_s: () -> String
+
+        # @return [String]
+        # : () -> String
+        def inspect: () -> String
+
+        # Converts 0-indexed row and col to Excel reference (e.g. 0, 0 -> "A1")
+        #
+        # @param row [Integer]
+        # @param col [Integer]
+        # @param row_abs [Boolean]
+        # @param col_abs [Boolean]
+        # @return [String]
+        # : (?Integer row, ?Integer col, ?bool row_abs, ?bool col_abs) -> String
+        def self.ind2ref: (?Integer row, ?Integer col, ?bool row_abs, ?bool col_abs) -> String
+
+        # Converts Excel reference to 0-indexed row and col (e.g. "A1" -> [0, 0, false, false])
+        #
+        # @param str [String]
+        # @return [Array(Integer, Integer, bool, bool)]
+        # : (String str) -> ([Integer, Integer] | [Integer, Integer, bool, bool])
+        def self.ref2ind: (String str) -> ([ Integer, Integer ] | [ Integer, Integer, bool, bool ])
+      end
+
+      # Space-separated list of references
+      # @rbs inherits Array[Reference]
+      class Sqref < Array[Reference]
+        # @param str [String]
+        # : (String str) -> void
+        def initialize: (String str) -> void
+
+        # @return [String]
+        # : () -> String
+        def to_s: () -> String
+      end
+    end
+  end
+end

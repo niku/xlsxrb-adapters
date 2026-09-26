@@ -1,0 +1,37 @@
+# Generated from lib/xlsxrb/adapters/ruby_xl/parser.rb with RBS::Inline
+
+module Xlsxrb
+  module Adapters
+    module RubyXL
+      # Parser providing RubyXL::Parser compatible reading interface backed by xlsxrb.
+      class Parser
+        # Parses an XLSX file from disk.
+        #
+        # @param file_path [String]
+        # @return [Workbook]
+        # : (String file_path) -> Workbook
+        def self.parse: (String file_path) -> Workbook
+
+        # Parses an XLSX file from an in-memory buffer (StringIO, IO, or binary String).
+        #
+        # @param buffer [StringIO, IO, String]
+        # @return [Workbook]
+        # : (StringIO | IO | String buffer) -> Workbook
+        def self.parse_buffer: (StringIO | IO | String buffer) -> Workbook
+
+        # Enriches workbook with metadata from ZIP entries not directly in xlsxrb DOM.
+        #
+        # @param source [Object]
+        # @param wb [Workbook]
+        # @return [void]
+        # : (untyped source, Workbook wb) -> void
+        def self.enrich_workbook: (untyped source, Workbook wb) -> void
+
+        # @param str [String, nil]
+        # @return [String, nil]
+        # : (String? str) -> String?
+        def self.unescape_xml: (String? str) -> String?
+      end
+    end
+  end
+end

@@ -1,0 +1,16 @@
+# Generated from lib/xlsxrb/adapters/ruby_xl.rb with RBS::Inline
+
+module Xlsxrb
+  module Adapters
+    # RubyXL adapter module providing a drop-in compatible interface for RubyXL
+    # without hijacking the global ::RubyXL namespace.
+    module RubyXL
+      # Converts an Xlsxrb::Elements::Workbook to an adapter Workbook.
+      #
+      # @param xlsxrb_workbook [Xlsxrb::Elements::Workbook]
+      # @return [Workbook]
+      # : (Xlsxrb::Elements::Workbook xlsxrb_workbook) -> Workbook
+      def self.from_xlsxrb: (Xlsxrb::Elements::Workbook xlsxrb_workbook) -> Workbook
+    end
+  end
+end

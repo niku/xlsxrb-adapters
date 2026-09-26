@@ -1,0 +1,62 @@
+# Generated from lib/xlsxrb/adapters/ruby_xl/color.rb with RBS::Inline
+
+module Xlsxrb
+  module Adapters
+    module RubyXL
+      # Color helper and validation compatible with RubyXL::Color.
+      class Color
+        COLOR_REGEX: ::Regexp
+
+        # Validates that color is a 6- or 8-character hex string without leading #.
+        #
+        # @param color [Object]
+        # @return [true]
+        # : (untyped color) -> true
+        def self.validate_color: (untyped color) -> true
+
+        # Converts String, Hash, or Color to a Color instance.
+        #
+        # @param color [Object]
+        # @return [Color, nil]
+        # : (untyped color) -> Color?
+        def self.from: (untyped color) -> Color?
+
+        attr_accessor rgb: String?
+
+        attr_accessor theme: Integer?
+
+        attr_accessor tint: Float?
+
+        # @param rgb [String, nil]
+        # @param theme [Integer, nil]
+        # @param tint [Float, nil]
+        # : (?rgb: String?, ?theme: Integer?, ?tint: Float?) -> void
+        def initialize: (?rgb: String?, ?theme: Integer?, ?tint: Float?) -> void
+
+        # @return [String?]
+        # : () -> String?
+        def to_s: () -> String?
+
+        # @param other [untyped]
+        # @return [bool]
+        # : (untyped other) -> bool
+        def ==: (untyped other) -> bool
+      end
+
+      # Compatibility class for RubyXL::RgbColor
+      class RgbColor
+        attr_accessor r: Integer?
+
+        attr_accessor g: Integer?
+
+        attr_accessor b: Integer?
+
+        attr_accessor a: Integer?
+
+        # @return [String]
+        # : () -> String
+        def to_s: () -> String
+      end
+    end
+  end
+end

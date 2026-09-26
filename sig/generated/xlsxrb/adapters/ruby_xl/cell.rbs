@@ -1,0 +1,393 @@
+# Generated from lib/xlsxrb/adapters/ruby_xl/cell.rb with RBS::Inline
+
+module Xlsxrb
+  module Adapters
+    module RubyXL
+      # Represents a mutable cell wrapper compatible with RubyXL::Cell.
+      class Cell
+        MAX_STRING_LENGTH: ::Integer
+
+        NUMBER_REGEXP: ::Regexp
+
+        attr_accessor worksheet: Worksheet?
+
+        attr_accessor is: Worksheet?
+
+        attr_accessor row: Integer
+
+        attr_accessor column: Integer
+
+        attr_accessor style_index: Integer?
+
+        attr_accessor datatype: String?
+
+        attr_accessor hyperlink: String?
+
+        attr_accessor tooltip: String?
+
+        alias row_index row
+
+        alias row_index= row=
+
+        alias column_index column
+
+        alias column_index= column=
+
+        # : untyped
+        attr_reader formula: Formula?
+
+        # @param worksheet [Worksheet, nil] Parent worksheet.
+        # @param row [Integer] 0-based row index.
+        # @param column [Integer] 0-based column index.
+        # @param value [Object, nil] Ruby-native cell value.
+        # @param formula [Formula, String, Xlsxrb::Elements::Formula, nil] Formula for the cell.
+        # @param style_index [Integer, nil] Style index.
+        # @param datatype [String, nil] OOXML datatype.
+        # @param raw_value [Object, nil] Raw cell value.
+        # @param is [Object, nil] Inline string / RichText object.
+        # : (?worksheet: Worksheet?, ?row: Integer, ?column: Integer, ?value: untyped, ?formula: (Formula | String | Xlsxrb::Elements::Formula)?, ?style_index: Integer?, ?datatype: String?, ?raw_value: untyped, ?is: untyped) -> void
+        # rubocop:disable Naming/MethodParameterName
+        def initialize: (?worksheet: Worksheet?, ?row: Integer, ?column: Integer, ?value: untyped, ?formula: (Formula | String | Xlsxrb::Elements::Formula)?, ?style_index: Integer?, ?datatype: String?, ?raw_value: untyped, ?is: untyped) -> void
+
+        # Returns the number format object for this cell.
+        #
+        # @return [NumberFormat, nil]
+        # : () -> NumberFormat?
+        def number_format: () -> NumberFormat?
+
+        # Checks if the cell value represents a date or time.
+        #
+        # @return [bool]
+        # : () -> bool
+        def is_date?: () -> bool
+
+        # Returns the cell value.
+        #
+        # @param _args [Object] Optional arguments.
+        # @return [Object, nil]
+        # : (?untyped _args) -> untyped
+        def value: (?untyped _args) -> untyped
+
+        # @return [Workbook, nil]
+        # : () -> Workbook?
+        def workbook: () -> Workbook?
+
+        # Validates parent worksheet exists.
+        # @return [void]
+        # : () -> void
+        def validate_worksheet: () -> void
+
+        # Returns Excel reference string like "A1".
+        # @return [String]
+        # : () -> String
+        def r: () -> String
+
+        # Sets the cell value.
+        #
+        # @param val [Object, nil]
+        # : (untyped val) -> void
+        def value=: (untyped val) -> void
+
+        # Returns the raw underlying cell value.
+        #
+        # @return [Object, nil]
+        # : () -> untyped
+        def raw_value: () -> untyped
+
+        # Sets the raw value of the cell.
+        #
+        # @param val [Object, nil]
+        # : (untyped val) -> void
+        def raw_value=: (untyped val) -> void
+
+        # Sets the cell's formula.
+        #
+        # @param new_formula [Formula, String, Xlsxrb::Elements::Formula, nil]
+        # : ((Formula | String | Xlsxrb::Elements::Formula)? new_formula) -> void
+        def formula=: ((Formula | String | Xlsxrb::Elements::Formula)? new_formula) -> void
+
+        # Removes any formula associated with this cell.
+        #
+        # @return [void]
+        # : () -> void
+        def remove_formula: () -> void
+
+        # Modifies the cell value and optionally updates its formula,
+        # preserving styles and compatibility with RubyXL::CellConvenienceMethods#change_contents.
+        #
+        # @param data [Object] The new cell data.
+        # @param formula_expression [String, Formula, nil] Optional new formula expression.
+        # @return [Object] The assigned raw value.
+        # : (?untyped data, ?(String | Formula)? formula_expression) -> untyped
+        def change_contents: (?untyped data, ?(String | Formula)? formula_expression) -> untyped
+
+        # Adds a shared string and sets cell datatype to SHARED_STRING.
+        #
+        # @param str [String]
+        # @return [Integer]
+        # : (String str) -> Integer
+        def add_shared_string: (String str) -> Integer
+
+        # Validates string length does not exceed Excel limitation (32767 chars).
+        #
+        # @param val [Object]
+        # : (untyped val) -> void
+        def validate_string_length!: (untyped val) -> void
+
+        # @return [XF]
+        # : () -> XF
+        def get_cell_xf: () -> XF
+
+        # @return [Font]
+        # : () -> Font
+        def get_cell_font: () -> Font
+
+        # @return [Border]
+        # : () -> Border
+        def get_cell_border: () -> Border
+
+        # Helper to update font references in workbook stylesheet.
+        #
+        # @param modified_font [Font]
+        # : (Font modified_font) -> void
+        def update_font_references: (Font modified_font) -> void
+
+        # Sets number format for the cell.
+        #
+        # @param format_code [String]
+        # @return [Integer]
+        # : (String format_code) -> Integer
+        def set_number_format: (String format_code) -> Integer
+
+        # Changes fill color of cell.
+        #
+        # @param rgb [String]
+        # @return [Integer]
+        # : (?String rgb) -> Integer
+        def change_fill: (?String rgb) -> Integer
+
+        # @return [String]
+        # : () -> String
+        def fill_color: () -> String
+
+        # Changes font name of cell.
+        #
+        # @param new_font_name [String]
+        # : (?String new_font_name) -> void
+        def change_font_name: (?String new_font_name) -> void
+
+        # Changes font size of cell.
+        #
+        # @param font_size [Numeric]
+        # : (?(Float | Integer) font_size) -> void
+        def change_font_size: (?Float | Integer font_size) -> void
+
+        # Changes font color of cell.
+        #
+        # @param font_color [String]
+        # : (?String font_color) -> void
+        def change_font_color: (?String font_color) -> void
+
+        # Changes font italics setting.
+        #
+        # @param italicized [Boolean]
+        # : (?bool italicized) -> void
+        def change_font_italics: (?bool italicized) -> void
+
+        # Changes font bold setting.
+        #
+        # @param bolded [Boolean]
+        # : (?bool bolded) -> void
+        def change_font_bold: (?bool bolded) -> void
+
+        # Changes font underline setting.
+        #
+        # @param underlined [Boolean]
+        # : (?bool underlined) -> void
+        def change_font_underline: (?bool underlined) -> void
+
+        # Changes font strikethrough setting.
+        #
+        # @param struckthrough [Boolean]
+        # : (?bool struckthrough) -> void
+        def change_font_strikethrough: (?bool struckthrough) -> void
+
+        # @return [bool?]
+        # : () -> bool?
+        def is_italicized: () -> bool?
+
+        # @return [bool?]
+        # : () -> bool?
+        def is_bolded: () -> bool?
+
+        # @return [bool?]
+        # : () -> bool?
+        def is_underlined: () -> bool?
+
+        # @return [bool?]
+        # : () -> bool?
+        def is_struckthrough: () -> bool?
+
+        # @return [String]
+        # : () -> String
+        def font_name: () -> String
+
+        # @return [Float | Integer]
+        # : () -> (Float | Integer)
+        def font_size: () -> (Float | Integer)
+
+        # @return [String]
+        # : () -> String
+        def font_color: () -> String
+
+        # Changes horizontal alignment.
+        #
+        # @param alignment [String]
+        # @return [Integer]
+        # : (?String alignment) -> Integer
+        def change_horizontal_alignment: (?String alignment) -> Integer
+
+        # Changes vertical alignment.
+        #
+        # @param alignment [String]
+        # @return [Integer]
+        # : (?String alignment) -> Integer
+        def change_vertical_alignment: (?String alignment) -> Integer
+
+        # Changes text wrap.
+        #
+        # @param wrap [Boolean]
+        # @return [Integer]
+        # : (?bool wrap) -> Integer
+        def change_text_wrap: (?bool wrap) -> Integer
+
+        # Changes shrink to fit.
+        #
+        # @param shrink [Boolean]
+        # @return [Integer]
+        # : (?bool shrink) -> Integer
+        def change_shrink_to_fit: (?bool shrink) -> Integer
+
+        # Changes text rotation.
+        #
+        # @param rot [Integer]
+        # @return [Integer]
+        # : (Integer rot) -> Integer
+        def change_text_rotation: (Integer rot) -> Integer
+
+        # Changes text indent.
+        #
+        # @param indent [Integer]
+        # @return [Integer]
+        # : (Integer indent) -> Integer
+        def change_text_indent: (Integer indent) -> Integer
+
+        # @return [String, nil]
+        # : () -> String?
+        def horizontal_alignment: () -> String?
+
+        # @return [String, nil]
+        # : () -> String?
+        def vertical_alignment: () -> String?
+
+        # @return [Boolean, nil]
+        # : () -> bool?
+        def text_wrap: () -> bool?
+
+        # @return [Integer, nil]
+        # : () -> Integer?
+        def text_rotation: () -> Integer?
+
+        # @return [Integer, nil]
+        # : () -> Integer?
+        def text_indent: () -> Integer?
+
+        # Changes border style.
+        #
+        # @param direction [Symbol, String]
+        # @param weight [String]
+        # @param diagonals [untyped]
+        # @return [Integer]
+        # : (Symbol | String direction, String weight, ?untyped diagonals) -> Integer
+        def change_border: (Symbol | String direction, String weight, ?untyped diagonals) -> Integer
+
+        # Changes border color.
+        #
+        # @param direction [Symbol, String]
+        # @param color [String]
+        # @return [Integer]
+        # : (Symbol | String direction, String color) -> Integer
+        def change_border_color: (Symbol | String direction, String color) -> Integer
+
+        # @param direction [Symbol, String]
+        # @return [String, nil]
+        # : (Symbol | String direction) -> String?
+        def get_border: (Symbol | String direction) -> String?
+
+        # @param direction [Symbol, String]
+        # @return [String, nil]
+        # : (Symbol | String direction) -> String?
+        def get_border_color: (Symbol | String direction) -> String?
+
+        # @return [Border::Edge]
+        # : () -> Border::Edge
+        def border_top: () -> Border::Edge
+
+        # @return [Border::Edge]
+        # : () -> Border::Edge
+        def border_bottom: () -> Border::Edge
+
+        # @return [Border::Edge]
+        # : () -> Border::Edge
+        def border_left: () -> Border::Edge
+
+        # @return [Border::Edge]
+        # : () -> Border::Edge
+        def border_right: () -> Border::Edge
+
+        # @return [Border::Edge]
+        # : () -> Border::Edge
+        def border_diagonal: () -> Border::Edge
+
+        # Changes font property based on Worksheet change_type constant.
+        #
+        # @param change_type [Integer]
+        # @param arg [untyped]
+        # @return [void]
+        # : (Integer change_type, untyped arg) -> void
+        def font_switch: (Integer change_type, untyped arg) -> void
+
+        # Adds hyperlink to cell.
+        #
+        # @param url [String]
+        # @param tooltip [String, nil]
+        # @return [void]
+        # : (String url, ?String? tooltip) -> void
+        def add_hyperlink: (String url, ?String? tooltip) -> void
+
+        # Converts cell to an immutable Xlsxrb::Elements::Cell.
+        #
+        # @return [Xlsxrb::Elements::Cell]
+        # : () -> Xlsxrb::Elements::Cell
+        def to_xlsxrb: () -> Xlsxrb::Elements::Cell
+
+        # String representation of cell value.
+        #
+        # @return [String]
+        # : () -> String
+        def to_s: () -> String
+
+        # Inspect representation.
+        #
+        # @return [String]
+        # : () -> String
+        def inspect: () -> String
+
+        private
+
+        # : (untyped formula_expr) -> Formula?
+        def normalize_formula: (untyped formula_expr) -> Formula?
+      end
+    end
+  end
+end

@@ -1,0 +1,264 @@
+# Generated from lib/xlsxrb/adapters/ruby_xl/workbook.rb with RBS::Inline
+
+module Xlsxrb
+  module Adapters
+    module RubyXL
+      # Represents a root container compatible with RubyXL root object.
+      class Root
+        attr_reader workbook: Workbook
+
+        # @param workbook [Workbook]
+        # : (Workbook workbook) -> void
+        def initialize: (Workbook workbook) -> void
+
+        # @return [Array[Object]]
+        # : () -> Array[untyped]
+        def collect_related_objects: () -> Array[untyped]
+      end
+
+      # Represents a mutable workbook wrapper compatible with RubyXL::Workbook.
+      class Workbook
+        APPLICATION: ::String
+
+        APPVERSION: ::String
+
+        DATE1904: untyped
+
+        DATE1899: untyped
+
+        MARCH_1_1900: ::Integer
+
+        SHEET_NAME_FORBIDDEN_CHARS: ::Regexp
+
+        SHEET_NAME_FORBIDDEN_NAMES: untyped
+
+        attr_accessor worksheets: Array[Worksheet]
+
+        attr_accessor shared_strings: Array[String]
+
+        attr_accessor shared_strings_container: SharedStringsTable
+
+        attr_accessor styles: Hash[untyped, untyped]
+
+        attr_accessor unmapped_data: Hash[untyped, untyped]
+
+        attr_accessor stylesheet: Stylesheet
+
+        attr_accessor creator: String?
+
+        attr_accessor modifier: String?
+
+        attr_accessor created_at: Time?
+
+        attr_accessor modified_at: Time?
+
+        attr_accessor title: String?
+
+        attr_accessor company: String
+
+        attr_accessor application: String
+
+        attr_accessor appversion: String
+
+        attr_accessor date1904: bool
+
+        attr_accessor defined_names: DefinedNames
+
+        # Returns root container compatible with RubyXL::Workbook#root.
+        #
+        # @return [Root]
+        # : () -> Root
+        def root: () -> Root
+
+        # Creates a new Workbook from an existing Xlsxrb::Elements::Workbook.
+        #
+        # @param xlsxrb_workbook [Xlsxrb::Elements::Workbook]
+        # @return [Workbook]
+        # : (Xlsxrb::Elements::Workbook xlsxrb_workbook) -> Workbook
+        def self.from_xlsxrb: (Xlsxrb::Elements::Workbook xlsxrb_workbook) -> Workbook
+
+        # @param worksheets [Array<Worksheet>]
+        # @param shared_strings [Array<String>]
+        # @param styles [Hash]
+        # @param unmapped_data [Hash]
+        # @param creator [String, nil]
+        # @param modifier [String, nil]
+        # @param created_at [Time, nil]
+        # @param modified_at [Time, nil]
+        # @param company [String]
+        # @param application [String]
+        # @param appversion [String]
+        # @param date1904 [Boolean]
+        # : (?Array[Worksheet] worksheets, ?shared_strings: Array[String], ?styles: Hash[untyped, untyped], ?unmapped_data: Hash[untyped, untyped], ?creator: String?, ?modifier: String?, ?created_at: Time?, ?modified_at: Time?, ?company: String, ?application: String, ?appversion: String, ?date1904: bool) -> void
+        def initialize: (?Array[Worksheet] worksheets, ?shared_strings: Array[String], ?styles: Hash[untyped, untyped], ?unmapped_data: Hash[untyped, untyped], ?creator: String?, ?modifier: String?, ?created_at: Time?, ?modified_at: Time?, ?company: String, ?application: String, ?appversion: String, ?date1904: bool) -> void
+
+        # Iterates through worksheets.
+        #
+        # @yieldparam worksheet [Worksheet]
+        # @return [Enumerator, self]
+        # : () ?{ (Worksheet) -> void } -> (self | Enumerator[Worksheet, void])
+        def each: () ?{ (Worksheet) -> void } -> (self | Enumerator[Worksheet, void])
+
+        # Accesses a worksheet by index (Integer) or sheet name (String/Symbol).
+        #
+        # @param idx_or_name [Integer, String, Symbol]
+        # @return [Worksheet, nil]
+        # : (Integer | String | Symbol idx_or_name) -> Worksheet?
+        def []: (Integer | String | Symbol idx_or_name) -> Worksheet?
+
+        # Adds a new worksheet with the given name.
+        # Enforces Excel limits: max 31 chars, no forbidden chars [ ] * ? / \.
+        #
+        # @param name [String, nil]
+        # @return [Worksheet]
+        # : (?String? name) -> Worksheet
+        def add_worksheet: (?String? name) -> Worksheet
+
+        # Validates worksheet name against Excel limits.
+        #
+        # @param name [String]
+        # @return [void]
+        # : (String name) -> void
+        def validate_sheet_name!: (String name) -> void
+
+        # @return [Array<XF>]
+        # : () -> Array[XF]
+        def cell_xfs: () -> Array[XF]
+
+        # @return [Array<Font>]
+        # : () -> Array[Font]
+        def fonts: () -> Array[Font]
+
+        # @return [Array<Fill>]
+        # : () -> Array[Fill]
+        def fills: () -> Array[Fill]
+
+        # @return [Array<Border>]
+        # : () -> Array[Border]
+        def borders: () -> Array[Border]
+
+        # Returns fill RGB color for a given XF.
+        #
+        # @param xf [XF]
+        # @return [String]
+        # : (XF xf) -> String
+        def get_fill_color: (XF xf) -> String
+
+        # @param new_fill [Fill]
+        # @param old_xf [XF]
+        # @return [XF]
+        # : (Fill new_fill, XF old_xf) -> XF
+        def register_new_fill: (Fill new_fill, XF old_xf) -> XF
+
+        # @param new_font [Font]
+        # @param old_xf [XF]
+        # @return [XF]
+        # : (Font new_font, XF old_xf) -> XF
+        def register_new_font: (Font new_font, XF old_xf) -> XF
+
+        # @param new_xf [XF]
+        # @return [Integer]
+        # : (XF new_xf) -> Integer
+        def register_new_xf: (XF new_xf) -> Integer
+
+        # Modifies alignment in stylesheet for a given style_index.
+        #
+        # @param style_index [Integer, nil]
+        # @yieldparam alignment [Alignment]
+        # @return [Integer]
+        # : (Integer? style_index) { (Alignment) -> void } -> Integer
+        def modify_alignment: (Integer? style_index) { (Alignment) -> void } -> Integer
+
+        # Modifies fill in stylesheet for a given style_index.
+        #
+        # @param style_index [Integer, nil]
+        # @param rgb [String]
+        # @return [Integer]
+        # : (Integer? style_index, String rgb) -> Integer
+        def modify_fill: (Integer? style_index, String rgb) -> Integer
+
+        # Modifies border in stylesheet for a given style_index.
+        #
+        # @param style_index [Integer, nil]
+        # @param direction [Symbol, String]
+        # @param weight [String]
+        # @param diagonals [untyped]
+        # @return [Integer]
+        # : (Integer? style_index, Symbol | String direction, String weight, ?untyped diagonals) -> Integer
+        def modify_border: (Integer? style_index, Symbol | String direction, String weight, ?untyped diagonals) -> Integer
+
+        # Modifies border color in stylesheet for a given style_index.
+        #
+        # @param style_index [Integer, nil]
+        # @param direction [Symbol, String]
+        # @param color [String]
+        # @return [Integer]
+        # : (Integer? style_index, Symbol | String direction, String color) -> Integer
+        def modify_border_color: (Integer? style_index, Symbol | String direction, String color) -> Integer
+
+        # @return [DateTime]
+        # : () -> DateTime
+        def base_date: () -> DateTime
+
+        # Converts Date, DateTime, or Time into Excel numeric serial date.
+        #
+        # @param date [Date, DateTime, Time]
+        # @return [Float]
+        # : (Date | DateTime | Time date) -> Float
+        def date_to_num: (Date | DateTime | Time date) -> Float
+
+        # Converts Excel numeric serial date into DateTime.
+        #
+        # @param num [Numeric, nil]
+        # @return [DateTime, nil]
+        # : (Numeric? num) -> (Date | DateTime)?
+        def num_to_date: (Numeric? num) -> (Date | DateTime)?
+
+        # @param name [String]
+        # @param reference [String]
+        # @return [DefinedName]
+        # : (String name, String reference) -> DefinedName
+        def define_new_name: (String name, String reference) -> DefinedName
+
+        # @param name [String]
+        # @return [DefinedName, nil]
+        # : (String name) -> DefinedName?
+        def get_defined_name: (String name) -> DefinedName?
+
+        # Calculate password hash from string for use in 'password' fields.
+        # https://www.openoffice.org/sc/excelfileformat.pdf
+        #
+        # @param pwd [String]
+        # @return [String]
+        # : (String pwd) -> String
+        def password_hash: (String pwd) -> String
+
+        # Converts the mutable adapter model into an immutable Xlsxrb::Elements::Workbook.
+        #
+        # @return [Xlsxrb::Elements::Workbook]
+        # : () -> Xlsxrb::Elements::Workbook
+        def to_xlsxrb: () -> Xlsxrb::Elements::Workbook
+
+        # Writes workbook out to an XLSX file.
+        # Trims sheet names exceeding 31 characters to 31 characters as per Excel compatibility.
+        #
+        # @param filepath [String, IO]
+        # @return [void]
+        # : (String | IO filepath) -> void
+        def write: (String | IO filepath) -> void
+
+        # Exports workbook as a binary StringIO stream.
+        #
+        # @return [StringIO]
+        # : () -> StringIO
+        def stream: () -> StringIO
+
+        # Inspect representation.
+        #
+        # @return [String]
+        # : () -> String
+        def inspect: () -> String
+      end
+    end
+  end
+end
