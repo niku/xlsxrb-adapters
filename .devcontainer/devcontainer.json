@@ -1,0 +1,19 @@
+{
+    "name": "xlsxrb-adapters Development",
+    "build": {
+        "dockerfile": "Dockerfile"
+    },
+    "workspaceFolder": "/workspaces/xlsxrb-adapters",
+    "mounts": [
+        "source=${localWorkspaceFolder}/../xlsxrb,target=/workspaces/xlsxrb,type=bind"
+    ],
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "Shopify.ruby-lsp"
+            ]
+        }
+    },
+    "remoteUser": "vscode",
+    "postCreateCommand": "bundle install && bin/setup"
+}

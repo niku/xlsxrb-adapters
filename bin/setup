@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+set -euo pipefail
+IFS=$'\n\t'
+set -vx
+
+bundle install
+
+# Install git pre-push hook
+if [ -d ".git" ]; then
+  mkdir -p .git/hooks
+  cp bin/pre-push .git/hooks/pre-push
+  chmod +x .git/hooks/pre-push
+fi

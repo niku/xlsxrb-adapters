@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Git pre-push hook passes refs on stdin; redirect stdin to /dev/null
+# to prevent child test runners from hanging on open pipes.
+exec < /dev/null
+
+echo "Running pre-push checks..."
+
+echo "1/4 Running RuboCop..."
+bundle exec rubocop
+
+echo "2/4 Running Steep Type Check..."
+bundle exec rake typecheck
+
+echo "3/4 Verifying RBS is in sync..."
+bundle exec rake sig
+git diff --exit-code sig/
+
+echo "4/4 Running Tests..."
+bundle exec rake test
+
+echo "All pre-push checks passed!"
