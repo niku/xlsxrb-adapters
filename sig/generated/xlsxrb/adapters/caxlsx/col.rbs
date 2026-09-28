@@ -1,0 +1,88 @@
+# Generated from lib/xlsxrb/adapters/caxlsx/col.rb with RBS::Inline
+
+module Xlsxrb
+  module Adapters
+    module Caxlsx
+      # Defines column attributes
+      class Col
+        MAX_WIDTH: ::Integer
+
+        include OptionsParser
+
+        include SerializedAttributes
+
+        attr_reader min: Integer
+
+        attr_reader max: Integer
+
+        attr_reader best_fit: bool?
+
+        attr_reader collapsed: bool?
+
+        attr_reader hidden: bool?
+
+        attr_reader outline_level: Integer?
+
+        attr_reader phonetic: bool?
+
+        attr_reader style: Integer?
+
+        attr_reader width: Numeric?
+
+        attr_reader custom_width: bool?
+
+        alias bestFit best_fit
+
+        alias customWidth custom_width
+
+        alias outlineLevel outline_level
+
+        # @param min [Integer]
+        # @param max [Integer]
+        # @param options [Hash]
+        # : (Integer min, Integer max, ?Hash[Symbol, untyped] options) -> void
+        def initialize: (Integer min, Integer max, ?Hash[Symbol, untyped] options) -> void
+
+        # : (untyped v) -> void
+        def collapsed=: (untyped v) -> void
+
+        # : (untyped v) -> void
+        def hidden=: (untyped v) -> void
+
+        # : (untyped v) -> void
+        def outline_level=: (untyped v) -> void
+
+        alias outlineLevel= outline_level=
+
+        # : (untyped v) -> void
+        def phonetic=: (untyped v) -> void
+
+        # : (untyped v) -> void
+        def style=: (untyped v) -> void
+
+        # : (untyped v) -> void
+        def width=: (untyped v) -> void
+
+        # Updates column width based on cell autowidth and fixed width settings
+        # @param cell [Cell]
+        # @param fixed_width [Numeric, Symbol, nil]
+        # @param use_autowidth [Boolean]
+        # : (untyped cell, ?untyped fixed_width, ?bool use_autowidth) -> void
+        def update_width: (untyped cell, ?untyped fixed_width, ?bool use_autowidth) -> void
+
+        # : (?String str) -> String
+        def to_xml_string: (?String str) -> String
+      end
+
+      # Collection of column records
+      class Cols < SimpleTypedList
+        # @param worksheet [Worksheet]
+        # : (untyped worksheet) -> void
+        def initialize: (untyped worksheet) -> void
+
+        # : (?String str) -> String?
+        def to_xml_string: (?String str) -> String?
+      end
+    end
+  end
+end

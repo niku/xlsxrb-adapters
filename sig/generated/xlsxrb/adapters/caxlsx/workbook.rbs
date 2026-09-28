@@ -1,0 +1,315 @@
+# Generated from lib/xlsxrb/adapters/caxlsx/workbook.rb with RBS::Inline
+
+module Xlsxrb
+  module Adapters
+    module Caxlsx
+      # A BookView defines the display properties for a workbook.
+      class WorkbookView
+        include SerializedAttributes
+
+        include OptionsParser
+
+        include Accessors
+
+        # @return [Symbol, nil]
+        attr_reader visibility: untyped
+
+        # @param options [Hash{Symbol => untyped}]
+        # : (?Hash[Symbol, untyped] options) ?{ (WorkbookView) -> void } -> void
+        def initialize: (?Hash[Symbol, untyped] options) ?{ (WorkbookView) -> void } -> void
+
+        # @param v [Symbol]
+        # @return [Symbol]
+        # : (Symbol v) -> Symbol
+        def visibility=: (Symbol v) -> Symbol
+
+        # @param str [String]
+        # @return [String]
+        # : (?String str) -> String
+        def to_xml_string: (?String str) -> String
+      end
+
+      # Collection of WorkbookView objects.
+      class WorkbookViews < SimpleTypedList
+        # : () -> void
+        def initialize: () -> void
+
+        # @param str [String]
+        # @return [String, nil]
+        # : (?String str) -> String?
+        def to_xml_string: (?String str) -> String?
+      end
+
+      # Defined name in workbook.
+      class DefinedName
+        include SerializedAttributes
+
+        include OptionsParser
+
+        include Accessors
+
+        # @return [Integer, nil]
+        attr_reader local_sheet_id: untyped
+
+        # @param formula [String]
+        # @param options [Hash{Symbol => untyped}]
+        # : (String formula, ?Hash[Symbol, untyped] options) -> void
+        def initialize: (String formula, ?Hash[Symbol, untyped] options) -> void
+
+        # @param value [Integer]
+        # @return [Integer]
+        # : (Integer value) -> Integer
+        def local_sheet_id=: (Integer value) -> Integer
+
+        # @param str [String]
+        # @return [String]
+        # : (?String str) -> String
+        def to_xml_string: (?String str) -> String
+      end
+
+      # Collection of DefinedName objects.
+      class DefinedNames < SimpleTypedList
+        # : () -> void
+        def initialize: () -> void
+
+        # @param formula [String]
+        # @param options [Hash{Symbol => untyped}]
+        # @return [DefinedName]
+        # : (String formula, Hash[Symbol, untyped] options) -> DefinedName
+        def add_defined_name: (String formula, Hash[Symbol, untyped] options) -> DefinedName
+
+        # @param str [String]
+        # @return [String, nil]
+        # : (?String str) -> String?
+        def to_xml_string: (?String str) -> String?
+      end
+
+      # Shared strings table serialization.
+      class SharedStringsTable
+        # @return [Integer]
+        attr_reader count: untyped
+
+        # @return [Hash{untyped => Integer}]
+        attr_reader unique_cells: untyped
+
+        # @return [Symbol]
+        attr_reader xml_space: untyped
+
+        # @param cells [Array[Cell]]
+        # @param xml_space [Symbol]
+        # : (Array[untyped] cells, ?Symbol xml_space) -> void
+        def initialize: (Array[untyped] cells, ?Symbol xml_space) -> void
+
+        # @return [Integer]
+        # : () -> Integer
+        def unique_count: () -> Integer
+
+        # @param str [String]
+        # @return [String]
+        # : (?String str) -> String
+        def to_xml_string: (?String str) -> String
+
+        private
+
+        # @param cells [Array[Cell]]
+        # @return [void]
+        # : (Array[Cell] cells) -> void
+        def resolve: (Array[Cell] cells) -> void
+      end
+
+      # Workbook representation.
+      class Workbook
+        BOLD_FONT_MULTIPLIER: ::Float
+
+        FONT_SCALE_DIVISOR: ::Float
+
+        # @return [SimpleTypedList]
+        attr_reader worksheets: untyped
+
+        # @return [SimpleTypedList]
+        attr_reader drawings: untyped
+
+        # @return [SimpleTypedList]
+        attr_reader charts: untyped
+
+        # @return [SimpleTypedList]
+        attr_reader images: untyped
+
+        # @return [SimpleTypedList]
+        attr_reader tables: untyped
+
+        # @return [SimpleTypedList]
+        attr_reader pivot_tables: untyped
+
+        # @return [Boolean, nil]
+        attr_reader use_shared_strings: untyped
+
+        # @return [Boolean, nil]
+        attr_reader is_reversed: untyped
+
+        # @return [Boolean]
+        attr_reader escape_formulas: untyped
+
+        # @return [Boolean]
+        attr_reader secure_formulas: untyped
+
+        # @return [Boolean]
+        attr_reader use_autowidth: untyped
+
+        # @return [Float]
+        attr_reader bold_font_multiplier: untyped
+
+        # @return [Float]
+        attr_reader font_scale_divisor: untyped
+
+        # @return [Boolean, nil]
+        attr_accessor styles_applied: untyped
+
+        # @return [Boolean]
+        # : () -> bool
+        def self.date1904: () -> bool
+
+        # @param v [Boolean]
+        # @return [Boolean]
+        # : (bool v) -> bool
+        def self.date1904=: (bool v) -> bool
+
+        # @param options [Hash{Symbol => untyped}]
+        # : (?Hash[Symbol, untyped] options) ?{ (Workbook) -> void } -> void
+        def initialize: (?Hash[Symbol, untyped] options) ?{ (Workbook) -> void } -> void
+
+        # @return [Boolean]
+        # : () -> bool
+        def date1904: () -> bool
+
+        # @param v [Boolean]
+        # @return [Boolean]
+        # : (bool v) -> bool
+        def date1904=: (bool v) -> bool
+
+        # @param v [Boolean]
+        # @return [Boolean]
+        # : (bool v) -> bool
+        def use_shared_strings=: (bool v) -> bool
+
+        # @param v [Boolean]
+        # @return [Boolean]
+        # : (bool v) -> bool
+        def is_reversed=: (bool v) -> bool
+
+        # @param value [Boolean]
+        # @return [Boolean]
+        # : (bool value) -> bool
+        def escape_formulas=: (bool value) -> bool
+
+        # @param value [Boolean]
+        # @return [Boolean]
+        # : (bool value) -> bool
+        def secure_formulas=: (bool value) -> bool
+
+        # @param v [Boolean]
+        # @return [Boolean]
+        # : (?bool v) -> bool
+        def use_autowidth=: (?bool v) -> bool
+
+        # @param v [Float]
+        # @return [Float]
+        # : (Float v) -> Float
+        def bold_font_multiplier=: (Float v) -> Float
+
+        # @param v [Float]
+        # @return [Float]
+        # : (Float v) -> Float
+        def font_scale_divisor=: (Float v) -> Float
+
+        # @return [WorkbookViews]
+        # : () -> WorkbookViews
+        def views: () -> WorkbookViews
+
+        # @return [DefinedNames]
+        # : () -> DefinedNames
+        def defined_names: () -> DefinedNames
+
+        # @return [Array[Comments]]
+        # : () -> Array[Comments]
+        def comments: () -> Array[Comments]
+
+        # @return [Styles]
+        # : () ?{ (Styles) -> void } -> Styles
+        def styles: () ?{ (Styles) -> void } -> Styles
+
+        # @return [Theme]
+        # : () -> Theme
+        def theme: () -> Theme
+
+        # @return [Set[Cell]]
+        # : () -> Set[Cell]
+        def styled_cells: () -> Set[Cell]
+
+        # @return [Boolean]
+        # : () -> bool
+        def apply_styles: () -> bool
+
+        # @param name [String]
+        # @return [Worksheet, nil]
+        # : (String name) -> Worksheet?
+        def sheet_by_name: (String name) -> Worksheet?
+
+        # @param index [Integer]
+        # @param options [Hash{Symbol => untyped}]
+        # @return [Worksheet]
+        # : (?Integer index, ?Hash[Symbol, untyped] options) ?{ (Worksheet) -> void } -> Worksheet
+        def insert_worksheet: (?Integer index, ?Hash[Symbol, untyped] options) ?{ (Worksheet) -> void } -> Worksheet
+
+        # @param options [Hash{Symbol => untyped}]
+        # @return [Worksheet]
+        # : (?Hash[Symbol, untyped] options) ?{ (Worksheet) -> void } -> Worksheet
+        def add_worksheet: (?Hash[Symbol, untyped] options) ?{ (Worksheet) -> void } -> Worksheet
+
+        # @param options [Hash{Symbol => untyped}]
+        # @return [WorkbookView]
+        # : (?Hash[Symbol, untyped] options) -> WorkbookView
+        def add_view: (?Hash[Symbol, untyped] options) -> WorkbookView
+
+        # @param formula [String]
+        # @param options [Hash{Symbol => untyped}]
+        # @return [DefinedName]
+        # : (String formula, Hash[Symbol, untyped] options) -> DefinedName
+        def add_defined_name: (String formula, Hash[Symbol, untyped] options) -> DefinedName
+
+        # @return [Relationships]
+        # : () -> Relationships
+        def relationships: () -> Relationships
+
+        # @return [SharedStringsTable]
+        # : () -> SharedStringsTable
+        def shared_strings: () -> SharedStringsTable
+
+        # @return [Symbol]
+        # : () -> Symbol
+        def xml_space: () -> Symbol
+
+        # @param space [Symbol]
+        # @return [Symbol]
+        # : (Symbol space) -> Symbol
+        def xml_space=: (Symbol space) -> Symbol
+
+        # @param cell_def [String]
+        # @return [Cell, Array[Cell], nil]
+        # : (String cell_def) -> (Cell | Array[Cell] | nil)
+        def []: (String cell_def) -> (Cell | Array[Cell] | nil)
+
+        # @param str [String]
+        # @return [String]
+        # : (?String str) -> String
+        def to_xml_string: (?String str) -> String
+
+        # Converts Workbook to an immutable Xlsxrb::Elements::Workbook.
+        #
+        # @return [Xlsxrb::Elements::Workbook]
+        # : () -> Xlsxrb::Elements::Workbook
+        def to_xlsxrb: () -> Xlsxrb::Elements::Workbook
+      end
+    end
+  end
+end

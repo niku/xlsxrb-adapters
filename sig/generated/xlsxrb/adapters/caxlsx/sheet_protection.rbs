@@ -1,0 +1,100 @@
+# Generated from lib/xlsxrb/adapters/caxlsx/sheet_protection.rb with RBS::Inline
+
+module Xlsxrb
+  module Adapters
+    module Caxlsx
+      # The Protected Range class represents a set of cells in the worksheet.
+      class ProtectedRange
+        include OptionsParser
+
+        include SerializedAttributes
+
+        # @return [String, nil]
+        attr_reader sqref: untyped
+
+        # @return [String, nil]
+        attr_reader name: untyped
+
+        # @param options [Hash{Symbol => untyped}]
+        # : (?Hash[Symbol, untyped] options) ?{ (ProtectedRange) -> void } -> void
+        def initialize: (?Hash[Symbol, untyped] options) ?{ (ProtectedRange) -> void } -> void
+
+        # @param v [String]
+        # @return [String]
+        # : (String v) -> String
+        def sqref=: (String v) -> String
+
+        # @param v [String]
+        # @return [String]
+        # : (String v) -> String
+        def name=: (String v) -> String
+
+        # @param str [String]
+        # @return [String]
+        # : (?String str) -> String
+        def to_xml_string: (?String str) -> String
+      end
+
+      # A collection of ranges that should be protected in the worksheet.
+      class ProtectedRanges < SimpleTypedList
+        # @return [Worksheet]
+        attr_reader worksheet: untyped
+
+        # @param worksheet [Worksheet]
+        # : (Worksheet worksheet) -> void
+        def initialize: (Worksheet worksheet) -> void
+
+        # @param cells [String, SimpleTypedList, Array[Cell]]
+        # @return [ProtectedRange]
+        # : (String | SimpleTypedList | Array[Cell] cells) -> ProtectedRange
+        def add_range: (String | SimpleTypedList | Array[Cell] cells) -> ProtectedRange
+
+        # @param str [String]
+        # @return [String, nil]
+        # : (?String str) -> String?
+        def to_xml_string: (?String str) -> String?
+      end
+
+      # The SheetProtection object manages worksheet protection options per sheet.
+      class SheetProtection
+        include OptionsParser
+
+        include SerializedAttributes
+
+        include Accessors
+
+        # @return [String, nil]
+        attr_reader salt_value: untyped
+
+        # @return [String, nil]
+        attr_reader password: untyped
+
+        # @param options [Hash{Symbol => untyped}]
+        # : (?Hash[Symbol, untyped] options) -> void
+        def initialize: (?Hash[Symbol, untyped] options) -> void
+
+        # @param v [String, nil]
+        # @return [void]
+        # : (String? v) -> void
+        def password=: (String? v) -> void
+
+        # @param str [String]
+        # @return [String]
+        # : (?String str) -> String
+        def to_xml_string: (?String str) -> String
+
+        private
+
+        # @param password [String]
+        # @return [String]
+        # : (String password) -> String
+        def create_password_hash: (String password) -> String
+
+        # @param password [String]
+        # @return [Integer]
+        # : (String password) -> Integer
+        def encode_password: (String password) -> Integer
+      end
+    end
+  end
+end

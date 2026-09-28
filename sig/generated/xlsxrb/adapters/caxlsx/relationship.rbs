@@ -1,0 +1,87 @@
+# Generated from lib/xlsxrb/adapters/caxlsx/relationship.rb with RBS::Inline
+
+module Xlsxrb
+  module Adapters
+    module Caxlsx
+      # A relationship defines a reference between package parts.
+      class Relationship
+        # @return [Hash{Array[untyped] => String}]
+        def self.ids_cache: () -> untyped
+
+        # @return [void]
+        # : () -> void
+        def self.initialize_ids_cache: () -> void
+
+        # @return [void]
+        # : () -> void
+        def self.clear_ids_cache: () -> void
+
+        # @return [String]
+        # : () -> String
+        def self.next_free_id: () -> String
+
+        # @return [String]
+        attr_reader Id: untyped
+
+        # @return [String]
+        attr_reader Target: untyped
+
+        # @return [String]
+        attr_reader Type: untyped
+
+        # @return [Symbol, nil]
+        attr_reader TargetMode: untyped
+
+        # @return [untyped]
+        attr_reader source_obj: untyped
+
+        # @param source_obj [untyped]
+        # @param type [String]
+        # @param target [String]
+        # @param options [Hash{Symbol => untyped}]
+        # : (untyped source_obj, String type, String target, ?Hash[Symbol, untyped] options) -> void
+        def initialize: (untyped source_obj, String type, String target, ?Hash[Symbol, untyped] options) -> void
+
+        # @param v [String]
+        # @return [String]
+        # : (String v) -> String
+        def Target=: (String v) -> String
+
+        # @param v [String]
+        # @return [String]
+        # : (String v) -> String
+        def Type=: (String v) -> String
+
+        # @param v [Symbol]
+        # @return [Symbol]
+        # : (Symbol v) -> Symbol
+        def TargetMode=: (Symbol v) -> Symbol
+
+        # @param str [String]
+        # @return [String]
+        # : (?String str) -> String
+        def to_xml_string: (?String str) -> String
+
+        # @return [Array[untyped]]
+        # : () -> Array[untyped]
+        def ids_cache_key: () -> Array[untyped]
+      end
+
+      # Relationships collection based on SimpleTypedList.
+      class Relationships < SimpleTypedList
+        # : () -> void
+        def initialize: () -> void
+
+        # @param source_obj [untyped]
+        # @return [Relationship, nil]
+        # : (untyped source_obj) -> Relationship?
+        def for: (untyped source_obj) -> Relationship?
+
+        # @param str [String]
+        # @return [String]
+        # : (?String str) -> String
+        def to_xml_string: (?String str) -> String
+      end
+    end
+  end
+end

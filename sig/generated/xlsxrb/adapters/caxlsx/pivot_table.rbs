@@ -1,0 +1,213 @@
+# Generated from lib/xlsxrb/adapters/caxlsx/pivot_table.rb with RBS::Inline
+
+module Xlsxrb
+  module Adapters
+    module Caxlsx
+      # PivotTableCacheDefinition class.
+      class PivotTableCacheDefinition
+        include OptionsParser
+
+        # @return [PivotTable]
+        attr_reader pivot_table: untyped
+
+        # @param pivot_table [PivotTable]
+        # : (PivotTable pivot_table) -> void
+        def initialize: (PivotTable pivot_table) -> void
+
+        # @return [Integer]
+        # : () -> Integer
+        def index: () -> Integer
+
+        # @return [String]
+        # : () -> String
+        def pn: () -> String
+
+        # @return [Integer]
+        # : () -> Integer
+        def cache_id: () -> Integer
+
+        # @return [String]
+        # : () -> String
+        def rId: () -> String
+
+        # @param str [String]
+        # @return [String]
+        # : (?String str) -> String
+        def to_xml_string: (?String str) -> String
+      end
+
+      # PivotTable class representing an Excel pivot table.
+      class PivotTable
+        include OptionsParser
+
+        # @return [Array[String]]
+        attr_accessor no_subtotals_on_headers: untyped
+
+        # @return [Hash{String => Symbol}]
+        attr_reader sort_on_headers: untyped
+
+        # @return [Symbol]
+        attr_reader grand_totals: untyped
+
+        # @return [Hash{Symbol => untyped}]
+        attr_accessor style_info: untyped
+
+        # @return [String]
+        attr_reader ref: untyped
+
+        # @return [String]
+        attr_reader name: untyped
+
+        # @return [Worksheet]
+        attr_reader sheet: untyped
+
+        # @return [Worksheet, nil]
+        attr_writer data_sheet: untyped
+
+        # @return [Boolean]
+        attr_accessor use_auto_formatting: untyped
+
+        # @return [Boolean]
+        attr_accessor apply_width_height_formats: untyped
+
+        # @return [String, nil]
+        attr_reader range: untyped
+
+        # @return [Array[String]]
+        attr_reader rows: untyped
+
+        # @return [Array[String]]
+        attr_reader columns: untyped
+
+        # @return [Array[Hash{Symbol => untyped}]]
+        attr_reader data: untyped
+
+        # @return [Array[String]]
+        attr_reader pages: untyped
+
+        # @param ref [String]
+        # @param range [String]
+        # @param sheet [Worksheet]
+        # @param options [Hash{Symbol => untyped}]
+        # : (String ref, String range, Worksheet sheet, ?Hash[Symbol, untyped] options) ?{ (PivotTable) -> void } -> void
+        def initialize: (String ref, String range, Worksheet sheet, ?Hash[Symbol, untyped] options) ?{ (PivotTable) -> void } -> void
+
+        # @param headers [Hash{String => Symbol}, Array[String], nil]
+        # @return [Hash{String => Symbol}]
+        # : (Hash[String, Symbol] | Array[String] | nil headers) -> Hash[String, Symbol]
+        def sort_on_headers=: (Hash[String, Symbol] | Array[String] | nil headers) -> Hash[String, Symbol]
+
+        # @param value [Symbol]
+        # @return [Symbol]
+        # : (Symbol value) -> Symbol
+        def grand_totals=: (Symbol value) -> Symbol
+
+        # @return [Worksheet]
+        # : () -> Worksheet
+        def data_sheet: () -> Worksheet
+
+        # @param v [String]
+        # @return [void]
+        # : (String v) -> void
+        def range=: (String v) -> void
+
+        # @param v [Array[String]]
+        # @return [void]
+        # : (Array[String] v) -> void
+        def rows=: (Array[String] v) -> void
+
+        # @param v [Array[String]]
+        # @return [void]
+        # : (Array[String] v) -> void
+        def columns=: (Array[String] v) -> void
+
+        # @param v [Array[String, Hash{Symbol => untyped}]]
+        # @return [void]
+        # : (Array[String | Hash[Symbol, untyped]] v) -> void
+        def data=: (Array[String | Hash[Symbol, untyped]] v) -> void
+
+        # @param v [Array[String]]
+        # @return [void]
+        # : (Array[String] v) -> void
+        def pages=: (Array[String] v) -> void
+
+        # @return [Integer]
+        # : () -> Integer
+        def index: () -> Integer
+
+        # @return [String]
+        # : () -> String
+        def pn: () -> String
+
+        # @return [String]
+        # : () -> String
+        def rels_pn: () -> String
+
+        # @return [PivotTableCacheDefinition]
+        # : () -> PivotTableCacheDefinition
+        def cache_definition: () -> PivotTableCacheDefinition
+
+        # @return [Relationships]
+        # : () -> Relationships
+        def relationships: () -> Relationships
+
+        # @return [Array[String]]
+        # : () -> Array[String]
+        def header_cell_refs: () -> Array[String]
+
+        # @return [Array[Cell]]
+        # : () -> Array[Cell]
+        def header_cells: () -> Array[Cell]
+
+        # @return [Array[untyped]]
+        # : () -> Array[untyped]
+        def header_cell_values: () -> Array[untyped]
+
+        # @return [Integer]
+        # : () -> Integer
+        def header_cells_count: () -> Integer
+
+        # @param value [untyped]
+        # @return [Integer, nil]
+        # : (untyped value) -> Integer?
+        def header_index_of: (untyped value) -> Integer?
+
+        # @param str [String]
+        # @return [String]
+        # : (?String str) -> String
+        def to_xml_string: (?String str) -> String
+
+        private
+
+        # @param cell_ref [untyped]
+        # @param subtotal [Boolean]
+        # @param sorttype [Symbol, nil]
+        # @return [String]
+        # : (untyped cell_ref, bool subtotal, Symbol? sorttype) -> String
+        def pivot_field_for: (untyped cell_ref, bool subtotal, Symbol? sorttype) -> String
+
+        # @return [Array[untyped]]
+        # : () -> Array[untyped]
+        def data_refs: () -> Array[untyped]
+
+        # @return [String]
+        # : () -> String
+        def header_range: () -> String
+      end
+
+      # Collection of pivot tables in a worksheet.
+      class PivotTables < SimpleTypedList
+        # @return [Worksheet]
+        attr_reader worksheet: untyped
+
+        # @param worksheet [Worksheet]
+        # : (Worksheet worksheet) -> void
+        def initialize: (Worksheet worksheet) -> void
+
+        # @return [Array[Relationship]]
+        # : () -> Array[Relationship]
+        def relationships: () -> Array[Relationship]
+      end
+    end
+  end
+end

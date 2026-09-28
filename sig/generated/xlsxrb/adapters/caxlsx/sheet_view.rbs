@@ -1,0 +1,137 @@
+# Generated from lib/xlsxrb/adapters/caxlsx/sheet_view.rb with RBS::Inline
+
+module Xlsxrb
+  module Adapters
+    module Caxlsx
+      # Selection definition
+      class Selection
+        include OptionsParser
+
+        include SerializedAttributes
+
+        attr_reader pane: Symbol?
+
+        attr_accessor active_cell: String?
+
+        attr_accessor active_cell_id: Integer?
+
+        attr_accessor sqref: String?
+
+        # @param options [Hash]
+        # : (?Hash[Symbol, untyped] options) -> void
+        def initialize: (?Hash[Symbol, untyped] options) -> void
+
+        # : (untyped v) -> void
+        def pane=: (untyped v) -> void
+
+        # : (?String str) -> String
+        def to_xml_string: (?String str) -> String
+      end
+
+      # Pane definition (split/freeze)
+      class Pane
+        include OptionsParser
+
+        include SerializedAttributes
+
+        attr_accessor x_split: Integer?
+
+        attr_accessor y_split: Integer?
+
+        attr_accessor top_left_cell: String?
+
+        attr_reader active_pane: Symbol?
+
+        attr_reader state: Symbol?
+
+        # @param options [Hash]
+        # : (?Hash[Symbol, untyped] options) -> void
+        def initialize: (?Hash[Symbol, untyped] options) -> void
+
+        # : (untyped v) -> void
+        def active_pane=: (untyped v) -> void
+
+        # : (untyped v) -> void
+        def state=: (untyped v) -> void
+
+        # : (?String str) -> String
+        def to_xml_string: (?String str) -> String
+      end
+
+      # Sheet view settings
+      class SheetView
+        include OptionsParser
+
+        include SerializedAttributes
+
+        attr_reader selections: SimpleTypedList
+
+        attr_accessor show_grid_lines: bool?
+
+        attr_accessor show_row_col_headers: bool?
+
+        attr_accessor show_zeros: bool?
+
+        attr_accessor right_to_left: bool?
+
+        attr_accessor tab_selected: bool?
+
+        attr_accessor show_formulas: bool?
+
+        attr_accessor zoom_scale: Integer?
+
+        attr_accessor zoom_scale_normal: Integer?
+
+        attr_reader view: Symbol?
+
+        attr_accessor top_left_cell: String?
+
+        attr_accessor color_id: Integer?
+
+        attr_accessor default_grid_color: bool?
+
+        attr_accessor show_outline_symbols: bool?
+
+        attr_accessor show_ruler: bool?
+
+        attr_accessor show_white_space: bool?
+
+        attr_accessor window_protection: bool?
+
+        attr_accessor workbook_view_id: Integer?
+
+        attr_accessor zoom_scale_page_layout_view: Integer?
+
+        attr_accessor zoom_scale_sheet_layout_view: Integer?
+
+        # @param options [Hash]
+        # : (?Hash[Symbol, untyped] options) -> void
+        def initialize: (?Hash[Symbol, untyped] options) -> void
+
+        # Accesses or defines the pane
+        # @yieldparam pane [Pane]
+        # @return [Pane]
+        # : () ?{ (Pane) -> void } -> Pane
+        def pane: () ?{ (Pane) -> void } -> Pane
+
+        # : (Symbol pane_name, ?Hash[Symbol, untyped] options) -> Selection
+        def add_selection: (Symbol pane_name, ?Hash[Symbol, untyped] options) -> Selection
+
+        # : (untyped v) -> void
+        def view=: (untyped v) -> void
+
+        # : (?String str) -> String
+        def to_xml_string: (?String str) -> String
+
+        # : () -> Hash[Symbol, untyped]
+        def to_xlsxrb_hash: () -> Hash[Symbol, untyped]
+
+        # : () -> Hash[Symbol, untyped]?
+        def to_freeze_pane_hash: () -> Hash[Symbol, untyped]?
+
+        # : () -> Hash[Symbol, untyped]?
+        def to_split_pane_hash: () -> Hash[Symbol, untyped]?
+      end
+    end
+  end
+end

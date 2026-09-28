@@ -263,4 +263,20 @@ class XlsxrbAdaptersRubyXLTest < Test::Unit::TestCase
     assert_equal "DirectWorksheet", xlsxrb_ws.name
     assert_equal "DirectCell", xlsxrb_ws["A1"].value
   end
+
+  def test_worksheet_data_validations_roundtrip
+    wb = Xlsxrb::Adapters::RubyXL::Workbook.new
+    ws = wb[0]
+    ws.add_validation_list("A1:A10", %w[Apple Banana Orange])
+
+    xlsxrb_wb = wb.to_xlsxrb
+    xlsxrb_ws = xlsxrb_wb.sheet(0)
+    assert_equal 1, xlsxrb_ws.data_validations.size
+    assert_equal "A1:A10", xlsxrb_ws.data_validations.first[:sqref]
+    assert_equal "list", xlsxrb_ws.data_validations.first[:type]
+
+    reloaded_wb = Xlsxrb::Adapters::RubyXL::Workbook.from_xlsxrb(xlsxrb_wb)
+    assert_equal 1, reloaded_wb[0].data_validations.size
+    assert_equal "A1:A10", reloaded_wb[0].data_validations.first[:sqref]
+  end
 end

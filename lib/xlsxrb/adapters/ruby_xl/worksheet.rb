@@ -1344,6 +1344,7 @@ module Xlsxrb
             rows: sorted_rows,
             columns: cols_data,
             charts: @charts,
+            data_validations: @data_validations || [],
             unmapped_data: merged_unmapped
           )
         end

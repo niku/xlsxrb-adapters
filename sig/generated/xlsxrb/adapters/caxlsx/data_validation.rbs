@@ -1,0 +1,163 @@
+# Generated from lib/xlsxrb/adapters/caxlsx/data_validation.rb with RBS::Inline
+
+module Xlsxrb
+  module Adapters
+    module Caxlsx
+      # Data validation rules for cells in a worksheet.
+      class DataValidation
+        include OptionsParser
+
+        CHILD_ELEMENTS: untyped
+
+        # @return [String, nil]
+        attr_reader formula1: untyped
+
+        # @return [String, nil]
+        attr_reader formula2: untyped
+
+        # @return [Boolean, nil]
+        attr_reader allowBlank: untyped
+
+        # @return [String, nil]
+        attr_reader error: untyped
+
+        # @return [Symbol, nil]
+        attr_reader errorStyle: untyped
+
+        # @return [String, nil]
+        attr_reader errorTitle: untyped
+
+        # @return [Symbol, nil]
+        attr_reader operator: untyped
+
+        # @return [String, nil]
+        attr_reader prompt: untyped
+
+        # @return [String, nil]
+        attr_reader promptTitle: untyped
+
+        # @return [Boolean, nil]
+        attr_reader showDropDown: untyped
+
+        alias hideDropDown showDropDown
+
+        # @return [Boolean, nil]
+        attr_reader showErrorMessage: untyped
+
+        # @return [Boolean, nil]
+        attr_reader showInputMessage: untyped
+
+        # @return [String, nil]
+        attr_reader sqref: untyped
+
+        # @return [Symbol, nil]
+        attr_reader type: untyped
+
+        # @param options [Hash{Symbol => untyped}]
+        # : (?Hash[Symbol, untyped] options) -> void
+        def initialize: (?Hash[Symbol, untyped] options) -> void
+
+        # @param v [String]
+        # @return [String]
+        # : (String v) -> String
+        def formula1=: (String v) -> String
+
+        # @param v [String]
+        # @return [String]
+        # : (String v) -> String
+        def formula2=: (String v) -> String
+
+        # @param v [Boolean]
+        # @return [Boolean]
+        # : (bool v) -> bool
+        def allowBlank=: (bool v) -> bool
+
+        # @param v [String]
+        # @return [String]
+        # : (String v) -> String
+        def error=: (String v) -> String
+
+        # @param v [Symbol]
+        # @return [Symbol]
+        # : (Symbol v) -> Symbol
+        def errorStyle=: (Symbol v) -> Symbol
+
+        # @param v [String]
+        # @return [String]
+        # : (String v) -> String
+        def errorTitle=: (String v) -> String
+
+        # @param v [Symbol]
+        # @return [Symbol]
+        # : (Symbol v) -> Symbol
+        def operator=: (Symbol v) -> Symbol
+
+        # @param v [String]
+        # @return [String]
+        # : (String v) -> String
+        def prompt=: (String v) -> String
+
+        # @param v [String]
+        # @return [String]
+        # : (String v) -> String
+        def promptTitle=: (String v) -> String
+
+        # @param v [Boolean]
+        # @return [Boolean]
+        # : (bool v) -> bool
+        def showDropDown=: (bool v) -> bool
+
+        # @param v [Boolean]
+        # @return [Boolean]
+        # : (bool v) -> bool
+        def hideDropDown=: (bool v) -> bool
+
+        # @param v [Boolean]
+        # @return [Boolean]
+        # : (bool v) -> bool
+        def showErrorMessage=: (bool v) -> bool
+
+        # @param v [Boolean]
+        # @return [Boolean]
+        # : (bool v) -> bool
+        def showInputMessage=: (bool v) -> bool
+
+        # @param v [String]
+        # @return [String]
+        # : (String v) -> String
+        def sqref=: (String v) -> String
+
+        # @param v [Symbol]
+        # @return [Symbol]
+        # : (Symbol v) -> Symbol
+        def type=: (Symbol v) -> Symbol
+
+        # @param str [String]
+        # @return [String]
+        # : (?String str) -> String
+        def to_xml_string: (?String str) -> String
+
+        private
+
+        # @return [Array[Symbol]]
+        # : () -> Array[Symbol]
+        def get_valid_attributes: () -> Array[Symbol]
+      end
+
+      # Collection of DataValidation objects for a worksheet.
+      class DataValidations < SimpleTypedList
+        # @return [Worksheet]
+        attr_reader worksheet: untyped
+
+        # @param worksheet [Worksheet]
+        # : (Worksheet worksheet) -> void
+        def initialize: (Worksheet worksheet) -> void
+
+        # @param str [String]
+        # @return [String, nil]
+        # : (?String str) -> String?
+        def to_xml_string: (?String str) -> String?
+      end
+    end
+  end
+end

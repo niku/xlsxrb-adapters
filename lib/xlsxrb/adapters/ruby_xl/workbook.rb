@@ -90,6 +90,7 @@ module Xlsxrb
               charts: sheet.charts || [],
               unmapped_data: sheet.unmapped_data || {}
             )
+            ws.data_validations = (sheet.data_validations || sheet.unmapped_data&.dig(:facade, :data_validations) || []).dup
 
             # Load column styles and widths into ColumnRanges (cols)
             if sheet.columns && !sheet.columns.empty?
@@ -471,7 +472,7 @@ module Xlsxrb
           n += 1 if n < MARCH_1_1900 && !@date1904
 
           dateparts = n.divmod(1)
-          base_date + (dateparts[0] + ((dateparts[1] * 86_400).round(6) / 86_400))
+          base_date + dateparts[0] + Rational((dateparts[1] * 86_400).round(6), 86_400)
         end
 
         # --- Defined Names ---

@@ -1,0 +1,159 @@
+# Generated from lib/xlsxrb/adapters/caxlsx/comments.rb with RBS::Inline
+
+module Xlsxrb
+  module Adapters
+    module Caxlsx
+      # A VmlShape is used to position and render a comment.
+      class VmlShape
+        include OptionsParser
+
+        include Accessors
+
+        # @param options [Hash{Symbol => untyped}]
+        # : (?Hash[Symbol, untyped] options) ?{ (VmlShape) -> void } -> void
+        def initialize: (?Hash[Symbol, untyped] options) ?{ (VmlShape) -> void } -> void
+
+        # @param str [String]
+        # @return [String]
+        # : (?String str) -> String
+        def to_xml_string: (?String str) -> String
+      end
+
+      # A vml drawing used for comments in Excel.
+      class VmlDrawing
+        # @return [Comments]
+        attr_reader comments: untyped
+
+        # @param comments [Comments]
+        # : (Comments comments) -> void
+        def initialize: (Comments comments) -> void
+
+        # @return [String]
+        # : () -> String
+        def pn: () -> String
+
+        # @param str [String]
+        # @return [String]
+        # : (?String str) -> String
+        def to_xml_string: (?String str) -> String
+      end
+
+      # A comment is the text data for a comment.
+      class Comment
+        include OptionsParser
+
+        include Accessors
+
+        # @return [Comments]
+        attr_reader comments: untyped
+
+        # @return [String, nil]
+        attr_reader ref: untyped
+
+        # @param comments [Comments]
+        # @param options [Hash{Symbol => untyped}]
+        # : (Comments comments, ?Hash[Symbol, untyped] options) ?{ (Comment) -> void } -> void
+        def initialize: (Comments comments, ?Hash[Symbol, untyped] options) ?{ (Comment) -> void } -> void
+
+        # @return [VmlShape]
+        # : () -> VmlShape
+        def vml_shape: () -> VmlShape
+
+        # @return [Integer, nil]
+        # : () -> Integer?
+        def author_index: () -> Integer?
+
+        # @param v [String, Cell]
+        # @return [void]
+        # : (String | Cell v) -> void
+        def ref=: (String | Cell v) -> void
+
+        # @param str [String]
+        # @return [String]
+        # : (?String str) -> String
+        def to_xml_string: (?String str) -> String
+
+        private
+
+        # @return [VmlShape]
+        # : () -> VmlShape
+        def initialize_vml_shape: () -> VmlShape
+      end
+
+      # Comments collection for a worksheet.
+      class Comments < SimpleTypedList
+        # @return [VmlDrawing]
+        attr_reader vml_drawing: untyped
+
+        # @return [Worksheet]
+        attr_reader worksheet: untyped
+
+        # @param worksheet [Worksheet]
+        # : (Worksheet worksheet) -> void
+        def initialize: (Worksheet worksheet) -> void
+
+        # @return [Integer]
+        # : () -> Integer
+        def index: () -> Integer
+
+        # @return [String]
+        # : () -> String
+        def pn: () -> String
+
+        # @param options [Hash{Symbol => untyped}]
+        # @return [Comment]
+        # : (Hash[Symbol, untyped] options) ?{ (Comment) -> void } -> Comment
+        def add_comment: (Hash[Symbol, untyped] options) ?{ (Comment) -> void } -> Comment
+
+        # @return [Array[String]]
+        # : () -> Array[String]
+        def authors: () -> Array[String]
+
+        # @return [Array[Relationship]]
+        # : () -> Array[Relationship]
+        def relationships: () -> Array[Relationship]
+
+        # @param str [String]
+        # @return [String]
+        # : (?String str) -> String
+        def to_xml_string: (?String str) -> String
+      end
+
+      # A wrapper class for comments that defines its worksheet serialization.
+      class WorksheetComments
+        # @return [Worksheet]
+        attr_reader worksheet: untyped
+
+        # @param worksheet [Worksheet]
+        # : (Worksheet worksheet) -> void
+        def initialize: (Worksheet worksheet) -> void
+
+        # @return [Comments]
+        # : () -> Comments
+        def comments: () -> Comments
+
+        # @param options [Hash{Symbol => untyped}]
+        # @return [Comment]
+        # : (Hash[Symbol, untyped] options) -> Comment
+        def add_comment: (Hash[Symbol, untyped] options) -> Comment
+
+        # @return [Array[Relationship]]
+        # : () -> Array[Relationship]
+        def relationships: () -> Array[Relationship]
+
+        # @return [Boolean]
+        # : () -> bool
+        def has_comments?: () -> bool
+
+        # @return [String, nil]
+        # : () -> String?
+        def drawing_rId: () -> String?
+
+        # @param str [String]
+        # @return [String, nil]
+        # : (?String str) -> String?
+        def to_xml_string: (?String str) -> String?
+      end
+    end
+  end
+end

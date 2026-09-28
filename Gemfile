@@ -13,6 +13,7 @@ gemspec
 # - No `group`: Gemfile is dev-only; grouping does not affect consumers or CI.
 # - No `require: false`: Bundler.require is not used; files are required explicitly.
 # - No version constraints: Gemfile.lock pins versions.
+gem "caxlsx"
 gem "irb"
 gem "rake"
 gem "rbs-inline"

@@ -1,0 +1,200 @@
+# Generated from lib/xlsxrb/adapters/caxlsx/doc_props.rb with RBS::Inline
+
+module Xlsxrb
+  module Adapters
+    module Caxlsx
+      # Core properties for the package
+      class Core
+        include OptionsParser
+
+        attr_accessor creator: String?
+
+        attr_accessor created: Time?
+
+        attr_accessor title: String?
+
+        attr_accessor subject: String?
+
+        attr_accessor description: String?
+
+        attr_accessor category: String?
+
+        attr_accessor keywords: String?
+
+        attr_accessor last_modified_by: String?
+
+        attr_accessor modified: Time?
+
+        # @param options [Hash]
+        # : (?Hash[Symbol, untyped] options) -> void
+        def initialize: (?Hash[Symbol, untyped] options) -> void
+
+        # : (?String str) -> String
+        def to_xml_string: (?String str) -> String
+      end
+
+      # App extended properties for the package
+      class App
+        include OptionsParser
+
+        attr_accessor company: String?
+
+        attr_accessor manager: String?
+
+        attr_accessor application: String
+
+        attr_accessor app_version: String
+
+        attr_accessor doc_security: Integer?
+
+        attr_accessor scale_crop: bool?
+
+        attr_accessor links_up_to_date: bool?
+
+        attr_accessor shared_doc: bool?
+
+        attr_accessor hyperlinks_changed: bool?
+
+        attr_accessor hyperlink_base: String?
+
+        alias Company company
+
+        alias Company= company=
+
+        alias Application application
+
+        alias AppVersion app_version
+
+        alias AppVersion= app_version=
+
+        alias Manager manager
+
+        alias Manager= manager=
+
+        alias DocSecurity doc_security
+
+        alias DocSecurity= doc_security=
+
+        alias ScaleCrop scale_crop
+
+        alias ScaleCrop= scale_crop=
+
+        alias LinksUpToDate links_up_to_date
+
+        alias LinksUpToDate= links_up_to_date=
+
+        alias SharedDoc shared_doc
+
+        alias SharedDoc= shared_doc=
+
+        alias HyperlinksChanged hyperlinks_changed
+
+        alias HyperlinksChanged= hyperlinks_changed=
+
+        alias HyperLinksChanged= hyperlinks_changed=
+
+        alias HyperlinkBase hyperlink_base
+
+        alias HyperlinkBase= hyperlink_base=
+
+        # Dummy accessors for caxlsx compatibility
+        attr_accessor lines: untyped
+
+        # Dummy accessors for caxlsx compatibility
+        attr_accessor words: untyped
+
+        # Dummy accessors for caxlsx compatibility
+        attr_accessor characters: untyped
+
+        # Dummy accessors for caxlsx compatibility
+        attr_accessor characters_with_spaces: untyped
+
+        # Dummy accessors for caxlsx compatibility
+        attr_accessor pages: untyped
+
+        # Dummy accessors for caxlsx compatibility
+        attr_accessor paragraphs: untyped
+
+        # Dummy accessors for caxlsx compatibility
+        attr_accessor slides: untyped
+
+        # Dummy accessors for caxlsx compatibility
+        attr_accessor notes: untyped
+
+        # Dummy accessors for caxlsx compatibility
+        attr_accessor hidden_slides: untyped
+
+        # Dummy accessors for caxlsx compatibility
+        attr_accessor m_m_clips: untyped
+
+        # Dummy accessors for caxlsx compatibility
+        attr_accessor presentation_format: untyped
+
+        # Dummy accessors for caxlsx compatibility
+        attr_accessor template: untyped
+
+        # Dummy accessors for caxlsx compatibility
+        attr_accessor total_time: untyped
+
+        alias Lines lines
+
+        alias Lines= lines=
+
+        alias Words words
+
+        alias Words= words=
+
+        alias Characters characters
+
+        alias Characters= characters=
+
+        alias CharactersWithSpaces characters_with_spaces
+
+        alias CharactersWithSpaces= characters_with_spaces=
+
+        alias Pages pages
+
+        alias Pages= pages=
+
+        alias Paragraphs paragraphs
+
+        alias Paragraphs= paragraphs=
+
+        alias Slides slides
+
+        alias Slides= slides=
+
+        alias Notes notes
+
+        alias Notes= notes=
+
+        alias HiddenSlides hidden_slides
+
+        alias HiddenSlides= hidden_slides=
+
+        alias MMClips m_m_clips
+
+        alias MMClips= m_m_clips=
+
+        alias PresentationFormat presentation_format
+
+        alias PresentationFormat= presentation_format=
+
+        alias Template template
+
+        alias Template= template=
+
+        alias TotalTime total_time
+
+        alias TotalTime= total_time=
+
+        # @param options [Hash]
+        # : (?Hash[Symbol, untyped] options) -> void
+        def initialize: (?Hash[Symbol, untyped] options) -> void
+
+        # : (?String str) -> String
+        def to_xml_string: (?String str) -> String
+      end
+    end
+  end
+end

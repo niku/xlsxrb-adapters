@@ -1,0 +1,365 @@
+# Generated from lib/xlsxrb/adapters/caxlsx/util.rb with RBS::Inline
+
+module Xlsxrb
+  module Adapters
+    module Caxlsx
+      # Coder fallback for HTML entities encoding
+      class EntityCoder
+        # : (String? str) -> String
+        def encode: (String? str) -> String
+      end
+
+      # @return [Boolean]
+      # : () -> bool
+      def self.escape_formulas: () -> bool
+
+      # @param value [Boolean]
+      # @return [Boolean]
+      # : (bool value) -> bool
+      def self.escape_formulas=: (bool value) -> bool
+
+      # @return [Boolean]
+      # : () -> bool
+      def self.secure_formulas: () -> bool
+
+      # @param value [Boolean]
+      # @return [Boolean]
+      # : (bool value) -> bool
+      def self.secure_formulas=: (bool value) -> bool
+
+      # @return [Boolean]
+      # : () -> bool
+      def self.trust_input: () -> bool
+
+      # @param value [Boolean]
+      # @return [Boolean]
+      # : (bool value) -> bool
+      def self.trust_input=: (bool value) -> bool
+
+      # @return [Boolean]
+      # : () -> bool
+      def self.validate_sheet_name_length: () -> bool
+
+      # @param value [Boolean]
+      # @return [Boolean]
+      # : (bool value) -> bool
+      def self.validate_sheet_name_length=: (bool value) -> bool
+
+      # Returns HTML entity coder
+      # @return [Object]
+      # : () -> untyped
+      def self.coder: () -> untyped
+
+      # Sanitizes strings by removing control characters
+      # @param str [String]
+      # @return [String]
+      # : (untyped str) -> String
+      def self.sanitize: (untyped str) -> String
+
+      # Converts a column index (0-based) into an Excel column letter reference (e.g. 0 -> 'A')
+      # @param index [Integer]
+      # @return [String]
+      # : (Integer index) -> String
+      def self.col_ref: (Integer index) -> String
+
+      # Converts a row index (0-based) into an Excel 1-based row number
+      # @param index [Integer]
+      # @return [String]
+      # : (Integer index) -> String
+      def self.row_ref: (Integer index) -> String
+
+      # Returns the cell reference (e.g. 'A1') for a given column and row index
+      # @param col_index [Integer]
+      # @param row_index [Integer]
+      # @return [String]
+      # : (Integer col_index, Integer row_index) -> String
+      def self.cell_r: (Integer col_index, Integer row_index) -> String
+
+      # Converts an Excel cell reference (e.g. 'A1' or 'AB12') into 0-based [col_index, row_index]
+      # @param name [String]
+      # @return [Array<Integer>]
+      # : (String name) -> Array[Integer]
+      def self.name_to_indices: (String name) -> Array[Integer]
+
+      # Converts a range definition into a 2D array of coordinate strings
+      # @param range [String]
+      # @return [Array<Array<String>>]
+      # : (String range) -> Array[Array[String]]
+      def self.range_to_a: (String range) -> Array[Array[String]]
+
+      # Returns a formula range string for a list of cells
+      # @param cells [Array]
+      # @param absolute [Boolean]
+      # @return [String]
+      # : (Array[untyped] cells, ?bool absolute) -> String
+      def self.cell_range: (Array[untyped] cells, ?bool absolute) -> String
+
+      # Sorts a list of cells in reading order (top to bottom, left to right)
+      # @param cells [Array]
+      # @return [Array]
+      # : (Array[untyped] cells) -> Array[untyped]
+      def self.sort_cells: (Array[untyped] cells) -> Array[untyped]
+
+      # Converts various types into a boolean
+      # @param v [Object]
+      # @return [Boolean]
+      # : (untyped v) -> bool
+      def self.booleanize: (untyped v) -> bool
+
+      # Recursively merges two hashes
+      # @param hash [Hash]
+      # @param other_hash [Hash]
+      # @return [Hash]
+      # : (Hash[untyped, untyped] hash, Hash[untyped, untyped] other_hash) -> Hash[untyped, untyped]
+      def self.hash_deep_merge: (Hash[untyped, untyped] hash, Hash[untyped, untyped] other_hash) -> Hash[untyped, untyped]
+
+      # Returns a hash mapping instance variable names (without leading @) as strings to their values
+      # @param obj [Object]
+      # @return [Hash]
+      # : (untyped obj) -> Hash[String, untyped]
+      def self.instance_values_for: (untyped obj) -> Hash[String, untyped]
+
+      # Converts snake_case to CamelCase or camelCase
+      # @param s [String, Symbol]
+      # @param all_caps [Boolean]
+      # @return [String]
+      # : (?String | Symbol s, ?bool all_caps) -> String
+      def self.camel: (?String | Symbol s, ?bool all_caps) -> String
+
+      # : (untyped v) -> void
+      def self.validate_boolean: (untyped v) -> void
+
+      # : (untyped v) -> void
+      def self.validate_string: (untyped v) -> void
+
+      # : (untyped v) -> void
+      def self.validate_int: (untyped v) -> void
+
+      # : (untyped v) -> void
+      def self.validate_unsigned_int: (untyped v) -> void
+
+      # : (untyped v) -> void
+      def self.validate_float: (untyped v) -> void
+
+      # : (untyped v) -> void
+      def self.validate_unsigned_numeric: (untyped v) -> void
+
+      # : (untyped v) -> void
+      def self.validate_family: (untyped v) -> void
+
+      # : (untyped v) -> void
+      def self.validate_cell_u: (untyped v) -> void
+
+      # : (untyped v) -> void
+      def self.validate_pattern_type: (untyped v) -> void
+
+      # : (untyped v) -> void
+      def self.validate_gradient_type: (untyped v) -> void
+
+      # : (untyped v) -> void
+      def self.validate_horizontal_alignment: (untyped v) -> void
+
+      # : (untyped v) -> void
+      def self.validate_vertical_alignment: (untyped v) -> void
+
+      # : (untyped v) -> void
+      def self.validate_page_orientation: (untyped v) -> void
+
+      # : (untyped v) -> void
+      def self.validate_pane_type: (untyped v) -> void
+
+      # : (untyped v) -> void
+      def self.validate_split_state_type: (untyped v) -> void
+
+      # : (untyped v) -> void
+      def self.validate_view_visibility: (untyped v) -> void
+
+      # : (untyped v) -> void
+      def self.validate_data_validation_type: (untyped v) -> void
+
+      # : (untyped v) -> void
+      def self.validate_data_validation_operator: (untyped v) -> void
+
+      # : (untyped v) -> void
+      def self.validate_data_validation_error_style: (untyped v) -> void
+
+      # : (untyped v) -> void
+      def self.validate_conditional_formatting_type: (untyped v) -> void
+
+      # : (untyped v) -> void
+      def self.validate_conditional_formatting_operator: (untyped v) -> void
+
+      # : (untyped v) -> void
+      def self.validate_conditional_formatting_value_object_type: (untyped v) -> void
+
+      # : (untyped v) -> void
+      def self.validate_icon_set: (untyped v) -> void
+
+      # : (untyped v) -> void
+      def self.validate_time_period_type: (untyped v) -> void
+
+      # : (untyped v) -> void
+      def self.validate_scatter_style: (untyped v) -> void
+
+      # : (untyped v) -> void
+      def self.validate_marker_symbol: (untyped v) -> void
+
+      # : (untyped v) -> void
+      def self.validate_display_blanks_as: (untyped v) -> void
+
+      # : (untyped v) -> void
+      def self.validate_scale_10_400: (untyped v) -> void
+
+      # : (untyped v) -> void
+      def self.validate_scale_0_10_400: (untyped v) -> void
+
+      # : (untyped v) -> void
+      def self.validate_angle: (untyped v) -> void
+
+      # : (untyped v) -> void
+      def self.validate_number_with_unit: (untyped v) -> void
+
+      # SimpleTypedList is a typed collection inheriting from Array
+      # @rbs inherits Array[untyped]
+      class SimpleTypedList < Array[untyped]
+        attr_reader allowed_types: Array[Class]
+
+        attr_reader serialize_as: String?
+
+        attr_accessor locked_at: Integer?
+
+        DESTRUCTIVE: untyped
+
+        alias == equal?
+
+        alias eql? equal?
+
+        # @param type [Class, Array<Class>]
+        # @param serialize_as [String, nil]
+        # @param start_size [Integer]
+        # : (Class | Array[Class] type, ?String? serialize_as, ?Integer start_size) -> void
+        def initialize: (Class | Array[Class] type, ?String? serialize_as, ?Integer start_size) -> void
+
+        # : (untyped item) -> (Integer | untyped)
+        def <<: (untyped item) -> (Integer | untyped)
+
+        # : (*untyped values) -> self
+        def push: (*untyped values) -> self
+
+        # : (*untyped others) -> self
+        def concat: (*untyped others) -> self
+
+        # : (untyped item) -> untyped
+        def delete: (untyped item) -> untyped
+
+        # : (Integer idx) -> untyped
+        def delete_at: (Integer idx) -> untyped
+
+        # : (Integer idx, untyped item) -> untyped
+        def []=: (Integer idx, untyped item) -> untyped
+
+        # : (Integer idx) -> bool
+        def protected?: (Integer idx) -> bool
+
+        # : () -> self
+        def lock: () -> self
+
+        # : () -> self
+        def unlock: () -> self
+
+        # : () ?{ (Integer, Integer) -> untyped } -> Array[Array[untyped]]
+        def transpose: () ?{ (Integer, Integer) -> untyped } -> Array[Array[untyped]]
+
+        # : (?String str) -> String
+        def to_xml_string: (?String str) -> String
+      end
+
+      # Mixin for option parsing
+      module OptionsParser
+        # : (Hash[Symbol, untyped] options) -> void
+        def parse_options: (Hash[Symbol, untyped] options) -> void
+      end
+
+      # Mixin for serialized attributes
+      module SerializedAttributes
+        def self.included: (untyped base) -> untyped
+
+        # Class methods for SerializedAttributes
+        module ClassMethods
+          # : (*Symbol attrs) -> void
+          def serializable_attributes: (*Symbol attrs) -> void
+
+          # : () -> Array[Symbol]
+          def serializable_attrs: () -> Array[Symbol]
+        end
+
+        # : (String str) -> String
+        def serialized_attributes: (String str) -> String
+
+        # : (String tag, String str, ?Hash[Symbol, untyped] extra_attrs) ?{ () -> void } -> String
+        def serialized_tag: (String tag, String str, ?Hash[Symbol, untyped] extra_attrs) ?{ () -> void } -> String
+      end
+
+      # Mixin for validating accessor helpers
+      module Accessors
+        def self.included: (untyped base) -> untyped
+
+        # Class methods for Accessors
+        module ClassMethods
+          # : (*Symbol names) -> void
+          def string_attr_accessor: (*Symbol names) -> void
+
+          # : (*Symbol names) -> void
+          def unsigned_int_attr_accessor: (*Symbol names) -> void
+
+          # : (*Symbol names) -> void
+          def float_attr_accessor: (*Symbol names) -> void
+
+          # : (*Symbol names) -> void
+          def boolean_attr_accessor: (*Symbol names) -> void
+
+          # : (Array[Symbol] symbols, Symbol validator) -> void
+          def validated_attr_accessor: (Array[Symbol] symbols, Symbol validator) -> void
+        end
+      end
+
+      # Validators
+      module DataTypeValidator
+        # Validates an object against allowed types
+        # @param name [Symbol, String]
+        # @param types [Class, Array<Class>]
+        # @param v [Object]
+        # : (Symbol | String name, Class | Array[Class] types, untyped v) -> void
+        def self.validate: (Symbol | String name, Class | Array[Class] types, untyped v) -> void
+      end
+
+      module RestrictionValidator
+        # Validates that a value is in an allowed collection
+        # @param name [Symbol, String]
+        # @param allowed [Array, Range]
+        # @param v [Object]
+        # : (Symbol | String name, Array[untyped] | Range[untyped] allowed, untyped v) -> void
+        def self.validate: (Symbol | String name, Array[untyped] | Range[untyped] allowed, untyped v) -> void
+      end
+
+      module RangeValidator
+        # Validates that a value is within a numeric range
+        # @param name [Symbol, String]
+        # @param min [Numeric]
+        # @param max [Numeric]
+        # @param v [Numeric]
+        # : (Symbol | String name, Numeric min, Numeric max, untyped v) -> void
+        def self.validate: (Symbol | String name, Numeric min, Numeric max, untyped v) -> void
+      end
+
+      module RegexValidator
+        # Validates that a value matches a regular expression
+        # @param name [Symbol, String]
+        # @param regex [Regexp]
+        # @param v [Object]
+        # : (Symbol | String name, Regexp regex, untyped v) -> void
+        def self.validate: (Symbol | String name, Regexp regex, untyped v) -> void
+      end
+    end
+  end
+end

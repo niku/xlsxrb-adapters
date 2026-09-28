@@ -1,0 +1,108 @@
+# Generated from lib/xlsxrb/adapters/caxlsx/table.rb with RBS::Inline
+
+module Xlsxrb
+  module Adapters
+    module Caxlsx
+      # The table style info class manages style attributes for defined tables.
+      class TableStyleInfo
+        include OptionsParser
+
+        include SerializedAttributes
+
+        include Accessors
+
+        # @return [String]
+        attr_accessor name: untyped
+
+        # @param options [Hash{Symbol => untyped}]
+        # : (?Hash[Symbol, untyped] options) -> void
+        def initialize: (?Hash[Symbol, untyped] options) -> void
+
+        # @return [void]
+        # : () -> void
+        def initialize_defaults: () -> void
+
+        # @param str [String]
+        # @return [String]
+        # : (?String str) -> String
+        def to_xml_string: (?String str) -> String
+      end
+
+      # Table representation for a worksheet.
+      class Table
+        include OptionsParser
+
+        # @return [String]
+        attr_reader ref: untyped
+
+        # @return [String]
+        attr_reader name: untyped
+
+        # @return [untyped]
+        attr_reader style: untyped
+
+        # @return [Worksheet]
+        attr_reader sheet: untyped
+
+        # @param ref [String]
+        # @param sheet [Worksheet]
+        # @param options [Hash{Symbol => untyped}]
+        # : (String ref, Worksheet sheet, ?Hash[Symbol, untyped] options) ?{ (Table) -> void } -> void
+        def initialize: (String ref, Worksheet sheet, ?Hash[Symbol, untyped] options) ?{ (Table) -> void } -> void
+
+        # @return [Integer]
+        # : () -> Integer
+        def index: () -> Integer
+
+        # @return [String]
+        # : () -> String
+        def pn: () -> String
+
+        # @return [String]
+        # : () -> String
+        def rId: () -> String
+
+        # @param v [String]
+        # @return [void]
+        # : (String v) -> void
+        def name=: (String v) -> void
+
+        # @return [TableStyleInfo]
+        # : () -> TableStyleInfo
+        def table_style_info: () -> TableStyleInfo
+
+        alias style_info table_style_info
+
+        # @param str [String]
+        # @return [String]
+        # : (?String str) -> String
+        def to_xml_string: (?String str) -> String
+
+        private
+
+        # @return [Array[Cell]]
+        # : () -> Array[Cell]
+        def header_cells: () -> Array[Cell]
+      end
+
+      # Collection of tables in a worksheet.
+      class Tables < SimpleTypedList
+        # @return [Worksheet]
+        attr_reader worksheet: untyped
+
+        # @param worksheet [Worksheet]
+        # : (Worksheet worksheet) -> void
+        def initialize: (Worksheet worksheet) -> void
+
+        # @return [Array[Relationship]]
+        # : () -> Array[Relationship]
+        def relationships: () -> Array[Relationship]
+
+        # @param str [String]
+        # @return [String, nil]
+        # : (?String str) -> String?
+        def to_xml_string: (?String str) -> String?
+      end
+    end
+  end
+end

@@ -10,6 +10,20 @@ Rake::TestTask.new(:test) do |t|
   t.test_files = FileList["test/**/*_test.rb"]
 end
 
+namespace :test do
+  Rake::TestTask.new(:caxlsx) do |t|
+    t.libs << "test"
+    t.libs << "lib"
+    t.test_files = FileList["test/xlsxrb/adapters/caxlsx_*test.rb"]
+  end
+
+  Rake::TestTask.new(:ruby_xl) do |t|
+    t.libs << "test"
+    t.libs << "lib"
+    t.test_files = FileList["test/xlsxrb/adapters/ruby_xl*test.rb"]
+  end
+end
+
 RuboCop::RakeTask.new
 
 desc "Generate RBS signature files from inline annotations"
@@ -23,9 +37,19 @@ task typecheck: :sig do
   sh "bundle exec steep check"
 end
 
-desc "Run official rubyXL RSpec compatibility suite"
-task :compatibility do
-  sh "bundle exec ruby bin/compatibility_runner"
+desc "Run all compatibility suites (both rubyXL and caxlsx)"
+task compatibility: ["compatibility:ruby_xl", "compatibility:caxlsx"]
+
+namespace :compatibility do
+  desc "Run official rubyXL RSpec compatibility suite"
+  task :ruby_xl do
+    sh "bundle exec ruby bin/compatibility_runner ruby_xl"
+  end
+
+  desc "Run caxlsx compatibility test suite"
+  task :caxlsx do
+    sh "bundle exec ruby bin/compatibility_runner caxlsx"
+  end
 end
 
 desc "Run benchmarks (usage: rake benchmark [rows=10000] [cols=10] [runs=3])"

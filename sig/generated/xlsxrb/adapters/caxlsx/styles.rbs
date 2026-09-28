@@ -1,0 +1,526 @@
+# Generated from lib/xlsxrb/adapters/caxlsx/styles.rb with RBS::Inline
+
+module Xlsxrb
+  module Adapters
+    module Caxlsx
+      # Font definition
+      class Font
+        include OptionsParser
+
+        include SerializedAttributes
+
+        attr_reader name: String
+
+        attr_reader sz: Integer | Float
+
+        attr_reader family: Integer?
+
+        attr_reader b: bool?
+
+        attr_reader i: bool?
+
+        attr_reader u: Symbol?
+
+        attr_reader strike: bool?
+
+        attr_reader outline: bool?
+
+        attr_reader shadow: bool?
+
+        attr_reader condense: bool?
+
+        attr_reader extend: bool?
+
+        attr_reader color: Color?
+
+        attr_reader charset: Integer?
+
+        attr_reader scheme: Symbol?
+
+        # @param options [Hash]
+        # : (?Hash[Symbol, untyped] options) -> void
+        def initialize: (?Hash[Symbol, untyped] options) -> void
+
+        # : (untyped v) -> void
+        def name=: (untyped v) -> void
+
+        # : (untyped v) -> void
+        def sz=: (untyped v) -> void
+
+        # : (untyped v) -> void
+        def family=: (untyped v) -> void
+
+        # : (untyped v) -> void
+        def b=: (untyped v) -> void
+
+        # : (untyped v) -> void
+        def i=: (untyped v) -> void
+
+        # : (untyped v) -> void
+        def u=: (untyped v) -> void
+
+        # : (untyped v) -> void
+        def strike=: (untyped v) -> void
+
+        # : (untyped v) -> void
+        def outline=: (untyped v) -> void
+
+        # : (untyped v) -> void
+        def shadow=: (untyped v) -> void
+
+        # : (untyped v) -> void
+        def condense=: (untyped v) -> void
+
+        # : (untyped v) -> void
+        def extend=: (untyped v) -> void
+
+        # : (untyped v) -> void
+        def color=: (untyped v) -> void
+
+        # : (untyped v) -> void
+        def charset=: (untyped v) -> void
+
+        # : (untyped v) -> void
+        def scheme=: (untyped v) -> void
+
+        # : (?String str) -> String
+        def to_xml_string: (?String str) -> String
+
+        # : () -> Hash[Symbol, untyped]
+        def to_xlsxrb_hash: () -> Hash[Symbol, untyped]
+      end
+
+      # PatternFill definition
+      class PatternFill
+        include OptionsParser
+
+        attr_reader patternType: Symbol
+
+        attr_reader fgColor: Color?
+
+        attr_reader bgColor: Color?
+
+        # @param options [Hash]
+        # : (?Hash[Symbol, untyped] options) -> void
+        def initialize: (?Hash[Symbol, untyped] options) -> void
+
+        # : (untyped v) -> void
+        def patternType=: (untyped v) -> void
+
+        # : (untyped v) -> void
+        def fgColor=: (untyped v) -> void
+
+        # : (untyped v) -> void
+        def bgColor=: (untyped v) -> void
+
+        # : (?String str) -> String
+        def to_xml_string: (?String str) -> String
+
+        # : () -> Hash[Symbol, untyped]
+        def to_xlsxrb_hash: () -> Hash[Symbol, untyped]
+      end
+
+      # GradientStop definition
+      class GradientStop
+        include OptionsParser
+
+        attr_accessor position: Float
+
+        attr_accessor color: Color?
+
+        # : (?Hash[Symbol, untyped] options) -> void
+        def initialize: (?Hash[Symbol, untyped] options) -> void
+      end
+
+      # GradientFill definition
+      class GradientFill
+        include OptionsParser
+
+        attr_accessor type: Symbol
+
+        attr_accessor degree: Float?
+
+        attr_accessor stop: SimpleTypedList
+
+        # : (?Hash[Symbol, untyped] options) -> void
+        def initialize: (?Hash[Symbol, untyped] options) -> void
+
+        # : (?String str) -> String
+        def to_xml_string: (?String str) -> String
+
+        # : () -> Hash[Symbol, untyped]
+        def to_xlsxrb_hash: () -> Hash[Symbol, untyped]
+      end
+
+      # Fill container
+      class Fill
+        attr_reader fill_type: PatternFill | GradientFill
+
+        # @param fill_type [PatternFill, GradientFill]
+        # : (PatternFill | GradientFill fill_type) -> void
+        def initialize: (PatternFill | GradientFill fill_type) -> void
+
+        # : (?String str) -> String
+        def to_xml_string: (?String str) -> String
+
+        # : () -> Hash[Symbol, untyped]
+        def to_xlsxrb_hash: () -> Hash[Symbol, untyped]
+      end
+
+      # Border property for an edge
+      class BorderPr
+        include OptionsParser
+
+        attr_reader name: Symbol
+
+        attr_reader style: Symbol?
+
+        attr_reader color: Color?
+
+        # @param options [Hash]
+        # : (?Hash[Symbol, untyped] options) -> void
+        def initialize: (?Hash[Symbol, untyped] options) -> void
+
+        # : (untyped v) -> void
+        def name=: (untyped v) -> void
+
+        # : (untyped v) -> void
+        def style=: (untyped v) -> void
+
+        # : (untyped v) -> void
+        def color=: (untyped v) -> void
+
+        # : (?String str) -> String
+        def to_xml_string: (?String str) -> String
+      end
+
+      # Border definition
+      class Border
+        EDGES: untyped
+
+        attr_reader prs: SimpleTypedList
+
+        attr_accessor diagonalUp: bool?
+
+        attr_accessor diagonalDown: bool?
+
+        attr_accessor outline: bool?
+
+        # @param options [Hash]
+        # : (?Hash[Symbol, untyped] options) -> void
+        def initialize: (?Hash[Symbol, untyped] options) -> void
+
+        # : (?String str) -> String
+        def to_xml_string: (?String str) -> String
+
+        # : () -> Hash[Symbol, untyped]
+        def to_xlsxrb_hash: () -> Hash[Symbol, untyped]
+      end
+
+      # Number format definition
+      class NumFmt
+        include OptionsParser
+
+        attr_accessor numFmtId: Integer
+
+        attr_accessor formatCode: String
+
+        # @param options [Hash]
+        # : (?Hash[Symbol, untyped] options) -> void
+        def initialize: (?Hash[Symbol, untyped] options) -> void
+
+        # : (?String str) -> String
+        def to_xml_string: (?String str) -> String
+      end
+
+      # Cell alignment definition
+      class CellAlignment
+        include OptionsParser
+
+        attr_reader horizontal: Symbol?
+
+        attr_reader vertical: Symbol?
+
+        attr_accessor textRotation: Integer?
+
+        attr_accessor wrapText: bool?
+
+        attr_accessor indent: Integer?
+
+        attr_accessor relativeIndent: Integer?
+
+        attr_accessor justifyLastLine: bool?
+
+        attr_accessor shrinkToFit: bool?
+
+        attr_accessor readingOrder: Integer?
+
+        alias wrap_text wrapText
+
+        alias wrap_text= wrapText=
+
+        alias shrink_to_fit shrinkToFit
+
+        alias shrink_to_fit= shrinkToFit=
+
+        alias text_rotation textRotation
+
+        alias text_rotation= textRotation=
+
+        # @param options [Hash]
+        # : (?Hash[Symbol, untyped] options) -> void
+        def initialize: (?Hash[Symbol, untyped] options) -> void
+
+        # : (untyped v) -> void
+        def horizontal=: (untyped v) -> void
+
+        # : (untyped v) -> void
+        def vertical=: (untyped v) -> void
+
+        # : (?String str) -> String
+        def to_xml_string: (?String str) -> String
+
+        # : () -> Hash[Symbol, untyped]
+        def to_xlsxrb_hash: () -> Hash[Symbol, untyped]
+      end
+
+      # Cell protection definition
+      class CellProtection
+        include OptionsParser
+
+        attr_accessor hidden: bool?
+
+        attr_accessor locked: bool?
+
+        # @param options [Hash]
+        # : (?Hash[Symbol, untyped] options) -> void
+        def initialize: (?Hash[Symbol, untyped] options) -> void
+
+        # : (?String str) -> String
+        def to_xml_string: (?String str) -> String
+
+        # : () -> Hash[Symbol, untyped]
+        def to_xlsxrb_hash: () -> Hash[Symbol, untyped]
+      end
+
+      # Formatting record (Xf)
+      class Xf
+        include OptionsParser
+
+        attr_accessor numFmtId: Integer
+
+        attr_accessor fontId: Integer
+
+        attr_accessor fillId: Integer
+
+        attr_accessor borderId: Integer
+
+        attr_accessor xfId: Integer
+
+        attr_accessor quotePrefix: bool?
+
+        attr_accessor pivotButton: bool?
+
+        attr_accessor applyNumberFormat: bool?
+
+        attr_accessor applyFont: bool?
+
+        attr_accessor applyFill: bool?
+
+        attr_accessor applyBorder: bool?
+
+        attr_accessor applyAlignment: bool?
+
+        attr_accessor applyProtection: bool?
+
+        attr_accessor alignment: CellAlignment?
+
+        attr_accessor protection: CellProtection?
+
+        alias quote_prefix quotePrefix
+
+        alias quote_prefix= quotePrefix=
+
+        # @param options [Hash]
+        # : (?Hash[Symbol, untyped] options) -> void
+        def initialize: (?Hash[Symbol, untyped] options) -> void
+
+        # : (?String str) -> String
+        def to_xml_string: (?String str) -> String
+
+        # : () -> Hash[Symbol, untyped]
+        def to_xlsxrb_hash: () -> Hash[Symbol, untyped]
+      end
+
+      # Named cell style definition
+      class CellStyle
+        include OptionsParser
+
+        attr_accessor name: String
+
+        attr_accessor xfId: Integer
+
+        attr_accessor builtinId: Integer?
+
+        attr_accessor iLevel: Integer?
+
+        attr_accessor hidden: bool?
+
+        attr_accessor customBuiltin: bool?
+
+        # @param options [Hash]
+        # : (?Hash[Symbol, untyped] options) -> void
+        def initialize: (?Hash[Symbol, untyped] options) -> void
+
+        # : (?String str) -> String
+        def to_xml_string: (?String str) -> String
+      end
+
+      # Differential formatting record (dxf)
+      class Dxf
+        include OptionsParser
+
+        attr_accessor font: Font?
+
+        attr_accessor fill: Fill?
+
+        attr_accessor border: Border?
+
+        attr_accessor numFmt: NumFmt?
+
+        attr_accessor alignment: CellAlignment?
+
+        attr_accessor protection: CellProtection?
+
+        # @param options [Hash]
+        # : (?Hash[Symbol, untyped] options) -> void
+        def initialize: (?Hash[Symbol, untyped] options) -> void
+
+        # : (?String str) -> String
+        def to_xml_string: (?String str) -> String
+
+        # : () -> Hash[Symbol, untyped]
+        def to_xlsxrb_hash: () -> Hash[Symbol, untyped]
+      end
+
+      # Table style element
+      class TableStyleElement
+        include OptionsParser
+
+        attr_accessor type: Symbol
+
+        attr_accessor size: Integer
+
+        attr_accessor dxfId: Integer
+
+        # : (?Hash[Symbol, untyped] options) -> void
+        def initialize: (?Hash[Symbol, untyped] options) -> void
+      end
+
+      # Table style
+      class TableStyle
+        include OptionsParser
+
+        attr_accessor name: String
+
+        attr_accessor pivot: bool?
+
+        attr_accessor table: bool?
+
+        # : (?Hash[Symbol, untyped] options) -> void
+        def initialize: (?Hash[Symbol, untyped] options) -> void
+      end
+
+      # Table styles container
+      class TableStyles < SimpleTypedList
+        include OptionsParser
+
+        attr_accessor defaultTableStyle: String?
+
+        attr_accessor defaultPivotStyle: String?
+
+        # @param options [Hash]
+        # : (?Hash[Symbol, untyped] options) -> void
+        def initialize: (?Hash[Symbol, untyped] options) -> void
+
+        # : (?String str) -> String
+        def to_xml_string: (?String str) -> String
+      end
+
+      # Theme definition
+      class Theme
+        # : (?String str) -> String
+        def to_xml_string: (?String str) -> String
+      end
+
+      # Styles manager
+      class Styles
+        attr_reader numFmts: SimpleTypedList
+
+        attr_reader fonts: SimpleTypedList
+
+        attr_reader fills: SimpleTypedList
+
+        attr_reader borders: SimpleTypedList
+
+        attr_reader cellStyleXfs: SimpleTypedList
+
+        attr_reader cellStyles: SimpleTypedList
+
+        attr_reader cellXfs: SimpleTypedList
+
+        attr_reader dxfs: SimpleTypedList
+
+        attr_reader tableStyles: TableStyles
+
+        # @return [Hash]
+        # : () -> Hash[Integer, Hash[Symbol, untyped]]
+        def style_index: () -> Hash[Integer, Hash[Symbol, untyped]]
+
+        def initialize: () -> untyped
+
+        # Adds a new style definition and returns its index
+        # @param options [Hash]
+        # @return [Integer, Dxf]
+        # : (?Hash[Symbol, untyped] options) -> (Integer | Dxf)
+        def add_style: (?Hash[Symbol, untyped] options) -> (Integer | Dxf)
+
+        # Returns quotePrefix enabled style index for base_style_index
+        # @param base_style_index [Integer]
+        # @return [Integer]
+        # : (Integer base_style_index) -> Integer
+        def quote_prefix_style_for: (Integer base_style_index) -> Integer
+
+        # : (?Hash[Symbol, untyped] options) -> CellProtection?
+        def parse_protection_options: (?Hash[Symbol, untyped] options) -> CellProtection?
+
+        # : (?Hash[Symbol, untyped] options) -> CellAlignment?
+        def parse_alignment_options: (?Hash[Symbol, untyped] options) -> CellAlignment?
+
+        # : (?Hash[Symbol, untyped] options) -> (Font | Integer | nil)
+        def parse_font_options: (?Hash[Symbol, untyped] options) -> (Font | Integer | nil)
+
+        # : (?Hash[Symbol, untyped] options) -> (Fill | Integer | nil)
+        def parse_fill_options: (?Hash[Symbol, untyped] options) -> (Fill | Integer | nil)
+
+        # : (?Hash[Symbol, untyped] options) -> (Border | Integer | nil)
+        def parse_border_options: (?Hash[Symbol, untyped] options) -> (Border | Integer | nil)
+
+        # : (?Hash[Symbol, untyped] options) -> (NumFmt | Integer | nil)
+        def parse_num_fmt_options: (?Hash[Symbol, untyped] options) -> (NumFmt | Integer | nil)
+
+        # : (?String str) -> String
+        def to_xml_string: (?String str) -> String
+
+        # Converts to xlsxrb styles hash
+        # @return [Hash]
+        # : () -> Hash[Symbol, untyped]
+        def to_xlsxrb_hash: () -> Hash[Symbol, untyped]
+
+        private
+
+        def load_default_styles: () -> untyped
+      end
+    end
+  end
+end

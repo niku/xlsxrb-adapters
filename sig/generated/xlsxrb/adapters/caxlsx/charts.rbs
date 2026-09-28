@@ -1,0 +1,1412 @@
+# Generated from lib/xlsxrb/adapters/caxlsx/charts.rb with RBS::Inline
+
+module Xlsxrb
+  module Adapters
+    module Caxlsx
+      # Scaling properties for an axis.
+      class Scaling
+        include OptionsParser
+
+        # @return [Integer, nil]
+        attr_reader logBase: untyped
+
+        # @return [Symbol, nil]
+        attr_reader orientation: untyped
+
+        # @return [Float, nil]
+        attr_reader max: untyped
+
+        # @return [Float, nil]
+        attr_reader min: untyped
+
+        # @param options [Hash{Symbol => untyped}]
+        # : (?Hash[Symbol, untyped] options) -> void
+        def initialize: (?Hash[Symbol, untyped] options) -> void
+
+        # @param v [Integer]
+        # @return [Integer]
+        # : (Integer v) -> Integer
+        def logBase=: (Integer v) -> Integer
+
+        # @param v [Symbol]
+        # @return [Symbol]
+        # : (Symbol v) -> Symbol
+        def orientation=: (Symbol v) -> Symbol
+
+        # @param v [Float]
+        # @return [Float]
+        # : (Float v) -> Float
+        def max=: (Float v) -> Float
+
+        # @param v [Float]
+        # @return [Float]
+        # : (Float v) -> Float
+        def min=: (Float v) -> Float
+
+        # @param str [String]
+        # @return [String]
+        # : (?String str) -> String
+        def to_xml_string: (?String str) -> String
+      end
+
+      # Chart title representation.
+      class Title
+        # @return [String]
+        attr_reader text: untyped
+
+        # @return [String]
+        attr_reader text_size: untyped
+
+        # @return [Cell, nil]
+        attr_reader cell: untyped
+
+        # @param title [String, Cell]
+        # @param title_size [String]
+        # : (?String | Cell title, ?String title_size) -> void
+        def initialize: (?String | Cell title, ?String title_size) -> void
+
+        # @param v [String]
+        # @return [String]
+        # : (String v) -> String
+        def text=: (String v) -> String
+
+        # @param v [String]
+        # @return [String]
+        # : (String v) -> String
+        def text_size=: (String v) -> String
+
+        # @param v [Cell]
+        # @return [Cell]
+        # : (Cell v) -> Cell
+        def cell=: (Cell v) -> Cell
+
+        # @return [Boolean]
+        # : () -> bool
+        def empty?: () -> bool
+
+        # @param str [String]
+        # @return [String]
+        # : (?String str) -> String
+        def to_xml_string: (?String str) -> String
+      end
+
+      # Series title representation.
+      class SeriesTitle < Title
+        # @param str [String]
+        # @return [String]
+        # : (?String str) -> String
+        def to_xml_string: (?String str) -> String
+      end
+
+      # Base axis class.
+      class Axis
+        include OptionsParser
+
+        VALID_TICK_MARK_VALUES: untyped
+
+        # @return [String, nil]
+        attr_accessor color: untyped
+
+        # @return [Integer]
+        attr_reader id: untyped
+
+        alias axID id
+
+        # @return [Axis, nil]
+        attr_reader cross_axis: untyped
+
+        alias crossAx cross_axis
+
+        # @return [Scaling]
+        attr_reader scaling: untyped
+
+        # @return [Symbol]
+        attr_reader ax_pos: untyped
+
+        alias axPos ax_pos
+
+        # @return [Symbol]
+        attr_reader tick_lbl_pos: untyped
+
+        alias tickLblPos tick_lbl_pos
+
+        # @return [Symbol]
+        attr_reader major_tick_mark: untyped
+
+        alias majorTickMark major_tick_mark
+
+        # @return [Symbol]
+        attr_reader minor_tick_mark: untyped
+
+        alias minorTickMark minor_tick_mark
+
+        # @return [String]
+        attr_reader format_code: untyped
+
+        # @return [Symbol]
+        attr_reader crosses: untyped
+
+        # @return [Integer]
+        attr_reader label_rotation: untyped
+
+        # @return [Boolean]
+        attr_reader gridlines: untyped
+
+        # @return [Integer, Boolean]
+        attr_accessor delete: untyped
+
+        # @return [Title, nil]
+        attr_reader title: untyped
+
+        # @param options [Hash{Symbol => untyped}]
+        # : (?Hash[Symbol, untyped] options) -> void
+        def initialize: (?Hash[Symbol, untyped] options) -> void
+
+        # @param axis [Axis]
+        # @return [void]
+        # : (Axis axis) -> void
+        def cross_axis=: (Axis axis) -> void
+
+        # @param v [Symbol]
+        # @return [Symbol]
+        # : (Symbol v) -> Symbol
+        def ax_pos=: (Symbol v) -> Symbol
+
+        alias axPos= ax_pos=
+
+        # @param v [Symbol]
+        # @return [Symbol]
+        # : (Symbol v) -> Symbol
+        def tick_lbl_pos=: (Symbol v) -> Symbol
+
+        alias tickLblPos= tick_lbl_pos=
+
+        # @param v [Symbol]
+        # @return [Symbol]
+        # : (Symbol v) -> Symbol
+        def major_tick_mark=: (Symbol v) -> Symbol
+
+        alias majorTickMark= major_tick_mark=
+
+        # @param v [Symbol]
+        # @return [Symbol]
+        # : (Symbol v) -> Symbol
+        def minor_tick_mark=: (Symbol v) -> Symbol
+
+        alias minorTickMark= minor_tick_mark=
+
+        # @param v [String]
+        # @return [String]
+        # : (String v) -> String
+        def format_code=: (String v) -> String
+
+        # @param v [Boolean]
+        # @return [Boolean]
+        # : (bool v) -> bool
+        def gridlines=: (bool v) -> bool
+
+        # @param v [Symbol]
+        # @return [Symbol]
+        # : (Symbol v) -> Symbol
+        def crosses=: (Symbol v) -> Symbol
+
+        # @param v [Integer]
+        # @return [Integer]
+        # : (Integer v) -> Integer
+        def label_rotation=: (Integer v) -> Integer
+
+        # @param v [String, Cell]
+        # @return [void]
+        # : (String | Cell v) -> void
+        def title=: (String | Cell v) -> void
+
+        # @param str [String]
+        # @return [String]
+        # : (?String str) -> String
+        def to_xml_string: (?String str) -> String
+      end
+
+      # Category axis.
+      class CatAxis < Axis
+        LBL_OFFSET_REGEX: ::Regexp
+
+        # @return [Integer, Boolean]
+        attr_accessor auto: untyped
+
+        # @return [Symbol]
+        attr_reader lbl_algn: untyped
+
+        alias lblAlgn lbl_algn
+
+        # @return [Integer, String]
+        attr_reader lbl_offset: untyped
+
+        alias lblOffset lbl_offset
+
+        # @return [Integer, nil]
+        attr_reader tick_lbl_skip: untyped
+
+        alias tickLblSkip tick_lbl_skip
+
+        # @return [Integer, nil]
+        attr_reader tick_mark_skip: untyped
+
+        alias tickMarkSkip tick_mark_skip
+
+        # @param options [Hash{Symbol => untyped}]
+        # : (?Hash[Symbol, untyped] options) -> void
+        def initialize: (?Hash[Symbol, untyped] options) -> void
+
+        # @param v [Integer, nil]
+        # @return [Integer, nil]
+        # : (Integer? v) -> Integer?
+        def tick_lbl_skip=: (Integer? v) -> Integer?
+
+        alias tickLblSkip= tick_lbl_skip=
+
+        # @param v [Integer, nil]
+        # @return [Integer, nil]
+        # : (Integer? v) -> Integer?
+        def tick_mark_skip=: (Integer? v) -> Integer?
+
+        alias tickMarkSkip= tick_mark_skip=
+
+        # @param v [Symbol]
+        # @return [Symbol]
+        # : (Symbol v) -> Symbol
+        def lbl_algn=: (Symbol v) -> Symbol
+
+        alias lblAlgn= lbl_algn=
+
+        # @param v [String]
+        # @return [String]
+        # : (String v) -> String
+        def lbl_offset=: (String v) -> String
+
+        alias lblOffset= lbl_offset=
+
+        # @param str [String]
+        # @return [String]
+        # : (?String str) -> String
+        def to_xml_string: (?String str) -> String
+      end
+
+      # Value axis.
+      class ValAxis < Axis
+        # @return [Symbol]
+        attr_reader cross_between: untyped
+
+        alias crossBetween cross_between
+
+        # @param options [Hash{Symbol => untyped}]
+        # : (?Hash[Symbol, untyped] options) -> void
+        def initialize: (?Hash[Symbol, untyped] options) -> void
+
+        # @param v [Symbol]
+        # @return [Symbol]
+        # : (Symbol v) -> Symbol
+        def cross_between=: (Symbol v) -> Symbol
+
+        alias crossBetween= cross_between=
+
+        # @param str [String]
+        # @return [String]
+        # : (?String str) -> String
+        def to_xml_string: (?String str) -> String
+      end
+
+      # Series axis.
+      class SerAxis < Axis
+        # @param str [String]
+        # @return [String]
+        # : (?String str) -> String
+        def to_xml_string: (?String str) -> String
+      end
+
+      # Axes collection for a chart.
+      class Axes
+        # @param options [Hash{Symbol => untyped}]
+        # : (?Hash[Symbol, untyped] options) -> void
+        def initialize: (?Hash[Symbol, untyped] options) -> void
+
+        # @param name [Symbol]
+        # @return [Axis, nil]
+        # : (Symbol name) -> Axis?
+        def []: (Symbol name) -> Axis?
+
+        # @param str [String]
+        # @param options [Hash{Symbol => untyped}]
+        # @return [String]
+        # : (?String str, ?Hash[Symbol, untyped] options) -> String
+        def to_xml_string: (?String str, ?Hash[Symbol, untyped] options) -> String
+
+        # @param name [Symbol]
+        # @param axis_class [Class]
+        # @return [void]
+        # : (Symbol name, Class axis_class) -> void
+        def add_axis: (Symbol name, Class axis_class) -> void
+
+        private
+
+        # @return [Array[Array[untyped]]]
+        # : () -> Array[Array[untyped]]
+        def axes: () -> Array[Array[untyped]]
+
+        # @param axis [Axis]
+        # @return [void]
+        # : (Axis axis) -> void
+        def set_cross_axis: (Axis axis) -> void
+      end
+
+      # String value data point.
+      class StrVal
+        include OptionsParser
+
+        # @return [String]
+        attr_reader v: untyped
+
+        # @param options [Hash{Symbol => untyped}]
+        # : (?Hash[Symbol, untyped] options) -> void
+        def initialize: (?Hash[Symbol, untyped] options) -> void
+
+        # @param v [untyped]
+        # @return [String]
+        # : (untyped v) -> String
+        def v=: (untyped v) -> String
+
+        # @param idx [Integer]
+        # @param str [String]
+        # @return [void]
+        # : (Integer idx, ?String str) -> void
+        def to_xml_string: (Integer idx, ?String str) -> void
+      end
+
+      # Numeric value data point.
+      class NumVal < StrVal
+        # @return [String]
+        attr_reader format_code: untyped
+
+        # @param options [Hash{Symbol => untyped}]
+        # : (?Hash[Symbol, untyped] options) -> void
+        def initialize: (?Hash[Symbol, untyped] options) -> void
+
+        # @param v [String]
+        # @return [String]
+        # : (String v) -> String
+        def format_code=: (String v) -> String
+
+        # @param idx [Integer]
+        # @param str [String]
+        # @return [void]
+        # : (Integer idx, ?String str) -> void
+        def to_xml_string: (Integer idx, ?String str) -> void
+      end
+
+      # String data collection.
+      class StrData
+        include OptionsParser
+
+        # @param options [Hash{Symbol => untyped}]
+        # : (?Hash[Symbol, untyped] options) -> void
+        def initialize: (?Hash[Symbol, untyped] options) -> void
+
+        # @param values [Array[untyped]]
+        # @return [void]
+        # : (?Array[untyped] values) -> void
+        def data=: (?Array[untyped] values) -> void
+
+        # @param str [String]
+        # @return [String]
+        # : (?String str) -> String
+        def to_xml_string: (?String str) -> String
+      end
+
+      # Numeric data collection.
+      class NumData
+        include OptionsParser
+
+        # @return [String]
+        attr_reader format_code: untyped
+
+        # @param options [Hash{Symbol => untyped}]
+        # : (?Hash[Symbol, untyped] options) -> void
+        def initialize: (?Hash[Symbol, untyped] options) -> void
+
+        # @param values [Array[untyped]]
+        # @return [void]
+        # : (?Array[untyped] values) -> void
+        def data=: (?Array[untyped] values) -> void
+
+        # @param v [String]
+        # @return [String]
+        # : (?String v) -> String
+        def format_code=: (?String v) -> String
+
+        # @param str [String]
+        # @return [String]
+        # : (?String str) -> String
+        def to_xml_string: (?String str) -> String
+      end
+
+      # Numeric data source for charts.
+      class NumDataSource
+        include OptionsParser
+
+        # @return [Symbol]
+        attr_reader tag_name: untyped
+
+        # @return [untyped]
+        attr_reader data: untyped
+
+        # @return [Array[Symbol]]
+        def self.allowed_tag_names: () -> untyped
+
+        # @param options [Hash{Symbol => untyped}]
+        # : (?Hash[Symbol, untyped] options) -> void
+        def initialize: (?Hash[Symbol, untyped] options) -> void
+
+        # @param v [Symbol]
+        # @return [Symbol]
+        # : (Symbol v) -> Symbol
+        def tag_name=: (Symbol v) -> Symbol
+
+        # @param str [String]
+        # @return [String]
+        # : (?String str) -> String
+        def to_xml_string: (?String str) -> String
+      end
+
+      # Axis data source.
+      class AxDataSource < NumDataSource
+        # @return [Array[Symbol]]
+        def self.allowed_tag_names: () -> untyped
+
+        # @param options [Hash{Symbol => untyped}]
+        # : (?Hash[Symbol, untyped] options) -> void
+        def initialize: (?Hash[Symbol, untyped] options) -> void
+      end
+
+      # 3D view properties for charts.
+      class View3D
+        include OptionsParser
+
+        H_PERCENT_REGEX: ::Regexp
+
+        DEPTH_PERCENT_REGEX: ::Regexp
+
+        # @return [Integer, nil]
+        attr_reader rot_x: untyped
+
+        alias rotX rot_x
+
+        # @return [String, nil]
+        attr_reader h_percent: untyped
+
+        alias hPercent h_percent
+
+        # @return [Integer, nil]
+        attr_reader rot_y: untyped
+
+        alias rotY rot_y
+
+        # @return [String, nil]
+        attr_reader depth_percent: untyped
+
+        alias depthPercent depth_percent
+
+        # @return [Boolean, Integer, nil]
+        attr_accessor r_ang_ax: untyped
+
+        alias rAngAx r_ang_ax
+
+        # @return [Integer, nil]
+        attr_reader perspective: untyped
+
+        # @param options [Hash{Symbol => untyped}]
+        # : (?Hash[Symbol, untyped] options) -> void
+        def initialize: (?Hash[Symbol, untyped] options) -> void
+
+        # @param v [Integer]
+        # @return [Integer]
+        # : (Integer v) -> Integer
+        def rot_x=: (Integer v) -> Integer
+
+        alias rotX= rot_x=
+
+        # @param v [String]
+        # @return [String]
+        # : (String v) -> String
+        def h_percent=: (String v) -> String
+
+        alias hPercent= h_percent=
+
+        # @param v [Integer]
+        # @return [Integer]
+        # : (Integer v) -> Integer
+        def rot_y=: (Integer v) -> Integer
+
+        alias rotY= rot_y=
+
+        # @param v [String]
+        # @return [String]
+        # : (String v) -> String
+        def depth_percent=: (String v) -> String
+
+        alias depthPercent= depth_percent=
+
+        # @param v [Boolean, Integer]
+        # @return [untyped]
+        # : (bool | Integer v) -> untyped
+        alias rAngAx= r_ang_ax=
+
+        # @param v [Integer]
+        # @return [Integer]
+        # : (Integer v) -> Integer
+        def perspective=: (Integer v) -> Integer
+
+        # @param str [String]
+        # @return [String]
+        # : (?String str) -> String
+        def to_xml_string: (?String str) -> String
+      end
+
+      # Data label properties.
+      class DLbls
+        include Accessors
+
+        include OptionsParser
+
+        # @return [Class]
+        attr_reader chart_type: untyped
+
+        # @param chart_type [Class]
+        # @param options [Hash{Symbol => untyped}]
+        # : (Class chart_type, ?Hash[Symbol, untyped] options) -> void
+        def initialize: (Class chart_type, ?Hash[Symbol, untyped] options) -> void
+
+        # @return [void]
+        # : () -> void
+        def initialize_defaults: () -> void
+
+        # @return [Symbol, nil]
+        # : () -> Symbol?
+        def d_lbl_pos: () -> Symbol?
+
+        # @param label_position [Symbol]
+        # @return [Symbol]
+        # : (Symbol label_position) -> Symbol
+        def d_lbl_pos=: (Symbol label_position) -> Symbol
+
+        # @param str [String]
+        # @return [String]
+        # : (?String str) -> String
+        def to_xml_string: (?String str) -> String
+      end
+
+      # Base Series class.
+      class Series
+        include OptionsParser
+
+        # @return [Chart]
+        attr_reader chart: untyped
+
+        # @return [SeriesTitle, nil]
+        attr_reader title: untyped
+
+        # @param chart [Chart]
+        # @param options [Hash{Symbol => untyped}]
+        # : (Chart chart, ?Hash[Symbol, untyped] options) -> void
+        def initialize: (Chart chart, ?Hash[Symbol, untyped] options) -> void
+
+        # @return [Integer]
+        # : () -> Integer
+        def index: () -> Integer
+
+        # @return [Integer]
+        # : () -> Integer
+        def order: () -> Integer
+
+        # @param v [Integer]
+        # @return [Integer]
+        # : (Integer v) -> Integer
+        def order=: (Integer v) -> Integer
+
+        # @param v [String, Cell, SeriesTitle]
+        # @return [void]
+        # : (String | Cell | SeriesTitle v) -> void
+        def title=: (String | Cell | SeriesTitle v) -> void
+
+        # @param str [String]
+        # @return [String]
+        # : (?String str) ?{ () -> void } -> String
+        def to_xml_string: (?String str) ?{ () -> void } -> String
+
+        private
+
+        # @param v [Chart]
+        # @return [void]
+        # : (Chart v) -> void
+        def chart=: (Chart v) -> void
+      end
+
+      # Bar series.
+      class BarSeries < Series
+        # @return [NumDataSource, nil]
+        attr_reader data: untyped
+
+        # @return [AxDataSource, nil]
+        attr_reader labels: untyped
+
+        # @return [Symbol]
+        attr_reader shape: untyped
+
+        # @return [Array[String]]
+        attr_reader colors: untyped
+
+        # @return [String, nil]
+        attr_accessor series_color: untyped
+
+        # @param chart [Chart]
+        # @param options [Hash{Symbol => untyped}]
+        # : (Chart chart, ?Hash[Symbol, untyped] options) -> void
+        def initialize: (Chart chart, ?Hash[Symbol, untyped] options) -> void
+
+        # @param v [Array[String]]
+        # @return [void]
+        # : (Array[String] v) -> void
+        def colors=: (Array[String] v) -> void
+
+        # @param v [Symbol]
+        # @return [Symbol]
+        # : (Symbol v) -> Symbol
+        def shape=: (Symbol v) -> Symbol
+
+        # @param str [String]
+        # @return [String]
+        # : (?String str) -> String
+        def to_xml_string: (?String str) -> String
+
+        private
+
+        # @param v [NumDataSource]
+        # @return [void]
+        # : (NumDataSource v) -> void
+        def data=: (NumDataSource v) -> void
+
+        # @param v [AxDataSource]
+        # @return [void]
+        # : (AxDataSource v) -> void
+        def labels=: (AxDataSource v) -> void
+      end
+
+      # Line series.
+      class LineSeries < Series
+        # @return [NumDataSource, nil]
+        attr_reader data: untyped
+
+        # @return [AxDataSource, nil]
+        attr_reader labels: untyped
+
+        # @return [String, nil]
+        attr_accessor color: untyped
+
+        # @return [Boolean]
+        attr_accessor show_marker: untyped
+
+        # @return [Symbol, String]
+        attr_accessor marker_symbol: untyped
+
+        # @return [Boolean]
+        attr_accessor smooth: untyped
+
+        # @param chart [Chart]
+        # @param options [Hash{Symbol => untyped}]
+        # : (Chart chart, ?Hash[Symbol, untyped] options) -> void
+        def initialize: (Chart chart, ?Hash[Symbol, untyped] options) -> void
+
+        # @param str [String]
+        # @return [String]
+        # : (?String str) -> String
+        def to_xml_string: (?String str) -> String
+
+        private
+
+        # @param v [NumDataSource]
+        # @return [void]
+        # : (NumDataSource v) -> void
+        def data=: (NumDataSource v) -> void
+
+        # @param v [AxDataSource]
+        # @return [void]
+        # : (AxDataSource v) -> void
+        def labels=: (AxDataSource v) -> void
+      end
+
+      # Pie series.
+      class PieSeries < Series
+        # @return [NumDataSource, nil]
+        attr_reader data: untyped
+
+        # @return [AxDataSource, nil]
+        attr_reader labels: untyped
+
+        # @return [Integer, nil]
+        attr_reader explosion: untyped
+
+        # @return [Array[String]]
+        attr_reader colors: untyped
+
+        # @param chart [Chart]
+        # @param options [Hash{Symbol => untyped}]
+        # : (Chart chart, ?Hash[Symbol, untyped] options) -> void
+        def initialize: (Chart chart, ?Hash[Symbol, untyped] options) -> void
+
+        # @param v [Array[String]]
+        # @return [void]
+        # : (Array[String] v) -> void
+        def colors=: (Array[String] v) -> void
+
+        # @param v [Integer]
+        # @return [void]
+        # : (Integer v) -> void
+        def explosion=: (Integer v) -> void
+
+        # @param str [String]
+        # @return [String]
+        # : (?String str) -> String
+        def to_xml_string: (?String str) -> String
+
+        private
+
+        # @param v [NumDataSource]
+        # @return [void]
+        # : (NumDataSource v) -> void
+        def data=: (NumDataSource v) -> void
+
+        # @param v [AxDataSource]
+        # @return [void]
+        # : (AxDataSource v) -> void
+        def labels=: (AxDataSource v) -> void
+      end
+
+      # Scatter series.
+      class ScatterSeries < Series
+        # @return [AxDataSource, nil]
+        attr_accessor xData: untyped
+
+        # @return [NumDataSource, nil]
+        attr_accessor yData: untyped
+
+        # @return [String, nil]
+        attr_accessor color: untyped
+
+        # @return [String, nil]
+        attr_reader ln_width: untyped
+
+        # @return [Boolean]
+        attr_accessor smooth: untyped
+
+        # @return [Boolean]
+        attr_reader show_marker: untyped
+
+        # @return [Symbol, String]
+        attr_reader marker_symbol: untyped
+
+        # @param chart [Chart]
+        # @param options [Hash{Symbol => untyped}]
+        # : (Chart chart, ?Hash[Symbol, untyped] options) -> void
+        def initialize: (Chart chart, ?Hash[Symbol, untyped] options) -> void
+
+        # @param str [String]
+        # @return [String]
+        # : (?String str) -> String
+        def to_xml_string: (?String str) -> String
+      end
+
+      # Area series.
+      class AreaSeries < Series
+        # @return [NumDataSource, nil]
+        attr_reader data: untyped
+
+        # @return [AxDataSource, nil]
+        attr_reader labels: untyped
+
+        # @return [String, nil]
+        attr_accessor color: untyped
+
+        # @param chart [Chart]
+        # @param options [Hash{Symbol => untyped}]
+        # : (Chart chart, ?Hash[Symbol, untyped] options) -> void
+        def initialize: (Chart chart, ?Hash[Symbol, untyped] options) -> void
+
+        # @param str [String]
+        # @return [String]
+        # : (?String str) -> String
+        def to_xml_string: (?String str) -> String
+
+        private
+
+        # @param v [NumDataSource]
+        # @return [void]
+        # : (NumDataSource v) -> void
+        def data=: (NumDataSource v) -> void
+
+        # @param v [AxDataSource]
+        # @return [void]
+        # : (AxDataSource v) -> void
+        def labels=: (AxDataSource v) -> void
+      end
+
+      # Bubble series.
+      class BubbleSeries < Series
+        # @return [AxDataSource, nil]
+        attr_accessor xData: untyped
+
+        # @return [NumDataSource, nil]
+        attr_accessor yData: untyped
+
+        # @return [NumDataSource, nil]
+        attr_accessor bubbleSize: untyped
+
+        # @param chart [Chart]
+        # @param options [Hash{Symbol => untyped}]
+        # : (Chart chart, ?Hash[Symbol, untyped] options) -> void
+        def initialize: (Chart chart, ?Hash[Symbol, untyped] options) -> void
+
+        # @param str [String]
+        # @return [String]
+        # : (?String str) -> String
+        def to_xml_string: (?String str) -> String
+      end
+
+      # Base Chart class.
+      class Chart
+        include OptionsParser
+
+        # @return [GraphicFrame]
+        attr_reader graphic_frame: untyped
+
+        # @return [SimpleTypedList]
+        attr_reader series: untyped
+
+        # @return [Class]
+        attr_reader series_type: untyped
+
+        # @return [Boolean, Integer]
+        attr_accessor vary_colors: untyped
+
+        # @return [Title]
+        attr_reader title: untyped
+
+        # @return [Integer, nil]
+        attr_reader style: untyped
+
+        # @return [Boolean]
+        attr_reader show_legend: untyped
+
+        # @return [Symbol]
+        attr_reader legend_position: untyped
+
+        # @return [Symbol]
+        attr_reader display_blanks_as: untyped
+
+        # @return [String, nil]
+        attr_reader bg_color: untyped
+
+        # @return [Boolean]
+        attr_reader plot_visible_only: untyped
+
+        # @return [Boolean]
+        attr_reader rounded_corners: untyped
+
+        # @return [View3D, nil]
+        attr_reader view_3D: untyped
+
+        alias view3D view_3D
+
+        # @param frame [GraphicFrame]
+        # @param options [Hash{Symbol => untyped}]
+        # : (GraphicFrame frame, ?Hash[Symbol, untyped] options) -> void
+        def initialize: (GraphicFrame frame, ?Hash[Symbol, untyped] options) -> void
+
+        # @return [DLbls]
+        # : () -> DLbls
+        def d_lbls: () -> DLbls
+
+        # @return [Relationship]
+        # : () -> Relationship
+        def relationship: () -> Relationship
+
+        # @return [Integer]
+        # : () -> Integer
+        def index: () -> Integer
+
+        # @return [String]
+        # : () -> String
+        def pn: () -> String
+
+        # @param v [String, Cell]
+        # @return [void]
+        # : (String | Cell v) -> void
+        def title=: (String | Cell v) -> void
+
+        # @param v [String]
+        # @return [void]
+        # : (String v) -> void
+        def title_size=: (String v) -> void
+
+        # @param v [Boolean]
+        # @return [Boolean]
+        # : (bool v) -> bool
+        def show_legend=: (bool v) -> bool
+
+        # @param v [Symbol]
+        # @return [Symbol]
+        # : (Symbol v) -> Symbol
+        def display_blanks_as=: (Symbol v) -> Symbol
+
+        # @param v [Integer]
+        # @return [void]
+        # : (Integer v) -> void
+        def style=: (Integer v) -> void
+
+        # @param v [Symbol]
+        # @return [Symbol]
+        # : (Symbol v) -> Symbol
+        def legend_position=: (Symbol v) -> Symbol
+
+        # @return [Marker]
+        # : () -> Marker
+        def to: () -> Marker
+
+        # @return [Marker]
+        # : () -> Marker
+        def from: () -> Marker
+
+        # @param options [Hash{Symbol => untyped}]
+        # @return [Series]
+        # : (?Hash[Symbol, untyped] options) -> Series
+        def add_series: (?Hash[Symbol, untyped] options) -> Series
+
+        # @param v [String]
+        # @return [void]
+        # : (String v) -> void
+        def bg_color=: (String v) -> void
+
+        # @param v [Boolean]
+        # @return [Boolean]
+        # : (bool v) -> bool
+        def plot_visible_only=: (bool v) -> bool
+
+        # @param v [Boolean]
+        # @return [Boolean]
+        # : (bool v) -> bool
+        def rounded_corners=: (bool v) -> bool
+
+        # @param x [Integer, String, Cell, Array[Integer]]
+        # @param y [Integer]
+        # @return [Marker]
+        # : (?Integer | String | Cell | Array[Integer] x, ?Integer y) -> Marker
+        def start_at: (?Integer | String | Cell | Array[Integer] x, ?Integer y) -> Marker
+
+        # @param x [Integer]
+        # @param y [Integer]
+        # @return [Marker]
+        # : (?Integer x, ?Integer y) -> Marker
+        def end_at: (?Integer x, ?Integer y) -> Marker
+
+        # @param v [View3D]
+        # @return [void]
+        # : (View3D v) -> void
+        def view_3D=: (View3D v) -> void
+
+        alias view3D= view_3D=
+
+        # @param str [String]
+        # @return [String]
+        # : (?String str) ?{ () -> void } -> String
+        def to_xml_string: (?String str) ?{ () -> void } -> String
+
+        # Converts chart settings to an options hash compatible with xlsxrb ChartBuilder / Writer.
+        #
+        # @return [Hash{Symbol => untyped}]
+        # : () -> Hash[Symbol, untyped]
+        def to_chart_options: () -> Hash[Symbol, untyped]
+
+        alias to_hash to_chart_options
+      end
+
+      # Bar chart.
+      class BarChart < Chart
+        # @return [CatAxis]
+        # : () -> CatAxis
+        def cat_axis: () -> CatAxis
+
+        alias catAxis cat_axis
+
+        # @return [ValAxis]
+        # : () -> ValAxis
+        def val_axis: () -> ValAxis
+
+        alias valAxis val_axis
+
+        # @return [Symbol]
+        # : () -> Symbol
+        def bar_dir: () -> Symbol
+
+        alias barDir bar_dir
+
+        # @return [Integer]
+        # : () -> Integer
+        def gap_width: () -> Integer
+
+        alias gapWidth gap_width
+
+        # @return [Symbol]
+        # : () -> Symbol
+        def grouping: () -> Symbol
+
+        # @return [Integer]
+        # : () -> Integer
+        def overlap: () -> Integer
+
+        # @return [Symbol]
+        # : () -> Symbol
+        def shape: () -> Symbol
+
+        # @param frame [GraphicFrame]
+        # @param options [Hash{Symbol => untyped}]
+        # : (GraphicFrame frame, ?Hash[Symbol, untyped] options) -> void
+        def initialize: (GraphicFrame frame, ?Hash[Symbol, untyped] options) -> void
+
+        # @param v [Symbol]
+        # @return [Symbol]
+        # : (Symbol v) -> Symbol
+        def bar_dir=: (Symbol v) -> Symbol
+
+        alias barDir= bar_dir=
+
+        # @param v [Symbol]
+        # @return [Symbol]
+        # : (Symbol v) -> Symbol
+        def grouping=: (Symbol v) -> Symbol
+
+        # @param v [Integer]
+        # @return [Integer]
+        # : (Integer v) -> Integer
+        def gap_width=: (Integer v) -> Integer
+
+        alias gapWidth= gap_width=
+
+        # @param v [Integer]
+        # @return [Integer]
+        # : (Integer v) -> Integer
+        def overlap=: (Integer v) -> Integer
+
+        # @param v [Symbol]
+        # @return [Symbol]
+        # : (Symbol v) -> Symbol
+        def shape=: (Symbol v) -> Symbol
+
+        # @return [Axes]
+        # : () -> Axes
+        def axes: () -> Axes
+
+        # @param str [String]
+        # @return [String]
+        # : (?String str) -> String
+        def to_xml_string: (?String str) -> String
+      end
+
+      # 3D Bar chart.
+      class Bar3DChart < Chart
+        # @return [CatAxis]
+        # : () -> CatAxis
+        def cat_axis: () -> CatAxis
+
+        alias catAxis cat_axis
+
+        # @return [ValAxis]
+        # : () -> ValAxis
+        def val_axis: () -> ValAxis
+
+        alias valAxis val_axis
+
+        # @return [Symbol]
+        # : () -> Symbol
+        def bar_dir: () -> Symbol
+
+        alias barDir bar_dir
+
+        # @return [Integer, nil]
+        attr_reader gap_depth: untyped
+
+        alias gapDepth gap_depth
+
+        # @return [Integer]
+        # : () -> Integer
+        def gap_width: () -> Integer
+
+        alias gapWidth gap_width
+
+        # @return [Symbol]
+        # : () -> Symbol
+        def grouping: () -> Symbol
+
+        # @return [Symbol]
+        # : () -> Symbol
+        def shape: () -> Symbol
+
+        # @param frame [GraphicFrame]
+        # @param options [Hash{Symbol => untyped}]
+        # : (GraphicFrame frame, ?Hash[Symbol, untyped] options) -> void
+        def initialize: (GraphicFrame frame, ?Hash[Symbol, untyped] options) -> void
+
+        # @param v [Symbol]
+        # @return [Symbol]
+        # : (Symbol v) -> Symbol
+        def bar_dir=: (Symbol v) -> Symbol
+
+        alias barDir= bar_dir=
+
+        # @param v [Symbol]
+        # @return [Symbol]
+        # : (Symbol v) -> Symbol
+        def grouping=: (Symbol v) -> Symbol
+
+        # @param v [Integer]
+        # @return [Integer]
+        # : (Integer v) -> Integer
+        def gap_width=: (Integer v) -> Integer
+
+        alias gapWidth= gap_width=
+
+        # @param v [Integer]
+        # @return [Integer]
+        # : (Integer v) -> Integer
+        def gap_depth=: (Integer v) -> Integer
+
+        alias gapDepth= gap_depth=
+
+        # @param v [Symbol]
+        # @return [Symbol]
+        # : (Symbol v) -> Symbol
+        def shape=: (Symbol v) -> Symbol
+
+        # @return [Axes]
+        # : () -> Axes
+        def axes: () -> Axes
+
+        # @param str [String]
+        # @return [String]
+        # : (?String str) -> String
+        def to_xml_string: (?String str) -> String
+      end
+
+      # Line chart.
+      class LineChart < Chart
+        # @return [CatAxis]
+        # : () -> CatAxis
+        def cat_axis: () -> CatAxis
+
+        alias catAxis cat_axis
+
+        # @return [ValAxis]
+        # : () -> ValAxis
+        def val_axis: () -> ValAxis
+
+        alias valAxis val_axis
+
+        # @return [Symbol]
+        attr_reader grouping: untyped
+
+        # @param frame [GraphicFrame]
+        # @param options [Hash{Symbol => untyped}]
+        # : (GraphicFrame frame, ?Hash[Symbol, untyped] options) -> void
+        def initialize: (GraphicFrame frame, ?Hash[Symbol, untyped] options) -> void
+
+        # @param v [Symbol]
+        # @return [Symbol]
+        # : (Symbol v) -> Symbol
+        def grouping=: (Symbol v) -> Symbol
+
+        # @return [Axes]
+        # : () -> Axes
+        def axes: () -> Axes
+
+        # @param str [String]
+        # @return [String]
+        # : (?String str) -> String
+        def to_xml_string: (?String str) -> String
+      end
+
+      # 3D Line chart.
+      class Line3DChart < LineChart
+        # @return [String, nil]
+        attr_reader gap_depth: untyped
+
+        alias gapDepth gap_depth
+
+        GAP_AMOUNT_PERCENT: ::Regexp
+
+        # @return [Axis, nil]
+        # : () -> Axis?
+        def ser_axis: () -> Axis?
+
+        alias serAxis ser_axis
+
+        # @param frame [GraphicFrame]
+        # @param options [Hash{Symbol => untyped}]
+        # : (GraphicFrame frame, ?Hash[Symbol, untyped] options) -> void
+        def initialize: (GraphicFrame frame, ?Hash[Symbol, untyped] options) -> void
+
+        # @param v [String]
+        # @return [String]
+        # : (String v) -> String
+        def gap_depth=: (String v) -> String
+
+        alias gapDepth= gap_depth=
+
+        # @param str [String]
+        # @return [String]
+        # : (?String str) -> String
+        def to_xml_string: (?String str) -> String
+      end
+
+      # Pie chart.
+      class PieChart < Chart
+        # @param frame [GraphicFrame]
+        # @param options [Hash{Symbol => untyped}]
+        # : (GraphicFrame frame, ?Hash[Symbol, untyped] options) -> void
+        def initialize: (GraphicFrame frame, ?Hash[Symbol, untyped] options) -> void
+
+        # @param str [String]
+        # @return [String]
+        # : (?String str) -> String
+        def to_xml_string: (?String str) -> String
+      end
+
+      # 3D Pie chart.
+      class Pie3DChart < Chart
+        # @param frame [GraphicFrame]
+        # @param options [Hash{Symbol => untyped}]
+        # : (GraphicFrame frame, ?Hash[Symbol, untyped] options) -> void
+        def initialize: (GraphicFrame frame, ?Hash[Symbol, untyped] options) -> void
+
+        # @param str [String]
+        # @return [String]
+        # : (?String str) -> String
+        def to_xml_string: (?String str) -> String
+      end
+
+      # Scatter chart.
+      class ScatterChart < Chart
+        include OptionsParser
+
+        # @return [Symbol]
+        attr_reader scatter_style: untyped
+
+        alias scatterStyle scatter_style
+
+        # @return [ValAxis]
+        # : () -> ValAxis
+        def x_val_axis: () -> ValAxis
+
+        alias xValAxis x_val_axis
+
+        # @return [ValAxis]
+        # : () -> ValAxis
+        def y_val_axis: () -> ValAxis
+
+        alias yValAxis y_val_axis
+
+        # @param frame [GraphicFrame]
+        # @param options [Hash{Symbol => untyped}]
+        # : (GraphicFrame frame, ?Hash[Symbol, untyped] options) -> void
+        def initialize: (GraphicFrame frame, ?Hash[Symbol, untyped] options) -> void
+
+        # @param v [Symbol]
+        # @return [Symbol]
+        # : (Symbol v) -> Symbol
+        def scatter_style=: (Symbol v) -> Symbol
+
+        alias scatterStyle= scatter_style=
+
+        # @return [Axes]
+        # : () -> Axes
+        def axes: () -> Axes
+
+        # @param str [String]
+        # @return [String]
+        # : (?String str) -> String
+        def to_xml_string: (?String str) -> String
+      end
+
+      # Area chart.
+      class AreaChart < Chart
+        # @return [CatAxis]
+        # : () -> CatAxis
+        def cat_axis: () -> CatAxis
+
+        alias catAxis cat_axis
+
+        # @return [ValAxis]
+        # : () -> ValAxis
+        def val_axis: () -> ValAxis
+
+        alias valAxis val_axis
+
+        # @return [Symbol]
+        attr_reader grouping: untyped
+
+        # @param frame [GraphicFrame]
+        # @param options [Hash{Symbol => untyped}]
+        # : (GraphicFrame frame, ?Hash[Symbol, untyped] options) -> void
+        def initialize: (GraphicFrame frame, ?Hash[Symbol, untyped] options) -> void
+
+        # @param v [Symbol]
+        # @return [Symbol]
+        # : (Symbol v) -> Symbol
+        def grouping=: (Symbol v) -> Symbol
+
+        # @return [Axes]
+        # : () -> Axes
+        def axes: () -> Axes
+
+        # @param str [String]
+        # @return [String]
+        # : (?String str) -> String
+        def to_xml_string: (?String str) -> String
+      end
+
+      # Bubble chart.
+      class BubbleChart < Chart
+        # @return [ValAxis]
+        # : () -> ValAxis
+        def x_val_axis: () -> ValAxis
+
+        alias xValAxis x_val_axis
+
+        # @return [ValAxis]
+        # : () -> ValAxis
+        def y_val_axis: () -> ValAxis
+
+        alias yValAxis y_val_axis
+
+        # @param frame [GraphicFrame]
+        # @param options [Hash{Symbol => untyped}]
+        # : (GraphicFrame frame, ?Hash[Symbol, untyped] options) -> void
+        def initialize: (GraphicFrame frame, ?Hash[Symbol, untyped] options) -> void
+
+        # @return [Axes]
+        # : () -> Axes
+        def axes: () -> Axes
+
+        # @param str [String]
+        # @return [String]
+        # : (?String str) -> String
+        def to_xml_string: (?String str) -> String
+      end
+    end
+  end
+end

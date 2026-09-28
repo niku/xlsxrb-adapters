@@ -1,0 +1,72 @@
+# Generated from lib/xlsxrb/adapters/caxlsx/hyperlink.rb with RBS::Inline
+
+module Xlsxrb
+  module Adapters
+    module Caxlsx
+      # A worksheet hyperlink object.
+      class WorksheetHyperlink
+        include OptionsParser
+
+        include Accessors
+
+        include SerializedAttributes
+
+        # @return [String, nil]
+        attr_reader ref: untyped
+
+        # @return [Worksheet]
+        attr_reader worksheet: untyped
+
+        # @return [Symbol]
+        attr_accessor target: untyped
+
+        # @param worksheet [Worksheet]
+        # @param options [Hash{Symbol => untyped}]
+        # : (Worksheet worksheet, ?Hash[Symbol, untyped] options) ?{ (WorksheetHyperlink) -> void } -> void
+        def initialize: (Worksheet worksheet, ?Hash[Symbol, untyped] options) ?{ (WorksheetHyperlink) -> void } -> void
+
+        # @param cell_reference [String, Cell]
+        # @return [String]
+        # : (String | Cell cell_reference) -> String
+        def ref=: (String | Cell cell_reference) -> String
+
+        # @return [Relationship, nil]
+        # : () -> Relationship?
+        def relationship: () -> Relationship?
+
+        # @param str [String]
+        # @return [String]
+        # : (?String str) -> String
+        def to_xml_string: (?String str) -> String
+
+        # @return [Hash{Symbol => untyped}]
+        # : () -> Hash[Symbol, untyped]
+        def location_or_id: () -> Hash[Symbol, untyped]
+      end
+
+      # A collection of hyperlink objects for a worksheet.
+      class WorksheetHyperlinks < SimpleTypedList
+        # @return [Worksheet]
+        attr_reader worksheet: untyped
+
+        # @param worksheet [Worksheet]
+        # : (Worksheet worksheet) -> void
+        def initialize: (Worksheet worksheet) -> void
+
+        # @param options [Hash{Symbol => untyped}]
+        # @return [WorksheetHyperlink]
+        # : (Hash[Symbol, untyped] options) -> WorksheetHyperlink
+        def add: (Hash[Symbol, untyped] options) -> WorksheetHyperlink
+
+        # @return [Array[Relationship]]
+        # : () -> Array[Relationship]
+        def relationships: () -> Array[Relationship]
+
+        # @param str [String]
+        # @return [String, nil]
+        # : (?String str) -> String?
+        def to_xml_string: (?String str) -> String?
+      end
+    end
+  end
+end

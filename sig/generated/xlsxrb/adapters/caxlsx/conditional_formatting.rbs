@@ -1,0 +1,453 @@
+# Generated from lib/xlsxrb/adapters/caxlsx/conditional_formatting.rb with RBS::Inline
+
+module Xlsxrb
+  module Adapters
+    module Caxlsx
+      # Conditional Format Value Object.
+      class Cfvo
+        include OptionsParser
+
+        include SerializedAttributes
+
+        # @return [Symbol, nil]
+        attr_reader type: untyped
+
+        # @return [Boolean, nil]
+        attr_reader gte: untyped
+
+        # @return [String, nil]
+        attr_reader val: untyped
+
+        # @param options [Hash{Symbol => untyped}]
+        # : (?Hash[Symbol, untyped] options) -> void
+        def initialize: (?Hash[Symbol, untyped] options) -> void
+
+        # @param v [Symbol]
+        # @return [Symbol]
+        # : (Symbol v) -> Symbol
+        def type=: (Symbol v) -> Symbol
+
+        # @param v [Boolean]
+        # @return [Boolean]
+        # : (bool v) -> bool
+        def gte=: (bool v) -> bool
+
+        # @param v [untyped]
+        # @return [String]
+        # : (untyped v) -> String
+        def val=: (untyped v) -> String
+
+        # @param str [String]
+        # @return [String]
+        # : (?String str) -> String
+        def to_xml_string: (?String str) -> String
+      end
+
+      # Collection of Cfvo objects.
+      class Cfvos < SimpleTypedList
+        # : () -> void
+        def initialize: () -> void
+
+        # @param str [String]
+        # @return [String]
+        # : (?String str) -> String
+        def to_xml_string: (?String str) -> String
+      end
+
+      # ColorScale conditional formatting.
+      class ColorScale
+        # @return [Array[Hash{Symbol => untyped}]]
+        # : () -> Array[Hash[Symbol, untyped]]
+        def self.default_cfvos: () -> Array[Hash[Symbol, untyped]]
+
+        # @return [ColorScale]
+        # : () -> ColorScale
+        def self.two_tone: () -> ColorScale
+
+        # @return [ColorScale]
+        # : () -> ColorScale
+        def self.three_tone: () -> ColorScale
+
+        # @return [Cfvos]
+        # : () -> Cfvos
+        def value_objects: () -> Cfvos
+
+        # @return [SimpleTypedList]
+        # : () -> SimpleTypedList
+        def colors: () -> SimpleTypedList
+
+        # @param cfvos [Array[Hash{Symbol => untyped}]]
+        # : (*Hash[Symbol, untyped] cfvos) ?{ (ColorScale) -> void } -> void
+        def initialize: (*Hash[Symbol, untyped] cfvos) ?{ (ColorScale) -> void } -> void
+
+        # @param options [Hash{Symbol => untyped}]
+        # @return [Hash{Symbol => untyped}]
+        # : (?Hash[Symbol, untyped] options) -> Hash[Symbol, untyped]
+        def add: (?Hash[Symbol, untyped] options) -> Hash[Symbol, untyped]
+
+        # @param index [Integer]
+        # @return [void]
+        # : (?Integer index) -> void
+        def delete_at: (?Integer index) -> void
+
+        # @param str [String]
+        # @return [String]
+        # : (?String str) -> String
+        def to_xml_string: (?String str) -> String
+
+        private
+
+        # @param user_cfvos [Array[Hash{Symbol => untyped}]]
+        # @return [void]
+        # : (Array[Hash[Symbol, untyped]] user_cfvos) -> void
+        def initialize_default_cfvos: (Array[Hash[Symbol, untyped]] user_cfvos) -> void
+      end
+
+      # DataBar conditional formatting.
+      class DataBar
+        include OptionsParser
+
+        include SerializedAttributes
+
+        # @return [Array[Hash{Symbol => untyped}]]
+        # : () -> Array[Hash[Symbol, untyped]]
+        def self.default_cfvos: () -> Array[Hash[Symbol, untyped]]
+
+        CHILD_ELEMENTS: untyped
+
+        # @return [Integer]
+        attr_reader min_length: untyped
+
+        alias minLength min_length
+
+        # @return [Integer]
+        attr_reader max_length: untyped
+
+        alias maxLength max_length
+
+        # @return [Boolean]
+        attr_reader show_value: untyped
+
+        alias showValue show_value
+
+        # @param options [Hash{Symbol => untyped}]
+        # @param cfvos [Array[Hash{Symbol => untyped}]]
+        # : (?Hash[Symbol, untyped] options, *Hash[Symbol, untyped] cfvos) ?{ (DataBar) -> void } -> void
+        def initialize: (?Hash[Symbol, untyped] options, *Hash[Symbol, untyped] cfvos) ?{ (DataBar) -> void } -> void
+
+        # @return [Cfvos]
+        # : () -> Cfvos
+        def value_objects: () -> Cfvos
+
+        # @return [Color]
+        # : () -> Color
+        def color: () -> Color
+
+        # @param v [Integer]
+        # @return [Integer]
+        # : (Integer v) -> Integer
+        def min_length=: (Integer v) -> Integer
+
+        alias minLength= min_length=
+
+        # @param v [Integer]
+        # @return [Integer]
+        # : (Integer v) -> Integer
+        def max_length=: (Integer v) -> Integer
+
+        alias maxLength= max_length=
+
+        # @param v [Boolean]
+        # @return [Boolean]
+        # : (bool v) -> bool
+        def show_value=: (bool v) -> bool
+
+        alias showValue= show_value=
+
+        # @param v [Color, String]
+        # @return [void]
+        # : (Color | String v) -> void
+        def color=: (Color | String v) -> void
+
+        # @param str [String]
+        # @return [String]
+        # : (?String str) -> String
+        def to_xml_string: (?String str) -> String
+
+        private
+
+        # @param cfvos [Array[Hash{Symbol => untyped}]]
+        # @return [void]
+        # : (Array[Hash[Symbol, untyped]] cfvos) -> void
+        def initialize_cfvos: (Array[Hash[Symbol, untyped]] cfvos) -> void
+      end
+
+      # IconSet conditional formatting.
+      class IconSet
+        include OptionsParser
+
+        include SerializedAttributes
+
+        # @return [String]
+        attr_reader iconSet: untyped
+
+        # @return [Boolean]
+        attr_reader percent: untyped
+
+        # @return [Boolean]
+        attr_reader reverse: untyped
+
+        # @return [Boolean]
+        attr_reader showValue: untyped
+
+        # @return [Array[Integer]]
+        attr_reader interpolationPoints: untyped
+
+        # @param options [Hash{Symbol => untyped}]
+        # : (?Hash[Symbol, untyped] options) ?{ (IconSet) -> void } -> void
+        def initialize: (?Hash[Symbol, untyped] options) ?{ (IconSet) -> void } -> void
+
+        # @param v [String]
+        # @return [String]
+        # : (String v) -> String
+        def iconSet=: (String v) -> String
+
+        # @param v [Array[Integer]]
+        # @return [Array[Integer]]
+        # : (Array[Integer] v) -> Array[Integer]
+        def interpolationPoints=: (Array[Integer] v) -> Array[Integer]
+
+        # @param v [Boolean]
+        # @return [Boolean]
+        # : (bool v) -> bool
+        def showValue=: (bool v) -> bool
+
+        # @param v [Boolean]
+        # @return [Boolean]
+        # : (bool v) -> bool
+        def percent=: (bool v) -> bool
+
+        # @param v [Boolean]
+        # @return [Boolean]
+        # : (bool v) -> bool
+        def reverse=: (bool v) -> bool
+
+        # @param str [String]
+        # @return [String]
+        # : (?String str) -> String
+        def to_xml_string: (?String str) -> String
+
+        private
+
+        # @return [void]
+        # : () -> void
+        def initialize_value_objects: () -> void
+      end
+
+      # A rule for conditional formatting.
+      class ConditionalFormattingRule
+        include OptionsParser
+
+        include SerializedAttributes
+
+        # @return [Array[String], nil]
+        attr_reader formula: untyped
+
+        # @return [Symbol, nil]
+        attr_reader type: untyped
+
+        # @return [Boolean, nil]
+        attr_reader aboveAverage: untyped
+
+        # @return [Boolean, nil]
+        attr_reader bottom: untyped
+
+        # @return [Integer, nil]
+        attr_reader dxfId: untyped
+
+        # @return [Boolean, nil]
+        attr_reader equalAverage: untyped
+
+        # @return [Symbol, nil]
+        attr_reader operator: untyped
+
+        # @return [Integer, nil]
+        attr_reader priority: untyped
+
+        # @return [String, nil]
+        attr_reader text: untyped
+
+        # @return [Boolean, nil]
+        attr_reader percent: untyped
+
+        # @return [Integer, nil]
+        attr_reader rank: untyped
+
+        # @return [Integer, nil]
+        attr_reader stdDev: untyped
+
+        # @return [Boolean, nil]
+        attr_reader stopIfTrue: untyped
+
+        # @return [Symbol, nil]
+        attr_reader timePeriod: untyped
+
+        # @param options [Hash{Symbol => untyped}]
+        # : (?Hash[Symbol, untyped] options) -> void
+        def initialize: (?Hash[Symbol, untyped] options) -> void
+
+        # @return [ColorScale]
+        # : () -> ColorScale
+        def color_scale: () -> ColorScale
+
+        # @return [DataBar]
+        # : () -> DataBar
+        def data_bar: () -> DataBar
+
+        # @return [IconSet]
+        # : () -> IconSet
+        def icon_set: () -> IconSet
+
+        # @param v [Symbol]
+        # @return [Symbol]
+        # : (Symbol v) -> Symbol
+        def type=: (Symbol v) -> Symbol
+
+        # @param v [Boolean]
+        # @return [Boolean]
+        # : (bool v) -> bool
+        def aboveAverage=: (bool v) -> bool
+
+        # @param v [Boolean]
+        # @return [Boolean]
+        # : (bool v) -> bool
+        def bottom=: (bool v) -> bool
+
+        # @param v [Integer]
+        # @return [Integer]
+        # : (Integer v) -> Integer
+        def dxfId=: (Integer v) -> Integer
+
+        # @param v [Boolean]
+        # @return [Boolean]
+        # : (bool v) -> bool
+        def equalAverage=: (bool v) -> bool
+
+        # @param v [Integer]
+        # @return [Integer]
+        # : (Integer v) -> Integer
+        def priority=: (Integer v) -> Integer
+
+        # @param v [Symbol]
+        # @return [Symbol]
+        # : (Symbol v) -> Symbol
+        def operator=: (Symbol v) -> Symbol
+
+        # @param v [String]
+        # @return [String]
+        # : (String v) -> String
+        def text=: (String v) -> String
+
+        # @param v [Boolean]
+        # @return [Boolean]
+        # : (bool v) -> bool
+        def percent=: (bool v) -> bool
+
+        # @param v [Integer]
+        # @return [Integer]
+        # : (Integer v) -> Integer
+        def rank=: (Integer v) -> Integer
+
+        # @param v [Integer]
+        # @return [Integer]
+        # : (Integer v) -> Integer
+        def stdDev=: (Integer v) -> Integer
+
+        # @param v [Boolean]
+        # @return [Boolean]
+        # : (bool v) -> bool
+        def stopIfTrue=: (bool v) -> bool
+
+        # @param v [Symbol]
+        # @return [Symbol]
+        # : (Symbol v) -> Symbol
+        def timePeriod=: (Symbol v) -> Symbol
+
+        # @param v [String, Array[String]]
+        # @return [Array[String]]
+        # : (String | Array[String] v) -> Array[String]
+        def formula=: (String | Array[String] v) -> Array[String]
+
+        # @param v [ColorScale]
+        # @return [void]
+        # : (ColorScale v) -> void
+        def color_scale=: (ColorScale v) -> void
+
+        # @param v [DataBar]
+        # @return [void]
+        # : (DataBar v) -> void
+        def data_bar=: (DataBar v) -> void
+
+        # @param v [IconSet]
+        # @return [void]
+        # : (IconSet v) -> void
+        def icon_set=: (IconSet v) -> void
+
+        # @param str [String]
+        # @return [String]
+        # : (?String str) -> String
+        def to_xml_string: (?String str) -> String
+      end
+
+      # Conditional formatting element applying rules to a range.
+      class ConditionalFormatting
+        include OptionsParser
+
+        # @return [String, nil]
+        attr_reader sqref: untyped
+
+        # @return [Array[ConditionalFormattingRule]]
+        attr_accessor rules: untyped
+
+        # @param options [Hash{Symbol => untyped}]
+        # : (?Hash[Symbol, untyped] options) -> void
+        def initialize: (?Hash[Symbol, untyped] options) -> void
+
+        # @param rules [Array[untyped], Hash{Symbol => untyped}]
+        # @return [void]
+        # : (Array[untyped] | Hash[Symbol, untyped] rules) -> void
+        def add_rules: (Array[untyped] | Hash[Symbol, untyped] rules) -> void
+
+        # @param rule [ConditionalFormattingRule, Hash{Symbol => untyped}]
+        # @return [void]
+        # : (ConditionalFormattingRule | Hash[Symbol, untyped] rule) -> void
+        def add_rule: (ConditionalFormattingRule | Hash[Symbol, untyped] rule) -> void
+
+        # @param v [String]
+        # @return [String]
+        # : (String v) -> String
+        def sqref=: (String v) -> String
+
+        # @param str [String]
+        # @return [String]
+        # : (?String str) -> String
+        def to_xml_string: (?String str) -> String
+      end
+
+      # Collection of ConditionalFormatting items for a worksheet.
+      class ConditionalFormattings < SimpleTypedList
+        # @return [Worksheet]
+        attr_reader worksheet: untyped
+
+        # @param worksheet [Worksheet]
+        # : (Worksheet worksheet) -> void
+        def initialize: (Worksheet worksheet) -> void
+
+        # @param str [String]
+        # @return [String]
+        # : (?String str) -> String
+        def to_xml_string: (?String str) -> String
+      end
+    end
+  end
+end
