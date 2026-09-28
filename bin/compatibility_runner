@@ -2,147 +2,31 @@
 # frozen_string_literal: true
 
 require "bundler/setup"
-require "zip"
-require "rspec"
-require "rspec/core"
-require_relative "../lib/xlsxrb-adapters"
+require "rbconfig"
 
-# Compatibility harness:
-# Bind RubyXL constant to Xlsxrb::Adapters::RubyXL within this test process.
-Object.const_set(:RubyXL, Xlsxrb::Adapters::RubyXL)
+target = (ARGV[0] || "all").downcase
 
-# Provide RgbColor if not defined
-unless defined?(RubyXL::RgbColor)
-  module RubyXL
-    class RgbColor
-      attr_accessor :r, :g, :b, :a
+ruby = RbConfig.ruby
+dir = __dir__
 
-      def to_s
-        str = format("%02x%02x%02x", r || 0, g || 0, b || 0)
-        str += format("%02x", a) if a
-        str
-      end
-    end
-  end
+ruby_xl_runner = File.join(dir, "compatibility_runner_ruby_xl")
+caxlsx_runner = File.join(dir, "compatibility_runner_caxlsx")
+
+exit_codes = []
+
+case target
+when "ruby_xl", "rubyxl"
+  exit_codes << (system(ruby, ruby_xl_runner) ? 0 : 1)
+when "caxlsx", "axlsx"
+  exit_codes << (system(ruby, caxlsx_runner) ? 0 : 1)
+when "all"
+  puts ">>> Running RubyXL compatibility suite..."
+  exit_codes << (system(ruby, ruby_xl_runner) ? 0 : 1)
+  puts "\n>>> Running Caxlsx compatibility suite..."
+  exit_codes << (system(ruby, caxlsx_runner) ? 0 : 1)
+else
+  warn "Unknown compatibility target: #{target}. Valid targets: all, ruby_xl, caxlsx"
+  exit 1
 end
 
-# Provide NumberFormat if not defined
-unless defined?(RubyXL::NumberFormat)
-  module RubyXL
-    class NumberFormat
-      attr_accessor :num_fmt_id, :format_code
-
-      def initialize(params = {})
-        @num_fmt_id = params[:num_fmt_id]
-        @format_code = params[:format_code]
-      end
-
-      def is_date_format?
-        !!(format_code.to_s.gsub(/("[^"]*"|\[[^\]]*\]|[\\_*].)/i, "") =~ /[dmyhs]/i)
-      end
-    end
-  end
-end
-
-# Intercept require calls to rubyXL internal paths
-module Kernel
-  alias_method :original_require, :require
-  def require(path)
-    return true if path == "rubyXL" || path.start_with?("rubyXL/") || path == "spec_helper"
-
-    original_require(path)
-  end
-end
-
-RSpec.configure do |c|
-  c.color = true
-end
-
-# Locate official rubyXL spec files
-spec_dir = nil
-candidates = [
-  File.expand_path("../../gems/rubyXL-*/spec/lib", __dir__),
-  "/usr/local/bundle/gems/rubyXL-3.4.38/spec/lib"
-]
-
-candidates.each do |candidate|
-  matches = Dir.glob(candidate)
-  unless matches.empty?
-    spec_dir = matches.first
-    break
-  end
-end
-
-unless spec_dir && Dir.exist?(spec_dir)
-  # Try finding via gem specification
-  begin
-    spec = Gem::Specification.find_by_name("rubyXL")
-    spec_dir = File.join(spec.gem_dir, "spec", "lib")
-  rescue Gem::MissingSpecError
-    abort "Error: rubyXL gem with spec suite not found."
-  end
-end
-
-files = [
-  "color_spec.rb",
-  "rgb_color_spec.rb",
-  "text_spec.rb",
-  "reference_spec.rb",
-  "stylesheet_spec.rb",
-  "parser_spec.rb",
-  "workbook_spec.rb",
-  "cell_spec.rb",
-  "worksheet_spec.rb"
-]
-
-results = {}
-
-puts "=================================================="
-puts "Running official rubyXL spec suite (#{spec_dir})"
-puts "Target: Xlsxrb::Adapters::RubyXL"
-puts "=================================================="
-
-files.each do |file|
-  path = File.join(spec_dir, file)
-  next unless File.exist?(path)
-
-  # Reset RSpec world for each file to isolate examples
-  RSpec.reset
-
-  # Run RSpec
-  RSpec::Core::Runner.run([path, "--format", "progress"])
-  world = RSpec.world
-  examples = world.all_examples
-  failed = examples.select { |e| e.execution_result.status == :failed }
-  passed = examples.select { |e| e.execution_result.status == :passed }
-  pending = examples.select { |e| e.execution_result.status == :pending }
-
-  results[file] = {
-    total: examples.size,
-    passed: passed.size,
-    failed: failed.size,
-    pending: pending.size
-  }
-end
-
-puts "\n\n"
-puts "=================================================="
-puts "SUMMARY OF OFFICIAL RUBYXL RSPEC SUITE RUN"
-puts "=================================================="
-total_all = 0
-passed_all = 0
-failed_all = 0
-
-printf "%-22s | %6s | %6s | %6s | %7s\n", "File", "Total", "Pass", "Fail", "Pass %"
-puts "-" * 55
-results.each do |file, res|
-  total_all += res[:total]
-  passed_all += res[:passed]
-  failed_all += res[:failed]
-  pct = res[:total].positive? ? (res[:passed].to_f / res[:total] * 100).round(1) : 0
-  printf "%-22s | %6d | %6d | %6d | %6.1f%%\n", file, res[:total], res[:passed], res[:failed], pct
-end
-puts "-" * 55
-pct_all = total_all.positive? ? (passed_all.to_f / total_all * 100).round(1) : 0
-printf "%-22s | %6d | %6d | %6d | %6.1f%%\n", "TOTAL", total_all, passed_all, failed_all, pct_all
-puts "=================================================="
+exit(exit_codes.all?(&:zero?) ? 0 : 1)

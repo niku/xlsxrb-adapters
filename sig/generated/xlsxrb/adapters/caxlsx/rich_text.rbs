@@ -1,0 +1,162 @@
+# Generated from lib/xlsxrb/adapters/caxlsx/rich_text.rb with RBS::Inline
+
+module Xlsxrb
+  module Adapters
+    module Caxlsx
+      # A single rich text run with formatting options
+      class RichTextRun
+        include OptionsParser
+
+        attr_accessor value: untyped
+
+        attr_accessor cell: untyped
+
+        attr_reader font_name: String?
+
+        attr_reader charset: Integer?
+
+        attr_reader family: Integer?
+
+        attr_reader b: bool?
+
+        attr_reader i: bool?
+
+        attr_reader strike: bool?
+
+        attr_reader outline: bool?
+
+        attr_reader shadow: bool?
+
+        attr_reader condense: bool?
+
+        attr_reader extend: bool?
+
+        attr_reader u: Symbol?
+
+        attr_reader color: Color?
+
+        attr_reader sz: Integer?
+
+        attr_reader vertAlign: Symbol?
+
+        attr_reader scheme: Symbol?
+
+        INLINE_STYLES: untyped
+
+        # @param value [Object]
+        # @param options [Hash]
+        # : (untyped value, ?Hash[Symbol, untyped] options) -> void
+        def initialize: (untyped value, ?Hash[Symbol, untyped] options) -> void
+
+        alias text value
+
+        alias text= value=
+
+        # : (untyped v) -> void
+        def font_name=: (untyped v) -> void
+
+        # : (untyped v) -> void
+        def charset=: (untyped v) -> void
+
+        # : (untyped v) -> void
+        def family=: (untyped v) -> void
+
+        # : (untyped v) -> void
+        def b=: (untyped v) -> void
+
+        # : (untyped v) -> void
+        def i=: (untyped v) -> void
+
+        # : (untyped v) -> void
+        def strike=: (untyped v) -> void
+
+        # : (untyped v) -> void
+        def outline=: (untyped v) -> void
+
+        # : (untyped v) -> void
+        def shadow=: (untyped v) -> void
+
+        # : (untyped v) -> void
+        def condense=: (untyped v) -> void
+
+        # : (untyped v) -> void
+        def extend=: (untyped v) -> void
+
+        # : (untyped v) -> void
+        def u=: (untyped v) -> void
+
+        # : (untyped v) -> void
+        def color=: (untyped v) -> void
+
+        # : (untyped v) -> void
+        def sz=: (untyped v) -> void
+
+        # : (untyped v) -> void
+        def vertAlign=: (untyped v) -> void
+
+        # : (untyped v) -> void
+        def scheme=: (untyped v) -> void
+
+        # : (untyped validator, Symbol attr, untyped val) -> void
+        def set_run_style: (untyped validator, Symbol attr, untyped val) -> void
+
+        # : (Array[Float] widtharray) -> Array[Float]
+        def autowidth: (Array[Float] widtharray) -> Array[Float]
+
+        # : (?String str) -> String
+        def to_xml_string: (?String str) -> String
+
+        # Converts to native Xlsxrb::Elements::RichTextRun.
+        #
+        # @return [Xlsxrb::Elements::RichTextRun]
+        # : () -> Xlsxrb::Elements::RichTextRun
+        def to_xlsxrb: () -> Xlsxrb::Elements::RichTextRun
+
+        # Builds a RichTextRun from native Xlsxrb::Elements::RichTextRun or Hash.
+        #
+        # @param xlsxrb_run [Xlsxrb::Elements::RichTextRun, Hash{Symbol => untyped}]
+        # @return [RichTextRun]
+        # : (untyped xlsxrb_run) -> RichTextRun
+        def self.from_xlsxrb: (untyped xlsxrb_run) -> RichTextRun
+      end
+
+      # Collection of rich text runs
+      class RichText < SimpleTypedList
+        attr_reader cell: untyped
+
+        # @param text [String, nil]
+        # @param options [Hash]
+        # : (?String? text, ?Hash[Symbol, untyped] options) ?{ (self) -> void } -> void
+        def initialize: (?String? text, ?Hash[Symbol, untyped] options) ?{ (self) -> void } -> void
+
+        # : (untyped c) -> void
+        def cell=: (untyped c) -> void
+
+        # : (String text, ?Hash[Symbol, untyped] options) -> RichTextRun
+        def add_run: (String text, ?Hash[Symbol, untyped] options) -> RichTextRun
+
+        # : () -> self
+        def runs: () -> self
+
+        # : () -> Float
+        def autowidth: () -> Float
+
+        # : (?String str) -> String
+        def to_xml_string: (?String str) -> String
+
+        # Converts to native Xlsxrb::Elements::RichText.
+        #
+        # @return [Xlsxrb::Elements::RichText]
+        # : () -> Xlsxrb::Elements::RichText
+        def to_xlsxrb: () -> Xlsxrb::Elements::RichText
+
+        # Builds a RichText from native Xlsxrb::Elements::RichText.
+        #
+        # @param xlsxrb_rt [Xlsxrb::Elements::RichText]
+        # @return [RichText]
+        # : (untyped xlsxrb_rt) -> RichText
+        def self.from_xlsxrb: (untyped xlsxrb_rt) -> RichText
+      end
+    end
+  end
+end

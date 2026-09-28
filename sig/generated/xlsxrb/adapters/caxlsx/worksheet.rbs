@@ -1,0 +1,673 @@
+# Generated from lib/xlsxrb/adapters/caxlsx/worksheet.rb with RBS::Inline
+
+module Xlsxrb
+  module Adapters
+    module Caxlsx
+      # BorderCreator helper for drawing borders on cell ranges.
+      class BorderCreator
+        # @param worksheet [Worksheet]
+        # @param cells [Array[Cell]]
+        # @param edges [Symbol, Array[Symbol], nil]
+        # @param style [Symbol, nil]
+        # @param color [String, nil]
+        # : (worksheet: Worksheet, cells: Array[Cell], ?edges: Symbol | Array[Symbol] | nil, ?style: Symbol | nil, ?color: String | nil) -> void
+        def initialize: (worksheet: Worksheet, cells: Array[Cell], ?edges: Symbol | Array[Symbol] | nil, ?style: Symbol | nil, ?color: String | nil) -> void
+
+        # @return [void]
+        # : () -> void
+        def draw: () -> void
+
+        private
+
+        # @return [Hash{Symbol => String}]
+        # : () -> Hash[Symbol, String]
+        def border_cells: () -> Hash[Symbol, String]
+
+        # @return [String]
+        # : () -> String
+        def first_cell: () -> String
+
+        # @return [String]
+        # : () -> String
+        def last_cell: () -> String
+
+        # @return [String]
+        # : () -> String
+        def first_row: () -> String
+
+        # @return [String]
+        # : () -> String
+        def first_col: () -> String
+
+        # @return [String]
+        # : () -> String
+        def last_row: () -> String
+
+        # @return [String]
+        # : () -> String
+        def last_col: () -> String
+      end
+
+      # Dimension node for worksheet.
+      class Dimension
+        # @return [String]
+        # : () -> String
+        def self.default_first: () -> String
+
+        # @return [String]
+        # : () -> String
+        def self.default_last: () -> String
+
+        # @return [Worksheet]
+        attr_reader worksheet: untyped
+
+        # @param worksheet [Worksheet]
+        # : (Worksheet worksheet) -> void
+        def initialize: (Worksheet worksheet) -> void
+
+        # @return [String]
+        # : () -> String
+        def sqref: () -> String
+
+        # @param str [String]
+        # @return [String, nil]
+        # : (?String str) -> String?
+        def to_xml_string: (?String str) -> String?
+
+        # @return [String]
+        # : () -> String
+        def first_cell_reference: () -> String
+
+        # @return [String]
+        # : () -> String
+        def last_cell_reference: () -> String
+
+        private
+
+        # @param cell [Cell, untyped]
+        # @param default [String]
+        # @return [String]
+        # : (untyped cell, String default) -> String
+        def dimension_reference: (untyped cell, String default) -> String
+      end
+
+      # OutlinePr properties.
+      class OutlinePr
+        include OptionsParser
+
+        include Accessors
+
+        include SerializedAttributes
+
+        # @param options [Hash{Symbol => untyped}]
+        # : (?Hash[Symbol, untyped] options) -> void
+        def initialize: (?Hash[Symbol, untyped] options) -> void
+
+        # @param str [String]
+        # @return [String]
+        # : (?String str) -> String
+        def to_xml_string: (?String str) -> String
+      end
+
+      # Sheet formatting properties.
+      class SheetFormatPr
+        include SerializedAttributes
+
+        include OptionsParser
+
+        include Accessors
+
+        # @param options [Hash{Symbol => untyped}]
+        # : (?Hash[Symbol, untyped] options) -> void
+        def initialize: (?Hash[Symbol, untyped] options) -> void
+
+        # @param str [String]
+        # @return [String]
+        # : (?String str) -> String
+        def to_xml_string: (?String str) -> String
+      end
+
+      # SheetCalcPr calculation properties.
+      class SheetCalcPr
+        include OptionsParser
+
+        include SerializedAttributes
+
+        include Accessors
+
+        # @param options [Hash{Symbol => untyped}]
+        # : (?Hash[Symbol, untyped] options) -> void
+        def initialize: (?Hash[Symbol, untyped] options) -> void
+
+        # @param str [String]
+        # @return [String]
+        # : (?String str) -> String
+        def to_xml_string: (?String str) -> String
+      end
+
+      # SheetPr sheet properties element.
+      class SheetPr
+        include OptionsParser
+
+        include Accessors
+
+        include SerializedAttributes
+
+        # @return [Worksheet]
+        attr_reader worksheet: untyped
+
+        # @return [Color, nil]
+        attr_reader tab_color: untyped
+
+        # @param worksheet [Worksheet]
+        # @param options [Hash{Symbol => untyped}]
+        # : (Worksheet worksheet, ?Hash[Symbol, untyped] options) -> void
+        def initialize: (Worksheet worksheet, ?Hash[Symbol, untyped] options) -> void
+
+        # @return [PageSetUpPr]
+        # : () -> PageSetUpPr
+        def page_setup_pr: () -> PageSetUpPr
+
+        # @return [OutlinePr]
+        # : () -> OutlinePr
+        def outline_pr: () -> OutlinePr
+
+        # @param v [String]
+        # @return [void]
+        # : (String v) -> void
+        def tab_color=: (String v) -> void
+
+        # @param str [String]
+        # @return [String]
+        # : (?String str) -> String
+        def to_xml_string: (?String str) -> String
+
+        private
+
+        # @return [void]
+        # : () -> void
+        def update_properties: () -> void
+      end
+
+      # MergedCells collection.
+      class MergedCells < SimpleTypedList
+        # @param worksheet [Worksheet]
+        # : (Worksheet worksheet) -> void
+        def initialize: (Worksheet worksheet) -> void
+
+        # @param cells [String, Array[Cell]]
+        # @return [void]
+        # : (String | Array[Cell] cells) -> void
+        def add: (String | Array[Cell] cells) -> void
+
+        # @param str [String]
+        # @return [String, nil]
+        # : (?String str) -> String?
+        def to_xml_string: (?String str) -> String?
+      end
+
+      # WorksheetDrawing connector.
+      class WorksheetDrawing
+        # @return [Worksheet]
+        attr_reader worksheet: untyped
+
+        # @return [Drawing, nil]
+        attr_reader drawing: untyped
+
+        # @param worksheet [Worksheet]
+        # : (Worksheet worksheet) -> void
+        def initialize: (Worksheet worksheet) -> void
+
+        # @param chart_type [Class]
+        # @param options [Hash{Symbol => untyped}]
+        # @return [Chart]
+        # : (Class chart_type, Hash[Symbol, untyped] options) -> Chart
+        def add_chart: (Class chart_type, Hash[Symbol, untyped] options) -> Chart
+
+        # @param options [Hash{Symbol => untyped}]
+        # @return [Pic]
+        # : (Hash[Symbol, untyped] options) -> Pic
+        def add_image: (Hash[Symbol, untyped] options) -> Pic
+
+        # @return [Boolean]
+        # : () -> bool
+        def has_drawing?: () -> bool
+
+        # @return [Relationship, nil]
+        # : () -> Relationship?
+        def relationship: () -> Relationship?
+
+        # @param str [String]
+        # @return [String, nil]
+        # : (?String str) -> String?
+        def to_xml_string: (?String str) -> String?
+      end
+
+      # SheetData serializer.
+      class SheetData
+        # @return [Worksheet]
+        attr_reader worksheet: untyped
+
+        # @param worksheet [Worksheet]
+        # : (Worksheet worksheet) -> void
+        def initialize: (Worksheet worksheet) -> void
+
+        # @param str [String]
+        # @return [String]
+        # : (?String str) -> String
+        def to_xml_string: (?String str) -> String
+      end
+
+      # The Worksheet class represents a worksheet in the workbook.
+      class Worksheet
+        include OptionsParser
+
+        include SerializedAttributes
+
+        # @return [Workbook]
+        attr_reader workbook: untyped
+
+        # @return [Integer]
+        attr_reader sheet_id: untyped
+
+        # @return [Boolean]
+        attr_reader escape_formulas: untyped
+
+        # @return [Boolean]
+        attr_reader secure_formulas: untyped
+
+        # @return [Boolean, nil]
+        attr_accessor preserve_spaces: untyped
+
+        # @param wb [Workbook]
+        # @param options [Hash{Symbol => untyped}]
+        # : (Workbook wb, ?Hash[Symbol, untyped] options) ?{ (Worksheet) -> void } -> void
+        def initialize: (Workbook wb, ?Hash[Symbol, untyped] options) ?{ (Worksheet) -> void } -> void
+
+        # @param options [Hash{Symbol => untyped}]
+        # @return [void]
+        # : (Hash[Symbol, untyped] options) -> void
+        def initialize_page_options: (Hash[Symbol, untyped] options) -> void
+
+        # @return [String]
+        # : () -> String
+        def name: () -> String
+
+        # @param name [String]
+        # @return [void]
+        # : (String name) -> void
+        def name=: (String name) -> void
+
+        # @param value [Boolean]
+        # @return [Boolean]
+        # : (bool value) -> bool
+        def escape_formulas=: (bool value) -> bool
+
+        # @param value [Boolean]
+        # @return [Boolean]
+        # : (bool value) -> bool
+        def secure_formulas=: (bool value) -> bool
+
+        # @param sheet_state [Symbol]
+        # @return [void]
+        # : (Symbol sheet_state) -> void
+        def state=: (Symbol sheet_state) -> void
+
+        # @return [Symbol]
+        # : () -> Symbol
+        def state: () -> Symbol
+
+        # @return [SheetCalcPr]
+        # : () -> SheetCalcPr
+        def sheet_calc_pr: () -> SheetCalcPr
+
+        # @return [SheetProtection]
+        # : () ?{ (SheetProtection) -> void } -> SheetProtection
+        def sheet_protection: () ?{ (SheetProtection) -> void } -> SheetProtection
+
+        # @return [SheetView]
+        # : () ?{ (SheetView) -> void } -> SheetView
+        def sheet_view: () ?{ (SheetView) -> void } -> SheetView
+
+        # @return [SheetFormatPr]
+        # : () -> SheetFormatPr
+        def sheet_format_pr: () -> SheetFormatPr
+
+        # @return [Tables]
+        # : () -> Tables
+        def tables: () -> Tables
+
+        # @return [PivotTables]
+        # : () -> PivotTables
+        def pivot_tables: () -> PivotTables
+
+        # @return [ColBreaks]
+        # : () -> ColBreaks
+        def col_breaks: () -> ColBreaks
+
+        # @return [RowBreaks]
+        # : () -> RowBreaks
+        def row_breaks: () -> RowBreaks
+
+        # @return [WorksheetHyperlinks]
+        # : () -> WorksheetHyperlinks
+        def hyperlinks: () -> WorksheetHyperlinks
+
+        # @return [Comments, nil]
+        # : () -> Comments?
+        def comments: () -> Comments?
+
+        # @return [SimpleTypedList]
+        # : () -> SimpleTypedList
+        def rows: () -> SimpleTypedList
+
+        # @yieldparam row_idx [Integer]
+        # @yieldparam col_idx [Integer]
+        # @return [Array[Array[Cell]]]
+        # : () ?{ (Integer, Integer) -> void } -> Array[Array[Cell]]
+        def cols: () ?{ (Integer, Integer) -> void } -> Array[Array[Cell]]
+
+        # @return [AutoFilter]
+        # : () -> AutoFilter
+        def auto_filter: () -> AutoFilter
+
+        # @param v [String]
+        # @return [String]
+        # : (String v) -> String
+        def auto_filter=: (String v) -> String
+
+        # @return [Boolean]
+        # : () -> bool
+        def fit_to_page?: () -> bool
+
+        # @return [Cols]
+        # : () -> Cols
+        def column_info: () -> Cols
+
+        # @return [PageMargins]
+        # : () ?{ (PageMargins) -> void } -> PageMargins
+        def page_margins: () ?{ (PageMargins) -> void } -> PageMargins
+
+        # @return [PageSetup]
+        # : () ?{ (PageSetup) -> void } -> PageSetup
+        def page_setup: () ?{ (PageSetup) -> void } -> PageSetup
+
+        # @return [PrintOptions]
+        # : () ?{ (PrintOptions) -> void } -> PrintOptions
+        def print_options: () ?{ (PrintOptions) -> void } -> PrintOptions
+
+        # @return [HeaderFooter]
+        # : () ?{ (HeaderFooter) -> void } -> HeaderFooter
+        def header_footer: () ?{ (HeaderFooter) -> void } -> HeaderFooter
+
+        # @return [Array[Cell]]
+        # : () -> Array[Cell]
+        def cells: () -> Array[Cell]
+
+        # @param cells [String, Array[Cell]]
+        # @return [void]
+        # : (String | Array[Cell] cells) -> void
+        def merge_cells: (String | Array[Cell] cells) -> void
+
+        # @param cells [String, Array[Cell]]
+        # @return [ProtectedRange]
+        # : (String | Array[Cell] cells) -> ProtectedRange
+        def protect_range: (String | Array[Cell] cells) -> ProtectedRange
+
+        # @return [Dimension]
+        # : () -> Dimension
+        def dimension: () -> Dimension
+
+        # @return [SheetPr]
+        # : () -> SheetPr
+        def sheet_pr: () -> SheetPr
+
+        # @return [String]
+        # : () -> String
+        def pn: () -> String
+
+        # @return [String]
+        # : () -> String
+        def rels_pn: () -> String
+
+        # @return [String]
+        # : () -> String
+        def rId: () -> String
+
+        # @return [Integer]
+        # : () -> Integer
+        def index: () -> Integer
+
+        # @return [Drawing, nil]
+        # : () -> Drawing?
+        def drawing: () -> Drawing?
+
+        # @param values [Array[untyped]]
+        # @param options [Hash{Symbol => untyped}]
+        # @return [Row]
+        # : (?Array[untyped] values, ?Hash[Symbol, untyped] options) ?{ (Row) -> void } -> Row
+        def add_row: (?Array[untyped] values, ?Hash[Symbol, untyped] options) ?{ (Row) -> void } -> Row
+
+        alias << add_row
+
+        # @param cells [String]
+        # @param rules [Array[untyped], Hash{Symbol => untyped}]
+        # @return [ConditionalFormattings]
+        # : (String cells, Array[untyped] | Hash[Symbol, untyped] rules) -> ConditionalFormattings
+        def add_conditional_formatting: (String cells, Array[untyped] | Hash[Symbol, untyped] rules) -> ConditionalFormattings
+
+        # @param cells [String]
+        # @param data_validation [Hash{Symbol => untyped}]
+        # @return [void]
+        # : (String cells, Hash[Symbol, untyped] data_validation) -> void
+        def add_data_validation: (String cells, Hash[Symbol, untyped] data_validation) -> void
+
+        # @param options [Hash{Symbol => untyped}]
+        # @return [WorksheetHyperlink]
+        # : (?Hash[Symbol, untyped] options) -> WorksheetHyperlink
+        def add_hyperlink: (?Hash[Symbol, untyped] options) -> WorksheetHyperlink
+
+        # @param chart_type [Class]
+        # @param options [Hash{Symbol => untyped}]
+        # @return [Chart]
+        # : (Class chart_type, ?Hash[Symbol, untyped] options) ?{ (Chart) -> void } -> Chart
+        def add_chart: (Class chart_type, ?Hash[Symbol, untyped] options) ?{ (Chart) -> void } -> Chart
+
+        # @param ref [String]
+        # @param options [Hash{Symbol => untyped}]
+        # @return [Table]
+        # : (String ref, ?Hash[Symbol, untyped] options) ?{ (Table) -> void } -> Table
+        def add_table: (String ref, ?Hash[Symbol, untyped] options) ?{ (Table) -> void } -> Table
+
+        # @param ref [String]
+        # @param range [String]
+        # @param options [Hash{Symbol => untyped}]
+        # @return [PivotTable]
+        # : (String ref, String range, ?Hash[Symbol, untyped] options) ?{ (PivotTable) -> void } -> PivotTable
+        def add_pivot_table: (String ref, String range, ?Hash[Symbol, untyped] options) ?{ (PivotTable) -> void } -> PivotTable
+
+        # @param options [Hash{Symbol => untyped}]
+        # @return [Comment]
+        # : (?Hash[Symbol, untyped] options) -> Comment
+        def add_comment: (?Hash[Symbol, untyped] options) -> Comment
+
+        # @param options [Hash{Symbol => untyped}]
+        # @return [Pic]
+        # : (?Hash[Symbol, untyped] options) ?{ (Pic) -> void } -> Pic
+        def add_image: (?Hash[Symbol, untyped] options) ?{ (Pic) -> void } -> Pic
+
+        # @param cell [String, Cell]
+        # @return [void]
+        # : (String | Cell cell) -> void
+        def add_page_break: (String | Cell cell) -> void
+
+        # @param widths [Array[Numeric, nil]]
+        # @return [void]
+        # : (*(Numeric | nil) widths) -> void
+        def column_widths: (*Numeric | nil widths) -> void
+
+        # @param styles [Array[Integer, nil]]
+        # @return [void]
+        # : (*(Integer | nil) styles) -> void
+        def column_styles: (*Integer | nil styles) -> void
+
+        # @param index [Integer]
+        # @param style [Integer]
+        # @param options [Hash{Symbol => untyped}]
+        # @return [void]
+        # : (Integer index, Integer style, ?Hash[Symbol, untyped] options) -> void
+        def col_style: (Integer index, Integer style, ?Hash[Symbol, untyped] options) -> void
+
+        # @param index [Integer]
+        # @param style [Integer]
+        # @param options [Hash{Symbol => untyped}]
+        # @return [void]
+        # : (Integer index, Integer style, ?Hash[Symbol, untyped] options) -> void
+        def row_style: (Integer index, Integer style, ?Hash[Symbol, untyped] options) -> void
+
+        # @param cell_refs [String, Array[String]]
+        # @param styles [Array[untyped]]
+        # @return [void]
+        # : (String | Array[String] cell_refs, *untyped styles) -> void
+        def add_style: (String | Array[String] cell_refs, *untyped styles) -> void
+
+        # @param cell_refs [String, Array[String]]
+        # @param options [Hash{Symbol => untyped}, Array[Symbol], Symbol, nil]
+        # @return [void]
+        # : (String | Array[String] cell_refs, ?Hash[Symbol, untyped] | Array[Symbol] | Symbol | nil options) -> void
+        def add_border: (String | Array[String] cell_refs, ?Hash[Symbol, untyped] | Array[Symbol] | Symbol | nil options) -> void
+
+        # @param str [String]
+        # @return [String]
+        # : (?String str) -> String
+        def to_sheet_node_xml_string: (?String str) -> String
+
+        # @param str [String]
+        # @return [String]
+        # : (?String str) -> String
+        def to_xml_string: (?String str) -> String
+
+        # @return [Relationships]
+        # : () -> Relationships
+        def relationships: () -> Relationships
+
+        # @param cell_def [String, Integer]
+        # @return [Cell, Array[Cell], Row, nil]
+        # : (String | Integer cell_def) -> (Cell | Array[Cell] | Row | nil)
+        def []: (String | Integer cell_def) -> (Cell | Array[Cell] | Row | nil)
+
+        # @param name [String]
+        # @return [Cell, nil]
+        # : (String name) -> Cell?
+        def name_to_cell: (String name) -> Cell?
+
+        # @return [Styles]
+        # : () -> Styles
+        def styles: () -> Styles
+
+        # @param start_index [Integer]
+        # @param end_index [Integer]
+        # @param level [Integer]
+        # @param collapsed [Boolean]
+        # @return [void]
+        # : (Integer start_index, Integer end_index, ?Integer level, ?bool collapsed) -> void
+        def outline_level_rows: (Integer start_index, Integer end_index, ?Integer level, ?bool collapsed) -> void
+
+        # @param start_index [Integer]
+        # @param end_index [Integer]
+        # @param level [Integer]
+        # @param collapsed [Boolean]
+        # @return [void]
+        # : (Integer start_index, Integer end_index, ?Integer level, ?bool collapsed) -> void
+        def outline_level_columns: (Integer start_index, Integer end_index, ?Integer level, ?bool collapsed) -> void
+
+        # @return [ProtectedRanges]
+        # : () -> ProtectedRanges
+        def protected_ranges: () -> ProtectedRanges
+
+        # @return [ConditionalFormattings]
+        # : () -> ConditionalFormattings
+        def conditional_formattings: () -> ConditionalFormattings
+
+        # @return [DataValidations]
+        # : () -> DataValidations
+        def data_validations: () -> DataValidations
+
+        # @return [MergedCells]
+        # : () -> MergedCells
+        def merged_cells: () -> MergedCells
+
+        # @return [String]
+        # : () -> String
+        def worksheet_node: () -> String
+
+        # @return [SheetData]
+        # : () -> SheetData
+        def sheet_data: () -> SheetData
+
+        # @return [WorksheetDrawing]
+        # : () -> WorksheetDrawing
+        def worksheet_drawing: () -> WorksheetDrawing
+
+        # @return [WorksheetComments]
+        # : () -> WorksheetComments
+        def worksheet_comments: () -> WorksheetComments
+
+        # @param index [Integer]
+        # @return [Col]
+        # : (Integer index) -> Col
+        def find_or_create_column_info: (Integer index) -> Col
+
+        # Converts worksheet to an immutable Xlsxrb::Elements::Worksheet.
+        #
+        # @return [Xlsxrb::Elements::Worksheet]
+        # : () -> Xlsxrb::Elements::Worksheet
+        def to_xlsxrb: () -> Xlsxrb::Elements::Worksheet
+
+        private
+
+        # @return [Symbol, String]
+        # : () -> (Symbol | String)
+        def xml_space: () -> (Symbol | String)
+
+        # @param collection [untyped]
+        # @param range [Range[Integer]]
+        # @param level [Integer]
+        # @param collapsed [Boolean]
+        # @return [void]
+        # : (untyped collection, Range[Integer] range, ?Integer level, ?bool collapsed) -> void
+        def outline: (untyped collection, Range[Integer] range, ?Integer level, ?bool collapsed) -> void
+
+        # @param name [String]
+        # @return [void]
+        # : (String name) -> void
+        def validate_sheet_name: (String name) -> void
+
+        # @return [Array[untyped]]
+        # : () -> Array[untyped]
+        def serializable_parts: () -> Array[untyped]
+
+        # @param first [Cell]
+        # @param last [Cell]
+        # @return [Array[Cell]]
+        # : (Cell first, Cell last) -> Array[Cell]
+        def range: (Cell first, Cell last) -> Array[Cell]
+
+        # @param v [Workbook]
+        # @return [Workbook]
+        # : (Workbook v) -> Workbook
+        def workbook=: (Workbook v) -> Workbook
+
+        # @param row [Row]
+        # @param widths [Array[Numeric, Symbol, nil], nil]
+        # @return [void]
+        # : (Row row, ?Array[Numeric | Symbol | nil]? widths) -> void
+        def update_column_info: (Row row, ?Array[Numeric | Symbol | nil]? widths) -> void
+
+        # @return [void]
+        # : () -> void
+        def add_autofilter_defined_name_to_workbook: () -> void
+      end
+    end
+  end
+end

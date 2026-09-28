@@ -1,0 +1,89 @@
+# Generated from lib/xlsxrb/adapters/caxlsx/package.rb with RBS::Inline
+
+module Xlsxrb
+  module Adapters
+    module Caxlsx
+      # Package manages OOXML serialization and validation.
+      class Package
+        include OptionsParser
+
+        # @return [App]
+        attr_reader app: untyped
+
+        # @return [Core]
+        attr_reader core: untyped
+
+        # @param options [Hash{Symbol => untyped}]
+        # : (?Hash[Symbol, untyped] options) ?{ (Package) -> void } -> void
+        def initialize: (?Hash[Symbol, untyped] options) ?{ (Package) -> void } -> void
+
+        # @param v [Boolean]
+        # @return [Boolean]
+        # : (bool v) -> bool
+        def use_autowidth=: (bool v) -> bool
+
+        # @return [Boolean, nil]
+        # : () -> bool?
+        def use_shared_strings: () -> bool?
+
+        # @param v [Boolean]
+        # @return [Boolean]
+        # : (bool v) -> bool
+        def use_shared_strings=: (bool v) -> bool
+
+        # @return [Workbook]
+        # : () ?{ (Workbook) -> void } -> Workbook
+        def workbook: () ?{ (Workbook) -> void } -> Workbook
+
+        # @param workbook [Workbook]
+        # @return [Workbook]
+        # : (Workbook workbook) -> Workbook
+        def workbook=: (Workbook workbook) -> Workbook
+
+        # Serializes the workbook to disk.
+        #
+        # @param output [String]
+        # @param options [Hash{Symbol => untyped}, Boolean]
+        # @param secondary_options [Hash{Symbol => untyped}, nil]
+        # @return [Boolean]
+        # : (String output, ?Hash[Symbol, untyped] | bool options, ?Hash[Symbol, untyped]? secondary_options) -> bool
+        def serialize: (String output, ?Hash[Symbol, untyped] | bool options, ?Hash[Symbol, untyped]? secondary_options) -> bool
+
+        # Serializes the workbook to a StringIO instance.
+        #
+        # @param old_confirm_valid [Boolean, nil]
+        # @param confirm_valid [Boolean]
+        # @param password [String, nil]
+        # @return [StringIO, Boolean]
+        # : (?bool? old_confirm_valid, ?confirm_valid: bool, ?password: String?) -> (StringIO | false)
+        def to_stream: (?bool? old_confirm_valid, ?confirm_valid: bool, ?password: String?) -> (StringIO | false)
+
+        # Validates package contents.
+        #
+        # @return [Array[untyped]]
+        # : () -> Array[untyped]
+        def validate: () -> Array[untyped]
+
+        # @param file_name [String]
+        # @param password [String]
+        # @return [Boolean]
+        # : (String file_name, String password) -> bool
+        def encrypt: (String file_name, String password) -> bool
+
+        # Converts Package to an immutable Xlsxrb::Elements::Workbook.
+        #
+        # @return [Xlsxrb::Elements::Workbook]
+        # : () -> Xlsxrb::Elements::Workbook
+        def to_xlsxrb: () -> Xlsxrb::Elements::Workbook
+
+        private
+
+        # @param options [Hash{Symbol => untyped}, Boolean]
+        # @param secondary_options [Hash{Symbol => untyped}, nil]
+        # @return [Array[untyped]]
+        # : (Hash[Symbol, untyped] | bool options, ?Hash[Symbol, untyped]? secondary_options) -> Array[untyped]
+        def parse_serialize_options: (Hash[Symbol, untyped] | bool options, ?Hash[Symbol, untyped]? secondary_options) -> Array[untyped]
+      end
+    end
+  end
+end

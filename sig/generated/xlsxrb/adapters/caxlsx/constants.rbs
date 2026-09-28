@@ -1,0 +1,308 @@
+# Generated from lib/xlsxrb/adapters/caxlsx/constants.rb with RBS::Inline
+
+module Xlsxrb
+  module Adapters
+    module Caxlsx
+      # Version of the caxlsx API targeted by this adapter
+      VERSION: ::String
+
+      # Error messages
+      ERR_SHEET_NAME_EMPTY: ::String
+
+      ERR_SHEET_NAME_TOO_LONG: ::String
+
+      ERR_SHEET_NAME_CHARACTER_FORBIDDEN: ::String
+
+      ERR_DUPLICATE_SHEET_NAME: ::String
+
+      ERR_CELL_REFERENCE_INVALID: ::String
+
+      ERR_CELL_REFERENCE_MISSING_CELL: ::String
+
+      ERR_INTEGERISH: ::String
+
+      ERR_RANGE: ::String
+
+      ERR_TYPE: ::String
+
+      ERR_ANGLE: ::String
+
+      ERR_RESTRICTION: ::String
+
+      ERR_REGEX: ::String
+
+      ERR_INVALID_BORDER_ID: ::String
+
+      ERR_INVALID_BORDER_OPTIONS: ::String
+
+      # XML Namespaces
+      XML_NS: ::String
+
+      XML_NS_A: ::String
+
+      XML_NS_C: ::String
+
+      XML_NS_R: ::String
+
+      XML_NS_T: ::String
+
+      XML_NS_XDR: ::String
+
+      SCHEMA_BASE: ::String
+
+      SML_XSD: untyped
+
+      RELS_XSD: untyped
+
+      DRAWING_XSD: untyped
+
+      APP_XSD: untyped
+
+      CORE_XSD: untyped
+
+      CONTENT_TYPES_XSD: untyped
+
+      # Core Properties Namespaces
+      CORE_NS: ::String
+
+      CORE_NS_DC: ::String
+
+      CORE_NS_DCMIT: ::String
+
+      CORE_NS_DCT: ::String
+
+      CORE_NS_XSI: ::String
+
+      APP_NS: ::String
+
+      APP_NS_VT: ::String
+
+      # Content Types & Part Names
+      WORKBOOK_CT: ::String
+
+      WORKBOOK_PN: ::String
+
+      WORKBOOK_R: ::String
+
+      WORKBOOK_RELS_PN: ::String
+
+      WORKSHEET_CT: ::String
+
+      WORKSHEET_MAX_NAME_LENGTH: ::Integer
+
+      WORKSHEET_NAME_FORBIDDEN_CHARS: untyped
+
+      WORKSHEET_PN: ::String
+
+      WORKSHEET_R: ::String
+
+      WORKSHEET_RELS_PN: ::String
+
+      STYLES_CT: ::String
+
+      STYLES_PN: ::String
+
+      STYLES_R: ::String
+
+      THEME_CT: ::String
+
+      THEME_PN: ::String
+
+      THEME_R: ::String
+
+      THEME_XSD: ::String
+
+      SHARED_STRINGS_CT: ::String
+
+      SHARED_STRINGS_PN: ::String
+
+      SHARED_STRINGS_R: ::String
+
+      CORE_CT: ::String
+
+      CORE_PN: ::String
+
+      CORE_R: ::String
+
+      APP_CT: ::String
+
+      APP_PN: ::String
+
+      APP_R: ::String
+
+      DRAWING_CT: ::String
+
+      DRAWING_PN: ::String
+
+      DRAWING_R: ::String
+
+      DRAWING_RELS_PN: ::String
+
+      CHART_CT: ::String
+
+      CHART_PN: ::String
+
+      CHART_R: ::String
+
+      COMMENT_CT: ::String
+
+      COMMENT_PN: ::String
+
+      COMMENT_R: ::String
+
+      COMMENT_R_NULL: ::String
+
+      VML_DRAWING_CT: ::String
+
+      VML_DRAWING_PN: ::String
+
+      VML_DRAWING_R: ::String
+
+      TABLE_CT: ::String
+
+      TABLE_PN: ::String
+
+      TABLE_R: ::String
+
+      PIVOT_TABLE_CT: ::String
+
+      PIVOT_TABLE_PN: ::String
+
+      PIVOT_TABLE_R: ::String
+
+      PIVOT_TABLE_RELS_PN: ::String
+
+      PIVOT_TABLE_CACHE_DEFINITION_CT: ::String
+
+      PIVOT_TABLE_CACHE_DEFINITION_PN: ::String
+
+      PIVOT_TABLE_CACHE_DEFINITION_R: ::String
+
+      CONTENT_TYPES_PN: ::String
+
+      RELS_CT: ::String
+
+      RELS_EX: ::String
+
+      RELS_PN: ::String
+
+      RELS_R: ::String
+
+      XML_CT: ::String
+
+      XML_EX: ::String
+
+      IMAGE_PN: ::String
+
+      IMAGE_R: ::String
+
+      HYPERLINK_R: ::String
+
+      JPEG_CT: ::String
+
+      JPEG_EXS: untyped
+
+      GIF_CT: ::String
+
+      GIF_EX: ::String
+
+      PNG_CT: ::String
+
+      PNG_EX: ::String
+
+      DIGITAL_SIGNATURE_XML_CT: ::String
+
+      DIGITAL_SIGNATURE_ORIGIN_CT: ::String
+
+      DIGITAL_SIGNATURE_CERTIFICATE_CT: ::String
+
+      DIGITAL_SIGNATURE_R: ::String
+
+      DIGITAL_SIGNATURE_NS: ::String
+
+      CONTROL_CHARS: ::String
+
+      ENCODING: ::String
+
+      # Formula prefixes
+      FORMULA_PREFIX: ::String
+
+      ARRAY_FORMULA_PREFIX: ::String
+
+      ARRAY_FORMULA_SUFFIX: ::String
+
+      SECONDARY_FORMULA_PREFIXES: untyped
+
+      # Style constants
+      STYLE_THIN_BORDER: ::Integer
+
+      STYLE_DATE: ::Integer
+
+      NUM_FMT_PERCENT: ::Integer
+
+      NUM_FMT_YYYYMMDD: ::Integer
+
+      NUM_FMT_YYYYMMDDHHMMSS: ::Integer
+
+      # Valid collections
+      VALID_BOOLEAN_CLASSES: untyped
+
+      VALID_BOOLEAN_VALUES: untyped
+
+      VALID_CELL_U_VALUES: untyped
+
+      VALID_HORIZONTAL_ALIGNMENT_VALUES: untyped
+
+      VALID_VERTICAL_ALIGNMENT_VALUES: untyped
+
+      VALID_PAGE_ORIENTATION_VALUES: untyped
+
+      VALID_PANE_TYPE_VALUES: untyped
+
+      VALID_SPLIT_STATE_TYPE_VALUES: untyped
+
+      VALID_VIEW_VISIBILITY_VALUES: untyped
+
+      VALID_SHEET_VIEW_TYPE_VALUES: untyped
+
+      VALID_PATTERN_TYPE_VALUES: untyped
+
+      VALID_GRADIENT_TYPE_VALUES: untyped
+
+      VALID_FAMILY_VALUES: untyped
+
+      VALID_DATA_VALIDATION_TYPE_VALUES: untyped
+
+      VALID_DATA_VALIDATION_OPERATOR_VALUES: untyped
+
+      VALID_DATA_VALIDATION_ERROR_STYLE_VALUES: untyped
+
+      VALID_CONDITIONAL_FORMATTING_TYPE_VALUES: untyped
+
+      VALID_CONDITIONAL_FORMATTING_OPERATOR_VALUES: untyped
+
+      VALID_CONDITION_FORMATTING_VALUE_OBJECT_TYPE_VALUES: untyped
+
+      VALID_ICON_SET_VALUES: untyped
+
+      VALID_TIME_PERIOD_TYPE_VALUES: untyped
+
+      VALID_SCATTER_STYLE_VALUES: untyped
+
+      VALID_MARKER_SYMBOL_VALUES: untyped
+
+      VALID_DISPLAY_BLANK_AS_VALUES: untyped
+
+      VALID_TABLE_ELEMENT_TYPE_VALUES: untyped
+
+      # Regular Expressions
+      NUMERIC_REGEX: ::Regexp
+
+      SAFE_FLOAT_REGEX: ::Regexp
+
+      MAYBE_FLOAT_REGEX: ::Regexp
+
+      ISO_8601_REGEX: ::Regexp
+    end
+  end
+end

@@ -1,0 +1,277 @@
+# Generated from lib/xlsxrb/adapters/caxlsx/page_setup.rb with RBS::Inline
+
+module Xlsxrb
+  module Adapters
+    module Caxlsx
+      # Page margins settings
+      class PageMargins
+        include OptionsParser
+
+        include SerializedAttributes
+
+        DEFAULT_LEFT_RIGHT_TOP_BOTTOM: ::Float
+
+        DEFAULT_HEADER_FOOTER: ::Float
+
+        attr_reader left: Float
+
+        attr_reader right: Float
+
+        attr_reader top: Float
+
+        attr_reader bottom: Float
+
+        attr_reader header: Float
+
+        attr_reader footer: Float
+
+        # @param options [Hash]
+        # : (?Hash[Symbol, untyped] options) -> void
+        def initialize: (?Hash[Symbol, untyped] options) -> void
+
+        # : (untyped v) -> void
+        def left=: (untyped v) -> void
+
+        # : (untyped v) -> void
+        def right=: (untyped v) -> void
+
+        # : (untyped v) -> void
+        def top=: (untyped v) -> void
+
+        # : (untyped v) -> void
+        def bottom=: (untyped v) -> void
+
+        # : (untyped v) -> void
+        def header=: (untyped v) -> void
+
+        # : (untyped v) -> void
+        def footer=: (untyped v) -> void
+
+        # @param options [Hash]
+        # : (Hash[Symbol, untyped] options) -> void
+        def set: (Hash[Symbol, untyped] options) -> void
+
+        # : (?String str) -> String
+        def to_xml_string: (?String str) -> String
+
+        # : () -> Hash[Symbol, Float]
+        def to_xlsxrb_hash: () -> Hash[Symbol, Float]
+      end
+
+      # Page setup properties
+      class PageSetUpPr
+        include OptionsParser
+
+        include SerializedAttributes
+
+        attr_reader fit_to_page: bool?
+
+        # : (?Hash[Symbol, untyped] options) -> void
+        def initialize: (?Hash[Symbol, untyped] options) -> void
+
+        # : (untyped v) -> void
+        def fit_to_page=: (untyped v) -> void
+
+        # : (?String str) -> String
+        def to_xml_string: (?String str) -> String
+      end
+
+      # Page setup settings
+      class PageSetup
+        include OptionsParser
+
+        include SerializedAttributes
+
+        attr_reader paper_size: Integer?
+
+        attr_reader scale: Integer?
+
+        attr_reader first_page_number: Integer?
+
+        attr_reader fit_to_width: Integer?
+
+        attr_reader fit_to_height: Integer?
+
+        attr_reader page_order: Symbol?
+
+        attr_reader orientation: Symbol?
+
+        attr_reader use_printer_defaults: bool?
+
+        attr_reader black_and_white: bool?
+
+        attr_reader draft: bool?
+
+        attr_reader cell_comments: Symbol?
+
+        attr_reader use_first_page_number: bool?
+
+        attr_reader horizontal_dpi: Integer?
+
+        attr_reader vertical_dpi: Integer?
+
+        attr_reader copies: Integer?
+
+        attr_reader paper_width: String?
+
+        attr_reader paper_height: String?
+
+        alias fitToWidth fit_to_width
+
+        alias fitToHeight fit_to_height
+
+        # @param options [Hash]
+        # : (?Hash[Symbol, untyped] options) -> void
+        def initialize: (?Hash[Symbol, untyped] options) -> void
+
+        # @param options [Hash]
+        # : (Hash[Symbol, untyped] options) -> void
+        def set: (Hash[Symbol, untyped] options) -> void
+
+        # : (untyped v) -> void
+        def orientation=: (untyped v) -> void
+
+        # : (untyped v) -> void
+        def paper_size=: (untyped v) -> void
+
+        # : (untyped v) -> void
+        def scale=: (untyped v) -> void
+
+        # : (untyped v) -> void
+        def fit_to_width=: (untyped v) -> void
+
+        alias fitToWidth= fit_to_width=
+
+        # : (untyped v) -> void
+        def fit_to_height=: (untyped v) -> void
+
+        alias fitToHeight= fit_to_height=
+
+        # : (untyped v) -> void
+        def paper_width=: (untyped v) -> void
+
+        # : (untyped v) -> void
+        def paper_height=: (untyped v) -> void
+
+        # : () -> bool
+        def fit_to_page?: () -> bool
+
+        alias fit_to_page fit_to_page?
+
+        # : (?String str) -> String
+        def to_xml_string: (?String str) -> String
+
+        # : () -> Hash[Symbol, untyped]
+        def to_xlsxrb_hash: () -> Hash[Symbol, untyped]
+      end
+
+      # Print options settings
+      class PrintOptions
+        include OptionsParser
+
+        attr_reader grid_lines: bool
+
+        attr_reader headings: bool
+
+        attr_reader horizontal_centered: bool
+
+        attr_reader vertical_centered: bool
+
+        # @param options [Hash]
+        # : (?Hash[Symbol, untyped] options) -> void
+        def initialize: (?Hash[Symbol, untyped] options) -> void
+
+        # @param options [Hash]
+        # : (Hash[Symbol, untyped] options) -> void
+        def set: (Hash[Symbol, untyped] options) -> void
+
+        # : (untyped v) -> void
+        def grid_lines=: (untyped v) -> void
+
+        # : (untyped v) -> void
+        def headings=: (untyped v) -> void
+
+        # : (untyped v) -> void
+        def horizontal_centered=: (untyped v) -> void
+
+        # : (untyped v) -> void
+        def vertical_centered=: (untyped v) -> void
+
+        # : (?String str) -> String
+        def to_xml_string: (?String str) -> String
+
+        # : () -> Hash[Symbol, bool]
+        def to_xlsxrb_hash: () -> Hash[Symbol, bool]
+      end
+
+      # Header and footer settings
+      class HeaderFooter
+        include OptionsParser
+
+        attr_accessor different_first: bool?
+
+        attr_accessor different_odd_even: bool?
+
+        attr_accessor odd_header: String?
+
+        attr_accessor odd_footer: String?
+
+        attr_accessor even_header: String?
+
+        attr_accessor even_footer: String?
+
+        attr_accessor first_header: String?
+
+        attr_accessor first_footer: String?
+
+        # @param options [Hash]
+        # : (?Hash[Symbol, untyped] options) -> void
+        def initialize: (?Hash[Symbol, untyped] options) -> void
+
+        # @param options [Hash]
+        # : (Hash[Symbol, untyped] options) -> void
+        def set: (Hash[Symbol, untyped] options) -> void
+
+        # : (?String str) -> String
+        def to_xml_string: (?String str) -> String
+
+        # : () -> Hash[Symbol, untyped]
+        def to_xlsxrb_hash: () -> Hash[Symbol, untyped]
+      end
+
+      # Break represents a page break
+      class Break
+        include OptionsParser
+
+        include SerializedAttributes
+
+        attr_accessor id: Integer?
+
+        attr_accessor min: Integer?
+
+        attr_accessor max: Integer?
+
+        attr_accessor man: bool?
+
+        attr_accessor pt: bool?
+
+        # @param options [Hash]
+        # : (?Hash[Symbol, untyped] options) -> void
+        def initialize: (?Hash[Symbol, untyped] options) -> void
+
+        # : (?String str) -> String
+        def to_xml_string: (?String str) -> String
+      end
+
+      # RowBreaks collection
+      class RowBreaks < SimpleTypedList
+        def initialize: () -> untyped
+      end
+
+      # ColBreaks collection
+      class ColBreaks < SimpleTypedList
+        def initialize: () -> untyped
+      end
+    end
+  end
+end

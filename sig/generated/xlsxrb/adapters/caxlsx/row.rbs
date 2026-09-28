@@ -1,0 +1,80 @@
+# Generated from lib/xlsxrb/adapters/caxlsx/row.rb with RBS::Inline
+
+module Xlsxrb
+  module Adapters
+    module Caxlsx
+      # A single row in a worksheet
+      class Row < SimpleTypedList
+        include SerializedAttributes
+
+        include Accessors
+
+        attr_reader worksheet: untyped
+
+        attr_reader outline_level: Integer?
+
+        attr_reader s: Integer?
+
+        alias outlineLevel outline_level
+
+        # @param worksheet [Worksheet]
+        # @param values [Array]
+        # @param options [Hash]
+        # : (untyped worksheet, ?Array[untyped] values, ?Hash[Symbol, untyped] options) -> void
+        def initialize: (untyped worksheet, ?Array[untyped] values, ?Hash[Symbol, untyped] options) -> void
+
+        # : () -> Float?
+        def height: () -> Float?
+
+        # : (untyped v) -> void
+        def height=: (untyped v) -> void
+
+        # : (untyped v) -> void
+        def outline_level=: (untyped v) -> void
+
+        alias outlineLevel= outline_level=
+
+        # : (untyped v) -> void
+        def s=: (untyped v) -> void
+
+        # : () -> Integer
+        def row_index: () -> Integer
+
+        # : () -> self
+        def cells: () -> self
+
+        # Adds a single cell to this row
+        # @param value [Object]
+        # @param options [Hash]
+        # @return [Cell]
+        # : (?untyped value, ?Hash[Symbol, untyped] options) -> Cell
+        def add_cell: (?untyped value, ?Hash[Symbol, untyped] options) -> Cell
+
+        # : (untyped color) -> void
+        def color=: (untyped color) -> void
+
+        # : (untyped style) -> void
+        def style=: (untyped style) -> void
+
+        # : (untyped val) -> void
+        def escape_formulas=: (untyped val) -> void
+
+        # : (untyped val) -> void
+        def secure_formulas=: (untyped val) -> void
+
+        # : (Integer r_idx, ?String str) -> String
+        def to_xml_string: (Integer r_idx, ?String str) -> String
+
+        # Converts to native Xlsxrb::Elements::Row
+        # @param r_idx [Integer, nil]
+        # @return [Xlsxrb::Elements::Row]
+        # : (?Integer? r_idx) -> Xlsxrb::Elements::Row
+        def to_xlsxrb: (?Integer? r_idx) -> Xlsxrb::Elements::Row
+
+        private
+
+        def array_to_cells: (untyped values, ?untyped options) -> untyped
+      end
+    end
+  end
+end

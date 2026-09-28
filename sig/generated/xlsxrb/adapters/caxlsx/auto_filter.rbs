@@ -1,0 +1,315 @@
+# Generated from lib/xlsxrb/adapters/caxlsx/auto_filter.rb with RBS::Inline
+
+module Xlsxrb
+  module Adapters
+    module Caxlsx
+      # This class expresses a filter criteria value.
+      class Filter
+        # @return [untyped]
+        attr_accessor val: untyped
+
+        # @param value [untyped]
+        # : (untyped value) -> void
+        def initialize: (untyped value) -> void
+
+        # @param str [String]
+        # @return [String]
+        # : (?String str) -> String
+        def to_xml_string: (?String str) -> String
+      end
+
+      # This collection is used to express a group of dates or times used in an AutoFilter criteria.
+      class DateGroupItem
+        include OptionsParser
+
+        include SerializedAttributes
+
+        DATE_TIME_GROUPING: untyped
+
+        # @return [String]
+        attr_reader date_time_grouping: untyped
+
+        # @return [Integer, String]
+        attr_reader year: untyped
+
+        # @return [Integer, nil]
+        attr_reader month: untyped
+
+        # @return [Integer, nil]
+        attr_reader day: untyped
+
+        # @return [Integer, nil]
+        attr_reader hour: untyped
+
+        # @return [Integer, nil]
+        attr_reader minute: untyped
+
+        # @return [Integer, nil]
+        attr_reader second: untyped
+
+        # @param options [Hash{Symbol => untyped}]
+        # : (?Hash[Symbol, untyped] options) -> void
+        def initialize: (?Hash[Symbol, untyped] options) -> void
+
+        # @param value [Integer, String]
+        # @return [Integer, String]
+        # : (Integer | String value) -> (Integer | String)
+        def year=: (Integer | String value) -> (Integer | String)
+
+        # @param value [Integer]
+        # @return [Integer]
+        # : (Integer value) -> Integer
+        def month=: (Integer value) -> Integer
+
+        # @param value [Integer]
+        # @return [Integer]
+        # : (Integer value) -> Integer
+        def day=: (Integer value) -> Integer
+
+        # @param value [Integer]
+        # @return [Integer]
+        # : (Integer value) -> Integer
+        def hour=: (Integer value) -> Integer
+
+        # @param value [Integer]
+        # @return [Integer]
+        # : (Integer value) -> Integer
+        def minute=: (Integer value) -> Integer
+
+        # @param value [Integer]
+        # @return [Integer]
+        # : (Integer value) -> Integer
+        def second=: (Integer value) -> Integer
+
+        # @param grouping [Symbol, String]
+        # @return [String]
+        # : (Symbol | String grouping) -> String
+        def date_time_grouping=: (Symbol | String grouping) -> String
+
+        # @param str [String]
+        # @return [String]
+        # : (?String str) -> String
+        def to_xml_string: (?String str) -> String
+      end
+
+      # Filters for an auto filter column.
+      class Filters
+        include OptionsParser
+
+        include SerializedAttributes
+
+        CALENDAR_TYPES: untyped
+
+        # @return [Boolean, nil]
+        attr_reader blank: untyped
+
+        # @return [String, nil]
+        attr_reader calendar_type: untyped
+
+        # @param options [Hash{Symbol => untyped}]
+        # : (?Hash[Symbol, untyped] options) -> void
+        def initialize: (?Hash[Symbol, untyped] options) -> void
+
+        # @param cell [Cell, nil]
+        # @return [Boolean]
+        # : (Cell? cell) -> bool
+        def apply: (Cell? cell) -> bool
+
+        # @return [Array[Filter]]
+        # : () -> Array[Filter]
+        def filter_items: () -> Array[Filter]
+
+        # @return [Array[DateGroupItem]]
+        # : () -> Array[DateGroupItem]
+        def date_group_items: () -> Array[DateGroupItem]
+
+        # @param calendar [String]
+        # @return [String]
+        # : (String calendar) -> String
+        def calendar_type=: (String calendar) -> String
+
+        # @param use_blank [Boolean]
+        # @return [Boolean]
+        # : (bool use_blank) -> bool
+        def blank=: (bool use_blank) -> bool
+
+        # @param values [Array[untyped]]
+        # @return [Array[untyped]]
+        # : (Array[untyped] values) -> Array[untyped]
+        def filter_items=: (Array[untyped] values) -> Array[untyped]
+
+        # @param options [Array[Hash{Symbol => untyped}]]
+        # @return [Array[Hash{Symbol => untyped}]]
+        # : (Array[Hash[Symbol, untyped]] options) -> Array[Hash[Symbol, untyped]]
+        def date_group_items=: (Array[Hash[Symbol, untyped]] options) -> Array[Hash[Symbol, untyped]]
+
+        # @param str [String]
+        # @return [String]
+        # : (?String str) -> String
+        def to_xml_string: (?String str) -> String
+      end
+
+      # The filterColumn collection identifies a particular column in the AutoFilter range.
+      class FilterColumn
+        include OptionsParser
+
+        include SerializedAttributes
+
+        FILTERS: untyped
+
+        # @return [Integer]
+        attr_reader col_id: untyped
+
+        # @return [Filters]
+        attr_reader filter: untyped
+
+        # @param col_id [Integer, Cell]
+        # @param filter_type [Symbol]
+        # @param options [Hash{Symbol => untyped}]
+        # : (Integer | Cell col_id, Symbol filter_type, ?Hash[Symbol, untyped] options) ?{ (Filters) -> void } -> void
+        def initialize: (Integer | Cell col_id, Symbol filter_type, ?Hash[Symbol, untyped] options) ?{ (Filters) -> void } -> void
+
+        # @return [Boolean]
+        # : () -> bool
+        def show_button: () -> bool
+
+        # @return [Boolean]
+        # : () -> bool
+        def hidden_button: () -> bool
+
+        # @param column_index [Integer, Cell]
+        # @return [Integer]
+        # : (Integer | Cell column_index) -> Integer
+        def col_id=: (Integer | Cell column_index) -> Integer
+
+        # @param row [Row]
+        # @param offset [Integer]
+        # @return [void]
+        # : (Row row, Integer offset) -> void
+        def apply: (Row row, Integer offset) -> void
+
+        # @param hidden [Boolean]
+        # @return [Boolean]
+        # : (bool hidden) -> bool
+        def hidden_button=: (bool hidden) -> bool
+
+        # @param show [Boolean]
+        # @return [Boolean]
+        # : (bool show) -> bool
+        def show_button=: (bool show) -> bool
+
+        # @param str [String]
+        # @return [String]
+        # : (?String str) -> String
+        def to_xml_string: (?String str) -> String
+      end
+
+      # This class represents an individual sort condition belonging to the sort state of an auto filter.
+      class SortCondition
+        # @return [Integer]
+        attr_reader column_index: untyped
+
+        # @return [Symbol]
+        attr_reader order: untyped
+
+        # @return [Array[untyped]]
+        attr_reader custom_list: untyped
+
+        # @param column_index [Integer]
+        # @param order [Symbol]
+        # @param custom_list [Array[untyped]]
+        # : (column_index: Integer, order: Symbol, custom_list: Array[untyped]) -> void
+        def initialize: (column_index: Integer, order: Symbol, custom_list: Array[untyped]) -> void
+
+        # @param ref [String]
+        # @param column_index [Integer]
+        # @return [String]
+        # : (String ref, Integer column_index) -> String
+        def ref_to_single_column: (String ref, Integer column_index) -> String
+
+        # @param str [String]
+        # @param ref [String]
+        # @return [String]
+        # : (String str, String ref) -> String
+        def to_xml_string: (String str, String ref) -> String
+      end
+
+      # This class performs sorting on a range in a worksheet.
+      class SortState
+        # @return [SimpleTypedList]
+        # : () -> SimpleTypedList
+        def sort_conditions: () -> SimpleTypedList
+
+        # @param auto_filter [AutoFilter]
+        # : (AutoFilter auto_filter) -> void
+        def initialize: (AutoFilter auto_filter) -> void
+
+        # @param column_index [Integer]
+        # @param order [Symbol]
+        # @param custom_list [Array[untyped]]
+        # @return [SortCondition]
+        # : (column_index: Integer, ?order: Symbol, ?custom_list: Array[untyped]) -> SortCondition
+        def add_sort_condition: (column_index: Integer, ?order: Symbol, ?custom_list: Array[untyped]) -> SortCondition
+
+        # @param str [String]
+        # @return [String]
+        # : (String str) -> String
+        def increment_cell_value: (String str) -> String
+
+        # @param str [String]
+        # @return [String, nil]
+        # : (?String str) -> String?
+        def to_xml_string: (?String str) -> String?
+      end
+
+      # This class represents an auto filter range in a worksheet.
+      class AutoFilter
+        # @return [Worksheet]
+        attr_reader worksheet: untyped
+
+        # @return [Boolean]
+        attr_reader sort_on_generate: untyped
+
+        # @return [String, nil]
+        attr_accessor range: untyped
+
+        # @param worksheet [Worksheet]
+        # : (Worksheet worksheet) -> void
+        def initialize: (Worksheet worksheet) -> void
+
+        # @return [String, nil]
+        # : () -> String?
+        def defined_name: () -> String?
+
+        # @return [SimpleTypedList]
+        # : () -> SimpleTypedList
+        def columns: () -> SimpleTypedList
+
+        # @param col_id [Integer, Cell]
+        # @param filter_type [Symbol]
+        # @param options [Hash{Symbol => untyped}]
+        # @return [FilterColumn]
+        # : (Integer | Cell col_id, Symbol filter_type, ?Hash[Symbol, untyped] options) -> FilterColumn
+        def add_column: (Integer | Cell col_id, Symbol filter_type, ?Hash[Symbol, untyped] options) -> FilterColumn
+
+        # @return [void]
+        # : () -> void
+        def apply: () -> void
+
+        # @return [SortState]
+        # : () -> SortState
+        def sort_state: () -> SortState
+
+        # @param v [Boolean]
+        # @return [Boolean]
+        # : (bool v) -> bool
+        def sort_on_generate=: (bool v) -> bool
+
+        # @param str [String]
+        # @return [String, nil]
+        # : (?String str) -> String?
+        def to_xml_string: (?String str) -> String?
+      end
+    end
+  end
+end

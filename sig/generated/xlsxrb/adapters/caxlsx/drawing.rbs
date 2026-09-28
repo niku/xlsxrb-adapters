@@ -1,0 +1,514 @@
+# Generated from lib/xlsxrb/adapters/caxlsx/drawing.rb with RBS::Inline
+
+module Xlsxrb
+  module Adapters
+    module Caxlsx
+      # Mime type utility functions for images.
+      module MimeTypeUtils
+        EXTENSION_MAP: untyped
+
+        # @param filepath [String]
+        # @return [String]
+        # : (String filepath) -> String
+        def self.get_mime_type: (String filepath) -> String
+
+        # @param uri_str [String]
+        # @return [String]
+        # : (String uri_str) -> String
+        def self.get_mime_type_from_uri: (String uri_str) -> String
+      end
+
+      # Picture locking properties.
+      class PictureLocking
+        include OptionsParser
+
+        include SerializedAttributes
+
+        include Accessors
+
+        # @param options [Hash{Symbol => untyped}]
+        # : (?Hash[Symbol, untyped] options) -> void
+        def initialize: (?Hash[Symbol, untyped] options) -> void
+
+        # @param str [String]
+        # @return [String]
+        # : (?String str) -> String
+        def to_xml_string: (?String str) -> String
+      end
+
+      # A drawing hyperlink object.
+      class Hyperlink
+        include SerializedAttributes
+
+        include OptionsParser
+
+        # @return [Pic]
+        attr_reader parent: untyped
+
+        # @return [String, nil]
+        attr_accessor href: untyped
+
+        # @return [String, nil]
+        attr_accessor invalid_url: untyped
+
+        alias invalidUrl invalid_url
+
+        alias invalidUrl= invalid_url=
+
+        # @return [String, nil]
+        attr_accessor action: untyped
+
+        # @return [Boolean, nil]
+        attr_reader end_snd: untyped
+
+        alias endSnd end_snd
+
+        # @return [Boolean, nil]
+        attr_reader highlight_click: untyped
+
+        alias highlightClick highlight_click
+
+        # @return [Boolean, nil]
+        attr_reader history: untyped
+
+        # @return [String, nil]
+        attr_accessor tgt_frame: untyped
+
+        alias tgtFrame tgt_frame
+
+        alias tgtFrame= tgt_frame=
+
+        # @return [String, nil]
+        attr_accessor tooltip: untyped
+
+        # @param parent [Pic]
+        # @param options [Hash{Symbol => untyped}]
+        # : (Pic parent, ?Hash[Symbol, untyped] options) ?{ (Hyperlink) -> void } -> void
+        def initialize: (Pic parent, ?Hash[Symbol, untyped] options) ?{ (Hyperlink) -> void } -> void
+
+        # @param v [Boolean]
+        # @return [Boolean]
+        # : (bool v) -> bool
+        def end_snd=: (bool v) -> bool
+
+        alias endSnd= end_snd=
+
+        # @param v [Boolean]
+        # @return [Boolean]
+        # : (bool v) -> bool
+        def highlight_click=: (bool v) -> bool
+
+        alias highlightClick= highlight_click=
+
+        # @param v [Boolean]
+        # @return [Boolean]
+        # : (bool v) -> bool
+        def history=: (bool v) -> bool
+
+        # @return [Relationship]
+        # : () -> Relationship
+        def relationship: () -> Relationship
+
+        # @param str [String]
+        # @return [String]
+        # : (?String str) -> String
+        def to_xml_string: (?String str) -> String
+      end
+
+      # Defines a point in the worksheet that drawing anchors attach to.
+      class Marker
+        include OptionsParser
+
+        # @return [Integer]
+        attr_reader col: untyped
+
+        # @return [Integer]
+        attr_reader colOff: untyped
+
+        # @return [Integer]
+        attr_reader row: untyped
+
+        # @return [Integer]
+        attr_reader rowOff: untyped
+
+        # @param options [Hash{Symbol => untyped}]
+        # : (?Hash[Symbol, untyped] options) -> void
+        def initialize: (?Hash[Symbol, untyped] options) -> void
+
+        # @param v [Integer]
+        # @return [Integer]
+        # : (Integer v) -> Integer
+        def col=: (Integer v) -> Integer
+
+        # @param v [Integer]
+        # @return [Integer]
+        # : (Integer v) -> Integer
+        def colOff=: (Integer v) -> Integer
+
+        # @param v [Integer]
+        # @return [Integer]
+        # : (Integer v) -> Integer
+        def row=: (Integer v) -> Integer
+
+        # @param v [Integer]
+        # @return [Integer]
+        # : (Integer v) -> Integer
+        def rowOff=: (Integer v) -> Integer
+
+        # @param col [Integer, String, Cell, Array[Integer]]
+        # @param row [Integer]
+        # @return [void]
+        # : (Integer | String | Cell | Array[Integer] col, ?Integer row) -> void
+        def coord: (Integer | String | Cell | Array[Integer] col, ?Integer row) -> void
+
+        # @param str [String]
+        # @return [String]
+        # : (?String str) -> String
+        def to_xml_string: (?String str) -> String
+
+        private
+
+        # @param x [Integer, String, Cell, Array[Integer]]
+        # @param y [Integer]
+        # @return [Array[Integer]]
+        # : (Integer | String | Cell | Array[Integer] x, ?Integer y) -> Array[Integer]
+        def parse_coord_args: (Integer | String | Cell | Array[Integer] x, ?Integer y) -> Array[Integer]
+      end
+
+      # Picture object in a drawing.
+      class Pic
+        include OptionsParser
+
+        ALLOWED_MIME_TYPES: untyped
+
+        # @return [String, nil]
+        attr_reader name: untyped
+
+        # @return [String, nil]
+        attr_reader descr: untyped
+
+        # @return [String, nil]
+        attr_reader image_src: untyped
+
+        # @return [OneCellAnchor, TwoCellAnchor]
+        attr_reader anchor: untyped
+
+        # @return [PictureLocking]
+        attr_reader picture_locking: untyped
+
+        # @return [Hyperlink, nil]
+        attr_reader hyperlink: untyped
+
+        # @return [Integer, nil]
+        attr_reader opacity: untyped
+
+        # @return [Boolean, nil]
+        attr_reader remote: untyped
+
+        # @param anchor [OneCellAnchor, TwoCellAnchor]
+        # @param options [Hash{Symbol => untyped}]
+        # : (OneCellAnchor | TwoCellAnchor anchor, ?Hash[Symbol, untyped] options) ?{ (Pic) -> void } -> void
+        def initialize: (OneCellAnchor | TwoCellAnchor anchor, ?Hash[Symbol, untyped] options) ?{ (Pic) -> void } -> void
+
+        # @param v [String]
+        # @param options [Hash{Symbol => untyped}]
+        # @return [Hyperlink]
+        # : (String v, ?Hash[Symbol, untyped] options) -> Hyperlink
+        def hyperlink=: (String v, ?Hash[Symbol, untyped] options) -> Hyperlink
+
+        # @param v [String]
+        # @return [String]
+        # : (String v) -> String
+        def image_src=: (String v) -> String
+
+        # @param v [String]
+        # @return [String]
+        # : (String v) -> String
+        def name=: (String v) -> String
+
+        # @param v [String]
+        # @return [String]
+        # : (String v) -> String
+        def descr=: (String v) -> String
+
+        # @param v [Boolean]
+        # @return [Boolean]
+        # : (bool v) -> bool
+        def remote=: (bool v) -> bool
+
+        # @return [Boolean]
+        # : () -> bool
+        def remote?: () -> bool
+
+        # @return [String, nil]
+        # : () -> String?
+        def file_name: () -> String?
+
+        # @return [String, nil]
+        # : () -> String?
+        def extname: () -> String?
+
+        # @return [Integer]
+        # : () -> Integer
+        def index: () -> Integer
+
+        # @return [String]
+        # : () -> String
+        def pn: () -> String
+
+        # @return [Relationship]
+        # : () -> Relationship
+        def relationship: () -> Relationship
+
+        # @return [Integer, nil]
+        # : () -> Integer?
+        def width: () -> Integer?
+
+        # @param v [Integer]
+        # @return [Integer]
+        # : (Integer v) -> Integer
+        def width=: (Integer v) -> Integer
+
+        # @return [Integer, nil]
+        # : () -> Integer?
+        def height: () -> Integer?
+
+        # @param v [Integer]
+        # @return [Integer]
+        # : (Integer v) -> Integer
+        def height=: (Integer v) -> Integer
+
+        # @param x [Integer]
+        # @param y [Integer, nil]
+        # @return [Marker]
+        # : (Integer x, ?Integer? y) -> Marker
+        def start_at: (Integer x, ?Integer? y) -> Marker
+
+        # @param x [Integer]
+        # @param y [Integer, nil]
+        # @return [Marker]
+        # : (Integer x, ?Integer? y) -> Marker
+        def end_at: (Integer x, ?Integer? y) -> Marker
+
+        # @param str [String]
+        # @return [String]
+        # : (?String str) -> String
+        def to_xml_string: (?String str) -> String
+
+        private
+
+        # @return [String]
+        # : () -> String
+        def relationship_xml_portion: () -> String
+
+        # @return [void]
+        # : () -> void
+        def use_one_cell_anchor: () -> void
+
+        # @return [void]
+        # : () -> void
+        def use_two_cell_anchor: () -> void
+
+        # @param new_anchor [OneCellAnchor, TwoCellAnchor]
+        # @return [void]
+        # : (OneCellAnchor | TwoCellAnchor new_anchor) -> void
+        def swap_anchor: (OneCellAnchor | TwoCellAnchor new_anchor) -> void
+      end
+
+      # Graphic frame container for chart objects.
+      class GraphicFrame
+        # @return [Chart]
+        attr_reader chart: untyped
+
+        # @return [TwoCellAnchor]
+        attr_reader anchor: untyped
+
+        # @param anchor [TwoCellAnchor]
+        # @param chart_type [Class]
+        # @param options [Hash{Symbol => untyped}]
+        # : (TwoCellAnchor anchor, Class chart_type, Hash[Symbol, untyped] options) -> void
+        def initialize: (TwoCellAnchor anchor, Class chart_type, Hash[Symbol, untyped] options) -> void
+
+        # @return [String]
+        # : () -> String
+        def rId: () -> String
+
+        # @param str [String]
+        # @return [String]
+        # : (?String str) -> String
+        def to_xml_string: (?String str) -> String
+      end
+
+      # Single cell anchor for images.
+      class OneCellAnchor
+        include OptionsParser
+
+        # @return [Marker]
+        attr_reader from: untyped
+
+        # @return [Pic]
+        attr_reader object: untyped
+
+        # @return [Drawing]
+        attr_reader drawing: untyped
+
+        # @return [Integer]
+        attr_reader width: untyped
+
+        # @return [Integer]
+        attr_reader height: untyped
+
+        # @param drawing [Drawing]
+        # @param options [Hash{Symbol => untyped}]
+        # : (Drawing drawing, ?Hash[Symbol, untyped] options) -> void
+        def initialize: (Drawing drawing, ?Hash[Symbol, untyped] options) -> void
+
+        # @param x [Integer, String, Cell, Array[Integer]]
+        # @param y [Integer]
+        # @return [void]
+        # : (Integer | String | Cell | Array[Integer] x, ?Integer y) -> void
+        def start_at: (Integer | String | Cell | Array[Integer] x, ?Integer y) -> void
+
+        # @param v [Integer]
+        # @return [Integer]
+        # : (Integer v) -> Integer
+        def height=: (Integer v) -> Integer
+
+        # @param v [Integer]
+        # @return [Integer]
+        # : (Integer v) -> Integer
+        def width=: (Integer v) -> Integer
+
+        # @return [Integer]
+        # : () -> Integer
+        def index: () -> Integer
+
+        # @param str [String]
+        # @return [String]
+        # : (?String str) -> String
+        def to_xml_string: (?String str) -> String
+
+        private
+
+        # @return [Hash{Symbol => Integer}]
+        # : () -> Hash[Symbol, Integer]
+        def ext: () -> Hash[Symbol, Integer]
+      end
+
+      # Two cell anchor for drawings and charts.
+      class TwoCellAnchor
+        include OptionsParser
+
+        # @return [Marker]
+        attr_reader from: untyped
+
+        # @return [Marker]
+        attr_reader to: untyped
+
+        # @return [Pic, GraphicFrame, untyped]
+        attr_reader object: untyped
+
+        # @return [Drawing]
+        attr_reader drawing: untyped
+
+        # @param drawing [Drawing]
+        # @param options [Hash{Symbol => untyped}]
+        # : (Drawing drawing, ?Hash[Symbol, untyped] options) -> void
+        def initialize: (Drawing drawing, ?Hash[Symbol, untyped] options) -> void
+
+        # @param x [Integer, String, Cell, Array[Integer]]
+        # @param y [Integer, nil]
+        # @return [void]
+        # : (Integer | String | Cell | Array[Integer] x, ?Integer? y) -> void
+        def start_at: (Integer | String | Cell | Array[Integer] x, ?Integer? y) -> void
+
+        # @param x [Integer, String, Cell, Array[Integer]]
+        # @param y [Integer, nil]
+        # @return [void]
+        # : (Integer | String | Cell | Array[Integer] x, ?Integer? y) -> void
+        def end_at: (Integer | String | Cell | Array[Integer] x, ?Integer? y) -> void
+
+        # @param chart_type [Class]
+        # @param options [Hash{Symbol => untyped}]
+        # @return [Chart]
+        # : (Class chart_type, Hash[Symbol, untyped] options) -> Chart
+        def add_chart: (Class chart_type, Hash[Symbol, untyped] options) -> Chart
+
+        # @param options [Hash{Symbol => untyped}]
+        # @return [Pic]
+        # : (?Hash[Symbol, untyped] options) -> Pic
+        def add_pic: (?Hash[Symbol, untyped] options) -> Pic
+
+        # @return [Integer]
+        # : () -> Integer
+        def index: () -> Integer
+
+        # @param str [String]
+        # @return [String]
+        # : (?String str) -> String
+        def to_xml_string: (?String str) -> String
+      end
+
+      # Canvas for charts and images in a worksheet.
+      class Drawing
+        # @return [Worksheet]
+        attr_reader worksheet: untyped
+
+        # @return [SimpleTypedList]
+        attr_reader anchors: untyped
+
+        # @param worksheet [Worksheet]
+        # : (Worksheet worksheet) -> void
+        def initialize: (Worksheet worksheet) -> void
+
+        # @param options [Hash{Symbol => untyped}]
+        # @return [Pic]
+        # : (?Hash[Symbol, untyped] options) -> Pic
+        def add_image: (?Hash[Symbol, untyped] options) -> Pic
+
+        # @param chart_type [Class]
+        # @param options [Hash{Symbol => untyped}]
+        # @return [Chart]
+        # : (Class chart_type, ?Hash[Symbol, untyped] options) -> Chart
+        def add_chart: (Class chart_type, ?Hash[Symbol, untyped] options) -> Chart
+
+        # @return [Array[Chart]]
+        # : () -> Array[Chart]
+        def charts: () -> Array[Chart]
+
+        # @return [Array[Hyperlink]]
+        # : () -> Array[Hyperlink]
+        def hyperlinks: () -> Array[Hyperlink]
+
+        # @return [Array[Pic]]
+        # : () -> Array[Pic]
+        def images: () -> Array[Pic]
+
+        # @return [Integer]
+        # : () -> Integer
+        def index: () -> Integer
+
+        # @return [String]
+        # : () -> String
+        def pn: () -> String
+
+        # @return [String]
+        # : () -> String
+        def rels_pn: () -> String
+
+        # @return [Array[untyped]]
+        # : () -> Array[untyped]
+        def child_objects: () -> Array[untyped]
+
+        # @return [Relationships]
+        # : () -> Relationships
+        def relationships: () -> Relationships
+
+        # @param str [String]
+        # @return [String]
+        # : (?String str) -> String
+        def to_xml_string: (?String str) -> String
+      end
+    end
+  end
+end

@@ -15,6 +15,9 @@ require "xlsxrb-adapters"
 require "rubyXL"
 require "rubyXL/convenience_methods"
 
+# Require official caxlsx for side-by-side comparison tests
+require "caxlsx"
+
 module TestHelper
   def with_tempfile(ext = ".xlsx")
     Dir.mktmpdir do |dir|

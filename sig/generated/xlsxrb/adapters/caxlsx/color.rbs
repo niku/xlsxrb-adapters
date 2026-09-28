@@ -1,0 +1,43 @@
+# Generated from lib/xlsxrb/adapters/caxlsx/color.rb with RBS::Inline
+
+module Xlsxrb
+  module Adapters
+    module Caxlsx
+      # Represents a color used for fonts, fills, and borders
+      class Color
+        include OptionsParser
+
+        include SerializedAttributes
+
+        attr_reader auto: bool?
+
+        attr_reader rgb: String?
+
+        attr_reader tint: Float?
+
+        # @param options [Hash]
+        # : (?Hash[Symbol, untyped] options) -> void
+        def initialize: (?Hash[Symbol, untyped] options) -> void
+
+        # Converts Color, Hash, String or object responding to rgb to a Color instance.
+        #
+        # @param val [Object]
+        # @return [Color, nil]
+        # : (untyped val) -> Color?
+        def self.from: (untyped val) -> Color?
+
+        # : (untyped v) -> void
+        def auto=: (untyped v) -> void
+
+        # : (untyped v) -> void
+        def rgb=: (untyped v) -> void
+
+        # : (untyped v) -> void
+        def tint=: (untyped v) -> void
+
+        # : (?String str, ?String tag_name) -> String
+        def to_xml_string: (?String str, ?String tag_name) -> String
+      end
+    end
+  end
+end

@@ -1,0 +1,222 @@
+# Generated from lib/xlsxrb/adapters/caxlsx/cell.rb with RBS::Inline
+
+module Xlsxrb
+  module Adapters
+    module Caxlsx
+      # A single cell in a worksheet
+      class Cell
+        include OptionsParser
+
+        attr_reader row: untyped
+
+        attr_reader value: untyped
+
+        attr_accessor formula_value: untyped
+
+        attr_accessor raw_style: Hash[Symbol, untyped]?
+
+        attr_reader ssti: Integer?
+
+        attr_reader name: String?
+
+        # Inline style accessors
+        attr_reader font_name: String?
+
+        attr_reader charset: Integer?
+
+        attr_reader family: Integer?
+
+        attr_reader b: bool?
+
+        attr_reader i: bool?
+
+        attr_reader strike: bool?
+
+        attr_reader outline: bool?
+
+        attr_reader shadow: bool?
+
+        attr_reader condense: bool?
+
+        attr_reader extend: bool?
+
+        attr_reader u: Symbol?
+
+        attr_reader color: Color?
+
+        attr_reader sz: Integer?
+
+        attr_reader vertAlign: Symbol?
+
+        attr_reader scheme: Symbol?
+
+        INLINE_STYLES: untyped
+
+        CELL_TYPES: untyped
+
+        CELL_REFERENCE_REGEX: ::Regexp
+
+        # @param row [Row]
+        # @param value [Object, nil]
+        # @param options [Hash]
+        # : (untyped row, ?untyped value, ?Hash[Symbol, untyped] options) -> void
+        def initialize: (untyped row, ?untyped value, ?Hash[Symbol, untyped] options) -> void
+
+        # : () -> Integer
+        def style: () -> Integer
+
+        # : (untyped v) -> void
+        def style=: (untyped v) -> void
+
+        # : () -> Integer
+        def effective_style_index: () -> Integer
+
+        # : () -> String
+        def style_str: () -> String
+
+        # Merges an additional style definition into this cell
+        # @param style [Hash]
+        # : (Hash[Symbol, untyped] style) -> void
+        def add_style: (Hash[Symbol, untyped] style) -> void
+
+        # : () -> Symbol
+        def type: () -> Symbol
+
+        # : (untyped v) -> void
+        def type=: (untyped v) -> void
+
+        # : () -> bool
+        def escape_formulas: () -> bool
+
+        # : (untyped v) -> void
+        def escape_formulas=: (untyped v) -> void
+
+        # : () -> bool
+        def secure_formulas: () -> bool
+
+        # : (untyped v) -> void
+        def secure_formulas=: (untyped v) -> void
+
+        # : () -> bool
+        def needs_quote_prefix?: () -> bool
+
+        # : (untyped v) -> void
+        def value=: (untyped v) -> void
+
+        # : () -> bool
+        def is_text_run?: () -> bool
+
+        # : () -> bool
+        def contains_rich_text?: () -> bool
+
+        # : () -> bool
+        def plain_string?: () -> bool
+
+        # : () -> bool
+        def is_formula?: () -> bool
+
+        # : () -> bool
+        def is_array_formula?: () -> bool
+
+        # : () -> Integer
+        def index: () -> Integer
+
+        # : () -> String
+        def r: () -> String
+
+        # : () -> String
+        def r_abs: () -> String
+
+        # : () -> Array[Integer]
+        def pos: () -> Array[Integer]
+
+        # : (String label) -> void
+        def name=: (String label) -> void
+
+        # : (untyped target) -> void
+        def merge: (untyped target) -> void
+
+        # : () -> Float?
+        def autowidth: () -> Float?
+
+        # : () -> String
+        def clean_value: () -> String
+
+        # Inline style setters
+        # : (untyped v) -> void
+        def font_name=: (untyped v) -> void
+
+        # : (untyped v) -> void
+        def charset=: (untyped v) -> void
+
+        # : (untyped v) -> void
+        def family=: (untyped v) -> void
+
+        # : (untyped v) -> void
+        def b=: (untyped v) -> void
+
+        # : (untyped v) -> void
+        def i=: (untyped v) -> void
+
+        # : (untyped v) -> void
+        def strike=: (untyped v) -> void
+
+        # : (untyped v) -> void
+        def outline=: (untyped v) -> void
+
+        # : (untyped v) -> void
+        def shadow=: (untyped v) -> void
+
+        # : (untyped v) -> void
+        def condense=: (untyped v) -> void
+
+        # : (untyped v) -> void
+        def extend=: (untyped v) -> void
+
+        # : (untyped v) -> void
+        def u=: (untyped v) -> void
+
+        # : (untyped v) -> void
+        def color=: (untyped v) -> void
+
+        # : (untyped v) -> void
+        def sz=: (untyped v) -> void
+
+        # : (untyped v) -> void
+        def vertAlign=: (untyped v) -> void
+
+        # : (untyped v) -> void
+        def scheme=: (untyped v) -> void
+
+        # : (untyped v) -> void
+        def ssti=: (untyped v) -> void
+
+        # : (Integer _r_index, Integer _c_index, ?String str) -> String
+        def to_xml_string: (Integer _r_index, Integer _c_index, ?String str) -> String
+
+        # Converts adapter cell to native Xlsxrb::Elements::Cell
+        # @param r_idx [Integer, nil]
+        # @param c_idx [Integer, nil]
+        # @return [Xlsxrb::Elements::Cell]
+        # : (?Integer? r_idx, ?Integer? c_idx) -> Xlsxrb::Elements::Cell
+        def to_xlsxrb: (?Integer? r_idx, ?Integer? c_idx) -> Xlsxrb::Elements::Cell
+
+        private
+
+        def styles: () -> untyped
+
+        def string_width: (untyped string, untyped font_size) -> untyped
+
+        def font_size: () -> untyped
+
+        def set_run_style: (untyped validator, untyped attr, untyped value) -> untyped
+
+        def safe_negative?: (untyped string) -> untyped
+
+        def cell_type_from_value: (untyped v) -> untyped
+
+        def cast_value: (untyped v) -> untyped
+      end
+    end
+  end
+end

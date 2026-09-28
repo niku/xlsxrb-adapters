@@ -1,0 +1,177 @@
+# Generated from lib/xlsxrb/adapters/caxlsx/streaming_package.rb with RBS::Inline
+
+module Xlsxrb
+  module Adapters
+    module Caxlsx
+      # Subclass of StreamWriter that resolves integer style IDs to themselves
+      # and supports custom style definitions from Caxlsx::Styles.
+      class CaxlsxStreamWriter < Xlsxrb::StreamWriter
+        # @return [Hash{Symbol => untyped}, nil]
+        attr_accessor custom_styles_hash: untyped
+
+        # Initializes writer with integer style ID pass-through.
+        #
+        # @param target [String, IO, StringIO] Destination target.
+        # @param opts [Hash{Symbol => untyped}] Writer options.
+        def initialize: (untyped target, **untyped opts) -> untyped
+
+        # Closes the writer, injecting custom styles if configured.
+        #
+        # @return [void]
+        def close: () -> untyped
+      end
+
+      # High-performance streaming worksheet providing Caxlsx DSL ergonomics
+      # while streaming row data directly into zip output with O(1) memory.
+      class StreamingWorksheet
+        # @return [StreamingWorkbook]
+        attr_reader workbook: untyped
+
+        # @return [String]
+        attr_reader name: untyped
+
+        # @return [Integer]
+        attr_reader row_count: untyped
+
+        # @param workbook [StreamingWorkbook]
+        # @param name [String]
+        # @param stream_writer [CaxlsxStreamWriter]
+        def initialize: (untyped workbook, untyped name, untyped stream_writer) -> untyped
+
+        # Appends a row of cells to the active sheet in constant memory.
+        #
+        # @param values [Array<Object>] Row cell values.
+        # @param options [Hash{Symbol => untyped}] Row options (e.g. :style, :height, :offset).
+        # @return [self]
+        def add_row: (?untyped values, ?untyped options) -> untyped
+
+        alias << add_row
+
+        # Rows list compatibility stub (streaming worksheets do not retain rows in memory).
+        #
+        # @return [Array]
+        def rows: () -> untyped
+
+        # Merges a range of cells.
+        #
+        # @param range [String, Array<String, Cell>] Cell range or start/end cells.
+        # @return [void]
+        def merge_cells: (untyped range) -> untyped
+
+        # Sets column widths for successive columns.
+        #
+        # @param widths [Array<Numeric, nil>] Widths in character units.
+        # @return [void]
+        def column_widths: (*untyped widths) -> untyped
+
+        # Sets or returns the auto filter range.
+        #
+        # @param range [String, nil]
+        # @return [String, Object]
+        def auto_filter=: (untyped range) -> untyped
+
+        # @return [Object] Auto-filter proxy supporting `.range = ...`
+        def auto_filter: () -> untyped
+
+        # Adds a conditional formatting rule.
+        #
+        # @param cells [String] Cell range (e.g. "A1:A10").
+        # @param rules [Array<Hash>, Hash] Formatting rules.
+        # @return [void]
+        def add_conditional_formatting: (untyped cells, untyped rules) -> untyped
+
+        # Adds a data validation rule.
+        #
+        # @param cells [String] Cell range.
+        # @param data_validation [Hash{Symbol => untyped}]
+        # @return [void]
+        def add_data_validation: (untyped cells, untyped data_validation) -> untyped
+
+        # Configures sheet view and freeze panes.
+        #
+        # @yield [pane]
+        # @return [Object]
+        def sheet_view: () -> untyped
+      end
+
+      # High-performance streaming workbook managing worksheets and styles.
+      class StreamingWorkbook
+        # @return [StreamingPackage]
+        attr_reader package: untyped
+
+        # @return [Styles]
+        attr_reader styles: untyped
+
+        # @return [Array<StreamingWorksheet>]
+        attr_reader worksheets: untyped
+
+        # @return [Boolean]
+        attr_reader date1904: untyped
+
+        # @param package [StreamingPackage]
+        # @param stream_writer [CaxlsxStreamWriter]
+        def initialize: (untyped package, untyped stream_writer) -> untyped
+
+        # @param v [Boolean]
+        def date1904=: (untyped v) -> untyped
+
+        # Adds a new streaming worksheet to the workbook.
+        #
+        # @param options [Hash{Symbol => untyped}] Worksheet options.
+        # @yield [worksheet]
+        # @yieldparam worksheet [StreamingWorksheet]
+        # @return [StreamingWorksheet]
+        def add_worksheet: (?untyped options) ?{ (?) -> untyped } -> untyped
+      end
+
+      # High-performance streaming package that provides Caxlsx DSL ergonomics
+      # while streaming row data directly into zip output with O(1) memory.
+      class StreamingPackage
+        # @return [StreamingWorkbook]
+        attr_reader workbook: untyped
+
+        # Opens a streaming package with block syntax and automatic close.
+        #
+        # @example
+        #   StreamingPackage.open("large.xlsx") do |pkg|
+        #     pkg.workbook.add_worksheet(name: "Data") do |sheet|
+        #       1_000_000.times { |i| sheet.add_row [i, "Row #{i}"] }
+        #     end
+        #   end
+        #
+        # @param target [String, IO, StringIO, nil] File path or writable IO.
+        # @param options [Hash{Symbol => untyped}]
+        # @yield [package]
+        # @return [StreamingPackage, void]
+        def self.open: (?untyped target, **untyped) -> untyped
+
+        # Initializes a streaming package.
+        #
+        # @param target [String, IO, StringIO, nil] File path or writable IO.
+        # @param options [Hash{Symbol => untyped}]
+        def initialize: (?untyped target, **untyped _options) -> untyped
+
+        # Serializes the streaming package to disk.
+        #
+        # @param output_path [String, nil] Destination file path.
+        # @param _options [Hash, Boolean]
+        # @param _secondary_options [Hash, nil]
+        # @return [Boolean]
+        def serialize: (?untyped output_path, ?untyped _options, ?untyped _secondary_options) -> untyped
+
+        # Serializes the workbook to a StringIO instance.
+        #
+        # @param _old_confirm_valid [Boolean, nil]
+        # @param _confirm_valid [Boolean]
+        # @param _password [String, nil]
+        # @return [StringIO]
+        def to_stream: (?untyped _old_confirm_valid, ?_confirm_valid: untyped, ?_password: untyped) -> untyped
+
+        # Finalizes and closes streaming output.
+        #
+        # @return [void]
+        def close: () -> untyped
+      end
+    end
+  end
+end

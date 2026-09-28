@@ -15,16 +15,38 @@ Naming/FileName:
 Naming/PredicatePrefix:
   Exclude:
     - "lib/xlsxrb/adapters/ruby_xl/**/*"
+    - "lib/xlsxrb/adapters/caxlsx/**/*"
 
 Naming/AccessorMethodName:
   Exclude:
     - "lib/xlsxrb/adapters/ruby_xl/**/*"
+    - "lib/xlsxrb/adapters/caxlsx/**/*"
+
+Naming/MethodName:
+  Exclude:
+    - "lib/xlsxrb/adapters/caxlsx/**/*"
+
+Naming/VariableName:
+  Exclude:
+    - "lib/xlsxrb/adapters/caxlsx/**/*"
+
+Naming/VariableNumber:
+  Exclude:
+    - "lib/xlsxrb/adapters/caxlsx/**/*"
+
+Style/Documentation:
+  Exclude:
+    - "lib/xlsxrb/adapters/caxlsx/**/*"
+    - "test/**/*"
 
 Style/OptionalBooleanParameter:
   Exclude:
     - "lib/xlsxrb/adapters/ruby_xl/**/*"
+    - "lib/xlsxrb/adapters/caxlsx/**/*"
 
 Naming/MethodParameterName:
+  Exclude:
+    - "lib/xlsxrb/adapters/caxlsx/**/*"
   AllowedNames:
     - xf
     - mc
@@ -177,6 +199,8 @@ Naming/BlockForwarding: # new in 1.24
   Enabled: true
 Naming/PredicateMethod: # new in 1.76
   Enabled: true
+  Exclude:
+    - "lib/xlsxrb/adapters/caxlsx/**/*"
 Security/CompoundHash: # new in 1.28
   Enabled: true
 Security/IoMethods: # new in 1.22

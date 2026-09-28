@@ -1,0 +1,18 @@
+# Generated from lib/xlsxrb/adapters/caxlsx.rb with RBS::Inline
+
+module Xlsxrb
+  module Adapters
+    # Caxlsx (Axlsx) adapter module providing a drop-in compatible interface for caxlsx
+    # without hijacking the global ::Axlsx / ::Caxlsx namespace by default.
+    module Caxlsx
+      # Converts an adapter Package or Workbook to an immutable Xlsxrb::Elements::Workbook.
+      #
+      # @param obj [Package, Workbook]
+      # @return [Xlsxrb::Elements::Workbook]
+      # : (Package | Workbook obj) -> Xlsxrb::Elements::Workbook
+      def self.to_xlsxrb: (Package | Workbook obj) -> Xlsxrb::Elements::Workbook
+    end
+
+    Axlsx: untyped
+  end
+end
