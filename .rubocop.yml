@@ -16,6 +16,7 @@ Naming/PredicatePrefix:
   Exclude:
     - "lib/xlsxrb/adapters/ruby_xl/**/*"
     - "lib/xlsxrb/adapters/caxlsx/**/*"
+    - "lib/xlsxrb/adapters/roo/**/*"
 
 Naming/AccessorMethodName:
   Exclude:
@@ -43,6 +44,7 @@ Style/OptionalBooleanParameter:
   Exclude:
     - "lib/xlsxrb/adapters/ruby_xl/**/*"
     - "lib/xlsxrb/adapters/caxlsx/**/*"
+    - "lib/xlsxrb/adapters/roo/**/*"
 
 Naming/MethodParameterName:
   Exclude:
@@ -55,6 +57,7 @@ Naming/MethodParameterName:
     - wb
     - r
     - c
+    - io
 
 plugins:
   - rubocop-rake
@@ -201,6 +204,7 @@ Naming/PredicateMethod: # new in 1.76
   Enabled: true
   Exclude:
     - "lib/xlsxrb/adapters/caxlsx/**/*"
+    - "lib/xlsxrb/adapters/roo/**/*"
 Security/CompoundHash: # new in 1.28
   Enabled: true
 Security/IoMethods: # new in 1.22

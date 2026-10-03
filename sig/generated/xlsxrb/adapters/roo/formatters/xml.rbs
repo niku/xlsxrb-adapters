@@ -1,0 +1,18 @@
+# Generated from lib/xlsxrb/adapters/roo/formatters/xml.rb with RBS::Inline
+
+module Xlsxrb
+  module Adapters
+    module Roo
+      module Formatters
+        # XML export formatter matching Roo::Formatters::XML.
+        module XML
+          # Returns an XML representation of all sheets.
+          #
+          # @return [String]
+          # : () -> String
+          def to_xml: () -> String
+        end
+      end
+    end
+  end
+end

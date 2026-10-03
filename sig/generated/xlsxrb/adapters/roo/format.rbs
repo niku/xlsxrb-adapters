@@ -1,0 +1,23 @@
+# Generated from lib/xlsxrb/adapters/roo/format.rb with RBS::Inline
+
+module Xlsxrb
+  module Adapters
+    module Roo
+      class Excelx
+        # Number and date format parsing utility matching Roo::Excelx::Format.
+        module Format
+          EXCEPTIONAL_FORMATS: Hash[String, Symbol]
+
+          STANDARD_FORMATS: Hash[Integer, String]
+
+          # Determines data type Symbol from Excel format code string.
+          #
+          # @param format [String, nil]
+          # @return [Symbol]
+          # : (untyped format) -> Symbol
+          def self?.to_type: (untyped format) -> Symbol
+        end
+      end
+    end
+  end
+end

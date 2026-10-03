@@ -1,0 +1,12 @@
+# Generated from lib/xlsxrb/adapters/roo/constants.rb with RBS::Inline
+
+module Xlsxrb
+  module Adapters
+    module Roo
+      ERROR_VALUES: Set[String]
+
+      class HeaderRowNotFoundError < StandardError
+      end
+    end
+  end
+end

@@ -1,0 +1,25 @@
+# Generated from lib/xlsxrb/adapters/roo/coordinate.rb with RBS::Inline
+
+module Xlsxrb
+  module Adapters
+    module Roo
+      class Excelx
+        # 1-based [row, column] coordinate representation matching Roo::Excelx::Coordinate.
+        class Coordinate < ::Array[Integer]
+          # @param row [Integer] 1-based row index.
+          # @param column [Integer] 1-based column index.
+          # : (Integer row, Integer column) -> void
+          def initialize: (Integer row, Integer column) -> void
+
+          # 1-based row number.
+          # : () -> Integer
+          def row: () -> Integer
+
+          # 1-based column number.
+          # : () -> Integer
+          def column: () -> Integer
+        end
+      end
+    end
+  end
+end

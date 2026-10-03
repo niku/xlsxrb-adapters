@@ -214,6 +214,31 @@ RUNNER_SCRIPT = <<~'RUBY'
         end
       end
     end
+  when ["roo", "read"]
+    require "roo"
+    measure do
+      xlsx = Roo::Excelx.new(filename)
+      count = 0
+      xlsx.each_row_streaming do |row|
+        row.each do |cell|
+          _val = cell&.value
+          count += 1
+        end
+      end
+    end
+  when ["xlsxrb_adapters_roo", "read"]
+    require "xlsxrb"
+    require "xlsxrb/adapters/roo"
+    measure do
+      xlsx = Xlsxrb::Adapters::Roo::Excelx.new(filename)
+      count = 0
+      xlsx.each_row_streaming do |row|
+        row.each do |cell|
+          _val = cell&.value
+          count += 1
+        end
+      end
+    end
   else
     raise "Unknown benchmark target: #{lib} #{mode}"
   end
@@ -268,31 +293,33 @@ def run_benchmark_series(name, lib, mode, rows, cols, filename, runs)
 end
 
 # 1. Benchmark Write
-puts "\n=== Benchmarking Write Performance ==="
-write_targets = []
-write_targets << ["xlsxrb (Streaming)", "xlsxrb_stream"]
-write_targets << ["xlsxrb (In-Memory)", "xlsxrb_inmemory"]
-if %w[all caxlsx].include?(CATEGORY)
-  write_targets << ["xlsxrb-adapters (Caxlsx Streaming)", "xlsxrb_adapters_caxlsx_streaming"]
-  write_targets << ["xlsxrb-adapters (Caxlsx)", "xlsxrb_adapters_caxlsx"]
-  write_targets << ["caxlsx (Original)", "caxlsx"]
-end
-if %w[all rubyxl].include?(CATEGORY)
-  write_targets << ["xlsxrb-adapters (RubyXL)", "xlsxrb_adapters"]
-  write_targets << ["rubyXL (Original)", "rubyXL"]
-end
-
 write_results = {}
-write_targets.each do |name, lib|
-  target_file = "tmp/bench_write_#{lib}.xlsx"
-  res = run_benchmark_series(name, lib, "write", ROWS, COLS, target_file, RUNS)
-  write_results[lib] = res if res
-  FileUtils.rm_f(target_file)
+if %w[all caxlsx rubyxl].include?(CATEGORY)
+  puts "\n=== Benchmarking Write Performance ==="
+  write_targets = []
+  write_targets << ["xlsxrb (Streaming)", "xlsxrb_stream"]
+  write_targets << ["xlsxrb (In-Memory)", "xlsxrb_inmemory"]
+  if %w[all caxlsx].include?(CATEGORY)
+    write_targets << ["xlsxrb-adapters (Caxlsx Streaming)", "xlsxrb_adapters_caxlsx_streaming"]
+    write_targets << ["xlsxrb-adapters (Caxlsx)", "xlsxrb_adapters_caxlsx"]
+    write_targets << ["caxlsx (Original)", "caxlsx"]
+  end
+  if %w[all rubyxl].include?(CATEGORY)
+    write_targets << ["xlsxrb-adapters (RubyXL)", "xlsxrb_adapters"]
+    write_targets << ["rubyXL (Original)", "rubyXL"]
+  end
+
+  write_targets.each do |name, lib|
+    target_file = "tmp/bench_write_#{lib}.xlsx"
+    res = run_benchmark_series(name, lib, "write", ROWS, COLS, target_file, RUNS)
+    write_results[lib] = res if res
+    FileUtils.rm_f(target_file)
+  end
 end
 
-# 2. Benchmark Read (only for libraries supporting read/parse, e.g. rubyXL)
+# 2. Benchmark Read (for libraries supporting read/parse, e.g. rubyXL, roo)
 read_results = {}
-if %w[all rubyxl].include?(CATEGORY)
+if %w[all rubyxl roo].include?(CATEGORY)
   ref_file = "tmp/bench_reference_data.xlsx"
   puts "\n[Setup] Generating reference file (#{ROWS} x #{COLS}) for read benchmarks..."
   run_isolated("xlsxrb_stream", "write", ROWS, COLS, ref_file)
@@ -300,10 +327,16 @@ if %w[all rubyxl].include?(CATEGORY)
   puts "\n=== Benchmarking Read Performance ==="
   read_targets = [
     ["xlsxrb (Streaming)", "xlsxrb_stream"],
-    ["xlsxrb (In-Memory)", "xlsxrb_inmemory"],
-    ["xlsxrb-adapters (RubyXL)", "xlsxrb_adapters"],
-    ["rubyXL (Original)", "rubyXL"]
+    ["xlsxrb (In-Memory)", "xlsxrb_inmemory"]
   ]
+  if %w[all rubyxl].include?(CATEGORY)
+    read_targets << ["xlsxrb-adapters (RubyXL)", "xlsxrb_adapters"]
+    read_targets << ["rubyXL (Original)", "rubyXL"]
+  end
+  if %w[all roo].include?(CATEGORY)
+    read_targets << ["xlsxrb-adapters (Roo)", "xlsxrb_adapters_roo"]
+    read_targets << ["roo (Original 3.0.0)", "roo"]
+  end
 
   read_targets.each do |name, lib|
     res = run_benchmark_series(name, lib, "read", ROWS, COLS, ref_file, RUNS)
@@ -362,6 +395,19 @@ if %w[all rubyxl].include?(CATEGORY)
     read_results["xlsxrb_stream"]
   ]
   print_table("RubyXL Read Performance", rubyxl_read)
+end
+
+if %w[all roo].include?(CATEGORY)
+  puts "\n" + ("-" * 80)
+  puts "## Roo Migration Benchmark (roo vs. xlsxrb-adapters vs. xlsxrb)"
+
+  roo_read = [
+    read_results["roo"],
+    read_results["xlsxrb_adapters_roo"],
+    read_results["xlsxrb_inmemory"],
+    read_results["xlsxrb_stream"]
+  ]
+  print_table("Roo Read Performance", roo_read)
 end
 
 puts "\n" + ("=" * 80)

@@ -96,13 +96,14 @@ module Xlsxrb
             # Defined names from workbook.xml
             workbook_xml = zip.read_entry("xl/workbook.xml")
             if workbook_xml
-              dn_matches = workbook_xml.scan(%r{<definedName\s+name="([^"]+)"[^>]*>([^<]+)</definedName>})
-              unless dn_matches.empty?
+              wb_props = Xlsxrb::Ooxml::WorkbookParser.parse_with_properties(workbook_xml)
+              parsed_dns = wb_props[:defined_names]
+              if parsed_dns && !parsed_dns.empty?
                 wb.defined_names ||= DefinedNames.new
-                dn_matches.each do |name, ref|
-                  next if wb.defined_names.any? { |d| d.name == name }
+                parsed_dns.each do |dn|
+                  next if wb.defined_names.any? { |d| d.name == dn[:name] }
 
-                  wb.defined_names << DefinedName.new(name: unescape_xml(name) || name, reference: unescape_xml(ref) || ref)
+                  wb.defined_names << DefinedName.new(name: dn[:name], reference: dn[:value])
                 end
               end
             end

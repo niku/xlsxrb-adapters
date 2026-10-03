@@ -1,0 +1,31 @@
+# Generated from lib/xlsxrb/adapters/roo/formatters/csv.rb with RBS::Inline
+
+module Xlsxrb
+  module Adapters
+    module Roo
+      module Formatters
+        # CSV export formatter matching Roo::Formatters::CSV.
+        module CSV
+          # Exports the spreadsheet to CSV format.
+          #
+          # @param filename [String, File, nil]
+          # @param old_separator [String, nil]
+          # @param old_sheet [String, Integer, nil]
+          # @param separator [String]
+          # @param sheet [String, Integer]
+          # @return [String, true]
+          # : (?String? filename, ?String? old_separator, ?untyped old_sheet, ?separator: String, ?sheet: untyped) -> (String | bool)
+          def to_csv: (?String? filename, ?String? old_separator, ?untyped old_sheet, ?separator: String, ?sheet: untyped) -> (String | bool)
+
+          private
+
+          # : (untyped stream, untyped sheet, String separator) -> void
+          def write_csv_content: (untyped stream, untyped sheet, String separator) -> void
+
+          # : (Integer row, Integer col, untyped sheet) -> String
+          def cell_to_csv: (Integer row, Integer col, untyped sheet) -> String
+        end
+      end
+    end
+  end
+end

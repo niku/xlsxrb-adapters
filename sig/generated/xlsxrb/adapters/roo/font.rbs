@@ -1,0 +1,34 @@
+# Generated from lib/xlsxrb/adapters/roo/font.rb with RBS::Inline
+
+module Xlsxrb
+  module Adapters
+    module Roo
+      # Font property container matching Roo::Font.
+      class Font
+        attr_accessor bold: untyped
+
+        attr_accessor italic: untyped
+
+        attr_accessor underline: untyped
+
+        # @param bold [Boolean]
+        # @param italic [Boolean]
+        # @param underline [Boolean]
+        # : (?bold: bool, ?italic: bool, ?underline: bool) -> void
+        def initialize: (?bold: bool, ?italic: bool, ?underline: bool) -> void
+
+        # Returns whether the font is bold.
+        # : () -> bool
+        def bold?: () -> bool
+
+        # Returns whether the font is italic.
+        # : () -> bool
+        def italic?: () -> bool
+
+        # Returns whether the font is underlined.
+        # : () -> bool
+        def underline?: () -> bool
+      end
+    end
+  end
+end

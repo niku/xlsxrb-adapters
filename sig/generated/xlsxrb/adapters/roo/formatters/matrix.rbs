@@ -1,0 +1,23 @@
+# Generated from lib/xlsxrb/adapters/roo/formatters/matrix.rb with RBS::Inline
+
+module Xlsxrb
+  module Adapters
+    module Roo
+      module Formatters
+        # Matrix export formatter matching Roo::Formatters::Matrix.
+        module Matrix
+          # Returns a Matrix from the whole sheet or a rectangular area.
+          #
+          # @param from_row [Integer, nil]
+          # @param from_column [Integer, nil]
+          # @param to_row [Integer, nil]
+          # @param to_column [Integer, nil]
+          # @param sheet [String, Integer]
+          # @return [Object]
+          # : (?Integer? from_row, ?Integer? from_column, ?Integer? to_row, ?Integer? to_column, ?sheet: untyped) -> untyped
+          def to_matrix: (?Integer? from_row, ?Integer? from_column, ?Integer? to_row, ?Integer? to_column, ?sheet: untyped) -> untyped
+        end
+      end
+    end
+  end
+end

@@ -1,0 +1,23 @@
+# Generated from lib/xlsxrb/adapters/roo/link.rb with RBS::Inline
+
+module Xlsxrb
+  module Adapters
+    module Roo
+      # String subclass representing a hyperlinked cell value matching Roo::Link.
+      class Link < String
+        attr_reader href: untyped
+
+        alias url href
+
+        # @param href [String] Target URL.
+        # @param text [String] Display text.
+        # : (?String href, ?String text) -> void
+        def initialize: (?String href, ?String text) -> void
+
+        # Parses href as a URI.
+        # : () -> URI::Generic
+        def to_uri: () -> URI::Generic
+      end
+    end
+  end
+end

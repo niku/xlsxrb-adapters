@@ -1262,18 +1262,21 @@ module Xlsxrb
           facade_meta[:data_validations] = dv_data if dv_data && !dv_data.empty?
           facade_meta[:conditional_formatting] = cf_data if cf_data && !cf_data.empty?
 
-          if @worksheet_comments&.has_comments?
-            comms = @worksheet_comments.comments
-            facade_meta[:comments] = comms.map do |c|
-              { cell: c.ref, ref: c.ref, author: c.author, text: c.text }
-            end
-          end
+          sheet_comments = if @worksheet_comments&.has_comments?
+                             @worksheet_comments.comments.map do |c|
+                               { cell: c.ref, ref: c.ref, author: c.author, text: c.text }
+                             end
+                           else
+                             []
+                           end
 
-          if @hyperlinks && !@hyperlinks.empty?
-            facade_meta[:hyperlinks] = @hyperlinks.map do |h|
-              { ref: h.ref, location: h.location, display: h.display, tooltip: h.tooltip, target: h.target }
-            end
-          end
+          sheet_hyperlinks = if @hyperlinks && !@hyperlinks.empty?
+                               @hyperlinks.map do |h|
+                                 { ref: h.ref, location: h.location, display: h.display, tooltip: h.tooltip, target: h.target }
+                               end
+                             else
+                               []
+                             end
 
           if @worksheet_drawing&.has_drawing?
             drw = @worksheet_drawing.drawing
@@ -1320,7 +1323,10 @@ module Xlsxrb
             charts: charts_data,
             conditional_formatting: cf_data,
             data_validations: dv_data,
-            unmapped_data: merged_unmapped
+            unmapped_data: merged_unmapped,
+            state: state,
+            comments: sheet_comments,
+            hyperlinks: sheet_hyperlinks
           )
         end
 
