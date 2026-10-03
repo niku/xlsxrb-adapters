@@ -1,0 +1,30 @@
+# Generated from lib/xlsxrb/adapters/roo/spreadsheet.rb with RBS::Inline
+
+module Xlsxrb
+  module Adapters
+    module Roo
+      # Spreadsheet opener matching Roo::Spreadsheet.
+      class Spreadsheet
+        CLASS_FOR_EXTENSION: Hash[Symbol, singleton(Excelx)]
+
+        # Opens a spreadsheet file detecting parser class by extension.
+        #
+        # @param path [String, Pathname, File, IO]
+        # @param options [Hash]
+        # @return [Excelx]
+        # : (untyped path, ?Hash[Symbol, untyped] options) -> Excelx
+        def self.open: (untyped path, ?Hash[Symbol, untyped] options) -> Excelx
+
+        # Extracts extension symbol from path or options.
+        #
+        # @param path [String, Pathname, Object]
+        # @param options [Hash]
+        # @return [Symbol]
+        # : (untyped path, Hash[Symbol, untyped] options) -> Symbol
+        def self.extension_for: (untyped path, Hash[Symbol, untyped] options) -> Symbol
+      end
+
+      CLASS_FOR_EXTENSION: untyped
+    end
+  end
+end

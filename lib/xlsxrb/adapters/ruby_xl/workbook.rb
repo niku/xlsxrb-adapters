@@ -157,10 +157,13 @@ module Xlsxrb
               instance.modified_at = cp[:modified_at] if cp[:modified_at].is_a?(Time)
               instance.title = cp[:title]&.to_s
             end
-            if wb.unmapped_data[:defined_names].is_a?(Array)
+            raw_dns = wb.defined_names || wb.unmapped_data&.[](:defined_names)
+            if raw_dns.is_a?(Array) && !raw_dns.empty?
               instance.defined_names = DefinedNames.new
-              wb.unmapped_data[:defined_names].each do |dn|
-                instance.defined_names << DefinedName.new(dn)
+              raw_dns.each do |dn|
+                name = dn[:name] || dn["name"]
+                ref = dn[:value] || dn["value"] || dn[:reference] || dn["reference"]
+                instance.defined_names << DefinedName.new(name: name, reference: ref)
               end
             end
           end
@@ -535,11 +538,11 @@ module Xlsxrb
               title: @title
             }.compact
           end
-          if @defined_names && !@defined_names.empty?
-            facade_meta[:defined_names] = @defined_names.map do |dn|
-              { name: dn.name, value: dn.reference }
-            end
-          end
+          dns = if @defined_names && !@defined_names.empty?
+                  @defined_names.map do |dn|
+                    { name: dn.name, value: dn.reference }
+                  end
+                end
           merged_unmapped[:facade] = facade_meta unless facade_meta.empty?
 
           sst = @shared_strings_container
@@ -549,7 +552,8 @@ module Xlsxrb
             sheets: elements_sheets,
             shared_strings: sst_strings,
             styles: styles_hash,
-            unmapped_data: merged_unmapped
+            unmapped_data: merged_unmapped,
+            defined_names: dns
           )
         end
 

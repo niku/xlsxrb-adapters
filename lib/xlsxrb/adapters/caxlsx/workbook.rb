@@ -545,23 +545,18 @@ module Xlsxrb
           elements_sheets = @worksheets.map(&:to_xlsxrb)
           styles_hash = @styles.to_xlsxrb_hash
 
-          facade_meta = {}
-          if @defined_names && !@defined_names.empty?
-            facade_meta[:defined_names] = @defined_names.map do |dn|
-              {
-                name: dn.name,
-                value: dn.formula,
-                local_sheet_id: dn.local_sheet_id,
-                hidden: dn.hidden
-              }.compact
-            end
-          end
+          dns = if @defined_names && !@defined_names.empty?
+                  @defined_names.map do |dn|
+                    {
+                      name: dn.name,
+                      value: dn.formula,
+                      local_sheet_id: dn.local_sheet_id,
+                      hidden: dn.hidden
+                    }.compact
+                  end
+                end
           merged_unmapped = {}
-          if date1904
-            facade_meta[:date1904] = true
-            merged_unmapped[:workbook_properties] = { date1904: true }
-          end
-          merged_unmapped[:facade] = facade_meta unless facade_meta.empty?
+          merged_unmapped[:workbook_properties] = { date1904: true } if date1904
 
           sst_strings = if use_shared_strings
                           shared_strings.unique_cells.keys.map(&:to_s)
@@ -573,7 +568,8 @@ module Xlsxrb
             sheets: elements_sheets,
             shared_strings: sst_strings,
             styles: styles_hash,
-            unmapped_data: merged_unmapped
+            unmapped_data: merged_unmapped,
+            defined_names: dns
           )
         end
       end

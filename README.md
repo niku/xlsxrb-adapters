@@ -1,25 +1,26 @@
 # xlsxrb-adapters
 
-Compatibility adapters for migrating from peer XLSX libraries ([`rubyXL`](https://github.com/weshatheleopard/rubyXL), [`caxlsx`](https://github.com/caxlsx/caxlsx)) to [`xlsxrb`](https://github.com/niku/xlsxrb) with zero downtime and drop-in safety.
+Compatibility adapters for migrating from peer XLSX libraries ([`rubyXL`](https://github.com/weshatheleopard/rubyXL), [`caxlsx`](https://github.com/caxlsx/caxlsx), [`roo`](https://github.com/roo-rb/roo)) to [`xlsxrb`](https://github.com/niku/xlsxrb) with zero downtime and drop-in safety.
 
 ## Overview
 
-In the Ruby ecosystem, two libraries have long served as standards for spreadsheet processing:
+In the Ruby ecosystem, three libraries have long served as primary standards for spreadsheet processing:
 - [`rubyXL`](https://github.com/weshatheleopard/rubyXL): A mature, full-featured Document Object Model (DOM) library widely trusted for comprehensive OpenXML spreadsheet creation, cell manipulation, and template editing.
 - [`caxlsx`](https://github.com/caxlsx/caxlsx) (formerly `axlsx`): The de facto builder library for generating styled spreadsheets, rich typography, DrawingML charts, and financial reports.
+- [`roo`](https://github.com/roo-rb/roo): The most widely used read-only spreadsheet reader library for consuming data, inspection, formulas, and formatters across various spreadsheet formats.
 
 [`xlsxrb`](https://github.com/niku/xlsxrb) is a pure Ruby, zero-dependency, streaming-capable, low-memory XLSX engine designed for high-throughput batch workloads.
 
 `xlsxrb-adapters` bridges the best of both worlds by providing drop-in compatible adapter layers to:
 1. Support gradual migration (Strangler Fig pattern) from peer XLSX libraries to `xlsxrb` without rewriting application logic.
-2. Enable high-throughput, low-memory execution in batch processing and resource-constrained environments while retaining `rubyXL` and `caxlsx` familiar and battle-tested APIs.
+2. Enable high-throughput, low-memory execution in batch processing and resource-constrained environments while retaining `rubyXL`, `caxlsx`, and `roo` familiar and battle-tested APIs.
 3. Construct interoperability test harnesses against peer libraries and real-world fixtures.
 4. Keep `xlsxrb` core strictly zero-dependency, mutant-tested, and type-safe while providing rich compatibility layers.
 
 ## Design Principles
 
 1. **No Global Hijacking**:
-   Does not reopen or hijack top-level constants like `::RubyXL` or `::Axlsx`. Instead, exposes namespaces like `Xlsxrb::Adapters::RubyXL` and `Xlsxrb::Adapters::Caxlsx` so you can run side-by-side during migration or run comparison tests. Optional drop-in aliases (e.g. `Axlsx = Xlsxrb::Adapters::Caxlsx::Axlsx`) are provided for seamless code transitions.
+   Does not reopen or hijack top-level constants like `::RubyXL`, `::Axlsx`, or `::Roo`. Instead, exposes namespaces like `Xlsxrb::Adapters::RubyXL`, `Xlsxrb::Adapters::Caxlsx`, and `Xlsxrb::Adapters::Roo` so you can run side-by-side during migration or run comparison tests. Optional drop-in aliases (e.g. `Roo = Xlsxrb::Adapters::Roo`) are provided for seamless code transitions.
 2. **Mutable-to-Immutable Boundary**:
    Maintains a mutable in-memory wrapper structure compatible with legacy workflows, translating into `xlsxrb`'s immutable data models (`Data.define`, frozen) upon save/export.
 3. **Native Bridge Conversion**:
@@ -126,6 +127,97 @@ package.serialize("report.xlsx")
   end
   ```
 
+### Roo (`Xlsxrb::Adapters::Roo` / `Roo`)
+
+Drop-in replacement for reading and inspecting XLSX / XLSM spreadsheets using the [`roo`](https://github.com/roo-rb/roo) API, fully compatible with the official [Excel (xlsx and xlsm) support](https://github.com/roo-rb/roo#excel-xlsx-and-xlsm-support) specification.
+
+#### Drop-In Migration Example
+
+```ruby
+require "xlsxrb/adapters/roo"
+
+# Option A: Explicit namespace (recommended to avoid global pollution)
+xlsx = Xlsxrb::Adapters::Roo::Excelx.new("data.xlsx")
+
+# Option B: Drop-in alias (existing Roo code works unmodified)
+Roo = Xlsxrb::Adapters::Roo
+xlsx = Roo::Spreadsheet.open("data.xlsx")
+
+# Standard Roo inspection & navigation
+puts xlsx.info
+puts xlsx.sheets
+
+xlsx.default_sheet = "Sheet1"
+puts xlsx.first_row
+puts xlsx.last_row
+puts xlsx.first_column_as_letter
+puts xlsx.last_column_as_letter
+
+# Cell access and metadata
+val  = xlsx.cell(1, 1)            # Typed Ruby object (String, Numeric, Date, etc.)
+fmt  = xlsx.formatted_value(1, 1) # Excel formatted string representation (e.g. "$1,234.50")
+type = xlsx.celltype(1, 1)        # :string, :float, :date, :datetime, :time, :boolean, :formula, :link
+fml  = xlsx.formula(1, 1)         # Formula expression (e.g. "SUM(A1:A10)")
+cmt  = xlsx.comment(1, 1)         # Cell comment or nil
+
+# Iteration & querying
+xlsx.each(header_search: ["ID", "Name"]) do |row_hash|
+  puts "#{row_hash['ID']}: #{row_hash['Name']}"
+end
+
+# Named cells / ranges
+xlsx.labels.each do |name, coord|
+  puts "Named range #{name} is at #{coord.inspect}"
+end
+
+# Formatters / Export
+csv_string = xlsx.to_csv
+yaml_string = xlsx.to_yaml
+matrix = xlsx.to_matrix
+```
+
+#### API Capabilities
+- **Document Loading & Opening**:
+  - `Xlsxrb::Adapters::Roo::Excelx.new(filepath_or_io, options)`
+  - `Xlsxrb::Adapters::Roo::Spreadsheet.open(filepath_or_io, options)` (supports block yielding)
+  - Options: `only_visible`, `cell_max`, `packed`, `file_warning`
+- **Sheets & Navigation**:
+  - `xlsx.sheets` (sheet names array)
+  - `xlsx.default_sheet = name_or_index` (supports 1-based, 0-based index or sheet name)
+  - `xlsx.sheet_for(name_or_index)`
+  - `xlsx.sheet_hidden?(name_or_index)`
+  - `xlsx.sheet_visible?(name_or_index)`
+  - `xlsx.first_row`, `xlsx.last_row`, `xlsx.first_column`, `xlsx.last_column`
+  - `xlsx.first_column_as_letter`, `xlsx.last_column_as_letter`
+  - `xlsx.info` (detailed summary string of document and sheets)
+- **Cell Reading & Metadata**:
+  - `xlsx.cell(row, col, sheet = nil)`
+  - `xlsx.celltype(row, col, sheet = nil)`
+  - `xlsx.cell_post(row, col, sheet = nil)` (alias for cell)
+  - `xlsx.excelx_value(row, col, sheet = nil)`
+  - `xlsx.excelx_type(row, col, sheet = nil)`
+  - `xlsx.excelx_format(row, col, sheet = nil)`
+  - `xlsx.formatted_value(row, col, sheet = nil)`
+  - `xlsx.formula(row, col, sheet = nil)`
+  - `xlsx.formula?(row, col, sheet = nil)`
+  - `xlsx.comment(row, col, sheet = nil)`
+  - `xlsx.comments(sheet = nil)`
+  - `xlsx.empty?(row, col, sheet = nil)`
+  - `xlsx.row(row_number, sheet = nil)`
+  - `xlsx.column(col_number, sheet = nil)`
+- **Advanced Navigation & Querying**:
+  - `xlsx.each(options) { |row| ... }` (supports `:header_search`, `:clean`, condition filtering)
+  - `xlsx.row_with(query, return_headers = false)`
+  - `xlsx.sheet(index, name = false)`
+- **Named Cells (Defined Names)**:
+  - `xlsx.labels` (array of `[name, [sheet, row, col]]`)
+  - `xlsx.label(name)` (returns `[sheet, row, col]`)
+- **Formatters & Export**:
+  - `xlsx.to_csv(filename = nil, separator = ",", sheet = nil)`
+  - `xlsx.to_matrix(sheet = nil)`
+  - `xlsx.to_xml(sheet = nil)`
+  - `xlsx.to_yaml(options = {}, sheet = nil)`
+
 ## Compatibility (100% Test Pass)
 
 `xlsxrb-adapters` verifies 100% behavioral compatibility and drop-in safety against both `rubyXL` and `caxlsx` through dedicated compatibility suites, official upstream test suites, and cross-validation fixtures:
@@ -212,9 +304,49 @@ Run the official rubyXL compatibility suite:
 bundle exec rake compatibility:ruby_xl
 ```
 
-Run all compatibility suites (both rubyXL and caxlsx):
+### Roo Compatibility (`Xlsxrb::Adapters::Roo`)
+
+Verified against official Roo (3.0.0) fixtures and Excelx behavior across the full feature scope documented in [Excel (xlsx and xlsm) support](https://github.com/roo-rb/roo#excel-xlsx-and-xlsm-support):
+
+#### Feature Compatibility Matrix
+
+| Feature Domain | Roo API / Construct | Compatibility Status | Notes |
+| :--- | :--- | :--- | :--- |
+| **Document Loading** | `Roo::Excelx.new`, `Roo::Spreadsheet.open` | **100% Supported** | Supports file paths, Pathnames, StringIO, open IO streams, and URLs |
+| **Sheets & Bounds** | `sheets`, `default_sheet`, `first_row`, `last_row`, `first_column`, `last_column` | **100% Supported** | Sheet selection by name, 1-based index, or 0-based index; hidden sheet detection |
+| **Cell Inspection** | `cell`, `celltype`, `excelx_type`, `excelx_value`, `formatted_value` | **100% Supported** | Native typed conversion (Integer, Float, Date, DateTime, Time, Boolean, String) |
+| **Number & Date Formats**| Excel number & date formats, custom formatting patterns | **100% Supported** | Preserves formatted string representations (currencies, percentages, decimals, dates) |
+| **Formulas** | `formula(row, col)`, `formula?(row, col)` | **100% Supported** | Returns formula expression string (without `=`); handles self-closing `<f ... />` |
+| **Comments** | `comment(row, col)`, `comments(sheet)` | **100% Supported** | Reads and resolves cell comments from `xl/comments*.xml` |
+| **Hyperlinks** | `cell.link?`, `cell.url`, `cell.hyperlink` | **100% Supported** | Returns `Roo::Link` with URL and text target |
+| **Defined Names** | `labels`, `label(name)` | **100% Supported** | Parses `<definedNames>` in `xl/workbook.xml` into `[sheet, row, col]` coordinates |
+| **Querying & Iteration** | `each(options)`, `row_with`, `header_search` | **100% Supported** | Header-based column mapping, condition matching, and clean string options |
+| **Formatters / Export** | `to_csv`, `to_matrix`, `to_xml`, `to_yaml` | **100% Supported** | Exports sheet contents into CSV, Matrix, XML, and YAML strings or files |
+
+#### Test Suite Breakdown
+
+| Test Suite | Scope | Total Tests | Passed | Failed | Pass Rate |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| `roo_test.rb` | Excelx core methods, Spreadsheet.open, cell access, formats, formulas, info, each | 20 | 20 | 0 | 100.0% |
+| `roo_compatibility_test.rb` | Cross-validation against official `::Roo::Excelx` across 12 diverse real-world fixtures | 12 | 12 | 0 | 100.0% |
+| `roo_dropin_test.rb` | End-to-end drop-in replacement workflow and pipeline testing | 2 | 2 | 0 | 100.0% |
+| **Total** | **Roo Adapter Compatibility Verification (1,747 assertions)** | **34** | **34** | **0** | **100.0%** |
+
+> [!TIP]
+> In addition to the test suite above, all 54 official `.xlsx` fixtures from upstream Roo's test repository were verified side-by-side against official `::Roo::Excelx`, achieving **0 mismatches (100% parity)** across all sheet names, cell values, and cell types.
+
+Run the Roo compatibility test suite:
+```bash
+bundle exec rake compatibility:roo
+# or
+bundle exec rake test:roo
+```
+
+Run all compatibility suites (RubyXL, Caxlsx, and Roo):
 ```bash
 bundle exec rake compatibility
+# or
+bin/compatibility_runner all
 ```
 
 ## Performance & Memory Footprint
@@ -248,6 +380,17 @@ Official `caxlsx` is a write-only library designed for building and exporting sp
 | | `xlsxrb (In-Memory)` | 2.779 s | 394.9 MB | 28.0 | ~20.6x faster | 84.0% reduced |
 | | `xlsxrb (Streaming)` | 1.811 s | 87.7 MB | 51.0 | ~31.6x faster | 96.4% reduced |
 
+### 3. Roo Migration: 1,000,000 cells (100,000 rows × 10 cols)
+
+Official `roo` is a widely adopted spreadsheet extraction and parsing library. `xlsxrb-adapters (Roo)` provides 100% drop-in API compatibility for existing Roo codebases (supporting `Roo::Excelx.new`, `Roo::Spreadsheet.open`, cell lookups, formats, and `each_row_streaming`) while executing **~1.1x–1.6x faster**. For memory-critical pipelines, native `xlsxrb` streaming reader achieves **~4.5x faster throughput** with **~38% lower memory usage**:
+
+| Operation | Library / Mode | Time (Median) | Peak Memory (VmHWM) | GC Count | vs. roo Speed | vs. roo Memory |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **Read** | `roo` (3.0.0) | 8.387 s | 129.3 MB | 74.0 | 1.0x (baseline) | 100% (baseline) |
+| | **`xlsxrb-adapters (Roo)`** | **7.569 s** | **475.9 MB** | **77.0** | **~1.1x faster** | +268.1% (in-memory DOM) |
+| | `xlsxrb (In-Memory)` | 3.363 s | 448.2 MB | 19.0 | ~2.5x faster | +246.6% |
+| | `xlsxrb (Streaming)` | 1.879 s | 80.0 MB | 72.0 | ~4.5x faster | **38.1% reduced** |
+
 Detailed scaling analysis across 10,000, 100,000, and 1,000,000 cells is documented in [docs/BENCHMARK.md](docs/BENCHMARK.md).
 
 ## Development & Dev Container
@@ -265,16 +408,22 @@ Run test suites, compatibility harnesses, and benchmarks with:
 ```bash
 bundle install
 
-# Run all unit and adapter tests (103 tests, 725 assertions)
+# Run all unit and adapter tests (139 tests, 2,497 assertions)
 bundle exec rake test
 
-# Run Caxlsx compatibility test suite (47 tests, 304 assertions)
+# Run Caxlsx compatibility test suite (49 tests, 329 assertions)
 bundle exec rake test:caxlsx
 
 # Run RubyXL adapter test suite (56 tests, 421 assertions)
 bundle exec rake test:ruby_xl
 
+# Run Roo adapter test suite (34 tests, 1,747 assertions)
+bundle exec rake test:roo
+
 # Run official rubyXL RSpec compatibility suite (363 tests)
+bundle exec rake compatibility:ruby_xl
+
+# Run all compatibility suites (RubyXL, Caxlsx, and Roo)
 bundle exec rake compatibility
 
 # Run static type checking with Steep
@@ -283,7 +432,7 @@ bundle exec rake typecheck
 # Run linter
 bundle exec rubocop
 
-# Run benchmarks (usage: rake benchmark [rows=10000] [cols=10] [runs=3])
+# Run benchmarks (usage: rake benchmark [rows=10000] [cols=10] [runs=3] [category=all|caxlsx|rubyxl|roo])
 bundle exec rake benchmark
 ```
 
@@ -292,6 +441,7 @@ bundle exec rake benchmark
 We extend our sincere respect and gratitude to:
 - Vivek Bhagwat, Wesha, and all contributors to [`rubyXL`](https://github.com/weshatheleopard/rubyXL) for pioneering comprehensive OpenXML DOM manipulation in Ruby over a decade.
 - Randy Morgan, Jurriaan Pruis, and the [`caxlsx`](https://github.com/caxlsx/caxlsx) community for establishing the gold standard builder API for styled spreadsheets, charts, and reporting in Ruby.
+- Thomas Preymesser, Hugh McGowan, and the [`roo`](https://github.com/roo-rb/roo) community for creating and maintaining the premier spreadsheet extraction library in the Ruby ecosystem.
 
 `xlsxrb-adapters` builds directly upon the ergonomic foundations and test specifications they pioneered.
 

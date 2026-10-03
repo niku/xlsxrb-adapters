@@ -15,8 +15,10 @@ gemspec
 # - No version constraints: Gemfile.lock pins versions.
 gem "caxlsx"
 gem "irb"
+gem "matrix"
 gem "rake"
 gem "rbs-inline"
+gem "roo"
 gem "rspec"
 gem "rubocop"
 gem "rubocop-rake"

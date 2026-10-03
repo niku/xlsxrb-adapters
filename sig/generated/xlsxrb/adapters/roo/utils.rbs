@@ -1,0 +1,70 @@
+# Generated from lib/xlsxrb/adapters/roo/utils.rb with RBS::Inline
+
+module Xlsxrb
+  module Adapters
+    module Roo
+      # Coordinate conversion and range utility module matching Roo::Utils.
+      module Utils
+        LETTERS: Array[String]
+
+        URI_PARSER: untyped
+
+        # Extracts coordinate as Excelx::Coordinate from a reference string like "A1".
+        #
+        # @param str [String, Symbol]
+        # @return [Excelx::Coordinate]
+        # : (String | Symbol str) -> Excelx::Coordinate
+        def self?.extract_coordinate: (String | Symbol str) -> Excelx::Coordinate
+
+        # @param str [String]
+        # @return [Excelx::Coordinate]
+        # : (String | Symbol str) -> Excelx::Coordinate
+        def self?.split_coordinate: (String | Symbol str) -> Excelx::Coordinate
+
+        # @param str [String]
+        # @return [Excelx::Coordinate]
+        # : (String | Symbol str) -> Excelx::Coordinate
+        def self?.ref_to_key: (String | Symbol str) -> Excelx::Coordinate
+
+        # Splits a coordinate into [column_letter, row_number].
+        #
+        # @param str [String]
+        # @return [Array(String, Integer)]
+        # : (String | Symbol str) -> [String, Integer]
+        def self?.split_coord: (String | Symbol str) -> [ String, Integer ]
+
+        # Converts a 1-based column number to letter representation (e.g. 1 => "A", 27 => "AA").
+        #
+        # @param num [Integer, nil]
+        # @return [String]
+        # : (Integer? num) -> String
+        def self?.number_to_letter: (Integer? num) -> String
+
+        # Converts column letter(s) to 1-based number (e.g. "A" => 1, "AA" => 27).
+        #
+        # @param letters [String, Symbol, nil]
+        # @return [Integer]
+        # : (String | Symbol letters) -> Integer
+        def self?.letter_to_number: (String | Symbol letters) -> Integer
+
+        # Computes total cell count in a range like "A1:C10".
+        #
+        # @param str [String, nil]
+        # @return [Integer]
+        # : (String? str) -> Integer
+        def self?.num_cells_in_range: (String? str) -> Integer
+
+        # Yields or returns enumerator of coordinates in range.
+        #
+        # @param str [String]
+        # @yield [coord]
+        # @yieldparam coord [Excelx::Coordinate]
+        # @return [Enumerator, void]
+        # : (String str) { (Excelx::Coordinate) -> void } -> void
+        # : (String str) -> Enumerator[Excelx::Coordinate, void]
+        def self?.coordinates_in_range: (String str) { (Excelx::Coordinate) -> void } -> void
+                                      | (String str) -> Enumerator[Excelx::Coordinate, void]
+      end
+    end
+  end
+end

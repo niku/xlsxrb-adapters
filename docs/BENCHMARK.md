@@ -3,6 +3,7 @@
 This document provides dedicated benchmarks comparing migration paths from peer XLSX libraries to `xlsxrb`:
 1. **Caxlsx Migration**: Comparing `caxlsx` (4.5.0), `xlsxrb-adapters (Caxlsx)` (both In-Memory and Streaming), and native `xlsxrb`.
 2. **RubyXL Migration**: Comparing `rubyXL` (3.4.38), `xlsxrb-adapters (RubyXL)`, and native `xlsxrb`.
+3. **Roo Migration**: Comparing `roo` (3.0.0), `xlsxrb-adapters (Roo)`, and native `xlsxrb`.
 
 ## Methodology
 
@@ -129,7 +130,50 @@ The benchmark suite follows the isolated subprocess approach established in [`xl
 
 ---
 
-## 3. Key Takeaways
+## 3. Roo Migration Benchmarks (roo vs. xlsxrb-adapters vs. xlsxrb)
+
+*Note: Official `roo` is an extraction and parsing library (read-only for XLSX). Accordingly, benchmarks evaluate file loading and row/cell streaming read throughput and memory footprint.*
+
+### 3.1 Large-Scale (1,000,000 cells: 100,000 rows × 10 cols)
+
+#### Read Performance (Parsing & Cell Iteration)
+
+| Library / Mode | Adapter / Engine | Time (Median) | Peak Memory (VmHWM) | GC Count | vs. roo Speed | vs. roo Memory |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **`roo` (3.0.0)** | Official Roo Engine | 8.387 s | 129.3 MB | 74.0 | 1.0x (baseline) | 100% (baseline) |
+| **`xlsxrb-adapters (Roo)`** | **Roo API + xlsxrb core** | **7.569 s** | **475.9 MB** | **77.0** | **~1.1x faster** | +268.1% (in-memory DOM) |
+| `xlsxrb (In-Memory)` | Native `Xlsxrb::Elements` | 3.363 s | 448.2 MB | 19.0 | ~2.5x faster | +246.6% |
+| `xlsxrb (Streaming)` | Native Streaming Reader | 1.879 s | 80.0 MB | 72.0 | ~4.5x faster | **38.1% reduced** |
+
+---
+
+### 3.2 Medium-Scale (100,000 cells: 10,000 rows × 10 cols)
+
+#### Read Performance
+
+| Library | Time (Median) | Peak Memory | GC Count | vs. roo Speed |
+| :--- | :--- | :--- | :--- | :--- |
+| **`roo` (Original 3.0.0)** | 0.787 s | 65.7 MB | 26.0 | 1.0x (baseline) |
+| **`xlsxrb-adapters (Roo)`** | **0.575 s** | **94.4 MB** | **22.0** | **~1.4x faster** |
+| `xlsxrb (In-Memory)` | 0.281 s | 111.8 MB | 5.0 | ~2.8x faster |
+| `xlsxrb (Streaming)` | 0.210 s | 87.8 MB | 3.0 | ~3.7x faster |
+
+---
+
+### 3.3 Small-Scale (10,000 cells: 1,000 rows × 10 cols)
+
+#### Read Performance
+
+| Library | Time (Median) | Peak Memory | GC Count | vs. roo Speed |
+| :--- | :--- | :--- | :--- | :--- |
+| **`roo` (Original 3.0.0)** | 0.078 s | 46.6 MB | 3.0 | 1.0x (baseline) |
+| **`xlsxrb-adapters (Roo)`** | **0.048 s** | **56.3 MB** | **1.0** | **~1.6x faster** |
+| `xlsxrb (In-Memory)` | 0.025 s | 55.4 MB | 0.0 | ~3.1x faster |
+| `xlsxrb (Streaming)` | 0.022 s | 56.1 MB | 0.0 | ~3.5x faster |
+
+---
+
+## 4. Key Takeaways
 
 1. **Caxlsx Migration**:
    - `xlsxrb-adapters (Caxlsx)` provides 100% drop-in API compatibility for existing caxlsx generation code with zero application changes.
@@ -137,10 +181,13 @@ The benchmark suite follows the isolated subprocess approach established in [`xl
 2. **RubyXL Migration**:
    - `xlsxrb-adapters (RubyXL)` executes **~9.4x–11.3x faster** on 1,000,000 cells while reducing RAM consumption by **~78%** (~489 MB vs. ~2.2 GB).
    - Full 100% compatibility with official rubyXL spec suite without any code changes in user applications.
+3. **Roo Migration**:
+   - `xlsxrb-adapters (Roo)` provides 100% drop-in API compatibility with official `roo` (including `Roo::Excelx.new`, `Roo::Spreadsheet.open`, `cell`, and `each_row_streaming`) while running **~1.1x–1.6x faster**.
+   - Direct migration to native `xlsxrb` streaming reader yields **~4.5x faster reads** and **~38% lower memory usage** on 1,000,000 cells.
 
 ---
 
-## 4. Reproducing Locally
+## 5. Reproducing Locally
 
 Run the benchmark suite with:
 
@@ -153,4 +200,7 @@ bundle exec ruby benchmark.rb 10000 10 caxlsx
 
 # Run only RubyXL migration benchmarks
 bundle exec ruby benchmark.rb 10000 10 rubyxl
+
+# Run only Roo migration benchmarks
+bundle exec ruby benchmark.rb 10000 10 roo
 ```

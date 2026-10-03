@@ -1,0 +1,240 @@
+# Generated from lib/xlsxrb/adapters/roo/base.rb with RBS::Inline
+
+module Xlsxrb
+  module Adapters
+    module Roo
+      # Base spreadsheet abstraction matching Roo::Base.
+      class Base
+        attr_reader headers: untyped
+
+        attr_accessor header_line: untyped
+
+        def initialize: () -> untyped
+
+        # Returns array of sheet names.
+        #
+        # @return [Array<String>]
+        # : () -> Array[String]
+        def sheets: () -> Array[String]
+
+        # Returns current default sheet name.
+        #
+        # @return [String]
+        # : () -> String
+        def default_sheet: () -> String
+
+        # Sets current default sheet.
+        #
+        # @param sheet [String, Integer]
+        # @return [String]
+        # : (untyped sheet) -> untyped
+        def default_sheet=: (untyped sheet) -> untyped
+
+        # Switches default sheet or returns tuple [sheet_name, self].
+        #
+        # @param index [String, Integer]
+        # @param name [Boolean]
+        # @return [Base, Array(String, Base)]
+        # : (untyped index, ?bool name) -> untyped
+        def sheet: (untyped index, ?bool name) -> untyped
+
+        # Iterates through all worksheets.
+        #
+        # @yield [name, sheet]
+        # @return [Enumerator, void]
+        # : () { ([String, untyped]) -> void } -> void
+        # : () -> Enumerator[[String, untyped], void]
+        def each_with_pagename: () { ([ String, untyped ]) -> void } -> void
+                              | () -> Enumerator[[ String, untyped ], void]
+
+        # First non-empty row.
+        #
+        # @param sheet [String, Integer, nil]
+        # @return [Integer, nil]
+        # : (?untyped sheet) -> Integer?
+        def first_row: (?untyped sheet) -> Integer?
+
+        # Last non-empty row.
+        #
+        # @param sheet [String, Integer, nil]
+        # @return [Integer, nil]
+        # : (?untyped sheet) -> Integer?
+        def last_row: (?untyped sheet) -> Integer?
+
+        # First non-empty column.
+        #
+        # @param sheet [String, Integer, nil]
+        # @return [Integer, nil]
+        # : (?untyped sheet) -> Integer?
+        def first_column: (?untyped sheet) -> Integer?
+
+        # Last non-empty column.
+        #
+        # @param sheet [String, Integer, nil]
+        # @return [Integer, nil]
+        # : (?untyped sheet) -> Integer?
+        def last_column: (?untyped sheet) -> Integer?
+
+        # First non-empty column as a letter string (e.g. "A").
+        #
+        # @param sheet [String, Integer, nil]
+        # @return [String]
+        # : (?untyped sheet) -> String
+        def first_column_as_letter: (?untyped sheet) -> String
+
+        # Last non-empty column as a letter string (e.g. "Z").
+        #
+        # @param sheet [String, Integer, nil]
+        # @return [String]
+        # : (?untyped sheet) -> String
+        def last_column_as_letter: (?untyped sheet) -> String
+
+        # Returns row values as Array.
+        #
+        # @param rownumber [Integer]
+        # @param sheet [String, Integer, nil]
+        # @return [Array<Object>]
+        # : (Integer rownumber, ?untyped sheet) -> Array[untyped]
+        def row: (Integer rownumber, ?untyped sheet) -> Array[untyped]
+
+        # Returns column values as Array.
+        #
+        # @param column_number [Integer, String, Symbol]
+        # @param sheet [String, Integer, nil]
+        # @return [Array<Object>]
+        # : (untyped column_number, ?untyped sheet) -> Array[untyped]
+        def column: (untyped column_number, ?untyped sheet) -> Array[untyped]
+
+        # Returns cell value.
+        #
+        # @param row [Integer, String]
+        # @param col [Integer, String, Symbol]
+        # @param sheet [String, Integer, nil]
+        # @return [Object, nil]
+        # : (untyped row, untyped col, ?untyped sheet) -> untyped
+        def cell: (untyped row, untyped col, ?untyped sheet) -> untyped
+
+        # Returns whether cell is empty.
+        #
+        # @param row [Integer, String]
+        # @param col [Integer, String, Symbol]
+        # @param sheet [String, Integer, nil]
+        # @return [Boolean]
+        # : (untyped row, untyped col, ?untyped sheet) -> bool
+        def empty?: (untyped row, untyped col, ?untyped sheet) -> bool
+
+        # Sets cell value in-memory.
+        #
+        # @param row [Integer, String]
+        # @param col [Integer, String, Symbol]
+        # @param value [Object]
+        # @param sheet [String, Integer, nil]
+        # @return [void]
+        # : (untyped row, untyped col, untyped value, ?untyped sheet) -> void
+        def set: (untyped row, untyped col, untyped value, ?untyped sheet) -> void
+
+        # Returns document and sheet information summary string.
+        #
+        # @return [String]
+        # : () -> String
+        def info: () -> String
+
+        # Iterates through rows or maps to columns hash.
+        #
+        # @param options [Hash]
+        # @yield [row]
+        # @return [Enumerator, void]
+        # : (?Hash[untyped, untyped] options) { (untyped) -> void } -> void
+        # : (?Hash[untyped, untyped] options) -> Enumerator[untyped, void]
+        def each: (?Hash[untyped, untyped] options) { (untyped) -> void } -> void
+                | (?Hash[untyped, untyped] options) -> Enumerator[untyped, void]
+
+        # Parses spreadsheet content into an Array of rows or hashes.
+        #
+        # @param options [Hash]
+        # @yield [row]
+        # @return [Array<Object>]
+        # : (?Hash[untyped, untyped] options) ?{ (untyped) -> untyped } -> Array[untyped]
+        def parse: (?Hash[untyped, untyped] options) ?{ (untyped) -> untyped } -> Array[untyped]
+
+        # Finds the header row matching query expressions.
+        #
+        # @param query [Array<Object>]
+        # @param return_headers [Boolean]
+        # @return [Integer, Array<Object>]
+        # : (Array[untyped] query, ?bool return_headers) -> untyped
+        def row_with: (Array[untyped] query, ?bool return_headers) -> untyped
+
+        # Finds rows by condition or index.
+        #
+        # @param args [Array<Object>]
+        # @return [Object]
+        # : (*untyped args) -> untyped
+        def find: (*untyped args) -> untyped
+
+        # Handles method missing for coordinate access (e.g. `xlsx.a1`, `xlsx.b2`) and defined names.
+        # : (Symbol method_name, *untyped args) -> untyped
+        def method_missing: (Symbol method_name, *untyped args) -> untyped
+
+        # : (Symbol method_name, ?bool include_private) -> bool
+        def respond_to_missing?: (Symbol method_name, ?bool include_private) -> bool
+
+        # Closes reader and clears in-memory state.
+        # : () -> nil
+        def close: () -> nil
+
+        # Validates that sheet name or index exists.
+        #
+        # @param sheet [String, Integer, nil]
+        # @return [void]
+        # : (untyped sheet) -> void
+        def validate_sheet!: (untyped sheet) -> void
+
+        # Normalizes row and column arguments to [row_integer, col_integer].
+        #
+        # @param row [Integer, String]
+        # @param col [Integer, String, Symbol]
+        # @return [Array(Integer, Integer)]
+        # : (untyped row, untyped col) -> [Integer, Integer]
+        def normalize: (untyped row, untyped col) -> [ Integer, Integer ]
+
+        # Returns internal sheet instance for given sheet name or index.
+        #
+        # @param sheet [String, Integer, nil]
+        # @return [Excelx::Sheet, nil]
+        # : (?untyped sheet) -> Excelx::Sheet?
+        def sheet_for: (?untyped sheet) -> Excelx::Sheet?
+
+        private
+
+        # : (Hash[untyped, untyped] options) -> void
+        def clean_sheet_if_needed: (Hash[untyped, untyped] options) -> void
+
+        # : (String str) -> String
+        def sanitize_value: (String str) -> String
+
+        # : (Hash[untyped, untyped] options) -> void
+        def search_or_set_header: (Hash[untyped, untyped] options) -> void
+
+        # : (Hash[untyped, untyped] hash) -> void
+        def set_headers: (Hash[untyped, untyped] hash) -> void
+
+        # : (untyped query) -> Integer?
+        def header_index: (untyped query) -> Integer?
+
+        # : (Integer row_index) -> Array[untyped]
+        def find_by_row: (Integer row_index) -> Array[untyped]
+
+        # : (Hash[untyped, untyped] options) -> Array[untyped]
+        def find_by_conditions: (Hash[untyped, untyped] options) -> Array[untyped]
+
+        # : [T] () { () -> T } -> T
+        def without_changing_default_sheet: [T] () { () -> T } -> T
+      end
+
+      # Forward declaration for Excelx inheriting from Base
+      class Excelx < Base
+      end
+    end
+  end
+end

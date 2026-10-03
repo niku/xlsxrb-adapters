@@ -18,6 +18,9 @@ require "rubyXL/convenience_methods"
 # Require official caxlsx for side-by-side comparison tests
 require "caxlsx"
 
+# Require official roo for side-by-side comparison tests
+require "roo"
+
 module TestHelper
   def with_tempfile(ext = ".xlsx")
     Dir.mktmpdir do |dir|

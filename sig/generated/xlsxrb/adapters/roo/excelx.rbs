@@ -1,0 +1,313 @@
+# Generated from lib/xlsxrb/adapters/roo/excelx.rb with RBS::Inline
+
+module Xlsxrb
+  module Adapters
+    module Roo
+      # High-performance, low-memory Excel (.xlsx and .xlsm) reader adapter
+      # matching Roo::Excelx backed by the xlsxrb engine.
+      class Excelx < Base
+        ERROR_VALUES: untyped
+
+        class ExceedsMaxError < StandardError
+        end
+
+        # Defined name label matching Roo::Excelx::Workbook::Label.
+        class Label
+          attr_reader name: untyped
+
+          attr_reader sheet: untyped
+
+          attr_reader row: untyped
+
+          attr_reader col: untyped
+
+          # @param name [String]
+          # @param sheet [String]
+          # @param row [Integer] 1-based row index.
+          # @param col [Integer] 1-based column index.
+          # : (String name, String sheet, Integer row, Integer col) -> void
+          def initialize: (String name, String sheet, Integer row, Integer col) -> void
+
+          # Coordinate key [row, col].
+          #
+          # @return [Array(Integer, Integer)]
+          # : () -> [Integer, Integer]
+          def key: () -> [ Integer, Integer ]
+        end
+
+        # Workbook metadata proxy matching Roo::Excelx::Workbook.
+        class WorkbookProxy
+          attr_reader defined_names: untyped
+
+          attr_reader base_date: untyped
+
+          attr_reader base_timestamp: untyped
+
+          attr_reader sheets_data: untyped
+
+          # @param defined_names [Hash[String, Label]]
+          # @param base_date [::Date]
+          # @param sheets_data [Array[Hash[Symbol, untyped]]]
+          # : (Hash[String, Label] defined_names, ::Date base_date, Array[Hash[Symbol, untyped]] sheets_data) -> void
+          def initialize: (Hash[String, Label] defined_names, ::Date base_date, Array[Hash[Symbol, untyped]] sheets_data) -> void
+
+          # Sheet metadata list.
+          # : () -> Array[Hash[Symbol, untyped]]
+          def sheets: () -> Array[Hash[Symbol, untyped]]
+        end
+
+        attr_reader workbook: untyped
+
+        # Initializes and parses an XLSX/XLSM file or stream.
+        #
+        # @param filename_or_stream [String, Pathname, File, IO, StringIO]
+        # @param options [Hash]
+        # : (untyped filename_or_stream, ?Hash[Symbol, untyped] options) -> void
+        def initialize: (untyped filename_or_stream, ?Hash[Symbol, untyped] options) -> void
+
+        # Returns list of sheet names.
+        #
+        # @return [Array<String>]
+        # : () -> Array[String]
+        def sheets: () -> Array[String]
+
+        # Returns sheet instance for name or index.
+        #
+        # @param sheet [String, Integer, nil]
+        # @return [Excelx::Sheet]
+        # : (?untyped sheet) -> Excelx::Sheet?
+        def sheet_for: (?untyped sheet) -> Excelx::Sheet?
+
+        # Returns whether the specified sheet is hidden.
+        #
+        # @param sheet [String, Integer, nil]
+        # @return [Boolean]
+        # : (?untyped sheet) -> bool
+        def sheet_hidden?: (?untyped sheet) -> bool
+
+        # Returns whether the specified sheet is visible.
+        #
+        # @param sheet [String, Integer, nil]
+        # @return [Boolean]
+        # : (?untyped sheet) -> bool
+        def sheet_visible?: (?untyped sheet) -> bool
+
+        # Returns internal type of cell: [:numeric_or_formula, format] or :string or :boolean.
+        #
+        # @param row [Integer, String]
+        # @param col [Integer, String, Symbol]
+        # @param sheet [String, Integer, nil]
+        # @return [Object, nil]
+        # : (untyped row, untyped col, ?untyped sheet) -> untyped
+        def excelx_type: (untyped row, untyped col, ?untyped sheet) -> untyped
+
+        # Returns unformatted string value as stored in XML.
+        #
+        # @param row [Integer, String]
+        # @param col [Integer, String, Symbol]
+        # @param sheet [String, Integer, nil]
+        # @return [String, nil]
+        # : (untyped row, untyped col, ?untyped sheet) -> untyped
+        def excelx_value: (untyped row, untyped col, ?untyped sheet) -> untyped
+
+        # Returns formatted value string matching cell format code.
+        #
+        # @param row [Integer, String]
+        # @param col [Integer, String, Symbol]
+        # @param sheet [String, Integer, nil]
+        # @return [String, nil]
+        # : (untyped row, untyped col, ?untyped sheet) -> untyped
+        def formatted_value: (untyped row, untyped col, ?untyped sheet) -> untyped
+
+        # Returns format code string for cell.
+        #
+        # @param row [Integer, String]
+        # @param col [Integer, String, Symbol]
+        # @param sheet [String, Integer, nil]
+        # @return [String, nil]
+        # : (untyped row, untyped col, ?untyped sheet) -> String?
+        def excelx_format: (untyped row, untyped col, ?untyped sheet) -> String?
+
+        # Returns formula expression string (without '=') or nil.
+        #
+        # @param row [Integer, String]
+        # @param col [Integer, String, Symbol]
+        # @param sheet [String, Integer, nil]
+        # @return [String, nil]
+        # : (untyped row, untyped col, ?untyped sheet) -> String?
+        def formula: (untyped row, untyped col, ?untyped sheet) -> String?
+
+        # Returns whether the cell contains a formula.
+        #
+        # @param row [Integer, String]
+        # @param col [Integer, String, Symbol]
+        # @param sheet [String, Integer, nil]
+        # @return [Boolean]
+        # : (*untyped args) -> bool
+        def formula?: (*untyped args) -> bool
+
+        # Returns all formulas in sheet as [[row, col, formula], ...].
+        #
+        # @param sheet [String, Integer, nil]
+        # @return [Array<Array(Integer, Integer, String)>]
+        # : (?untyped sheet) -> Array[[Integer, Integer, String]]
+        def formulas: (?untyped sheet) -> Array[[ Integer, Integer, String ]]
+
+        # Returns Font object for cell.
+        #
+        # @param row [Integer, String]
+        # @param col [Integer, String, Symbol]
+        # @param sheet [String, Integer, nil]
+        # @return [Font, nil]
+        # : (untyped row, untyped col, ?untyped sheet) -> Font?
+        def font: (untyped row, untyped col, ?untyped sheet) -> Font?
+
+        # Returns cell type Symbol.
+        #
+        # @param row [Integer, String]
+        # @param col [Integer, String, Symbol]
+        # @param sheet [String, Integer, nil]
+        # @return [Symbol, nil]
+        # : (untyped row, untyped col, ?untyped sheet) -> Symbol?
+        def celltype: (untyped row, untyped col, ?untyped sheet) -> Symbol?
+
+        # Returns comment string for cell or nil.
+        #
+        # @param row [Integer, String]
+        # @param col [Integer, String, Symbol]
+        # @param sheet [String, Integer, nil]
+        # @return [String, nil]
+        # : (untyped row, untyped col, ?untyped sheet) -> String?
+        def comment: (untyped row, untyped col, ?untyped sheet) -> String?
+
+        # Returns whether the cell contains a comment.
+        #
+        # @param row [Integer, String]
+        # @param col [Integer, String, Symbol]
+        # @param sheet [String, Integer, nil]
+        # @return [Boolean]
+        # : (untyped row, untyped col, ?untyped sheet) -> bool
+        def comment?: (untyped row, untyped col, ?untyped sheet) -> bool
+
+        # Returns all comments in sheet as [[row, col, comment_text], ...].
+        #
+        # @param sheet [String, Integer, nil]
+        # @return [Array<Array(Integer, Integer, String)>]
+        # : (?untyped sheet) -> Array[[Integer, Integer, String]]
+        def comments: (?untyped sheet) -> Array[[ Integer, Integer, String ]]
+
+        # Returns hyperlink target URL string or nil.
+        #
+        # @param row [Integer, String]
+        # @param col [Integer, String, Symbol]
+        # @param sheet [String, Integer, nil]
+        # @return [String, nil]
+        # : (untyped row, untyped col, ?untyped sheet) -> String?
+        def hyperlink: (untyped row, untyped col, ?untyped sheet) -> String?
+
+        # Returns whether the cell has a hyperlink.
+        #
+        # @param row [Integer, String]
+        # @param col [Integer, String, Symbol]
+        # @param sheet [String, Integer, nil]
+        # @return [Boolean]
+        # : (untyped row, untyped col, ?untyped sheet) -> bool
+        def hyperlink?: (untyped row, untyped col, ?untyped sheet) -> bool
+
+        # Returns coordinate [row, col, sheet] for defined name or [nil, nil, nil].
+        #
+        # @param name [String, Symbol]
+        # @return [Array(Integer, Integer, String), Array(nil, nil, nil)]
+        # : (untyped name) -> Array[untyped]
+        def label: (untyped name) -> Array[untyped]
+
+        # Returns all defined names as [[name, [row, col, sheet]], ...].
+        #
+        # @return [Array<Array(String, Array(Integer, Integer, String))>]
+        # : () -> Array[[String, [Integer, Integer, String]]]
+        def labels: () -> Array[[ String, [ Integer, Integer, String ] ]]
+
+        # Returns list of image paths for sheet.
+        #
+        # @param sheet [String, Integer, nil]
+        # @return [Array<String>]
+        # : (?untyped sheet) -> Array[String]
+        def images: (?untyped sheet) -> Array[String]
+
+        # Yields each row as an Array of Excelx::Cell objects.
+        #
+        # @param options [Hash]
+        # @yield [row]
+        # @return [Enumerator, void]
+        # : (?Hash[Symbol, untyped] options) { (Array[untyped]) -> void } -> void
+        # : (?Hash[Symbol, untyped] options) -> Enumerator[Array[untyped], void]
+        def each_row_streaming: (?Hash[Symbol, untyped] options) { (Array[untyped]) -> void } -> void
+                              | (?Hash[Symbol, untyped] options) -> Enumerator[Array[untyped], void]
+
+        alias each_row each_row_streaming
+
+        # Resolves defined names or coordinates via method_missing.
+        # : (Symbol method_name, *untyped args) -> untyped
+        def method_missing: (Symbol method_name, *untyped args) -> untyped
+
+        # : (Symbol method_name, ?bool include_private) -> bool
+        def respond_to_missing?: (Symbol method_name, ?bool include_private) -> bool
+
+        # Converts this Excelx adapter instance to an immutable Xlsxrb::Elements::Workbook.
+        #
+        # @return [Xlsxrb::Elements::Workbook]
+        # : () -> Xlsxrb::Elements::Workbook
+        def to_xlsxrb: () -> Xlsxrb::Elements::Workbook
+
+        # Constructs an Excelx instance from an Xlsxrb::Elements::Workbook.
+        #
+        # @param xlsxrb_wb [Xlsxrb::Elements::Workbook]
+        # @return [Excelx]
+        # : (Xlsxrb::Elements::Workbook xlsxrb_wb) -> Excelx
+        def self.from_xlsxrb: (Xlsxrb::Elements::Workbook xlsxrb_wb) -> Excelx
+
+        private
+
+        # : (untyped source, untyped packed, untyped file_warning) -> untyped
+        def prepare_input: (untyped source, untyped packed, untyped file_warning) -> untyped
+
+        # : (String path, Symbol file_warning) -> void
+        def validate_file_extension: (String path, Symbol file_warning) -> void
+
+        # rubocop:disable Security/Open
+        # : (String uri_str) -> StringIO
+        def download_to_io: (String uri_str) -> StringIO
+
+        # : (untyped obj) -> bool
+        def is_stream?: (untyped obj) -> bool
+
+        # : (untyped io, bool only_visible) -> void
+        def parse_archive: (untyped io, bool only_visible) -> void
+
+        # : (String? xml) -> [Array[String], Hash[Integer, String]]
+        def parse_shared_strings: (String? xml) -> [ Array[String], Hash[Integer, String] ]
+
+        # : (String? xml, bool only_visible) -> [Array[Hash[Symbol, untyped]], Hash[String, Label], ::Date]
+        def parse_workbook_xml: (String? xml, bool only_visible) -> [ Array[Hash[Symbol, untyped]], Hash[String, Label], ::Date ]
+
+        # : (String s_name, String sheet_xml, String? sheet_rels_xml, untyped zip, Array[String] shared_strings, Hash[Integer, String] html_strings, Hash[Integer, String] num_fmts, ::Date base_date, Array[String] media_images, ?state: (Symbol | String)) -> Excelx::Sheet
+        def parse_sheet: (String s_name, String sheet_xml, String? sheet_rels_xml, untyped zip, Array[String] shared_strings, Hash[Integer, String] html_strings, Hash[Integer, String] num_fmts, ::Date base_date, Array[String] media_images, ?state: Symbol | String) -> Excelx::Sheet
+
+        # : (String? xml) -> Hash[Excelx::Coordinate, String]
+        def parse_comments_xml: (String? xml) -> Hash[Excelx::Coordinate, String]
+
+        # : (untyped zip, String path) -> String?
+        def read_xml: (untyped zip, String path) -> String?
+
+        # : (String? xml) -> String
+        def strip_tag_namespaces: (String? xml) -> String
+
+        # : (String base_dir, String target) -> String
+        def resolve_zip_path: (String base_dir, String target) -> String
+
+        # : (String? str) -> String?
+        def unescape_xml: (String? str) -> String?
+      end
+    end
+  end
+end

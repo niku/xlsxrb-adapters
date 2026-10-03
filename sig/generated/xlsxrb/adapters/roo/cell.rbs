@@ -1,0 +1,286 @@
+# Generated from lib/xlsxrb/adapters/roo/cell.rb with RBS::Inline
+
+module Xlsxrb
+  module Adapters
+    module Roo
+      class Excelx
+        # Container for Excel cell objects matching Roo::Excelx::Cell.
+        class Cell
+          # Base class for all Excelx cell types.
+          class Base
+            attr_reader cell_value: untyped
+
+            attr_reader cell_type: untyped
+
+            attr_reader formula: untyped
+
+            attr_reader coordinate: untyped
+
+            attr_reader format: untyped
+
+            attr_accessor value: untyped
+
+            # @param value [Object]
+            # @param formula [String, nil]
+            # @param excelx_type [Object]
+            # @param style [Integer, nil]
+            # @param link [String, nil]
+            # @param coordinate [Coordinate, nil]
+            # : (untyped value, ::String? formula, untyped excelx_type, Integer? style, ::String? link, Coordinate? coordinate) -> void
+            def initialize: (untyped value, ::String? formula, untyped excelx_type, Integer? style, ::String? link, Coordinate? coordinate) -> void
+
+            # @return [Integer, nil]
+            # : () -> Integer?
+            def style: () -> Integer?
+
+            # @return [Symbol]
+            # : () -> Symbol?
+            def type: () -> Symbol?
+
+            # @return [Symbol]
+            # : () -> Symbol?
+            def default_type: () -> Symbol?
+
+            # @return [Boolean]
+            # : () -> bool
+            def formula?: () -> bool
+
+            # @return [Boolean]
+            # : () -> bool
+            def link?: () -> bool
+
+            # @return [Boolean]
+            # : () -> bool
+            def empty?: () -> bool
+
+            # @return [String, Object]
+            # : () -> untyped
+            def formatted_value: () -> untyped
+
+            # @return [String]
+            # : () -> ::String
+            def to_s: () -> ::String
+
+            # @return [Boolean]
+            # : () -> bool
+            def hyperlink: () -> bool
+
+            # @return [Boolean]
+            # : () -> bool
+            def link: () -> bool
+
+            # @return [Object]
+            # : () -> untyped
+            def excelx_value: () -> untyped
+
+            # @return [Object]
+            # : () -> untyped
+            def excelx_type: () -> untyped
+          end
+
+          # Number cell representation.
+          class Number < Base
+            attr_reader format: untyped
+
+            # @param value [Object]
+            # @param formula [String, nil]
+            # @param excelx_type [Object]
+            # @param style [Integer, nil]
+            # @param link [String, nil]
+            # @param coordinate [Coordinate, nil]
+            # : (untyped value, ::String? formula, untyped excelx_type, Integer? style, ::String? link, Coordinate? coordinate) -> void
+            def initialize: (untyped value, ::String? formula, untyped excelx_type, Integer? style, ::String? link, Coordinate? coordinate) -> void
+
+            # @return [Symbol]
+            # : () -> Symbol
+            def default_type: () -> Symbol
+
+            # Converts raw value string to Integer or Float.
+            #
+            # @param number [Object]
+            # @return [Numeric, String, nil]
+            # : (untyped number) -> untyped
+            def create_numeric: (untyped number) -> untyped
+
+            # Returns formatted number representation matching format code.
+            #
+            # @return [String]
+            # : () -> ::String
+            def formatted_value: () -> ::String
+
+            private
+
+            # Generates a formatter string or Proc for the given format code.
+            # : (::String format) -> untyped
+            def generate_formatter: (::String format) -> untyped
+
+            # : () -> Proc
+            def general_formatter: () -> Proc
+
+            # : (::String formatter, ?::String? negative_formatter) -> Proc
+            def number_format: (::String formatter, ?::String? negative_formatter) -> Proc
+          end
+
+          # Date and DateTime base cell representation.
+          class DateTime < Base
+            SECONDS_IN_DAY: ::Integer
+
+            DATE_FORMATS: Hash[::String, ::String]
+
+            TIME_FORMATS: Hash[::String, ::String]
+
+            attr_reader format: untyped
+
+            # @param value [Object]
+            # @param formula [String, nil]
+            # @param excelx_type [Object]
+            # @param style [Integer, nil]
+            # @param link [String, nil]
+            # @param base_timestamp [Integer, nil]
+            # @param coordinate [Coordinate, nil]
+            # : (untyped value, ::String? formula, untyped excelx_type, Integer? style, ::String? link, Integer? base_timestamp, Coordinate? coordinate) -> void
+            def initialize: (untyped value, ::String? formula, untyped excelx_type, Integer? style, ::String? link, Integer? base_timestamp, Coordinate? coordinate) -> void
+
+            # @return [Symbol]
+            # : () -> Symbol
+            def default_type: () -> Symbol
+
+            # @return [String]
+            # : () -> ::String
+            def formatted_value: () -> ::String
+
+            private
+
+            # : (Integer? base_timestamp, untyped value) -> untyped
+            def create_datetime: (Integer? base_timestamp, untyped value) -> untyped
+
+            # : (::String part) -> (::String | false)
+            def parse_date_or_time_format: (::String part) -> (::String | false)
+          end
+
+          # Date cell representation.
+          class Date < DateTime
+            # @param value [Object]
+            # @param formula [String, nil]
+            # @param excelx_type [Object]
+            # @param style [Integer, nil]
+            # @param link [String, nil]
+            # @param base_date [::Date, nil]
+            # @param coordinate [Coordinate, nil]
+            # : (untyped value, ::String? formula, untyped excelx_type, Integer? style, ::String? link, ::Date? base_date, Coordinate? coordinate) -> void
+            def initialize: (untyped value, ::String? formula, untyped excelx_type, Integer? style, ::String? link, ::Date? base_date, Coordinate? coordinate) -> void
+
+            # @return [Symbol]
+            # : () -> Symbol
+            def default_type: () -> Symbol
+
+            # @return [String]
+            # : () -> ::String
+            def formatted_value: () -> ::String
+
+            private
+
+            # : (::Date? base_date, untyped value) -> untyped
+            def create_date: (::Date? base_date, untyped value) -> untyped
+          end
+
+          # Time cell representation.
+          class Time < DateTime
+            # @param value [Object]
+            # @param formula [String, nil]
+            # @param excelx_type [Object]
+            # @param style [Integer, nil]
+            # @param link [String, nil]
+            # @param base_date [::Date, nil]
+            # @param coordinate [Coordinate, nil]
+            # : (untyped value, ::String? formula, untyped excelx_type, Integer? style, ::String? link, ::Date? base_date, Coordinate? coordinate) -> void
+            def initialize: (untyped value, ::String? formula, untyped excelx_type, Integer? style, ::String? link, ::Date? base_date, Coordinate? coordinate) -> void
+
+            # @return [Symbol]
+            # : () -> Symbol
+            def default_type: () -> Symbol
+
+            # @return [String]
+            # : () -> ::String
+            def formatted_value: () -> ::String
+
+            alias to_s formatted_value
+          end
+
+          # Boolean cell representation.
+          class Boolean < Base
+            # @param value [Object]
+            # @param formula [String, nil]
+            # @param style [Integer, nil]
+            # @param link [String, nil]
+            # @param coordinate [Coordinate, nil]
+            # : (untyped value, ::String? formula, Integer? style, ::String? link, Coordinate? coordinate) -> void
+            def initialize: (untyped value, ::String? formula, Integer? style, ::String? link, Coordinate? coordinate) -> void
+
+            # @return [Symbol]
+            # : () -> Symbol
+            def default_type: () -> Symbol
+
+            # @return [String]
+            # : () -> ::String
+            def formatted_value: () -> ::String
+
+            private
+
+            # : (untyped value) -> bool
+            def create_boolean: (untyped value) -> bool
+          end
+
+          # String cell representation.
+          class String < Base
+            # @param value [Object]
+            # @param formula [String, nil]
+            # @param style [Integer, nil]
+            # @param link [String, nil]
+            # @param coordinate [Coordinate, nil]
+            # : (untyped value, ::String? formula, Integer? style, ::String? link, Coordinate? coordinate) -> void
+            def initialize: (untyped value, ::String? formula, Integer? style, ::String? link, Coordinate? coordinate) -> void
+
+            # @return [Symbol]
+            # : () -> Symbol
+            def default_type: () -> Symbol
+
+            # @return [Boolean]
+            # : () -> bool
+            def empty?: () -> bool
+          end
+
+          # Empty cell representation.
+          class Empty < Base
+            # @param coordinate [Coordinate, nil]
+            # : (?Coordinate? coordinate) -> void
+            def initialize: (?Coordinate? coordinate) -> void
+
+            # @return [nil]
+            # : () -> nil
+            def default_type: () -> nil
+
+            # @return [true]
+            # : () -> true
+            def empty?: () -> true
+          end
+
+          # Factory method to create cell by type.
+          #
+          # @param type [Symbol]
+          # @param values [Array<Object>]
+          # @return [Base, nil]
+          # : (Symbol type, *untyped values) -> Base?
+          def self.create_cell: (Symbol type, *untyped values) -> Base?
+
+          # Returns cell class for type Symbol.
+          #
+          # @param type [Symbol]
+          # @return [Class, nil]
+          # : (Symbol type) -> singleton(Base)?
+          def self.cell_class: (Symbol type) -> singleton(Base)?
+        end
+      end
+    end
+  end
+end

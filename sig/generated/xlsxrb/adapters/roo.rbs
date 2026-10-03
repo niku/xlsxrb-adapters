@@ -1,0 +1,16 @@
+# Generated from lib/xlsxrb/adapters/roo.rb with RBS::Inline
+
+module Xlsxrb
+  module Adapters
+    # Roo adapter module providing a drop-in compatible interface for Roo (.xlsx & .xlsm)
+    # without hijacking the global ::Roo namespace by default.
+    module Roo
+      # Converts an Xlsxrb::Elements::Workbook to an adapter Excelx workbook.
+      #
+      # @param xlsxrb_workbook [Xlsxrb::Elements::Workbook]
+      # @return [Excelx]
+      # : (Xlsxrb::Elements::Workbook xlsxrb_workbook) -> Excelx
+      def self.from_xlsxrb: (Xlsxrb::Elements::Workbook xlsxrb_workbook) -> Excelx
+    end
+  end
+end
