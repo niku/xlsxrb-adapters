@@ -106,14 +106,7 @@ module Xlsxrb
         # @return [String]
         #: (Integer index) -> String
         def col_ref(index)
-          chars = []
-          i = index
-          while i >= 26
-            chars << ((i % 26) + 65).chr
-            i = (i / 26) - 1
-          end
-          chars << (i + 65).chr
-          chars.reverse.join
+          Xlsxrb::Utils.col_index_to_name(index)
         end
 
         # Converts a row index (0-based) into an Excel 1-based row number
@@ -130,7 +123,7 @@ module Xlsxrb
         # @return [String]
         #: (Integer col_index, Integer row_index) -> String
         def cell_r(col_index, row_index)
-          "#{col_ref(col_index)}#{row_ref(row_index)}"
+          Xlsxrb::Utils.row_col_to_ref(row_index, col_index)
         end
 
         # Converts an Excel cell reference (e.g. 'A1' or 'AB12') into 0-based [col_index, row_index]
@@ -140,15 +133,10 @@ module Xlsxrb
         def name_to_indices(name)
           raise ArgumentError, "invalid cell name" if name.nil? || name.to_s.length < 2
 
-          col_str = name[/\A[A-Z]+/i]
-          row_str = name[/\d+\z/]
-          raise ArgumentError, "invalid cell name" if col_str.nil? || row_str.nil?
+          coords = Xlsxrb::Utils.ref_to_row_col(name.to_s)
+          raise ArgumentError, "invalid cell name" unless coords
 
-          col_index = 0
-          col_str.upcase.each_byte do |b|
-            col_index = (col_index * 26) + (b - 64)
-          end
-          [col_index - 1, row_str.to_i - 1]
+          [coords[1], coords[0]]
         end
 
         # Converts a range definition into a 2D array of coordinate strings

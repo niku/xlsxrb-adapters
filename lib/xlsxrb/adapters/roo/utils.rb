@@ -74,13 +74,7 @@ module Xlsxrb
         def number_to_letter(num)
           return "" if num.nil? || num <= 0
 
-          result = +""
-          n = num
-          while n.positive?
-            n, rem = (n - 1).divmod(26)
-            result.prepend(LETTERS[rem])
-          end
-          result
+          Xlsxrb::Utils.col_index_to_name(num - 1)
         end
 
         # Converts column letter(s) to 1-based number (e.g. "A" => 1, "AA" => 27).
@@ -92,12 +86,7 @@ module Xlsxrb
           str = letters.to_s
           return 0 if str.empty?
 
-          result = 0
-          str.bytes.each do |b|
-            idx = b > 96 ? b - 96 : b - 64
-            result = (result * 26) + idx
-          end
-          result
+          Xlsxrb::Utils.col_name_to_index(str) + 1
         end
 
         # Computes total cell count in a range like "A1:C10".

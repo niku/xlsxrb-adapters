@@ -138,6 +138,7 @@ module Xlsxrb
             cells: elements_cells,
             height: height,
             hidden: hidden || false,
+            collapsed: collapsed || false,
             custom_height: custom_height || false,
             outline_level: @outline_level,
             unmapped_data: row_unmapped

@@ -18,6 +18,7 @@ module Xlsxrb
         attr_accessor :cells #: Array[Cell?]
         attr_accessor :height #: (Float | Integer)?
         attr_accessor :hidden #: bool
+        attr_accessor :collapsed #: bool
         attr_accessor :custom_height #: bool
         attr_accessor :outline_level #: Integer?
         attr_accessor :style_index #: Integer?
@@ -31,18 +32,28 @@ module Xlsxrb
         # @param height [Float, Integer, nil] Row height.
         # @param hidden [Boolean] Whether row is hidden.
         # @param custom_height [Boolean] Whether row has custom height.
+        # @param collapsed [Boolean] Whether row is collapsed.
         # @param outline_level [Integer, nil] Outline level.
         # @param style_index [Integer, nil] Style index.
-        #: (?worksheet: Worksheet?, ?index: Integer, ?cells: Array[Cell?], ?height: (Float | Integer)?, ?hidden: bool, ?custom_height: bool, ?outline_level: Integer?, ?style_index: Integer?) -> void
-        def initialize(worksheet: nil, index: 0, cells: [], height: nil, hidden: false, custom_height: false, outline_level: nil, style_index: 0)
+        #: (?worksheet: Worksheet?, ?index: Integer, ?cells: Array[Cell?], ?height: (Float | Integer)?, ?hidden: bool, ?custom_height: bool, ?collapsed: bool, ?outline_level: Integer?, ?style_index: Integer?) -> void
+        def initialize(worksheet: nil, index: 0, cells: [], height: nil, hidden: false, custom_height: false, collapsed: false, outline_level: nil, style_index: 0)
           @worksheet = worksheet
           @index = index
           @cells = cells.is_a?(Array) ? cells.dup : []
           @height = height
           @hidden = hidden
           @custom_height = custom_height
+          @collapsed = collapsed
           @outline_level = outline_level
           @style_index = style_index.to_i
+        end
+
+        # Returns whether row is collapsed.
+        #
+        # @return [Boolean]
+        #: () -> bool
+        def collapsed?
+          @collapsed == true
         end
 
         # Accesses a cell by 0-based column index.
@@ -159,6 +170,7 @@ module Xlsxrb
             cells: sorted_cells,
             height: @height,
             hidden: @hidden,
+            collapsed: @collapsed || false,
             custom_height: @custom_height,
             outline_level: @outline_level,
             unmapped_data: row_unmapped

@@ -59,14 +59,10 @@ module Xlsxrb
         # @return [Integer]
         #: (String col) -> Integer
         def column_index(col)
-          chars = col.bytes
-          sum = 0
-          while (char = chars.delete_at(0))
-            return sum - 1 if char < A_CODEPOINT # reached the number
+          coords = Xlsxrb::Utils.ref_to_row_col(col)
+          return coords[1] if coords
 
-            sum = (sum * 26) + (char - A_CODEPOINT + 1)
-          end
-          sum.positive? ? sum - 1 : 0
+          Xlsxrb::Utils.col_name_to_index(col)
         end
 
         # Return a Date for the given Excel date value

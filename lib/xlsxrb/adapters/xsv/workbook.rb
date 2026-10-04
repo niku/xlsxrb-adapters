@@ -186,7 +186,7 @@ module Xlsxrb
         #: () -> Xlsxrb::Elements::Workbook
         def to_xlsxrb
           worksheets = (@sheets || []).map(&:to_xlsxrb)
-          Elements::Workbook.new(sheets: worksheets)
+          Elements::Workbook.new(sheets: worksheets, date1904: date1904?)
         end
 
         private

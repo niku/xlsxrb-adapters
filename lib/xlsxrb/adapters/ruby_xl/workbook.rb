@@ -562,7 +562,8 @@ module Xlsxrb
             shared_strings: sst_strings,
             styles: styles_hash,
             unmapped_data: merged_unmapped,
-            defined_names: dns
+            defined_names: dns,
+            date1904: date1904?
           )
         end
 

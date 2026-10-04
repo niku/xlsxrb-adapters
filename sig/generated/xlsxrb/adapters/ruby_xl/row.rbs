@@ -17,6 +17,8 @@ module Xlsxrb
 
         attr_accessor hidden: bool
 
+        attr_accessor collapsed: bool
+
         attr_accessor custom_height: bool
 
         attr_accessor outline_level: Integer?
@@ -33,10 +35,17 @@ module Xlsxrb
         # @param height [Float, Integer, nil] Row height.
         # @param hidden [Boolean] Whether row is hidden.
         # @param custom_height [Boolean] Whether row has custom height.
+        # @param collapsed [Boolean] Whether row is collapsed.
         # @param outline_level [Integer, nil] Outline level.
         # @param style_index [Integer, nil] Style index.
-        # : (?worksheet: Worksheet?, ?index: Integer, ?cells: Array[Cell?], ?height: (Float | Integer)?, ?hidden: bool, ?custom_height: bool, ?outline_level: Integer?, ?style_index: Integer?) -> void
-        def initialize: (?worksheet: Worksheet?, ?index: Integer, ?cells: Array[Cell?], ?height: (Float | Integer)?, ?hidden: bool, ?custom_height: bool, ?outline_level: Integer?, ?style_index: Integer?) -> void
+        # : (?worksheet: Worksheet?, ?index: Integer, ?cells: Array[Cell?], ?height: (Float | Integer)?, ?hidden: bool, ?custom_height: bool, ?collapsed: bool, ?outline_level: Integer?, ?style_index: Integer?) -> void
+        def initialize: (?worksheet: Worksheet?, ?index: Integer, ?cells: Array[Cell?], ?height: (Float | Integer)?, ?hidden: bool, ?custom_height: bool, ?collapsed: bool, ?outline_level: Integer?, ?style_index: Integer?) -> void
+
+        # Returns whether row is collapsed.
+        #
+        # @return [Boolean]
+        # : () -> bool
+        def collapsed?: () -> bool
 
         # Accesses a cell by 0-based column index.
         #

@@ -464,7 +464,8 @@ module Xlsxrb
 
           Xlsxrb::Elements::Workbook.new(
             sheets: elements_sheets,
-            defined_names: dns
+            defined_names: dns,
+            date1904: date1904_active
           )
         end
 
