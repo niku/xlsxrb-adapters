@@ -15,6 +15,7 @@ gemspec
 # - No version constraints: Gemfile.lock pins versions.
 gem "caxlsx"
 gem "creek"
+gem "fast_excel"
 gem "irb"
 gem "matrix"
 gem "rake"

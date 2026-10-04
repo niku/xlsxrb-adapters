@@ -1,0 +1,172 @@
+# Generated from lib/xlsxrb/adapters/fast_excel/format.rb with RBS::Inline
+
+module Xlsxrb
+  module Adapters
+    module FastExcel
+      # Helper module providing hash-based attribute setters and introspection
+      module AttributeHelper
+        # Sets attributes from a hash of options.
+        #
+        # @param values [Hash{Symbol => untyped}]
+        # @return [self]
+        # : (Hash[Symbol, untyped] values) -> self
+        def set: (Hash[Symbol, untyped] values) -> self
+
+        # Returns a hash of all member field values.
+        #
+        # @return [Hash{Symbol => untyped}]
+        # : () -> Hash[Symbol, untyped]
+        def fields_hash: () -> Hash[Symbol, untyped]
+
+        # @param pp [PP]
+        # @return [void]
+        def pretty_print: (untyped pp) -> untyped
+      end
+
+      # Format class managing cell font, border, fill, alignment, and number formatting
+      class Format
+        include AttributeHelper
+
+        MEMBERS: untyped
+
+        # @return [Workbook, nil]
+        attr_accessor workbook: untyped
+
+        # @param workbook [Workbook, nil]
+        # @param options [Hash{Symbol => untyped}, nil]
+        # : (?Workbook? workbook, ?Hash[Symbol, untyped]? options) -> void
+        def initialize: (?Workbook? workbook, ?Hash[Symbol, untyped]? options) -> void
+
+        # @return [Array<Symbol>]
+        # : () -> Array[Symbol]
+        def members: () -> Array[Symbol]
+
+        # Access member field value by symbol key.
+        #
+        # @param key [Symbol, String]
+        # @return [untyped]
+        # : (Symbol | String key) -> untyped
+        def []: (Symbol | String key) -> untyped
+
+        # Set member field value by symbol key.
+        #
+        # @param key [Symbol, String]
+        # @param value [untyped]
+        # @return [untyped]
+        # : (Symbol | String key, untyped value) -> untyped
+        def []=: (Symbol | String key, untyped value) -> untyped
+
+        # Sets font size in points (0 for default).
+        #
+        # @param value [Numeric]
+        # @return [Numeric]
+        # : (Numeric value) -> Numeric
+        def set_font_size: (Numeric value) -> Numeric
+
+        # @return [String]
+        # : () -> String
+        def font_family: () -> String
+
+        # @param value [String]
+        # @return [String]
+        # : (String value) -> String
+        def font_family=: (String value) -> String
+
+        # Alignments getter returning hash of :horizontal and :vertical symbols
+        #
+        # @return [Hash{Symbol => Symbol}]
+        # : () -> Hash[Symbol, Symbol]
+        def align: () -> Hash[Symbol, Symbol]
+
+        # Sets alignment using symbol, string, or hash with :horizontal, :vertical, :h, :v keys.
+        #
+        # @param value [Symbol, String, Hash{Symbol => untyped}]
+        # @return [void]
+        # : (Symbol | String | Hash[Symbol, untyped] value) -> void
+        def align=: (Symbol | String | Hash[Symbol, untyped] value) -> void
+
+        # @param value [Symbol, Integer]
+        # @return [void]
+        # : (Symbol | Integer value) -> void
+        def set_align: (Symbol | Integer value) -> void
+
+        # @return [Symbol, Integer, nil]
+        def border: () -> untyped
+
+        # Sets all four border edges at once.
+        #
+        # @param value [Symbol, Integer, String]
+        # @return [void]
+        # : (Symbol | Integer | String value) -> void
+        def border=: (Symbol | Integer | String value) -> void
+
+        # Sets all four border edges.
+        #
+        # @param value [Symbol, Integer, String]
+        # @return [void]
+        # : (Symbol | Integer | String value) -> void
+        def set_border: (Symbol | Integer | String value) -> void
+
+        # Converts border symbol, string, or integer into valid integer border value.
+        #
+        # @param value [Symbol, String, Integer]
+        # @return [Integer]
+        # : (untyped value) -> Integer
+        def border_value: (untyped value) -> Integer
+
+        # Method setters for Libxlsxwriter compatibility
+        # @return [void]
+        def set_bold: () -> untyped
+
+        # @return [void]
+        def set_italic: () -> untyped
+
+        # @param val [String]
+        # @return [void]
+        def set_font_name: (untyped val) -> untyped
+
+        # @param val [String]
+        # @return [void]
+        def set_num_format: (untyped val) -> untyped
+
+        # @return [void]
+        def set_text_wrap: () -> untyped
+
+        # @return [void]
+        def set_font_strikeout: () -> untyped
+
+        # @return [void]
+        def set_font_outline: () -> untyped
+
+        # @return [void]
+        def set_font_shadow: () -> untyped
+
+        # @return [void]
+        def set_shrink: () -> untyped
+
+        # @return [void]
+        def set_text_justlast: () -> untyped
+
+        # @param val [Integer, Symbol]
+        # @return [void]
+        def set_underline: (?untyped val) -> untyped
+
+        # @param val [Integer]
+        # @return [void]
+        def set_rotation: (untyped val) -> untyped
+
+        # @param val [Integer]
+        # @return [void]
+        def set_indent: (untyped val) -> untyped
+
+        # @param val [Integer]
+        # @return [void]
+        def set_pattern: (untyped val) -> untyped
+
+        # @param val [Integer, Symbol]
+        # @return [void]
+        def set_font_script: (untyped val) -> untyped
+      end
+    end
+  end
+end

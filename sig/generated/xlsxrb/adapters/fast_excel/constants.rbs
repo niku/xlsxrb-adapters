@@ -1,0 +1,72 @@
+# Generated from lib/xlsxrb/adapters/fast_excel/constants.rb with RBS::Inline
+
+module Xlsxrb
+  module Adapters
+    module FastExcel
+      # Default Excel column width in character units
+      DEF_COL_WIDTH: ::Float
+
+      # Number of seconds in 1 standard day
+      XLSX_DATE_DAY: ::Float
+
+      # Number of days between 1970-01-01 and 1900-01-01 (including Excel 1900 leap year bug)
+      XLSX_DATE_EPOCH_DIFF: ::Integer
+
+      # rubocop:disable Lint/StructNewOverride
+      # Represents a lightweight Datetime struct compatible with Libxlsxwriter::Datetime
+      class Datetime < Struct[untyped]
+        attr_accessor year(): untyped
+
+        attr_accessor month(): untyped
+
+        attr_accessor day(): untyped
+
+        attr_accessor hour(): untyped
+
+        attr_accessor min(): untyped
+
+        attr_accessor sec(): untyped
+
+        def self.new: (?untyped year, ?untyped month, ?untyped day, ?untyped hour, ?untyped min, ?untyped sec) -> instance
+                    | (?year: untyped, ?month: untyped, ?day: untyped, ?hour: untyped, ?min: untyped, ?sec: untyped) -> instance
+      end
+
+      # Generic enum simulation matching FFI::Enum methods (.find, .symbols, #[])
+      class Enum
+        # @return [Array<Symbol>]
+        attr_reader symbols: untyped
+
+        # @param mapping [Hash{Symbol => untyped}]
+        def initialize: (untyped mapping) -> untyped
+
+        # Finds the integer value for a symbol, or symbol for an integer / string.
+        #
+        # @param key [Symbol, String, Integer]
+        # @return [Symbol, Integer, nil]
+        def find: (untyped key) -> untyped
+
+        # @param key [Symbol, String, Integer]
+        # @return [Symbol, Integer, nil]
+        def []: (untyped key) -> untyped
+      end
+
+      # Error codes enum matching libxlsxwriter lxw_error enum
+      ERROR_ENUM: untyped
+
+      # Descriptive error strings matching libxlsxwriter lxw_strerror
+      ERROR_STRINGS: untyped
+
+      # Standard defined colors enum matching libxlsxwriter defined_colors
+      COLOR_ENUM: untyped
+
+      # Border styles enum matching libxlsxwriter format_borders
+      BORDER_ENUM: untyped
+
+      # Alignments enum matching libxlsxwriter format_alignments
+      ALIGN_ENUM: untyped
+
+      # Comprehensive map of CSS color names to integer RGB hex values matching FastExcel::EXTRA_COLORS
+      EXTRA_COLORS: untyped
+    end
+  end
+end

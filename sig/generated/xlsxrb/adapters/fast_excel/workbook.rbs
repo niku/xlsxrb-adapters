@@ -1,0 +1,194 @@
+# Generated from lib/xlsxrb/adapters/fast_excel/workbook.rb with RBS::Inline
+
+module Xlsxrb
+  module Adapters
+    module FastExcel
+      # Represents a workbook compatible with FastExcel::WorkbookExt and Libxlsxwriter::Workbook
+      class Workbook
+        include AttributeHelper
+
+        # Standard built-in OpenXML number format mappings
+        BUILTIN_NUM_FMTS: untyped
+
+        # @return [Boolean]
+        attr_accessor tmp_file: untyped
+
+        # @return [Boolean]
+        attr_accessor is_open: untyped
+
+        # @return [String]
+        attr_accessor filename: untyped
+
+        # @return [Format]
+        attr_reader default_format: untyped
+
+        # @return [Array<Worksheet>]
+        attr_reader sheets: untyped
+
+        alias worksheets sheets
+
+        # @param filename [String, Pathname, nil]
+        # @param constant_memory [Boolean]
+        # @param default_format [Hash{Symbol => untyped}, nil]
+        # : (?String? filename, ?constant_memory: bool, ?default_format: Hash[Symbol, untyped]?) -> void
+        def initialize: (?String? filename, ?constant_memory: bool, ?default_format: Hash[Symbol, untyped]?) -> void
+
+        # Returns whether constant_memory mode is active.
+        #
+        # @return [Boolean]
+        # : () -> bool
+        def constant_memory?: () -> bool
+
+        # Adds a new format to the workbook.
+        #
+        # @param options [Hash{Symbol => untyped}, nil]
+        # @return [Format]
+        # : (?Hash[Symbol, untyped]? options) -> Format
+        def add_format: (?Hash[Symbol, untyped]? options) -> Format
+
+        # Creates a new format with bold text.
+        #
+        # @return [Format]
+        # : () -> Format
+        def bold_cell_format: () -> Format
+
+        alias bold_format bold_cell_format
+
+        # Creates a new format with a specified number formatting pattern.
+        #
+        # @param pattern [String]
+        # @return [Format]
+        # : (String pattern) -> Format
+        def number_format: (String pattern) -> Format
+
+        # Adds a new worksheet to the workbook.
+        #
+        # @param sheetname [String, nil]
+        # @yield [worksheet]
+        # @yieldparam worksheet [Worksheet]
+        # @return [Worksheet]
+        # : (?String? sheetname) ?{ (Worksheet) -> void } -> Worksheet
+        def add_worksheet: (?String? sheetname) ?{ (Worksheet) -> void } -> Worksheet
+
+        # Retrieves an existing worksheet by name.
+        #
+        # @param name [String]
+        # @return [Worksheet, nil]
+        # : (String name) -> Worksheet?
+        def get_worksheet_by_name: (String name) -> Worksheet?
+
+        # Validates a candidate worksheet name against Excel specification limits.
+        #
+        # @param sheetname [String]
+        # @return [Symbol]
+        # : (String sheetname) -> Symbol
+        def validate_worksheet_name: (String sheetname) -> Symbol
+
+        # Defines a global workbook-level defined name / named range.
+        #
+        # @param name [String]
+        # @param formula [String]
+        # @return [Symbol]
+        # : (String name, String formula) -> Symbol
+        def define_name: (String name, String formula) -> Symbol
+
+        # Sets core document properties.
+        #
+        # @param properties [Hash{Symbol => untyped}, untyped]
+        # @return [Symbol]
+        def set_properties: (untyped properties) -> untyped
+
+        # Sets custom document property string.
+        #
+        # @param name [String]
+        # @param value [String]
+        # @return [Symbol]
+        def set_custom_property_string: (untyped name, untyped value) -> untyped
+
+        # Sets custom document property number.
+        #
+        # @param name [String]
+        # @param value [Float]
+        # @return [Symbol]
+        def set_custom_property_number: (untyped name, untyped value) -> untyped
+
+        # Sets custom document property integer.
+        #
+        # @param name [String]
+        # @param value [Integer]
+        # @return [Symbol]
+        def set_custom_property_integer: (untyped name, untyped value) -> untyped
+
+        # Sets custom document property boolean.
+        #
+        # @param name [String]
+        # @param value [Boolean, Integer]
+        # @return [Symbol]
+        def set_custom_property_boolean: (untyped name, untyped value) -> untyped
+
+        # Sets custom document property datetime.
+        #
+        # @param name [String]
+        # @param datetime [Time, DateTime, Datetime]
+        # @return [Symbol]
+        def set_custom_property_datetime: (untyped name, untyped datetime) -> untyped
+
+        # Closes the workbook and serializes contents to disk.
+        #
+        # @return [Symbol]
+        # : () -> Symbol
+        def close: () -> Symbol
+
+        # Finalizes workbook and returns binary content string.
+        # Automatically removes temporary directory if temporary file was used.
+        #
+        # @return [String]
+        # : () -> String
+        def read_string: () -> String
+
+        # Cleans up temporary directory if created.
+        #
+        # @return [void]
+        def remove_tmp_folder: () -> untyped
+
+        # Converts mutable workbook into an immutable Xlsxrb::Elements::Workbook.
+        #
+        # @return [Xlsxrb::Elements::Workbook]
+        # : () -> Xlsxrb::Elements::Workbook
+        def to_xlsxrb: () -> Xlsxrb::Elements::Workbook
+
+        # Builds a FastExcel::Workbook instance from an immutable Xlsxrb::Elements::Workbook.
+        #
+        # @param xlsxrb_workbook [Xlsxrb::Elements::Workbook]
+        # @param filename [String, nil]
+        # @param constant_memory [Boolean]
+        # @return [Workbook]
+        # : (Xlsxrb::Elements::Workbook xlsxrb_workbook, ?String? filename, ?constant_memory: bool) -> Workbook
+        def self.from_xlsxrb: (Xlsxrb::Elements::Workbook xlsxrb_workbook, ?String? filename, ?constant_memory: bool) -> Workbook
+
+        private
+
+        # : () -> [Hash[Symbol, untyped], Hash[Format, Integer]]
+        def compile_styles: () -> [ Hash[Symbol, untyped], Hash[Format, Integer] ]
+
+        # : (Format fmt, Numeric default_sz) -> Hash[Symbol, untyped]
+        def compile_font_key: (Format fmt, Numeric default_sz) -> Hash[Symbol, untyped]
+
+        # : (Format fmt) -> Hash[Symbol, untyped]?
+        def compile_fill_key: (Format fmt) -> Hash[Symbol, untyped]?
+
+        # : (Format fmt) -> Hash[Symbol, untyped]?
+        def compile_border_key: (Format fmt) -> Hash[Symbol, untyped]?
+
+        # : (Symbol? side, Integer? color) -> Hash[Symbol, String]?
+        def border_side_hash: (Symbol? side, Integer? color) -> Hash[Symbol, String]?
+
+        # : (String? pattern, Hash[String, Integer] cache, Array[Hash[Symbol, untyped]] list, Integer next_id) -> Integer
+        def resolve_num_fmt: (String? pattern, Hash[String, Integer] cache, Array[Hash[Symbol, untyped]] list, Integer next_id) -> Integer
+
+        # : (Format fmt) -> Hash[Symbol, untyped]?
+        def compile_alignment: (Format fmt) -> Hash[Symbol, untyped]?
+      end
+    end
+  end
+end

@@ -14,6 +14,7 @@ caxlsx_runner = File.join(dir, "compatibility_runner_caxlsx")
 roo_runner = File.join(dir, "compatibility_runner_roo")
 xsv_runner = File.join(dir, "compatibility_runner_xsv")
 creek_runner = File.join(dir, "compatibility_runner_creek")
+fast_excel_runner = File.join(dir, "compatibility_runner_fast_excel")
 
 exit_codes = []
 
@@ -28,6 +29,8 @@ when "xsv"
   exit_codes << (system(ruby, xsv_runner) ? 0 : 1)
 when "creek"
   exit_codes << (system(ruby, creek_runner) ? 0 : 1)
+when "fast_excel", "fastexcel"
+  exit_codes << (system(ruby, fast_excel_runner) ? 0 : 1)
 when "all"
   puts ">>> Running RubyXL compatibility suite..."
   exit_codes << (system(ruby, ruby_xl_runner) ? 0 : 1)
@@ -39,8 +42,10 @@ when "all"
   exit_codes << (system(ruby, xsv_runner) ? 0 : 1)
   puts "\n>>> Running Creek compatibility suite..."
   exit_codes << (system(ruby, creek_runner) ? 0 : 1)
+  puts "\n>>> Running FastExcel compatibility suite..."
+  exit_codes << (system(ruby, fast_excel_runner) ? 0 : 1)
 else
-  warn "Unknown compatibility target: #{target}. Valid targets: all, ruby_xl, caxlsx, roo, xsv, creek"
+  warn "Unknown compatibility target: #{target}. Valid targets: all, ruby_xl, caxlsx, roo, xsv, creek, fast_excel"
   exit 1
 end
 

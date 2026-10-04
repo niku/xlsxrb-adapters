@@ -1,6 +1,6 @@
 # xlsxrb-adapters
 
-Compatibility adapters for migrating from peer XLSX libraries ([`rubyXL`](https://github.com/weshatheleopard/rubyXL), [`caxlsx`](https://github.com/caxlsx/caxlsx), [`roo`](https://github.com/roo-rb/roo), [`xsv`](https://github.com/martijn/xsv), [`creek`](https://github.com/pythonicrubyist/creek)) to [`xlsxrb`](https://github.com/niku/xlsxrb) with zero downtime and drop-in safety.
+Compatibility adapters for migrating from peer XLSX libraries ([`rubyXL`](https://github.com/weshatheleopard/rubyXL), [`caxlsx`](https://github.com/caxlsx/caxlsx), [`roo`](https://github.com/roo-rb/roo), [`xsv`](https://github.com/martijn/xsv), [`creek`](https://github.com/pythonicrubyist/creek), [`fast_excel`](https://github.com/Paxa/fast_excel)) to [`xlsxrb`](https://github.com/niku/xlsxrb) with zero downtime and drop-in safety.
 
 ## Overview
 
@@ -10,19 +10,20 @@ This project provides adapters for the following widely used Ruby spreadsheet li
 - [`roo`](https://github.com/roo-rb/roo): One of the most widely used spreadsheet reading libraries in Ruby, providing data access, formula and formatting inspection, and support for multiple spreadsheet formats.
 - [`xsv`](https://github.com/martijn/xsv): A fast, lightweight streaming reader designed specifically for pulling data out of tabular worksheets into arrays or hashes.
 - [`creek`](https://github.com/pythonicrubyist/creek): A stream-based reader designed for large Excel files with coordinate-keyed row iteration, row metadata inspection, and embedded DrawingML image extraction.
+- [`fast_excel`](https://github.com/Paxa/fast_excel): A high-performance writer library (wrapping C `libxlsxwriter`) designed for fast, memory-efficient XLSX writing with a concise API.
 
 [`xlsxrb`](https://github.com/niku/xlsxrb) is a pure Ruby, zero-dependency, streaming-capable, low-memory XLSX engine designed for high-throughput batch workloads.
 
 `xlsxrb-adapters` bridges the best of both worlds by providing drop-in compatible adapter layers to:
 1. Support gradual migration (Strangler Fig pattern) from peer XLSX libraries to `xlsxrb` without rewriting application logic.
-2. Enable high-throughput, low-memory execution in batch processing and resource-constrained environments while retaining `rubyXL`, `caxlsx`, `roo`, `xsv`, and `creek` familiar and battle-tested APIs.
+2. Enable high-throughput, low-memory execution in batch processing and resource-constrained environments while retaining `rubyXL`, `caxlsx`, `roo`, `xsv`, `creek`, and `fast_excel` familiar and battle-tested APIs.
 3. Construct interoperability test harnesses against peer libraries and real-world fixtures.
 4. Keep `xlsxrb` core strictly zero-dependency, mutant-tested, and type-safe while providing rich compatibility layers.
 
 ## Design Principles
 
 1. **No Global Hijacking**:
-   Does not reopen or hijack top-level constants like `::RubyXL`, `::Axlsx`, `::Roo`, `::Xsv`, or `::Creek`. Instead, exposes namespaces like `Xlsxrb::Adapters::RubyXL`, `Xlsxrb::Adapters::Caxlsx`, `Xlsxrb::Adapters::Roo`, `Xlsxrb::Adapters::Xsv`, and `Xlsxrb::Adapters::Creek` so you can run side-by-side during migration or run comparison tests. Optional drop-in aliases (e.g. `Xsv = Xlsxrb::Adapters::Xsv`, `Creek = Xlsxrb::Adapters::Creek`) are provided for seamless code transitions.
+   Does not reopen or hijack top-level constants like `::RubyXL`, `::Axlsx`, `::Roo`, `::Xsv`, `::Creek`, or `::FastExcel`. Instead, exposes namespaces like `Xlsxrb::Adapters::RubyXL`, `Xlsxrb::Adapters::Caxlsx`, `Xlsxrb::Adapters::Roo`, `Xlsxrb::Adapters::Xsv`, `Xlsxrb::Adapters::Creek`, and `Xlsxrb::Adapters::FastExcel` so you can run side-by-side during migration or run comparison tests. Optional drop-in aliases (e.g. `Xsv = Xlsxrb::Adapters::Xsv`, `Creek = Xlsxrb::Adapters::Creek`, `FastExcel = Xlsxrb::Adapters::FastExcel`) are provided for seamless code transitions.
 2. **Mutable-to-Immutable Boundary**:
    Maintains a mutable in-memory wrapper structure compatible with legacy workflows, translating into `xlsxrb`'s immutable data models (`Data.define`, frozen) upon save/export.
 3. **Native Bridge Conversion**:
@@ -356,9 +357,93 @@ creek.close
   - `sheet.to_xlsxrb` (converts Creek sheet to native `Xlsxrb::Elements::Sheet`)
   - `Xlsxrb::Adapters::Creek.from_xlsxrb(xlsxrb_wb)` (creates Creek Book from native `xlsxrb` workbook)
 
+### FastExcel (`Xlsxrb::Adapters::FastExcel` / `FastExcel`)
+
+Drop-in replacement for high-throughput spreadsheet generation using the [`fast_excel`](https://github.com/Paxa/fast_excel) API (wrapping `libxlsxwriter`). Enables pure Ruby, zero-C-dependency, ultra-fast generation with append-only workflows, custom formats, automatic column width calculation, formula cells, and in-memory buffer output.
+
+#### Drop-In Migration Example
+
+```ruby
+require "xlsxrb/adapters/fast_excel"
+
+# Option A: Explicit namespace (recommended to avoid global pollution)
+wb = Xlsxrb::Adapters::FastExcel.open("sales.xlsx")
+
+# Option B: Drop-in alias (existing FastExcel code works unmodified)
+FastExcel = Xlsxrb::Adapters::FastExcel
+wb = FastExcel.open("sales.xlsx")
+
+ws = wb.add_worksheet("Q3 Results")
+ws.auto_width = true
+
+# Define formats using convenient helpers or CSS colors
+header_fmt = wb.add_format(bold: true, bg_color: :navy, font_color: :white, align: :center)
+currency_fmt = wb.number_format("$#,##0.00")
+
+# Write header and data rows
+ws.append_row(["Product", "Quantity", "Unit Price", "Total"], header_fmt)
+ws.append_row(["MacBook Pro", 3, 2499.0, FastExcel::Formula.new("B2*C2")], [nil, nil, currency_fmt, currency_fmt])
+ws.append_row(["4K Monitor", 6, 450.0, FastExcel::Formula.new("B3*C3")], [nil, nil, currency_fmt, currency_fmt])
+ws << ["Total", FastExcel::Formula.new("SUM(B2:B3)"), nil, FastExcel::Formula.new("SUM(D2:D3)")]
+
+# Freeze header pane & autofilter
+ws.freeze_panes(1, 0)
+ws.autofilter(0, 0, 3, 3)
+
+# Save and close (or use block form: FastExcel.open("sales.xlsx") { |wb| ... })
+wb.close
+```
+
+#### In-Memory Binary Buffer Output
+
+```ruby
+# FastExcel allows generating files entirely in memory without writing to disk
+wb = FastExcel.open
+ws = wb.add_worksheet("Report")
+ws << ["Timestamp", "Metric", "Value"]
+ws << [Time.now, "Requests/sec", 15420]
+
+# Retrieve binary XLSX buffer (automatically cleans up any temp folder)
+xlsx_data = wb.read_string
+send_data(xlsx_data, filename: "report.xlsx", type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+```
+
+#### API Capabilities
+- **Workbook Opening & Options**:
+  - `FastExcel.open(filepath, constant_memory: false, default_format: nil)` (supports block with auto-close)
+  - `wb.add_worksheet(name)`
+  - `wb.bold_format`, `wb.number_format(pattern)`, `wb.add_format(opts)`
+  - `wb.read_string` (binary XLSX buffer)
+  - `wb.close`, `wb.remove_tmp_folder`
+  - `wb.set_properties(title:, author:, company:)`
+  - `wb.set_custom_property_string / number / boolean / datetime`
+- **Worksheet Operations**:
+  - `ws.append_row(values, formats = nil)`
+  - `ws << values` (idiomatic append operator)
+  - `ws.write_value(row, col, value, format = nil)`
+  - `ws.write_row(row, values, formats = nil)`
+  - Typed writers: `write_string`, `write_number`, `write_datetime`, `write_boolean`, `write_formula`, `write_formula_num`, `write_url`, `write_comment`, `write_blank`
+  - `ws.auto_width = true` (tracks cell lengths and assigns padded widths upon sheet close)
+  - `ws.set_column(first_col, last_col, width, format)`
+  - `ws.set_column_width(col, width)`, `ws.set_columns_width(first_col, last_col, width)`
+  - `ws.set_row(row, height, format)`
+  - `ws.merge_range(first_row, first_col, last_row, last_col, value, format)`
+  - `ws.autofilter(first_row, first_col, last_row, last_col)`
+  - `ws.freeze_panes(row, col)`, `ws.split_panes(vertical, horizontal)`
+  - `ws.set_right_to_left`, `ws.center_vertically`, `ws.print_row_col_headers`, `ws.set_margins`
+  - `ws[:name]`, `ws[:right_to_left]`, `ws[:selected]` (struct-like field inspection)
+- **Formatting**:
+  - `wb.add_format(bold:, italic:, font_size:, font_name:, font_color:, bg_color:, border:, align:)`
+  - 140+ CSS named colors (`:navy`, `:crimson`, `:teal`, `:gold`, `:coral`, etc.) and hex values
+  - Alignments: symbols (`:center`, `:left`, `:right`, `:top`, `:bottom`), prefixed (`:align_center`), and hashes (`{ h: :center, v: :center }`)
+  - Borders: `border: :thin`, `top: :medium`, `bottom: :double`, colors per edge
+- **Native Bridge**:
+  - `wb.to_xlsxrb` (compiles mutable builder into immutable `Xlsxrb::Elements::Workbook`)
+  - `Xlsxrb::Adapters::FastExcel.from_xlsxrb(xlsxrb_wb)`
+
 ## Compatibility (100% Test Pass)
 
-`xlsxrb-adapters` verifies 100% behavioral compatibility and drop-in safety against `rubyXL`, `caxlsx`, `roo`, `xsv`, and `creek` through dedicated compatibility suites, official upstream test suites, and cross-validation fixtures:
+`xlsxrb-adapters` verifies 100% behavioral compatibility and drop-in safety against `rubyXL`, `caxlsx`, `roo`, `xsv`, `creek`, and `fast_excel` through dedicated compatibility suites, official upstream test suites, and cross-validation fixtures:
 
 ### Caxlsx Compatibility (`Xlsxrb::Adapters::Caxlsx`)
 
@@ -543,7 +628,38 @@ bundle exec rake compatibility:creek
 bundle exec rake test:creek
 ```
 
-Run all compatibility suites (RubyXL, Caxlsx, Roo, Xsv, and Creek):
+### FastExcel Compatibility (`Xlsxrb::Adapters::FastExcel`)
+
+Verified against official `fast_excel` (0.5.0) behavior across the full feature scope documented in [fast_excel repository](https://github.com/Paxa/fast_excel):
+
+#### Feature Compatibility Matrix
+
+| Feature Domain | FastExcel API / Construct | Compatibility Status | Notes |
+| :--- | :--- | :--- | :--- |
+| **Document & Buffer** | `FastExcel.open`, tempdir allocation, `read_string`, `remove_tmp_folder` | **100% Supported** | Supports file paths, block execution with auto-close, and zero-disk in-memory generation |
+| **Append & Row Writes** | `append_row`, `<<`, `write_value`, `write_row`, typed writers | **100% Supported** | Strict constant_memory enforcement, last_row_number tracking, typed cell dispatch |
+| **Layout & Auto Width** | `auto_width = true`, `set_column`, `set_row`, `freeze_panes`, `split_panes`, `merge_range`, `autofilter` | **100% Supported** | Computes character and font-proportional widths on sheet close; full OpenXML sheet views |
+| **Formats & Styling** | `add_format`, `bold_format`, `number_format`, font/border/fill/alignment | **100% Supported** | Maps 140+ CSS named colors, hex strings, symbol/hash alignments, and border styles |
+| **Formulas & URLs** | `FastExcel::Formula`, `write_formula_num`, `FastExcel::URL` | **100% Supported** | Emits formula cells with default cached values for OpenXML reader compatibility |
+| **Native Bridge** | `wb.to_xlsxrb`, `FastExcel.from_xlsxrb` | **100% Supported** | Seamless bidirectional translation to native `xlsxrb` models |
+
+#### Test Suite Breakdown
+
+| Test Suite | Scope | Total Tests | Passed | Failed | Pass Rate |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| `fast_excel_test.rb` | Constants, Enums, Formats, Sheet, Workbook, Auto-width, Typed writes, Tempfiles, Bridge | 24 | 24 | 0 | 100.0% |
+| `fast_excel_dropin_test.rb` | End-to-end drop-in replacement workflow (`FastExcel = Xlsxrb::Adapters::FastExcel`) | 5 | 5 | 0 | 100.0% |
+| `fast_excel_compatibility_test.rb` | Side-by-side cross-validation against official `::FastExcel` (primitives, formulas, auto-width, format properties, read_string) | 5 | 5 | 0 | 100.0% |
+| **Total** | **FastExcel Adapter Compatibility Verification (204 assertions)** | **34** | **34** | **0** | **100.0%** |
+
+Run the FastExcel compatibility test suite:
+```bash
+bundle exec rake compatibility:fast_excel
+# or
+bundle exec rake test:fast_excel
+```
+
+Run all compatibility suites (RubyXL, Caxlsx, Roo, Xsv, Creek, and FastExcel):
 ```bash
 bundle exec rake compatibility
 # or
@@ -649,13 +765,19 @@ bundle exec rake test:xsv
 # Run Creek adapter test suite (30 tests, 3,415 assertions)
 bundle exec rake test:creek
 
+# Run FastExcel adapter test suite (34 tests, 204 assertions)
+bundle exec rake test:fast_excel
+
 # Run official rubyXL RSpec compatibility suite (363 tests)
 bundle exec rake compatibility:ruby_xl
 
 # Run Creek compatibility suite against official fixtures
 bundle exec rake compatibility:creek
 
-# Run all compatibility suites (RubyXL, Caxlsx, Roo, Xsv, and Creek)
+# Run FastExcel compatibility suite against official fast_excel gem
+bundle exec rake compatibility:fast_excel
+
+# Run all compatibility suites (RubyXL, Caxlsx, Roo, Xsv, Creek, and FastExcel)
 bundle exec rake compatibility
 
 # Run static type checking with Steep
@@ -677,6 +799,7 @@ bundle exec rake benchmark
 - Thomas Preymesser, Hugh McGowan, and the [`roo`](https://github.com/roo-rb/roo) community for creating and maintaining one of the most widely used spreadsheet reading libraries in the Ruby ecosystem.
 - Martijn Storck ([martijn](https://github.com/martijn)) and contributors to [`xsv`](https://github.com/martijn/xsv) for showing how lightweight streaming with simple array/hash rows can make spreadsheet reading remarkably fast.
 - Ramtin Vaziri ([pythonicrubyist](https://github.com/pythonicrubyist)) and contributors to [`creek`](https://github.com/pythonicrubyist/creek) for a simple, streaming-oriented API with cell-reference-keyed rows, along with its approach to image extraction.
+- Pavel Evstigneev ([Paxa](https://github.com/Paxa)) and contributors to [`fast_excel`](https://github.com/Paxa/fast_excel) for bringing fast, C-backed spreadsheet generation to Ruby with a clean formatting DSL.
 
 `xlsxrb-adapters` builds directly on the APIs these projects designed and the test suites they published. The test fixtures under `test/fixtures/roo` and `test/fixtures/creek` are taken from the respective upstream projects and remain under their original MIT licenses.
 

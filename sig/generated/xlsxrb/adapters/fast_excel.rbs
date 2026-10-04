@@ -1,0 +1,74 @@
+# Generated from lib/xlsxrb/adapters/fast_excel.rb with RBS::Inline
+
+module Xlsxrb
+  module Adapters
+    # FastExcel adapter module providing a drop-in compatible interface for fast_excel
+    # (FFI / libxlsxwriter wrapper) without hijacking the global ::FastExcel namespace by default.
+    module FastExcel
+      # Opens or creates a new workbook compatible with FastExcel.open.
+      #
+      # @param filename [String, Pathname, nil] File path to save workbook to. If nil, creates a temporary file.
+      # @param constant_memory [Boolean] Whether to enforce sequential constant-memory writing constraints.
+      # @param default_format [Hash{Symbol => untyped}, nil] Optional default format options.
+      # @yield [workbook]
+      # @yieldparam workbook [Workbook]
+      # @return [Workbook, untyped]
+      # : (?String? filename, ?constant_memory: bool, ?default_format: Hash[Symbol, untyped]?) ?{ (Workbook) -> untyped } -> untyped
+      def self.open: (?String? filename, ?constant_memory: bool, ?default_format: Hash[Symbol, untyped]?) ?{ (Workbook) -> untyped } -> untyped
+
+      # Converts a Time or DateTime object into an Excel 1900 date system serial number.
+      #
+      # @param time [Time, DateTime, Numeric]
+      # @param offset [Numeric, nil] Timezone offset in seconds (defaults to time.utc_offset)
+      # @return [Float]
+      # : (untyped time, ?Numeric? offset) -> Float
+      def self.date_num: (untyped time, ?Numeric? offset) -> Float
+
+      # Converts a Date or DateTime object into a Datetime struct.
+      #
+      # @param time [Date, DateTime, Time]
+      # @return [Datetime]
+      # : (untyped time) -> Datetime
+      def self.lxw_datetime: (untyped time) -> Datetime
+
+      # Converts a Time object into a Datetime struct.
+      #
+      # @param time [Time]
+      # @return [Datetime]
+      # : (Time time) -> Datetime
+      def self.lxw_time: (Time time) -> Datetime
+
+      # Converts a color name, hex string, symbol, or hex number into an integer RGB hex number.
+      #
+      # @param value [String, Symbol, Numeric]
+      # @return [Integer]
+      # : (untyped value) -> Integer
+      def self.color_to_hex: (untyped value) -> Integer
+
+      # Debug printing helper matching FastExcel.print_ffi_obj
+      #
+      # @param value [Object]
+      # @param do_print [Boolean]
+      # @param offset [String]
+      # @param deep [Boolean]
+      # @return [String, nil]
+      def self.print_ffi_obj: (untyped value, ?do_print: untyped, ?offset: untyped, ?_deep: untyped) -> untyped
+
+      # Converts an adapter Workbook to an immutable Xlsxrb::Elements::Workbook.
+      #
+      # @param obj [Workbook]
+      # @return [Xlsxrb::Elements::Workbook]
+      # : (Workbook obj) -> Xlsxrb::Elements::Workbook
+      def self.to_xlsxrb: (Workbook obj) -> Xlsxrb::Elements::Workbook
+
+      # Converts an Xlsxrb::Elements::Workbook into a FastExcel Workbook adapter instance.
+      #
+      # @param xlsxrb_workbook [Xlsxrb::Elements::Workbook]
+      # @param filename [String, nil]
+      # @param constant_memory [Boolean]
+      # @return [Workbook]
+      # : (Xlsxrb::Elements::Workbook xlsxrb_workbook, ?String? filename, ?constant_memory: bool) -> Workbook
+      def self.from_xlsxrb: (Xlsxrb::Elements::Workbook xlsxrb_workbook, ?String? filename, ?constant_memory: bool) -> Workbook
+    end
+  end
+end

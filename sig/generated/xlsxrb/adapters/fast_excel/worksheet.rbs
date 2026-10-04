@@ -1,0 +1,482 @@
+# Generated from lib/xlsxrb/adapters/fast_excel/worksheet.rb with RBS::Inline
+
+module Xlsxrb
+  module Adapters
+    module FastExcel
+      # Represents a mutable worksheet compatible with FastExcel::WorksheetExt and Libxlsxwriter::Worksheet
+      class Worksheet
+        include AttributeHelper
+
+        # Represents a single cell entry in the worksheet
+        class CellRecord < Struct[untyped]
+          attr_accessor row(): untyped
+
+          attr_accessor col(): untyped
+
+          attr_accessor value(): untyped
+
+          attr_accessor format(): untyped
+
+          attr_accessor formula(): untyped
+
+          attr_accessor cached_value(): untyped
+
+          attr_accessor url(): untyped
+
+          attr_accessor url_display(): untyped
+
+          attr_accessor url_tooltip(): untyped
+
+          attr_accessor comment(): untyped
+
+          def self.new: (?untyped row, ?untyped col, ?untyped value, ?untyped format, ?untyped formula, ?untyped cached_value, ?untyped url, ?untyped url_display, ?untyped url_tooltip, ?untyped comment) -> instance
+                      | (?row: untyped, ?col: untyped, ?value: untyped, ?format: untyped, ?formula: untyped, ?cached_value: untyped, ?url: untyped, ?url_display: untyped, ?url_tooltip: untyped, ?comment: untyped) -> instance
+        end
+
+        # @return [Workbook]
+        attr_accessor workbook: untyped
+
+        # @return [String]
+        attr_accessor name: untyped
+
+        # @return [Integer]
+        attr_accessor index: untyped
+
+        # @param workbook [Workbook]
+        # @param name [String]
+        # @param index [Integer]
+        # : (Workbook workbook, String name, ?Integer index) -> void
+        def initialize: (Workbook workbook, String name, ?Integer index) -> void
+
+        # @return [Array<Symbol>]
+        # : () -> Array[Symbol]
+        def members: () -> Array[Symbol]
+
+        # Struct-like field access matching FastExcel / libxlsxwriter struct members
+        #
+        # @param key [Symbol, String]
+        # @return [untyped]
+        # : (Symbol | String key) -> untyped
+        def []: (Symbol | String key) -> untyped
+
+        # Struct-like field assignment
+        #
+        # @param key [Symbol, String]
+        # @param value [untyped]
+        # @return [untyped]
+        # : (Symbol | String key, untyped value) -> untyped
+        def []=: (Symbol | String key, untyped value) -> untyped
+
+        # Returns the 0-based index of the last row written.
+        #
+        # @return [Integer]
+        # : () -> Integer
+        attr_reader last_row_number: untyped
+
+        # Writes a single value to a specific cell with automatic type detection.
+        #
+        # @param row_number [Integer] 0-based row index
+        # @param cell_number [Integer] 0-based column index
+        # @param value [Object] Value to write
+        # @param format [Format, nil] Cell format
+        # @return [void]
+        # : (Integer row_number, Integer cell_number, untyped value, ?Format? format) -> void
+        def write_value: (Integer row_number, Integer cell_number, untyped value, ?Format? format) -> void
+
+        # Writes a row of values to a specified row index.
+        #
+        # @param row_number [Integer] 0-based row index
+        # @param values [Array<Object>] Values to write
+        # @param formats [Format, Array<Format>, nil] Format or array of formats
+        # @return [void]
+        # : (Integer row_number, Array[untyped] values, ?(Format | Array[Format])? formats) -> void
+        def write_row: (Integer row_number, Array[untyped] values, ?(Format | Array[Format])? formats) -> void
+
+        # Appends a row of values to the bottom of the worksheet.
+        #
+        # @param values [Array<Object>] Values to write
+        # @param formats [Format, Array<Format>, nil] Format or array of formats
+        # @return [void]
+        # : (Array[untyped] values, ?(Format | Array[Format])? formats) -> void
+        def append_row: (Array[untyped] values, ?(Format | Array[Format])? formats) -> void
+
+        # Appends a row of values to the bottom of the worksheet.
+        #
+        # @param values [Array<Object>] Values to write
+        # @return [self]
+        # : (Array[untyped] values) -> self
+        def <<: (Array[untyped] values) -> self
+
+        # Writes a numeric cell value.
+        #
+        # @param row [Integer]
+        # @param col [Integer]
+        # @param number [Numeric]
+        # @param format [Format, nil]
+        # @return [Symbol]
+        # : (Integer row, Integer col, Numeric number, ?Format? format) -> Symbol
+        def write_number: (Integer row, Integer col, Numeric number, ?Format? format) -> Symbol
+
+        # Writes a string cell value.
+        #
+        # @param row [Integer]
+        # @param col [Integer]
+        # @param string [String]
+        # @param format [Format, nil]
+        # @return [Symbol]
+        # : (Integer row, Integer col, String string, ?Format? format) -> Symbol
+        def write_string: (Integer row, Integer col, String string, ?Format? format) -> Symbol
+
+        # Writes a datetime / date cell value.
+        #
+        # @param row [Integer]
+        # @param col [Integer]
+        # @param datetime [Datetime, Date, Time, DateTime]
+        # @param format [Format, nil]
+        # @return [Symbol]
+        # : (Integer row, Integer col, untyped datetime, ?Format? format) -> Symbol
+        def write_datetime: (Integer row, Integer col, untyped datetime, ?Format? format) -> Symbol
+
+        # Writes a boolean cell value.
+        #
+        # @param row [Integer]
+        # @param col [Integer]
+        # @param value [Boolean, Integer]
+        # @param format [Format, nil]
+        # @return [Symbol]
+        # : (Integer row, Integer col, bool | Integer value, ?Format? format) -> Symbol
+        def write_boolean: (Integer row, Integer col, bool | Integer value, ?Format? format) -> Symbol
+
+        # Writes a formula cell value.
+        #
+        # @param row [Integer]
+        # @param col [Integer]
+        # @param formula [String]
+        # @param format [Format, nil]
+        # @return [Symbol]
+        # : (Integer row, Integer col, String formula, ?Format? format) -> Symbol
+        def write_formula: (Integer row, Integer col, String formula, ?Format? format) -> Symbol
+
+        # Writes a formula cell value with precalculated numeric result.
+        #
+        # @param row [Integer]
+        # @param col [Integer]
+        # @param formula [String]
+        # @param format [Format, nil]
+        # @param result [Numeric]
+        # @return [Symbol]
+        # : (Integer row, Integer col, String formula, Format? format, Numeric result) -> Symbol
+        def write_formula_num: (Integer row, Integer col, String formula, Format? format, Numeric result) -> Symbol
+
+        # Writes an array formula.
+        #
+        # @param first_row [Integer]
+        # @param first_col [Integer]
+        # @param last_row [Integer]
+        # @param last_col [Integer]
+        # @param formula [String]
+        # @param format [Format, nil]
+        # @return [Symbol]
+        # : (Integer first_row, Integer first_col, Integer last_row, Integer last_col, String formula, ?Format? format) -> Symbol
+        def write_array_formula: (Integer first_row, Integer first_col, Integer last_row, Integer last_col, String formula, ?Format? format) -> Symbol
+
+        # Writes an array formula with precalculated numeric result.
+        #
+        # @param first_row [Integer]
+        # @param first_col [Integer]
+        # @param last_row [Integer]
+        # @param last_col [Integer]
+        # @param formula [String]
+        # @param format [Format, nil]
+        # @param result [Numeric]
+        # @return [Symbol]
+        # : (Integer first_row, Integer first_col, Integer last_row, Integer last_col, String formula, Format? format, Numeric result) -> Symbol
+        def write_array_formula_num: (Integer first_row, Integer first_col, Integer last_row, Integer last_col, String formula, Format? format, Numeric result) -> Symbol
+
+        # Writes a hyperlink URL to a cell.
+        #
+        # @param row [Integer]
+        # @param col [Integer]
+        # @param url [String]
+        # @param format [Format, nil]
+        # @return [Symbol]
+        # : (Integer row, Integer col, String url, ?Format? format) -> Symbol
+        def write_url: (Integer row, Integer col, String url, ?Format? format) -> Symbol
+
+        # Writes a hyperlink URL to a cell with optional display text and tooltip.
+        #
+        # @param row [Integer]
+        # @param col [Integer]
+        # @param url [String]
+        # @param format [Format, nil]
+        # @param string [String, nil]
+        # @param tooltip [String, nil]
+        # @return [Symbol]
+        # : (Integer row, Integer col, String url, ?Format? format, ?String? string, ?String? tooltip) -> Symbol
+        def write_url_opt: (Integer row, Integer col, String url, ?Format? format, ?String? string, ?String? tooltip) -> Symbol
+
+        # Writes a comment / note to a cell.
+        #
+        # @param row [Integer]
+        # @param col [Integer]
+        # @param string [String]
+        # @return [Symbol]
+        # : (Integer row, Integer col, String string) -> Symbol
+        def write_comment: (Integer row, Integer col, String string) -> Symbol
+
+        # Writes a blank cell with formatting.
+        #
+        # @param row [Integer]
+        # @param col [Integer]
+        # @param format [Format, nil]
+        # @return [Symbol]
+        # : (Integer row, Integer col, ?Format? format) -> Symbol
+        def write_blank: (Integer row, Integer col, ?Format? format) -> Symbol
+
+        # Sets column width and format for a range of columns.
+        #
+        # @param start_col [Integer]
+        # @param end_col [Integer]
+        # @param width [Numeric, nil]
+        # @param format [Format, nil]
+        # @return [void]
+        # : (Integer start_col, Integer end_col, ?Numeric? width, ?Format? format) -> void
+        def set_column: (Integer start_col, Integer end_col, ?Numeric? width, ?Format? format) -> void
+
+        # Sets the column width for a single column.
+        #
+        # @param col [Integer]
+        # @param width [Numeric]
+        # @return [void]
+        # : (Integer col, ?Numeric width) -> void
+        def set_column_width: (Integer col, ?Numeric width) -> void
+
+        # Sets the column width for a range of columns.
+        #
+        # @param start_col [Integer]
+        # @param end_col [Integer]
+        # @param width [Numeric]
+        # @return [void]
+        # : (Integer start_col, Integer end_col, ?Numeric width) -> void
+        def set_columns_width: (Integer start_col, Integer end_col, ?Numeric width) -> void
+
+        # Sets options for a column range.
+        #
+        # @param first_col [Integer]
+        # @param last_col [Integer]
+        # @param width [Numeric]
+        # @param format [Format, nil]
+        # @param _options [Hash, untyped]
+        # @return [Symbol]
+        def set_column_opt: (untyped first_col, untyped last_col, untyped width, untyped format, ?untyped _options) -> untyped
+
+        # Sets the height of a specific row.
+        #
+        # @param row [Integer]
+        # @param height [Numeric]
+        # @param format [Format, nil]
+        # @return [Symbol]
+        # : (Integer row, ?Numeric height, ?Format? format) -> Symbol
+        def set_row: (Integer row, ?Numeric height, ?Format? format) -> Symbol
+
+        # Sets row options.
+        #
+        # @param row [Integer]
+        # @param height [Numeric]
+        # @param format [Format, nil]
+        # @param _options [Hash, untyped]
+        # @return [Symbol]
+        def set_row_opt: (untyped row, untyped height, untyped format, untyped _options) -> untyped
+
+        # Merges a range of cells into a single cell, placing text in the top-left cell.
+        #
+        # @param first_row [Integer]
+        # @param first_col [Integer]
+        # @param last_row [Integer]
+        # @param last_col [Integer]
+        # @param string [String]
+        # @param format [Format, nil]
+        # @return [Symbol]
+        # : (Integer first_row, Integer first_col, Integer last_row, Integer last_col, String string, ?Format? format) -> Symbol
+        def merge_range: (Integer first_row, Integer first_col, Integer last_row, Integer last_col, String string, ?Format? format) -> Symbol
+
+        # Defines an autofilter range.
+        #
+        # @param first_row [Integer]
+        # @param first_col [Integer]
+        # @param last_row [Integer]
+        # @param last_col [Integer]
+        # @return [Symbol]
+        # : (Integer first_row, Integer first_col, Integer last_row, Integer last_col) -> Symbol
+        def autofilter: (Integer first_row, Integer first_col, Integer last_row, Integer last_col) -> Symbol
+
+        # Enables autofilter on the worksheet headers.
+        #
+        # @param start_col [Integer]
+        # @param end_col [Integer]
+        # @return [Symbol]
+        # : (?start_col: Integer, end_col: Integer) -> Symbol
+        def enable_filters!: (end_col: Integer, ?start_col: Integer) -> Symbol
+
+        # @return [Boolean]
+        # : () -> bool
+        def auto_width?: () -> bool
+
+        # @param v [Boolean]
+        # @return [Boolean]
+        # : (bool v) -> bool
+        def auto_width=: (bool v) -> bool
+
+        # Returns hash of calculated column widths from auto-width estimation.
+        #
+        # @return [Hash{Integer => Float}]
+        # : () -> Hash[Integer, Float]
+        def calculated_column_widths: () -> Hash[Integer, Float]
+
+        # Tracks text width for auto-width estimation.
+        #
+        # @param value [Object]
+        # @param format [Format, nil]
+        # @param cell_number [Integer]
+        # @return [void]
+        # : (untyped value, Format? format, Integer cell_number) -> void
+        def add_text_width: (untyped value, Format? format, Integer cell_number) -> void
+
+        # Sets worksheet display to right-to-left.
+        # @return [void]
+        def set_right_to_left: () -> untyped
+
+        # Centers worksheet vertically on printed page.
+        # @return [void]
+        def center_vertically: () -> untyped
+
+        # Configures printing of row and column headers.
+        # @return [void]
+        def print_row_col_headers: () -> untyped
+
+        # Sets print margins in inches.
+        #
+        # @param left [Float]
+        # @param right [Float]
+        # @param top [Float]
+        # @param bottom [Float]
+        # @return [void]
+        # : (Float left, Float right, Float top, Float bottom) -> void
+        def set_margins: (Float left, Float right, Float top, Float bottom) -> void
+
+        # Sets vertical page breaks from buffer or array.
+        #
+        # @param breaks [Array<Integer>, untyped]
+        # @return [void]
+        def set_v_pagebreaks: (untyped breaks) -> untyped
+
+        # Sets horizontal page breaks from buffer or array.
+        #
+        # @param breaks [Array<Integer>, untyped]
+        # @return [void]
+        def set_h_pagebreaks: (untyped breaks) -> untyped
+
+        # @return [void]
+        def activate: () -> untyped
+
+        # @return [void]
+        def select: () -> untyped
+
+        # @return [void]
+        def hide: () -> untyped
+
+        # @return [void]
+        def set_first_sheet: () -> untyped
+
+        # Freezes rows and columns at specified split coordinate.
+        #
+        # @param row [Integer]
+        # @param col [Integer]
+        # @return [void]
+        # : (Integer row, Integer col) -> void
+        def freeze_panes: (Integer row, Integer col) -> void
+
+        # Splits panes vertically and horizontally.
+        #
+        # @param vertical [Float]
+        # @param horizontal [Float]
+        # @return [void]
+        # : (Float vertical, Float horizontal) -> void
+        def split_panes: (Float vertical, Float horizontal) -> void
+
+        # @param first_row [Integer]
+        # @param first_col [Integer]
+        # @param _top_row [Integer]
+        # @param _left_col [Integer]
+        # @param _type [Integer]
+        # @return [void]
+        def freeze_panes_opt: (untyped first_row, untyped first_col, untyped _top_row, untyped _left_col, untyped _type) -> untyped
+
+        # @param vertical [Float]
+        # @param horizontal [Float]
+        # @param _top_row [Integer]
+        # @param _left_col [Integer]
+        # @return [void]
+        def split_panes_opt: (untyped vertical, untyped horizontal, untyped _top_row, untyped _left_col) -> untyped
+
+        # Inserts an image into the worksheet.
+        #
+        # @param row [Integer]
+        # @param col [Integer]
+        # @param filename [String]
+        # @return [Symbol]
+        # : (Integer row, Integer col, String filename) -> Symbol
+        def insert_image: (Integer row, Integer col, String filename) -> Symbol
+
+        # Inserts an image with options.
+        #
+        # @param row [Integer]
+        # @param col [Integer]
+        # @param filename [String]
+        # @param options [Hash, nil]
+        # @return [Symbol]
+        def insert_image_opt: (untyped row, untyped col, untyped filename, ?untyped options) -> untyped
+
+        # Inserts a chart into the worksheet.
+        #
+        # @param row [Integer]
+        # @param col [Integer]
+        # @param chart [Object]
+        # @return [Symbol]
+        def insert_chart: (untyped row, untyped col, untyped chart) -> untyped
+
+        # Inserts a chart with options.
+        #
+        # @param row [Integer]
+        # @param col [Integer]
+        # @param chart [Object]
+        # @param user_options [Hash, nil]
+        # @return [Symbol]
+        def insert_chart_opt: (untyped row, untyped col, untyped chart, ?untyped user_options) -> untyped
+
+        # Finalizes worksheet settings and applies column auto widths.
+        #
+        # @return [void]
+        def close: () -> untyped
+
+        # Converts Worksheet to an immutable Xlsxrb::Elements::Worksheet.
+        #
+        # @param style_map [Hash{Format => Integer}]
+        # @return [Xlsxrb::Elements::Worksheet]
+        # : (Hash[Format, Integer] style_map) -> Xlsxrb::Elements::Worksheet
+        def to_xlsxrb: (Hash[Format, Integer] style_map) -> Xlsxrb::Elements::Worksheet
+
+        private
+
+        # : (Integer row, Integer col, **untyped kwargs) -> void
+        def record_cell: (Integer row, Integer col, **untyped kwargs) -> void
+
+        # : (Datetime dt) -> (Date | DateTime)
+        def format_datetime_value: (Datetime dt) -> (Date | DateTime)
+
+        # : (untyped breaks) -> Integer
+        def count_pagebreaks: (untyped breaks) -> Integer
+      end
+    end
+  end
+end

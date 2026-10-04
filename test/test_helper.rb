@@ -27,6 +27,9 @@ require "xsv"
 # Require official creek for side-by-side comparison tests
 require "creek"
 
+# Require official fast_excel for side-by-side comparison tests
+require "fast_excel"
+
 module TestHelper
   def with_tempfile(ext = ".xlsx")
     Dir.mktmpdir do |dir|

@@ -1,0 +1,311 @@
+# frozen_string_literal: true
+
+# rbs_inline: enabled
+
+module Xlsxrb
+  module Adapters
+    module FastExcel
+      # Default Excel column width in character units
+      DEF_COL_WIDTH = 8.43
+
+      # Number of seconds in 1 standard day
+      XLSX_DATE_DAY = 86_400.0
+
+      # Number of days between 1970-01-01 and 1900-01-01 (including Excel 1900 leap year bug)
+      XLSX_DATE_EPOCH_DIFF = 25_569
+
+      # rubocop:disable Lint/StructNewOverride
+      # Represents a lightweight Datetime struct compatible with Libxlsxwriter::Datetime
+      Datetime = Struct.new(:year, :month, :day, :hour, :min, :sec) do
+        # @param key [Symbol, String]
+        # @return [Integer, nil]
+        def [](key)
+          send(key.to_sym) if respond_to?(key.to_sym)
+        end
+
+        # @param key [Symbol, String]
+        # @param val [Integer]
+        # @return [Integer]
+        def []=(key, val)
+          send(:"#{key}=", val) if respond_to?(:"#{key}=")
+        end
+      end
+      # rubocop:enable Lint/StructNewOverride
+
+      # Generic enum simulation matching FFI::Enum methods (.find, .symbols, #[])
+      class Enum
+        # @return [Array<Symbol>]
+        attr_reader :symbols
+
+        # @param mapping [Hash{Symbol => untyped}]
+        def initialize(mapping)
+          @mapping = mapping
+          @reverse = mapping.invert
+          @symbols = mapping.keys
+        end
+
+        # Finds the integer value for a symbol, or symbol for an integer / string.
+        #
+        # @param key [Symbol, String, Integer]
+        # @return [Symbol, Integer, nil]
+        def find(key)
+          k = key.is_a?(String) ? key.to_sym : key
+          @mapping[k] || @reverse[key]
+        end
+
+        # @param key [Symbol, String, Integer]
+        # @return [Symbol, Integer, nil]
+        def [](key)
+          find(key)
+        end
+      end
+
+      # Error codes enum matching libxlsxwriter lxw_error enum
+      ERROR_ENUM = Enum.new({
+        no_error: 0,
+        error_memory_malloc_failed: 1,
+        error_creating_xlsx_file: 2,
+        error_creating_tmpfile: 3,
+        error_reading_tmpfile: 4,
+        error_zip_file_operation: 5,
+        error_zip_parameter_error: 6,
+        error_zip_bad_zip_file: 7,
+        error_zip_internal_error: 8,
+        error_zip_file_add: 9,
+        error_zip_close: 10,
+        error_feature_not_supported: 11,
+        error_null_parameter_ignored: 12,
+        error_parameter_validation: 13,
+        error_sheetname_length_exceeded: 14,
+        error_invalid_sheetname_character: 15,
+        error_sheetname_start_end_apostrophe: 16,
+        error_sheetname_already_used: 17,
+        error_32_string_length_exceeded: 18,
+        error_128_string_length_exceeded: 19,
+        error_255_string_length_exceeded: 20,
+        error_max_string_length_exceeded: 21,
+        error_shared_string_index_not_found: 22,
+        error_worksheet_index_out_of_range: 23,
+        error_worksheet_max_number_urls_exceeded: 24,
+        error_image_dimensions: 25,
+        max_errno: 26
+      }.freeze)
+
+      # Descriptive error strings matching libxlsxwriter lxw_strerror
+      ERROR_STRINGS = {
+        0 => "No error.",
+        14 => "Worksheet name exceeds Excel's limit of 31 characters.",
+        15 => "Worksheet name cannot contain invalid characters: '[ ] : * ? / \\'",
+        16 => "Worksheet name cannot start or end with an apostrophe.",
+        17 => "Worksheet name is already in use."
+      }.freeze
+
+      # Standard defined colors enum matching libxlsxwriter defined_colors
+      COLOR_ENUM = Enum.new({
+        color_black: 0x1000000,
+        color_blue: 0x0000FF,
+        color_brown: 0x800000,
+        color_cyan: 0x00FFFF,
+        color_gray: 0x808080,
+        color_green: 0x008000,
+        color_lime: 0x00FF00,
+        color_magenta: 0xFF00FF,
+        color_navy: 0x000080,
+        color_orange: 0xFF6600,
+        color_pink: 0xFF00FF,
+        color_purple: 0x800080,
+        color_red: 0xFF0000,
+        color_silver: 0xC0C0C0,
+        color_white: 0xFFFFFF,
+        color_yellow: 0xFFFF00
+      }.freeze)
+
+      # Border styles enum matching libxlsxwriter format_borders
+      BORDER_ENUM = Enum.new({
+        border_none: 0,
+        border_thin: 1,
+        border_medium: 2,
+        border_dashed: 3,
+        border_dotted: 4,
+        border_thick: 5,
+        border_double: 6,
+        border_hair: 7,
+        border_medium_dashed: 8,
+        border_dash_dot: 9,
+        border_medium_dash_dot: 10,
+        border_dash_dot_dot: 11,
+        border_medium_dash_dot_dot: 12,
+        border_slant_dash_dot: 13
+      }.freeze)
+
+      # Alignments enum matching libxlsxwriter format_alignments
+      ALIGN_ENUM = Enum.new({
+        align_none: 0,
+        align_left: 1,
+        align_center: 2,
+        align_right: 3,
+        align_fill: 4,
+        align_justify: 5,
+        align_center_across: 6,
+        align_distributed: 7,
+        align_vertical_top: 8,
+        align_vertical_bottom: 9,
+        align_vertical_center: 10,
+        align_vertical_justify: 11,
+        align_vertical_distributed: 12
+      }.freeze)
+
+      # Comprehensive map of CSS color names to integer RGB hex values matching FastExcel::EXTRA_COLORS
+      EXTRA_COLORS = {
+        alice_blue: 0xF0F8FF,
+        antique_white: 0xFAEBD7,
+        aqua: 0x00FFFF,
+        aquamarine: 0x7FFFD4,
+        azure: 0xF0FFFF,
+        beige: 0xF5F5DC,
+        bisque: 0xFFE4C4,
+        black: 0x000000,
+        blanched_almond: 0xFFEBCD,
+        blue: 0x0000FF,
+        blue_violet: 0x8A2BE2,
+        brown: 0xA52A2A,
+        burly_wood: 0xDEB887,
+        cadet_blue: 0x5F9EA0,
+        chartreuse: 0x7FFF00,
+        chocolate: 0xD2691E,
+        coral: 0xFF7F50,
+        cornflower_blue: 0x6495ED,
+        cornsilk: 0xFFF8DC,
+        crimson: 0xDC143C,
+        cyan: 0x00FFFF,
+        dark_blue: 0x00008B,
+        dark_cyan: 0x008B8B,
+        dark_golden_rod: 0xB8860B,
+        dark_gray: 0xA9A9A9,
+        dark_grey: 0xA9A9A9,
+        dark_green: 0x006400,
+        dark_khaki: 0xBDB76B,
+        dark_magenta: 0x8B008B,
+        dark_olive_green: 0x556B2F,
+        dark_orange: 0xFF8C00,
+        dark_orchid: 0x9932CC,
+        dark_red: 0x8B0000,
+        dark_salmon: 0xE9967A,
+        dark_sea_green: 0x8FBC8F,
+        dark_slate_blue: 0x483D8B,
+        dark_slate_gray: 0x2F4F4F,
+        dark_slate_grey: 0x2F4F4F,
+        dark_turquoise: 0x00CED1,
+        dark_violet: 0x9400D3,
+        deep_pink: 0xFF1493,
+        deep_sky_blue: 0x00BFFF,
+        dim_gray: 0x696969,
+        dim_grey: 0x696969,
+        dodger_blue: 0x1E90FF,
+        fire_brick: 0xB22222,
+        floral_white: 0xFFFAF0,
+        forest_green: 0x228B22,
+        fuchsia: 0xFF00FF,
+        gainsboro: 0xDCDCDC,
+        ghost_white: 0xF8F8FF,
+        gold: 0xFFD700,
+        golden_rod: 0xDAA520,
+        gray: 0x808080,
+        grey: 0x808080,
+        green: 0x008000,
+        green_yellow: 0xADFF2F,
+        honey_dew: 0xF0FFF0,
+        hot_pink: 0xFF69B4,
+        indian_red: 0xCD5C5C,
+        indigo: 0x4B0082,
+        ivory: 0xFFFFF0,
+        khaki: 0xF0E68C,
+        lavender: 0xE6E6FA,
+        lavender_blush: 0xFFF0F5,
+        lawn_green: 0x7CFC00,
+        lemon_chiffon: 0xFFFACD,
+        light_blue: 0xADD8E6,
+        light_coral: 0xF08080,
+        light_cyan: 0xE0FFFF,
+        light_golden_rod_yellow: 0xFAFAD2,
+        light_gray: 0xD3D3D3,
+        light_grey: 0xD3D3D3,
+        light_green: 0x90EE90,
+        light_pink: 0xFFB6C1,
+        light_salmon: 0xFFA07A,
+        light_sea_green: 0x20B2AA,
+        light_sky_blue: 0x87CEFA,
+        light_slate_gray: 0x778899,
+        light_slate_grey: 0x778899,
+        light_steel_blue: 0xB0C4DE,
+        light_yellow: 0xFFFFE0,
+        lime: 0x00FF00,
+        lime_green: 0x32CD32,
+        linen: 0xFAF0E6,
+        magenta: 0xFF00FF,
+        maroon: 0x800000,
+        medium_aqua_marine: 0x66CDAA,
+        medium_blue: 0x0000CD,
+        medium_orchid: 0xBA55D3,
+        medium_purple: 0x9370DB,
+        medium_sea_green: 0x3CB371,
+        medium_slate_blue: 0x7B68EE,
+        medium_spring_green: 0x00FA9A,
+        medium_turquoise: 0x48D1CC,
+        medium_violet_red: 0xC71585,
+        midnight_blue: 0x191970,
+        mint_cream: 0xF5FFFA,
+        misty_rose: 0xFFE4E1,
+        moccasin: 0xFFE4B5,
+        navajo_white: 0xFFDEAD,
+        navy: 0x000080,
+        old_lace: 0xFDF5E6,
+        olive: 0x808000,
+        olive_drab: 0x6B8E23,
+        orange: 0xFFA500,
+        orange_red: 0xFF4500,
+        orchid: 0xDA70D6,
+        pale_golden_rod: 0xEEE8AA,
+        pale_green: 0x98FB98,
+        pale_turquoise: 0xAFEEEE,
+        pale_violet_red: 0xDB7093,
+        papaya_whip: 0xFFEFD5,
+        peach_puff: 0xFFDAB9,
+        peru: 0xCD853F,
+        pink: 0xFFC0CB,
+        plum: 0xDDA0DD,
+        powder_blue: 0xB0E0E6,
+        purple: 0x800080,
+        rebecca_purple: 0x663399,
+        red: 0xFF0000,
+        rosy_brown: 0xBC8F8F,
+        royal_blue: 0x4169E1,
+        saddle_brown: 0x8B4513,
+        salmon: 0xFA8072,
+        sandy_brown: 0xF4A460,
+        sea_green: 0x2E8B57,
+        sea_shell: 0xFFF5EE,
+        sienna: 0xA0522D,
+        silver: 0xC0C0C0,
+        sky_blue: 0x87CEEB,
+        slate_blue: 0x6A5ACD,
+        slate_gray: 0x708090,
+        slate_grey: 0x708090,
+        snow: 0xFFFAFA,
+        spring_green: 0x00FF7F,
+        steel_blue: 0x4682B4,
+        tan: 0xD2B48C,
+        teal: 0x008080,
+        thistle: 0xD8BFD8,
+        tomato: 0xFF6347,
+        turquoise: 0x40E0D0,
+        violet: 0xEE82EE,
+        wheat: 0xF5DEB3,
+        white: 0xFFFFFF,
+        white_smoke: 0xF5F5F5,
+        yellow: 0xFFFF00,
+        yellow_green: 0x9ACD32
+      }.freeze
+    end
+  end
+end

@@ -1,0 +1,32 @@
+# Generated from lib/xlsxrb/adapters/fast_excel/url.rb with RBS::Inline
+
+module Xlsxrb
+  module Adapters
+    module FastExcel
+      # Represents a hyperlink URL compatible with FastExcel::URL
+      class URL
+        # @return [String]
+        attr_accessor url: untyped
+
+        # @param url [String] Hyperlink destination URL (e.g. "https://github.com")
+        # : (String url) -> void
+        def initialize: (String url) -> void
+
+        # @return [String]
+        # : () -> String
+        def to_s: () -> String
+
+        # @param other [Object]
+        # @return [Boolean]
+        # : (untyped other) -> bool
+        def ==: (untyped other) -> bool
+
+        alias eql? ==
+
+        # @return [Integer]
+        # : () -> Integer
+        def hash: () -> Integer
+      end
+    end
+  end
+end

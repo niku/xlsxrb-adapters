@@ -29,6 +29,8 @@ GEM
     csv (3.3.6)
     diff-lcs (1.6.2)
     erb (6.0.7)
+    fast_excel (0.5.0)
+      ffi (> 1.9, < 2)
     ffi (1.17.4-aarch64-linux-gnu)
     ffi (1.17.4-aarch64-linux-musl)
     ffi (1.17.4-arm-linux-gnu)
@@ -186,6 +188,7 @@ PLATFORMS
 DEPENDENCIES
   caxlsx
   creek
+  fast_excel
   irb
   matrix
   rake
@@ -212,6 +215,7 @@ CHECKSUMS
   csv (3.3.6) sha256=aba61e7e507a66f03d45cb1f3c4b6359861c3504038b422962875dce099e4456
   diff-lcs (1.6.2) sha256=9ae0d2cba7d4df3075fe8cd8602a8604993efc0dfa934cff568969efb1909962
   erb (6.0.7) sha256=c5ca6dc25b0ef974a44dc8f59fe847577122483b1968a38dec305c60bf91ee92
+  fast_excel (0.5.0) sha256=59c418bdcf586a6030798d4e3a9f575742badaceaf7bb90f38eee5feb5bdc478
   ffi (1.17.4-aarch64-linux-gnu) sha256=b208f06f91ffd8f5e1193da3cae3d2ccfc27fc36fba577baf698d26d91c080df
   ffi (1.17.4-aarch64-linux-musl) sha256=9286b7a615f2676245283aef0a0a3b475ae3aae2bb5448baace630bb77b91f39
   ffi (1.17.4-arm-linux-gnu) sha256=d6dbddf7cb77bf955411af5f187a65b8cd378cb003c15c05697f5feee1cb1564

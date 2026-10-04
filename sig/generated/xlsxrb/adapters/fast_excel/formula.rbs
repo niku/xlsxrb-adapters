@@ -1,0 +1,32 @@
+# Generated from lib/xlsxrb/adapters/fast_excel/formula.rb with RBS::Inline
+
+module Xlsxrb
+  module Adapters
+    module FastExcel
+      # Represents an Excel formula string expression compatible with FastExcel::Formula
+      class Formula
+        # @return [String]
+        attr_accessor fml: untyped
+
+        # @param fml [String] Formula expression (e.g. "SUM(A1:B2)")
+        # : (String fml) -> void
+        def initialize: (String fml) -> void
+
+        # @return [String]
+        # : () -> String
+        def to_s: () -> String
+
+        # @param other [Object]
+        # @return [Boolean]
+        # : (untyped other) -> bool
+        def ==: (untyped other) -> bool
+
+        alias eql? ==
+
+        # @return [Integer]
+        # : () -> Integer
+        def hash: () -> Integer
+      end
+    end
+  end
+end
