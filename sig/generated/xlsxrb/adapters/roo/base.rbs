@@ -75,6 +75,25 @@ module Xlsxrb
         # : (?untyped sheet) -> Integer?
         def last_column: (?untyped sheet) -> Integer?
 
+        alias first_col first_column
+
+        alias last_col last_column
+
+        # Sheet dimension reference string (e.g. "A1:Z50"), or nil.
+        #
+        # @param sheet [String, Integer, nil]
+        # @return [String, nil]
+        # : (?untyped sheet) -> String?
+        def dimension: (?untyped sheet) -> String?
+
+        alias dimensions dimension
+
+        # Returns whether workbook uses 1904 date system.
+        #
+        # @return [Boolean]
+        # : () -> bool
+        def date1904?: () -> bool
+
         # First non-empty column as a letter string (e.g. "A").
         #
         # @param sheet [String, Integer, nil]
@@ -148,6 +167,17 @@ module Xlsxrb
         # : (?Hash[untyped, untyped] options) -> Enumerator[untyped, void]
         def each: (?Hash[untyped, untyped] options) { (untyped) -> void } -> void
                 | (?Hash[untyped, untyped] options) -> Enumerator[untyped, void]
+
+        # Iterates over row values directly as Arrays.
+        #
+        # @param sheet [String, Integer, nil]
+        # @yield [values]
+        # @yieldparam values [Array<Object>]
+        # @return [Enumerator, void]
+        # : (?untyped sheet) { (Array[untyped]) -> void } -> void
+        # : (?untyped sheet) -> Enumerator[Array[untyped], void]
+        def each_row_values: (?untyped sheet) { (Array[untyped]) -> void } -> void
+                           | (?untyped sheet) -> Enumerator[Array[untyped], void]
 
         # Parses spreadsheet content into an Array of rows or hashes.
         #

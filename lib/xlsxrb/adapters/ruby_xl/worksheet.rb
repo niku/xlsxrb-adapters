@@ -88,6 +88,93 @@ module Xlsxrb
         alias name sheet_name
         alias name= sheet_name=
 
+        # Returns sheet dimension reference string (e.g. "A1:Z50"), or nil.
+        # @return [String, nil]
+        #: () -> String?
+        def dimension
+          f_r = first_row
+          l_r = last_row
+          f_c = first_column
+          l_c = last_column
+          return nil unless f_r && l_r && f_c && l_c
+
+          "#{Elements::Cell.column_letter(f_c - 1)}#{f_r}:#{Elements::Cell.column_letter(l_c - 1)}#{l_r}"
+        end
+
+        # Returns 1-based index of the first row containing cells, or nil.
+        # @return [Integer, nil]
+        #: () -> Integer?
+        def first_row
+          idx = @rows.index { |r| r && !r.cells.empty? }
+          idx ? idx + 1 : nil
+        end
+
+        # Returns 1-based index of the last row containing cells, or nil.
+        # @return [Integer, nil]
+        #: () -> Integer?
+        def last_row
+          idx = @rows.rindex { |r| r && !r.cells.empty? }
+          idx ? idx + 1 : nil
+        end
+
+        # Returns 1-based index of the first column containing cells, or nil.
+        # @return [Integer, nil]
+        #: () -> Integer?
+        def first_column
+          min_c = nil
+          @rows.each do |r|
+            next unless r
+
+            r.cells.each_with_index do |c, c_idx|
+              next unless c
+
+              min_c = c_idx if min_c.nil? || c_idx < min_c
+            end
+          end
+          min_c ? min_c + 1 : nil
+        end
+        alias first_col first_column
+
+        # Returns 1-based index of the last column containing cells, or nil.
+        # @return [Integer, nil]
+        #: () -> Integer?
+        def last_column
+          max_c = nil
+          @rows.each do |r|
+            next unless r
+
+            r.cells.each_with_index do |c, c_idx|
+              next unless c
+
+              max_c = c_idx if max_c.nil? || c_idx > max_c
+            end
+          end
+          max_c ? max_c + 1 : nil
+        end
+        alias last_col last_column
+
+        # Returns whether workbook uses 1904 date system.
+        # @return [Boolean]
+        #: () -> bool
+        def date1904?
+          @workbook ? @workbook.date1904? : false
+        end
+
+        # Iterates over row values directly as Arrays without constructing cell objects.
+        #
+        # @yield [values]
+        # @yieldparam values [Array<Object>]
+        # @return [Enumerator, void]
+        #: () { (Array[untyped]) -> void } -> void
+        #: () -> Enumerator[Array[untyped], void]
+        def each_row_values(&block)
+          return enum_for(:each_row_values) unless block
+
+          @rows.each do |r|
+            block.call(r ? r.cells.map { |c| c&.value } : [])
+          end
+        end
+
         # Accesses a row by 0-based row index.
         #
         # @param row_idx [Integer]
@@ -1345,7 +1432,9 @@ module Xlsxrb
             columns: cols_data,
             charts: @charts,
             data_validations: @data_validations || [],
-            unmapped_data: merged_unmapped
+            unmapped_data: merged_unmapped,
+            date1904: date1904?,
+            dimension: dimension
           )
         end
 

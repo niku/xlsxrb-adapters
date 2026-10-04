@@ -64,6 +64,11 @@ module Xlsxrb
 
         attr_accessor defined_names: DefinedNames
 
+        # Returns whether workbook uses 1904 date system.
+        # @return [Boolean]
+        # : () -> bool
+        def date1904?: () -> bool
+
         # Returns root container compatible with RubyXL::Workbook#root.
         #
         # @return [Root]

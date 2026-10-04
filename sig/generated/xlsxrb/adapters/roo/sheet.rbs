@@ -93,6 +93,22 @@ module Xlsxrb
           # : () -> Integer?
           def last_column: () -> Integer?
 
+          alias dimension dimensions
+
+          alias first_col first_column
+
+          alias last_col last_column
+
+          # Iterates over row cell values as Array.
+          #
+          # @yield [values]
+          # @yieldparam values [Array<Object>]
+          # @return [Enumerator, void]
+          # : () { (Array[untyped]) -> void } -> void
+          # : () -> Enumerator[Array[untyped], void]
+          def each_row_values: () { (Array[untyped]) -> void } -> void
+                             | () -> Enumerator[Array[untyped], void]
+
           # Returns format code for cell coordinate.
           #
           # @param key [Array(Integer, Integer)]

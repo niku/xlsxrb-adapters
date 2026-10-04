@@ -71,6 +71,50 @@ module Xlsxrb
 
         alias name= sheet_name=
 
+        # Returns sheet dimension reference string (e.g. "A1:Z50"), or nil.
+        # @return [String, nil]
+        # : () -> String?
+        def dimension: () -> String?
+
+        # Returns 1-based index of the first row containing cells, or nil.
+        # @return [Integer, nil]
+        # : () -> Integer?
+        def first_row: () -> Integer?
+
+        # Returns 1-based index of the last row containing cells, or nil.
+        # @return [Integer, nil]
+        # : () -> Integer?
+        def last_row: () -> Integer?
+
+        # Returns 1-based index of the first column containing cells, or nil.
+        # @return [Integer, nil]
+        # : () -> Integer?
+        def first_column: () -> Integer?
+
+        alias first_col first_column
+
+        # Returns 1-based index of the last column containing cells, or nil.
+        # @return [Integer, nil]
+        # : () -> Integer?
+        def last_column: () -> Integer?
+
+        alias last_col last_column
+
+        # Returns whether workbook uses 1904 date system.
+        # @return [Boolean]
+        # : () -> bool
+        def date1904?: () -> bool
+
+        # Iterates over row values directly as Arrays without constructing cell objects.
+        #
+        # @yield [values]
+        # @yieldparam values [Array<Object>]
+        # @return [Enumerator, void]
+        # : () { (Array[untyped]) -> void } -> void
+        # : () -> Enumerator[Array[untyped], void]
+        def each_row_values: () { (Array[untyped]) -> void } -> void
+                           | () -> Enumerator[Array[untyped], void]
+
         # Accesses a row by 0-based row index.
         #
         # @param row_idx [Integer]

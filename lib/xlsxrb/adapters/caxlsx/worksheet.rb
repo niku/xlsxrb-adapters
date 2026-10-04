@@ -132,6 +132,7 @@ module Xlsxrb
         def sqref
           "#{first_cell_reference}:#{last_cell_reference}"
         end
+        alias to_s sqref
 
         # @param str [String]
         # @return [String, nil]
@@ -737,6 +738,84 @@ module Xlsxrb
           @dimension ||= Dimension.new(self)
         end
 
+        # Returns 1-based index of the first row containing cells, or nil.
+        # @return [Integer, nil]
+        #: () -> Integer?
+        def first_row
+          return nil if rows.empty?
+
+          idx = rows.index { |r| r && !r.cells.empty? }
+          idx ? idx + 1 : nil
+        end
+
+        # Returns 1-based index of the last row containing cells, or nil.
+        # @return [Integer, nil]
+        #: () -> Integer?
+        def last_row
+          return nil if rows.empty?
+
+          idx = rows.rindex { |r| r && !r.cells.empty? }
+          idx ? idx + 1 : nil
+        end
+
+        # Returns 1-based index of the first column containing cells, or nil.
+        # @return [Integer, nil]
+        #: () -> Integer?
+        def first_column
+          min_c = nil
+          rows.each do |r|
+            next unless r
+
+            r.cells.each_with_index do |c, c_idx|
+              next unless c
+
+              min_c = c_idx if min_c.nil? || c_idx < min_c
+            end
+          end
+          min_c ? min_c + 1 : nil
+        end
+        alias first_col first_column
+
+        # Returns 1-based index of the last column containing cells, or nil.
+        # @return [Integer, nil]
+        #: () -> Integer?
+        def last_column
+          max_c = nil
+          rows.each do |r|
+            next unless r
+
+            r.cells.each_with_index do |c, c_idx|
+              next unless c
+
+              max_c = c_idx if max_c.nil? || c_idx > max_c
+            end
+          end
+          max_c ? max_c + 1 : nil
+        end
+        alias last_col last_column
+
+        # Returns whether workbook uses 1904 date system.
+        # @return [Boolean]
+        #: () -> bool
+        def date1904?
+          @workbook&.date1904 ? true : false
+        end
+
+        # Iterates over row values directly as Arrays without constructing cell objects.
+        #
+        # @yield [values]
+        # @yieldparam values [Array<Object>]
+        # @return [Enumerator, void]
+        #: () { (Array[untyped]) -> void } -> void
+        #: () -> Enumerator[Array[untyped], void]
+        def each_row_values(&block)
+          return enum_for(:each_row_values) unless block
+
+          rows.each do |r|
+            block.call(r ? r.cells.map(&:value) : [])
+          end
+        end
+
         # @return [SheetPr]
         #: () -> SheetPr
         def sheet_pr
@@ -1316,6 +1395,7 @@ module Xlsxrb
           drw = @worksheet_drawing&.drawing
           charts_data = drw ? drw.charts.map(&:to_chart_options) : []
 
+          dim_str = rows.empty? ? nil : dimension.sqref
           Xlsxrb::Elements::Worksheet.new(
             name: name,
             rows: sorted_rows,
@@ -1326,7 +1406,9 @@ module Xlsxrb
             unmapped_data: merged_unmapped,
             state: state,
             comments: sheet_comments,
-            hyperlinks: sheet_hyperlinks
+            hyperlinks: sheet_hyperlinks,
+            date1904: date1904?,
+            dimension: dim_str
           )
         end
 

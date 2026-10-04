@@ -279,4 +279,51 @@ class XlsxrbAdaptersRubyXLTest < Test::Unit::TestCase
     assert_equal 1, reloaded_wb[0].data_validations.size
     assert_equal "A1:A10", reloaded_wb[0].data_validations.first[:sqref]
   end
+
+  def test_dimension_and_bounds
+    wb = Xlsxrb::Adapters::RubyXL::Workbook.new
+    ws = wb[0]
+    ws.add_cell(3, 1, "B4")
+    ws.add_cell(4, 1, "B5")
+
+    assert_equal "B4:B5", ws.dimension
+    assert_equal 4, ws.first_row
+    assert_equal 2, ws.first_column
+    assert_equal 2, ws.first_col
+    assert_equal 5, ws.last_row
+    assert_equal 2, ws.last_column
+    assert_equal 2, ws.last_col
+    assert_equal false, ws.date1904?
+    assert_equal false, wb.date1904?
+  end
+
+  def test_date1904_system
+    wb = Xlsxrb::Adapters::RubyXL::Workbook.new
+    wb.date1904 = true
+    ws = wb[0]
+    ws.add_cell(0, 0, Date.new(2026, 1, 1))
+
+    assert_equal true, wb.date1904?
+    assert_equal true, ws.date1904?
+
+    xlsxrb_wb = wb.to_xlsxrb
+    assert_equal true, xlsxrb_wb.sheets[0].date1904?
+
+    wb_back = Xlsxrb::Adapters::RubyXL::Workbook.from_xlsxrb(xlsxrb_wb)
+    assert_equal true, wb_back.date1904?
+    assert_equal true, wb_back[0].date1904?
+  end
+
+  def test_each_row_values
+    wb = Xlsxrb::Adapters::RubyXL::Workbook.new
+    ws = wb[0]
+    ws.add_cell(0, 0, "A1")
+    ws.add_cell(0, 1, "B1")
+    ws.add_cell(1, 0, "A2")
+
+    values = ws.each_row_values.to_a
+    assert_equal 2, values.size
+    assert_equal %w[A1 B1], values[0]
+    assert_equal ["A2"], values[1]
+  end
 end

@@ -303,4 +303,53 @@ class XlsxrbAdaptersRooTest < Test::Unit::TestCase
     assert cell_a7.formula?
     assert_equal "SUM(A1:A6)", cell_a7.formula_expression
   end
+
+  def test_dimension_and_bounds
+    doc = Xlsxrb::Adapters::Roo::Excelx.new(fixture("comments.xlsx"))
+    sheet = doc.sheet_for("Sheet1")
+    assert_equal "B4:B5", doc.dimension
+    assert_equal "B4:B5", sheet.dimension
+    assert_equal 4, doc.first_row
+    assert_equal 4, sheet.first_row
+    assert_equal 2, doc.first_column
+    assert_equal 2, doc.first_col
+    assert_equal 2, sheet.first_col
+    assert_equal 5, doc.last_row
+    assert_equal 5, sheet.last_row
+    assert_equal 2, doc.last_column
+    assert_equal 2, doc.last_col
+    assert_equal 2, sheet.last_col
+    assert_equal false, doc.date1904?
+  end
+
+  def test_date1904_system
+    with_tempfile do |filepath|
+      pkg = Xlsxrb::Adapters::Caxlsx::Package.new
+      pkg.workbook.date1904 = true
+      pkg.workbook.add_worksheet(name: "Dates") do |s|
+        s.add_row [Date.new(2026, 1, 1)]
+      end
+      pkg.serialize(filepath)
+
+      doc = Xlsxrb::Adapters::Roo::Excelx.new(filepath)
+      assert_equal true, doc.date1904?
+      assert_equal Date.new(2026, 1, 1), doc.cell(1, 1)
+
+      wb_xlsxrb = doc.to_xlsxrb
+      assert_equal true, wb_xlsxrb.sheets[0].date1904?
+    end
+  end
+
+  def test_each_row_values
+    doc = Xlsxrb::Adapters::Roo::Excelx.new(fixture("comments.xlsx"))
+    values = doc.each_row_values.to_a
+    assert_equal 5, values.size
+    assert_equal ["B4 (mit Kommentar)"], values[3]
+    assert_equal ["B5 (mit Kommentar)"], values[4]
+
+    sheet_values = doc.sheet_for("Sheet1").each_row_values.to_a
+    assert_equal 2, sheet_values.size
+    assert_equal ["B4 (mit Kommentar)"], sheet_values[0]
+    assert_equal ["B5 (mit Kommentar)"], sheet_values[1]
+  end
 end

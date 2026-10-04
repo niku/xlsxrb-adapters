@@ -122,6 +122,28 @@ module Xlsxrb
           def last_column
             first_last[:last_column]
           end
+          alias dimension dimensions
+          alias first_col first_column
+          alias last_col last_column
+
+          # Iterates over row cell values as Array.
+          #
+          # @yield [values]
+          # @yieldparam values [Array<Object>]
+          # @return [Enumerator, void]
+          #: () { (Array[untyped]) -> void } -> void
+          #: () -> Enumerator[Array[untyped], void]
+          def each_row_values(&block)
+            return enum_for(:each_row_values) unless block
+
+            f_row = first_row
+            l_row = last_row
+            return unless f_row && l_row
+
+            f_row.upto(l_row) do |r_num|
+              block.call(row(r_num))
+            end
+          end
 
           # Returns format code for cell coordinate.
           #

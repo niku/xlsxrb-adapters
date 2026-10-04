@@ -384,11 +384,20 @@ module Xlsxrb
           @workbook&.defined_names&.key?(method_name.to_s) || super
         end
 
+        # Returns whether workbook uses 1904 date system.
+        #
+        # @return [Boolean]
+        #: () -> bool
+        def date1904?
+          @workbook&.base_date&.year == 1904
+        end
+
         # Converts this Excelx adapter instance to an immutable Xlsxrb::Elements::Workbook.
         #
         # @return [Xlsxrb::Elements::Workbook]
         #: () -> Xlsxrb::Elements::Workbook
         def to_xlsxrb
+          date1904_active = date1904?
           elements_sheets = @sheets.map do |s|
             rows_hash = {}
             sheet_hyperlinks = {}
@@ -427,7 +436,8 @@ module Xlsxrb
                 hyperlink: hl,
                 comment: cm,
                 format_code: fmt,
-                raw_value: raw_v
+                raw_value: raw_v,
+                date1904: date1904_active
               )
             end
 
@@ -442,7 +452,9 @@ module Xlsxrb
               rows: elem_rows,
               state: sheet_state,
               hyperlinks: sheet_hyperlinks,
-              comments: sheet_comments
+              comments: sheet_comments,
+              date1904: date1904_active,
+              dimension: s.dimensions
             )
           end
 
@@ -860,8 +872,12 @@ module Xlsxrb
               link_url = hyperlinks_map[coord]
 
               xf = @cell_xfs[style_id] || {}
-              num_fmt_id = xf[:num_fmt_id] || 0
-              format_code = num_fmts[num_fmt_id] || Format::STANDARD_FORMATS[num_fmt_id] || "General"
+              format_code = if @parsed_styles.is_a?(Xlsxrb::Elements::Styles)
+                              @parsed_styles.number_format(style_id) || "General"
+                            else
+                              num_fmt_id = xf[:num_fmt_id] || 0
+                              num_fmts[num_fmt_id] || Format::STANDARD_FORMATS[num_fmt_id] || "General"
+                            end
               formats[coord] = format_code
 
               if xml.getbyte(c_tag_end - 1) == 47 # self-closing <c ... />
@@ -926,7 +942,11 @@ module Xlsxrb
                            v_clean = unescape_xml(v_str).gsub("_x000D_", "\n").gsub("\r\n", "\n").gsub("\r", "\n")
                            Cell::String.new(v_clean, formula_str, style_id, link_url, coord)
                          elsif v_str && !v_str.empty?
-                           cell_val_type = Format.to_type(format_code)
+                           cell_val_type = if @parsed_styles.is_a?(Xlsxrb::Elements::Styles)
+                                             @parsed_styles.format_type(style_id)
+                                           else
+                                             Format.to_type(format_code)
+                                           end
                            numeric_raw = v_str.strip
                            excelx_type_arg = [:numeric_or_formula, format_code]
 

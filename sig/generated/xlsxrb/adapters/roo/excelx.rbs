@@ -253,6 +253,12 @@ module Xlsxrb
         # : (Symbol method_name, ?bool include_private) -> bool
         def respond_to_missing?: (Symbol method_name, ?bool include_private) -> bool
 
+        # Returns whether workbook uses 1904 date system.
+        #
+        # @return [Boolean]
+        # : () -> bool
+        def date1904?: () -> bool
+
         # Converts this Excelx adapter instance to an immutable Xlsxrb::Elements::Workbook.
         #
         # @return [Xlsxrb::Elements::Workbook]

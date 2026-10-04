@@ -118,6 +118,33 @@ module Xlsxrb
         def last_column(sheet = default_sheet)
           sheet_for(sheet)&.last_column
         end
+        alias first_col first_column
+        alias last_col last_column
+
+        # Sheet dimension reference string (e.g. "A1:Z50"), or nil.
+        #
+        # @param sheet [String, Integer, nil]
+        # @return [String, nil]
+        #: (?untyped sheet) -> String?
+        def dimension(sheet = default_sheet)
+          target_sheet = sheet_for(sheet)
+          return nil unless target_sheet
+
+          if target_sheet.respond_to?(:dimension) && target_sheet.dimension
+            target_sheet.dimension
+          elsif target_sheet.respond_to?(:dimensions)
+            target_sheet.dimensions
+          end
+        end
+        alias dimensions dimension
+
+        # Returns whether workbook uses 1904 date system.
+        #
+        # @return [Boolean]
+        #: () -> bool
+        def date1904?
+          false
+        end
 
         # First non-empty column as a letter string (e.g. "A").
         #
@@ -292,6 +319,25 @@ module Xlsxrb
               end
               block.call(row_hash)
             end
+          end
+        end
+
+        # Iterates over row values directly as Arrays.
+        #
+        # @param sheet [String, Integer, nil]
+        # @yield [values]
+        # @yieldparam values [Array<Object>]
+        # @return [Enumerator, void]
+        #: (?untyped sheet) { (Array[untyped]) -> void } -> void
+        #: (?untyped sheet) -> Enumerator[Array[untyped], void]
+        def each_row_values(sheet = default_sheet, &block)
+          return enum_for(:each_row_values, sheet) unless block
+
+          l_row = last_row(sheet)
+          return unless l_row
+
+          1.upto(l_row) do |line|
+            block.call(row(line, sheet))
           end
         end
 

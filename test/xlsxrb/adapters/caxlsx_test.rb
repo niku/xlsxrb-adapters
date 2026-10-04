@@ -192,4 +192,47 @@ class XlsxrbAdaptersCaxlsxTest < Test::Unit::TestCase
     errors = pkg.validate
     assert_instance_of Array, errors
   end
+
+  def test_dimension_and_bounds
+    pkg = Xlsxrb::Adapters::Caxlsx::Package.new
+    ws = pkg.workbook.add_worksheet(name: "Bounds")
+    ws.add_row [nil, "B1"]
+    ws.add_row [nil, "B2", "C2"]
+
+    assert_equal "A1:C2", ws.dimension.to_s
+    assert_equal 1, ws.first_row
+    assert_equal 1, ws.first_column
+    assert_equal 1, ws.first_col
+    assert_equal 2, ws.last_row
+    assert_equal 3, ws.last_column
+    assert_equal 3, ws.last_col
+    assert_equal false, ws.date1904?
+
+    xlsxrb_ws = ws.to_xlsxrb
+    assert_equal "A1:C2", xlsxrb_ws.dimension
+    assert_equal false, xlsxrb_ws.date1904?
+  end
+
+  def test_date1904_system
+    pkg = Xlsxrb::Adapters::Caxlsx::Package.new
+    pkg.workbook.date1904 = true
+    ws = pkg.workbook.add_worksheet(name: "Dates")
+    ws.add_row [Date.new(2026, 1, 1)]
+
+    assert_equal true, ws.date1904?
+    xlsxrb_ws = ws.to_xlsxrb
+    assert_equal true, xlsxrb_ws.date1904?
+  end
+
+  def test_each_row_values
+    pkg = Xlsxrb::Adapters::Caxlsx::Package.new
+    ws = pkg.workbook.add_worksheet(name: "Values")
+    ws.add_row %w[A1 B1]
+    ws.add_row %w[A2 B2 C2]
+
+    values = ws.each_row_values.to_a
+    assert_equal 2, values.size
+    assert_equal %w[A1 B1], values[0]
+    assert_equal %w[A2 B2 C2], values[1]
+  end
 end
