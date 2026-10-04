@@ -12,6 +12,7 @@ dir = __dir__
 ruby_xl_runner = File.join(dir, "compatibility_runner_ruby_xl")
 caxlsx_runner = File.join(dir, "compatibility_runner_caxlsx")
 roo_runner = File.join(dir, "compatibility_runner_roo")
+xsv_runner = File.join(dir, "compatibility_runner_xsv")
 
 exit_codes = []
 
@@ -22,6 +23,8 @@ when "caxlsx", "axlsx"
   exit_codes << (system(ruby, caxlsx_runner) ? 0 : 1)
 when "roo"
   exit_codes << (system(ruby, roo_runner) ? 0 : 1)
+when "xsv"
+  exit_codes << (system(ruby, xsv_runner) ? 0 : 1)
 when "all"
   puts ">>> Running RubyXL compatibility suite..."
   exit_codes << (system(ruby, ruby_xl_runner) ? 0 : 1)
@@ -29,8 +32,10 @@ when "all"
   exit_codes << (system(ruby, caxlsx_runner) ? 0 : 1)
   puts "\n>>> Running Roo compatibility suite..."
   exit_codes << (system(ruby, roo_runner) ? 0 : 1)
+  puts "\n>>> Running Xsv compatibility suite..."
+  exit_codes << (system(ruby, xsv_runner) ? 0 : 1)
 else
-  warn "Unknown compatibility target: #{target}. Valid targets: all, ruby_xl, caxlsx, roo"
+  warn "Unknown compatibility target: #{target}. Valid targets: all, ruby_xl, caxlsx, roo, xsv"
   exit 1
 end
 

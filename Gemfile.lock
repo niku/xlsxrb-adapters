@@ -167,6 +167,8 @@ GEM
       unicode-emoji (~> 4.3)
     unicode-emoji (4.3.0)
     uri (1.1.1)
+    xsv (1.4.1)
+      rubyzip (>= 1.3, < 4)
 
 PLATFORMS
   aarch64-linux-gnu
@@ -193,6 +195,7 @@ DEPENDENCIES
   test-unit
   xlsxrb!
   xlsxrb-adapters!
+  xsv
 
 CHECKSUMS
   ast (2.4.3) sha256=954615157c1d6a382bc27d690d973195e79db7f55e9765ac7c481c60bdb4d383
@@ -271,6 +274,7 @@ CHECKSUMS
   uri (1.1.1) sha256=379fa58d27ffb1387eaada68c749d1426738bd0f654d812fcc07e7568f5c57c6
   xlsxrb (0.1.13)
   xlsxrb-adapters (0.1.0)
+  xsv (1.4.1) sha256=32a2949b6be2bfb6d5dc0335aebcc265bf7f781cb757f2292f31abb24996e70d
 
 BUNDLED WITH
   4.0.20

@@ -1,9 +1,10 @@
-# Benchmark Results: xlsxrb-adapters vs. caxlsx, rubyXL & xlsxrb
+# Benchmark Results: xlsxrb-adapters vs. caxlsx, rubyXL, roo, xsv & xlsxrb
 
 This document provides dedicated benchmarks comparing migration paths from peer XLSX libraries to `xlsxrb`:
 1. **Caxlsx Migration**: Comparing `caxlsx` (4.5.0), `xlsxrb-adapters (Caxlsx)` (both In-Memory and Streaming), and native `xlsxrb`.
 2. **RubyXL Migration**: Comparing `rubyXL` (3.4.38), `xlsxrb-adapters (RubyXL)`, and native `xlsxrb`.
 3. **Roo Migration**: Comparing `roo` (3.0.0), `xlsxrb-adapters (Roo)`, and native `xlsxrb`.
+4. **Xsv Migration**: Comparing `xsv` (1.4.1), `xlsxrb-adapters (Xsv)`, and native `xlsxrb`.
 
 ## Methodology
 
@@ -173,7 +174,50 @@ The benchmark suite follows the isolated subprocess approach established in [`xl
 
 ---
 
-## 4. Key Takeaways
+## 4. Xsv Migration Benchmarks (xsv vs. xlsxrb-adapters vs. xlsxrb)
+
+*Note: `xsv` is a fast, lightweight read-only XLSX streaming parser designed for extracting data from tabular worksheets. Benchmarks evaluate reading and cell value extraction.*
+
+### 4.1 Large-Scale (1,000,000 cells: 100,000 rows × 10 cols)
+
+#### Read Performance (Parsing & Cell Value Extraction)
+
+| Library / Mode | Adapter / Engine | Time (Median) | Peak Memory (VmHWM) | GC Count | vs. xsv Speed | vs. xsv GC Count |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **`xsv` (1.4.1)** | Native C/Ruby Chunk Parser | 18.762 s | 79.9 MB | 1,489.0 | 1.0x (baseline) | 100% (baseline) |
+| **`xlsxrb-adapters (Xsv)`** | **Xsv API + xlsxrb core** | **3.784 s** | **176.4 MB** | **63.0** | **~5.0x faster** | **95.8% reduced** |
+| `xlsxrb (In-Memory)` | Native `Xlsxrb::Elements` | 4.133 s | 446.9 MB | 19.0 | ~4.5x faster | 98.7% reduced |
+| `xlsxrb (Streaming)` | Native Streaming Reader | 2.288 s | 112.4 MB | 68.0 | ~8.2x faster | 95.4% reduced |
+
+---
+
+### 4.2 Medium-Scale (100,000 cells: 10,000 rows × 10 cols)
+
+#### Read Performance
+
+| Library | Time (Median) | Peak Memory | GC Count | vs. xsv Speed |
+| :--- | :--- | :--- | :--- | :--- |
+| **`xsv` (Original 1.4.1)** | 1.822 s | 52.4 MB | 166.0 | 1.0x (baseline) |
+| **`xlsxrb-adapters (Xsv)`** | **0.375 s** | **83.0 MB** | **8.0** | **~4.9x faster** |
+| `xlsxrb (In-Memory)` | 0.454 s | 111.8 MB | 5.0 | ~4.0x faster |
+| `xlsxrb (Streaming)` | 0.307 s | 87.5 MB | 3.0 | ~5.9x faster |
+
+---
+
+### 4.3 Small-Scale (10,000 cells: 1,000 rows × 10 cols)
+
+#### Read Performance
+
+| Library | Time (Median) | Peak Memory | GC Count | vs. xsv Speed |
+| :--- | :--- | :--- | :--- | :--- |
+| **`xsv` (Original 1.4.1)** | 0.175 s | 48.2 MB | 13.0 | 1.0x (baseline) |
+| **`xlsxrb-adapters (Xsv)`** | **0.033 s** | **61.9 MB** | **0.0** | **~5.3x faster** |
+| `xlsxrb (In-Memory)` | 0.029 s | 55.5 MB | 0.0 | ~6.0x faster |
+| `xlsxrb (Streaming)` | 0.025 s | 56.2 MB | 0.0 | ~7.0x faster |
+
+---
+
+## 5. Key Takeaways
 
 1. **Caxlsx Migration**:
    - `xlsxrb-adapters (Caxlsx)` provides 100% drop-in API compatibility for existing caxlsx generation code with zero application changes.
@@ -184,10 +228,13 @@ The benchmark suite follows the isolated subprocess approach established in [`xl
 3. **Roo Migration**:
    - `xlsxrb-adapters (Roo)` provides 100% drop-in API compatibility with official `roo` (including `Roo::Excelx.new`, `Roo::Spreadsheet.open`, `cell`, and `each_row_streaming`) while running **~1.1x–1.6x faster**.
    - Direct migration to native `xlsxrb` streaming reader yields **~4.5x faster reads** and **~38% lower memory usage** on 1,000,000 cells.
+4. **Xsv Migration**:
+   - `xlsxrb-adapters (Xsv)` provides 100% drop-in API compatibility with `xsv` (including `Xsv.open`, `sheet.each_row`, `sheet.parse_headers!`, and `sheet[r]`) while running **~4.9x–5.3x faster** and reducing GC churn by **~95%** (63 GC cycles vs. 1,489 GC cycles on 1,000,000 cells).
+   - Upgrading from `xsv` to `xlsxrb-adapters (Xsv)` requires only updating gem requirements or namespaces.
 
 ---
 
-## 5. Reproducing Locally
+## 6. Reproducing Locally
 
 Run the benchmark suite with:
 
@@ -203,4 +250,7 @@ bundle exec ruby benchmark.rb 10000 10 rubyxl
 
 # Run only Roo migration benchmarks
 bundle exec ruby benchmark.rb 10000 10 roo
+
+# Run only Xsv migration benchmarks
+bundle exec ruby benchmark.rb 10000 10 xsv
 ```

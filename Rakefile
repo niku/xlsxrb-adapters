@@ -28,6 +28,12 @@ namespace :test do
     t.libs << "lib"
     t.test_files = FileList["test/xlsxrb/adapters/roo*test.rb"]
   end
+
+  Rake::TestTask.new(:xsv) do |t|
+    t.libs << "test"
+    t.libs << "lib"
+    t.test_files = FileList["test/xlsxrb/adapters/xsv*test.rb"]
+  end
 end
 
 RuboCop::RakeTask.new
@@ -43,8 +49,8 @@ task typecheck: :sig do
   sh "bundle exec steep check"
 end
 
-desc "Run all compatibility suites (rubyXL, caxlsx, and roo)"
-task compatibility: ["compatibility:ruby_xl", "compatibility:caxlsx", "compatibility:roo"]
+desc "Run all compatibility suites (rubyXL, caxlsx, roo, and xsv)"
+task compatibility: ["compatibility:ruby_xl", "compatibility:caxlsx", "compatibility:roo", "compatibility:xsv"]
 
 namespace :compatibility do
   desc "Run official rubyXL RSpec compatibility suite"
@@ -60,6 +66,11 @@ namespace :compatibility do
   desc "Run roo compatibility test suite"
   task :roo do
     sh "bundle exec ruby bin/compatibility_runner roo"
+  end
+
+  desc "Run xsv compatibility test suite"
+  task :xsv do
+    sh "bundle exec ruby bin/compatibility_runner xsv"
   end
 end
 

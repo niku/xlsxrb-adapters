@@ -1,0 +1,66 @@
+# Generated from lib/xlsxrb/adapters/xsv/helpers.rb with RBS::Inline
+
+module Xlsxrb
+  module Adapters
+    module Xsv
+      # Helper methods and date/time/number formatting routines matching Xsv::Helpers.
+      module Helpers
+        # The default OOXML Spreadsheet number formats according to the ECMA standard
+        # User formats are appended from index 174 onward
+        BUILT_IN_NUMBER_FORMATS: untyped
+
+        MINUTE: ::Integer
+
+        HOUR: ::Integer
+
+        A_CODEPOINT: ::Integer
+
+        # The epoch for all dates in OOXML Spreadsheet documents (1900 date system)
+        EPOCH: untyped
+
+        # The epoch for the 1904 date system (Mac Excel standard)
+        EPOCH_1904: untyped
+
+        # Return the index number for the given Excel column name (i.e. "A1" => 0)
+        # @param col [String] Column name in A1 notation
+        # @return [Integer]
+        # : (String col) -> Integer
+        def column_index: (String col) -> Integer
+
+        # Return a Date for the given Excel date value
+        # @param number [Numeric]
+        # @param date1904 [Boolean, nil]
+        # @return [Date]
+        # : (Numeric number, ?date1904: bool?) -> Date
+        def parse_date: (Numeric number, ?date1904: bool?) -> Date
+
+        # Return a time as a string for the given Excel time value
+        # @param number [Numeric]
+        # @return [String]
+        # : (Numeric number) -> String
+        def parse_time: (Numeric number) -> String
+
+        # Returns a time including a date as a {Time} object
+        # @param number [Numeric]
+        # @param date1904 [Boolean, nil]
+        # @return [Time]
+        # : (Numeric number, ?date1904: bool?) -> Time
+        def parse_datetime: (Numeric number, ?date1904: bool?) -> Time
+
+        # Returns a number as either Integer or Float
+        # @param string_or_num [String, Numeric]
+        # @return [Numeric]
+        # : (untyped string_or_num) -> Numeric
+        def parse_number: (untyped string_or_num) -> Numeric
+
+        # Apply date or time number formats, if applicable
+        # @param number [String, Numeric]
+        # @param format [String, nil]
+        # @param style_id [Integer, nil]
+        # @return [Object]
+        # : (untyped number, String? format, ?style_id: Integer?) -> untyped
+        def parse_number_format: (untyped number, String? format, ?style_id: Integer?) -> untyped
+      end
+    end
+  end
+end

@@ -1,6 +1,6 @@
 # xlsxrb-adapters
 
-Compatibility adapters for migrating from peer XLSX libraries ([`rubyXL`](https://github.com/weshatheleopard/rubyXL), [`caxlsx`](https://github.com/caxlsx/caxlsx), [`roo`](https://github.com/roo-rb/roo)) to [`xlsxrb`](https://github.com/niku/xlsxrb) with zero downtime and drop-in safety.
+Compatibility adapters for migrating from peer XLSX libraries ([`rubyXL`](https://github.com/weshatheleopard/rubyXL), [`caxlsx`](https://github.com/caxlsx/caxlsx), [`roo`](https://github.com/roo-rb/roo), [`xsv`](https://github.com/martijn/xsv)) to [`xlsxrb`](https://github.com/niku/xlsxrb) with zero downtime and drop-in safety.
 
 ## Overview
 
@@ -8,19 +8,20 @@ This project provides adapters for the following widely used Ruby spreadsheet li
 - [`rubyXL`](https://github.com/weshatheleopard/rubyXL): A mature, full-featured Document Object Model (DOM) library widely trusted for comprehensive OpenXML spreadsheet creation, cell manipulation, and template editing.
 - [`caxlsx`](https://github.com/caxlsx/caxlsx) (formerly `axlsx`): The de facto builder library for generating styled spreadsheets, rich typography, DrawingML charts, and financial reports.
 - [`roo`](https://github.com/roo-rb/roo): One of the most widely used spreadsheet reading libraries in Ruby, providing data access, formula and formatting inspection, and support for multiple spreadsheet formats.
+- [`xsv`](https://github.com/martijn/xsv): A fast, lightweight streaming reader designed specifically for pulling data out of tabular worksheets into arrays or hashes.
 
 [`xlsxrb`](https://github.com/niku/xlsxrb) is a pure Ruby, zero-dependency, streaming-capable, low-memory XLSX engine designed for high-throughput batch workloads.
 
 `xlsxrb-adapters` bridges the best of both worlds by providing drop-in compatible adapter layers to:
 1. Support gradual migration (Strangler Fig pattern) from peer XLSX libraries to `xlsxrb` without rewriting application logic.
-2. Enable high-throughput, low-memory execution in batch processing and resource-constrained environments while retaining `rubyXL`, `caxlsx`, and `roo` familiar and battle-tested APIs.
+2. Enable high-throughput, low-memory execution in batch processing and resource-constrained environments while retaining `rubyXL`, `caxlsx`, `roo`, and `xsv` familiar and battle-tested APIs.
 3. Construct interoperability test harnesses against peer libraries and real-world fixtures.
 4. Keep `xlsxrb` core strictly zero-dependency, mutant-tested, and type-safe while providing rich compatibility layers.
 
 ## Design Principles
 
 1. **No Global Hijacking**:
-   Does not reopen or hijack top-level constants like `::RubyXL`, `::Axlsx`, or `::Roo`. Instead, exposes namespaces like `Xlsxrb::Adapters::RubyXL`, `Xlsxrb::Adapters::Caxlsx`, and `Xlsxrb::Adapters::Roo` so you can run side-by-side during migration or run comparison tests. Optional drop-in aliases (e.g. `Roo = Xlsxrb::Adapters::Roo`) are provided for seamless code transitions.
+   Does not reopen or hijack top-level constants like `::RubyXL`, `::Axlsx`, `::Roo`, or `::Xsv`. Instead, exposes namespaces like `Xlsxrb::Adapters::RubyXL`, `Xlsxrb::Adapters::Caxlsx`, `Xlsxrb::Adapters::Roo`, and `Xlsxrb::Adapters::Xsv` so you can run side-by-side during migration or run comparison tests. Optional drop-in aliases (e.g. `Xsv = Xlsxrb::Adapters::Xsv`) are provided for seamless code transitions.
 2. **Mutable-to-Immutable Boundary**:
    Maintains a mutable in-memory wrapper structure compatible with legacy workflows, translating into `xlsxrb`'s immutable data models (`Data.define`, frozen) upon save/export.
 3. **Native Bridge Conversion**:
@@ -218,6 +219,68 @@ matrix = xlsx.to_matrix
   - `xlsx.to_xml(sheet = nil)`
   - `xlsx.to_yaml(options = {}, sheet = nil)`
 
+### Xsv (`Xlsxrb::Adapters::Xsv` / `Xsv`)
+
+Drop-in replacement for reading and extracting tabular data from XLSX spreadsheets using the [`xsv`](https://github.com/martijn/xsv) API. Provides high-throughput streaming, zero external dependencies, and both array mode and hash mode row iteration.
+
+#### Drop-In Migration Example
+
+```ruby
+require "xlsxrb/adapters/xsv"
+
+# Option A: Explicit namespace (recommended to avoid global pollution)
+x = Xlsxrb::Adapters::Xsv.open("data.xlsx")
+
+# Option B: Drop-in alias (existing Xsv code works unmodified)
+Xsv = Xlsxrb::Adapters::Xsv
+x = Xsv.open("data.xlsx")
+
+sheet = x.sheets[0]
+
+# Default Array mode: iterates each row as an Array of typed values
+sheet.each do |row|
+  puts row.inspect #=> [1, "Widget", 25.5, #<Date: 2026-01-01>]
+end
+
+# Random access to rows by index or range
+row_5 = sheet[4]
+top_10 = sheet[0..9]
+
+# Hash mode: use first row as column headers
+sheet.parse_headers!
+sheet.each do |row|
+  puts row["Widget"] # Hash access by header name
+end
+
+# Block form automatically closes workbook
+Xsv.open("data.xlsx") do |wb|
+  wb.sheets.each { |s| puts s.name }
+end
+```
+
+#### API Capabilities
+- **Document Opening & Streaming**:
+  - `Xsv.open(filepath_or_io, trim_empty_rows: false, parse_headers: false, &block)`
+  - `Xsv::Workbook.open(data, ...)`
+  - `wb.close`
+- **Workbooks & Sheets**:
+  - `wb.sheets` (array of `Xsv::Sheet`)
+  - `wb.sheets_by_name(name)`
+  - `wb[index_or_name]`
+- **Sheet Operations & Modes**:
+  - `sheet.mode` (`:array` or `:hash`)
+  - `sheet.row_skip = n` (skip leading rows before headers/data)
+  - `sheet.parse_headers!` (activates hash mode; raises `Xsv::DuplicateHeaders` if duplicate header names exist)
+  - `sheet.headers` (returns array of header strings)
+  - `sheet.each { |row| ... }` / `sheet.each_row { |row| ... }`
+  - `sheet[index]` (returns row Array or Hash)
+  - `sheet[range]` (returns Array of rows)
+  - `sheet.last_row`, `sheet.last_column`
+  - `sheet.to_a`
+- **Native Bridge**:
+  - `wb.to_xlsxrb` (bridges to native `xlsxrb` workbook)
+  - `Xlsxrb::Adapters::Xsv.from_xlsxrb(xlsxrb_wb)`
+
 ## Compatibility (100% Test Pass)
 
 `xlsxrb-adapters` verifies 100% behavioral compatibility and drop-in safety against both `rubyXL` and `caxlsx` through dedicated compatibility suites, official upstream test suites, and cross-validation fixtures:
@@ -342,7 +405,39 @@ bundle exec rake compatibility:roo
 bundle exec rake test:roo
 ```
 
-Run all compatibility suites (RubyXL, Caxlsx, and Roo):
+### Xsv Compatibility (`Xlsxrb::Adapters::Xsv`)
+
+Verified against official `xsv` (1.4.1) behavior across the full feature scope documented in [xsv repository](https://github.com/martijn/xsv):
+
+#### Feature Compatibility Matrix
+
+| Feature Domain | Xsv API / Construct | Compatibility Status | Notes |
+| :--- | :--- | :--- | :--- |
+| **Document Opening** | `Xsv.open`, `Workbook.open` | **100% Supported** | Supports file paths, String buffers, open IO, and block forms |
+| **Sheet Iteration** | `sheet.each`, `sheet.each_row`, `sheet.to_a` | **100% Supported** | Iterates row-by-row in `:array` mode or `:hash` mode |
+| **Header Parsing** | `sheet.parse_headers!`, `sheet.headers`, `Xsv::DuplicateHeaders` | **100% Supported** | Activates hash mode; detects and raises on duplicate header names |
+| **Random Row Access**| `sheet[index]`, `sheet[range]` | **100% Supported** | Indexed and sliced row access; dimension and bounds caching |
+| **Type Casting** | Integer, Float, Date, DateTime, Time string (`HH:MM`), Boolean | **100% Supported** | Exact match with xsv type parsing and date formatting |
+| **Empty Row Trimming**| `trim_empty_rows: true/false` | **100% Supported** | Automatically trims trailing empty rows when enabled |
+| **Inline Strings** | Multi-run `<is><r><t>` parsing | **100% Supported** | Accurately extracts and concatenates inline string runs |
+
+#### Test Suite Breakdown
+
+| Test Suite | Scope | Total Tests | Passed | Failed | Pass Rate |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| `xsv_test.rb` | Workbook, sheet, helpers, modes, row_skip, duplicate headers, bounds, and date/time parsing | 18 | 18 | 0 | 100.0% |
+| `xsv_compatibility_test.rb` | Side-by-side cross-validation against official `::Xsv` across 11 fixture files | 5 | 5 | 0 | 100.0% |
+| `xsv_dropin_test.rb` | End-to-end drop-in replacement workflow (`Xsv = Xlsxrb::Adapters::Xsv`) | 2 | 2 | 0 | 100.0% |
+| **Total** | **Xsv Adapter Compatibility Verification (702 assertions)** | **25** | **25** | **0** | **100.0%** |
+
+Run the Xsv compatibility test suite:
+```bash
+bundle exec rake compatibility:xsv
+# or
+bundle exec rake test:xsv
+```
+
+Run all compatibility suites (RubyXL, Caxlsx, Roo, and Xsv):
 ```bash
 bundle exec rake compatibility
 # or
@@ -391,6 +486,17 @@ Official `roo` is a widely adopted spreadsheet extraction and parsing library. `
 | | `xlsxrb (In-Memory)` | 3.363 s | 448.2 MB | 19.0 | ~2.5x faster | +246.6% |
 | | `xlsxrb (Streaming)` | 1.879 s | 80.0 MB | 72.0 | ~4.5x faster | **38.1% reduced** |
 
+### 4. Xsv Migration: 1,000,000 cells (100,000 rows × 10 cols)
+
+[`xsv`](https://github.com/martijn/xsv) is a fast, lightweight streaming XLSX parser designed for extracting data from tabular worksheets. `xlsxrb-adapters (Xsv)` provides 100% drop-in API compatibility for existing `xsv` workflows while running **~5.0x faster** and reducing GC churn by **~95.8%**:
+
+| Operation | Library / Mode | Time (Median) | Peak Memory (VmHWM) | GC Count | vs. xsv Speed | vs. xsv GC Count |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **Read** | `xsv` (1.4.1) | 18.762 s | 79.9 MB | 1,489.0 | 1.0x (baseline) | 100% (baseline) |
+| | **`xlsxrb-adapters (Xsv)`** | **3.784 s** | **176.4 MB** | **63.0** | **~5.0x faster** | **95.8% reduced** |
+| | `xlsxrb (In-Memory)` | 4.133 s | 446.9 MB | 19.0 | ~4.5x faster | 98.7% reduced |
+| | `xlsxrb (Streaming)` | 2.288 s | 112.4 MB | 68.0 | ~8.2x faster | 95.4% reduced |
+
 Detailed scaling analysis across 10,000, 100,000, and 1,000,000 cells is documented in [docs/BENCHMARK.md](docs/BENCHMARK.md).
 
 ## Development & Dev Container
@@ -408,22 +514,25 @@ Run test suites, compatibility harnesses, and benchmarks with:
 ```bash
 bundle install
 
-# Run all unit and adapter tests (139 tests, 2,497 assertions)
+# Run all unit and adapter tests (173 tests, 3,253 assertions)
 bundle exec rake test
 
-# Run Caxlsx compatibility test suite (49 tests, 329 assertions)
+# Run Caxlsx compatibility test suite (52 tests, 344 assertions)
 bundle exec rake test:caxlsx
 
-# Run RubyXL adapter test suite (56 tests, 421 assertions)
+# Run RubyXL adapter test suite (59 tests, 438 assertions)
 bundle exec rake test:ruby_xl
 
-# Run Roo adapter test suite (34 tests, 1,747 assertions)
+# Run Roo adapter test suite (37 tests, 1,769 assertions)
 bundle exec rake test:roo
+
+# Run Xsv adapter test suite (25 tests, 702 assertions)
+bundle exec rake test:xsv
 
 # Run official rubyXL RSpec compatibility suite (363 tests)
 bundle exec rake compatibility:ruby_xl
 
-# Run all compatibility suites (RubyXL, Caxlsx, and Roo)
+# Run all compatibility suites (RubyXL, Caxlsx, Roo, and Xsv)
 bundle exec rake compatibility
 
 # Run static type checking with Steep
@@ -432,7 +541,7 @@ bundle exec rake typecheck
 # Run linter
 bundle exec rubocop
 
-# Run benchmarks (usage: rake benchmark [rows=10000] [cols=10] [runs=3] [category=all|caxlsx|rubyxl|roo])
+# Run benchmarks (usage: rake benchmark [rows=10000] [cols=10] [runs=3] [category=all|caxlsx|rubyxl|roo|xsv])
 bundle exec rake benchmark
 ```
 
@@ -443,6 +552,7 @@ bundle exec rake benchmark
 - Vivek Bhagwat, Wesha ([weshatheleopard](https://github.com/weshatheleopard)), and all contributors to [`rubyXL`](https://github.com/weshatheleopard/rubyXL) for pioneering comprehensive OpenXML DOM manipulation in Ruby and maintaining it for more than a decade.
 - Randy Morgan ([randym](https://github.com/randym)), Jurriaan Pruis ([jurriaan](https://github.com/jurriaan)), and the [`caxlsx`](https://github.com/caxlsx/caxlsx) community for the builder API that has become the de facto standard for styled spreadsheets, charts, and reports in Ruby.
 - Thomas Preymesser, Hugh McGowan, and the [`roo`](https://github.com/roo-rb/roo) community for creating and maintaining one of the most widely used spreadsheet reading libraries in the Ruby ecosystem.
+- Martijn Storck ([martijn](https://github.com/martijn)) and contributors to [`xsv`](https://github.com/martijn/xsv) for showing how lightweight streaming with simple array/hash rows can make spreadsheet reading remarkably fast.
 
 `xlsxrb-adapters` builds directly on the APIs these projects designed and the test suites they published. The test fixtures under `test/fixtures/roo` are taken from the upstream project and remain under its original MIT license.
 

@@ -1,0 +1,169 @@
+# Generated from lib/xlsxrb/adapters/xsv/sheet.rb with RBS::Inline
+
+module Xlsxrb
+  module Adapters
+    module Xsv
+      # Represents a single worksheet from a workbook matching Xsv::Sheet.
+      # Designed for worksheets with a single table of data, supporting both
+      # array mode (default) and hash mode (via {#parse_headers!}).
+      class Sheet
+        include Helpers
+
+        ROW_RE: ::Regexp
+
+        CELL_RE: ::Regexp
+
+        # Returns current mode (:array or :hash).
+        # @return [Symbol]
+        # : Symbol
+        attr_reader mode: untyped
+
+        # Returns sheet ID.
+        # @return [Integer]
+        # : Integer
+        attr_reader id: untyped
+
+        # Returns sheet name.
+        # @return [String]
+        # : String
+        attr_reader name: untyped
+
+        # Number of rows to skip at the top of the worksheet.
+        # @return [Integer]
+        # : Integer
+        attr_accessor row_skip: untyped
+
+        # Underlying StreamSheet instance if available.
+        # @return [StreamSheet, nil]
+        # : StreamSheet?
+        attr_reader stream_sheet: untyped
+
+        # Returns sheet dimension reference string (e.g. "A1:Z50"), or nil.
+        # @return [String, nil]
+        # : () -> String?
+        def dimension: () -> String?
+
+        # Returns the 1-based index of the first row.
+        # @return [Integer]
+        # : () -> Integer
+        def first_row: () -> Integer
+
+        # Returns the 1-based index of the first column.
+        # @return [Integer]
+        # : () -> Integer
+        def first_column: () -> Integer
+
+        alias first_col first_column
+
+        # Returns the 1-based index of the last row.
+        # @return [Integer]
+        # : Integer
+        attr_reader last_row: untyped
+
+        # Returns the 1-based index of the last column.
+        # @return [Integer]
+        # : () -> Integer
+        def last_column: () -> Integer
+
+        alias last_col last_column
+
+        # Returns whether the workbook uses the 1904 date system.
+        # @return [Boolean]
+        # : () -> bool
+        def date1904?: () -> bool
+
+        # Returns whether empty trailing rows are trimmed.
+        # @return [Boolean]
+        # : () -> bool
+        def trim_empty_rows?: () -> bool
+
+        alias trim_empty_rows trim_empty_rows?
+
+        # @param workbook [Workbook]
+        # @param sheet_source [String, Proc, IO]
+        # @param ids [Hash[Symbol, untyped]]
+        # @param last_row [Integer, nil]
+        # @param column_count [Integer, nil]
+        # @param stream_sheet [StreamSheet, nil]
+        # : (Workbook workbook, untyped sheet_source, Hash[Symbol, untyped] ids, ?Integer? last_row, ?Integer? column_count, ?stream_sheet: StreamSheet?) -> void
+        def initialize: (Workbook workbook, untyped sheet_source, Hash[Symbol, untyped] ids, ?Integer? last_row, ?Integer? column_count, ?stream_sheet: StreamSheet?) -> void
+
+        # Returns true if the worksheet is hidden.
+        # @return [Boolean]
+        # : () -> bool
+        def hidden?: () -> bool
+
+        # Human-readable representation.
+        # @return [String]
+        # : () -> String
+        def inspect: () -> String
+
+        # Switch to hash mode using the first data row (after row_skip) as header names.
+        #
+        # @return [self]
+        # @raise [Xsv::DuplicateHeaders] If duplicate non-nil headers are detected.
+        # : () -> self
+        def parse_headers!: () -> self
+
+        # Returns the header row array for the worksheet.
+        # @return [Array<Object>]
+        # : () -> Array[untyped]
+        def headers: () -> Array[untyped]
+
+        # Iterate over worksheet rows, yielding arrays in :array mode or hashes in :hash mode.
+        #
+        # @yield [row]
+        # @yieldparam row [Array<Object>, Hash<Object, Object>]
+        # @return [true, Enumerator]
+        # : () { (untyped) -> void } -> (bool | Enumerator[untyped, void])
+        # : () -> Enumerator[untyped, void]
+        def each_row: () { (untyped) -> void } -> (bool | Enumerator[untyped, void])
+                    | () -> Enumerator[untyped, void]
+
+        alias each each_row
+
+        # Converts this Xsv Sheet instance into an Xlsxrb::Elements::Worksheet.
+        #
+        # @return [Xlsxrb::Elements::Worksheet]
+        # : () -> Xlsxrb::Elements::Worksheet
+        def to_xlsxrb: () -> Xlsxrb::Elements::Worksheet
+
+        # Iterates over row values directly as Arrays without constructing hash records.
+        #
+        # @param type_cast [Boolean] Whether to cast date/time serial values.
+        # @param trim_empty_rows [Boolean, nil]
+        # @yield [values]
+        # @yieldparam values [Array<Object>]
+        # @return [void, Enumerator]
+        # : (?type_cast: bool, ?trim_empty_rows: bool?) { (Array[untyped]) -> void } -> void
+        # : (?type_cast: bool, ?trim_empty_rows: bool?) -> Enumerator[Array[untyped], void]
+        def each_row_values: (?type_cast: bool, ?trim_empty_rows: bool?) { (Array[untyped]) -> void } -> void
+                           | (?type_cast: bool, ?trim_empty_rows: bool?) -> Enumerator[Array[untyped], void]
+
+        # Get row by 0-based index or range.
+        #
+        # @param number_or_range [Integer, Range]
+        # @return [Array, Hash]
+        # : (untyped number_or_range) -> untyped
+        def []: (untyped number_or_range) -> untyped
+
+        private
+
+        # : () -> (Array[untyped] | Hash[untyped, untyped])
+        def empty_row: () -> (Array[untyped] | Hash[untyped, untyped])
+
+        # : () -> Array[untyped]
+        def parse_headers: () -> Array[untyped]
+
+        # : () -> String
+        def raw_sheet_xml: () -> String
+
+        # : () -> [Integer, Integer]
+        def compute_bounds: () -> [ Integer, Integer ]
+
+        # : (String? cell_type, String? style_id, String? val_str, String? is_xml) -> untyped
+        def format_cell_value: (String? cell_type, String? style_id, String? val_str, String? is_xml) -> untyped
+      end
+    end
+  end
+end

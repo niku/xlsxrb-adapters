@@ -1,0 +1,143 @@
+# Generated from lib/xlsxrb/adapters/xsv/workbook.rb with RBS::Inline
+
+module Xlsxrb
+  module Adapters
+    module Xsv
+      # An OOXML Spreadsheet document matching Xsv::Workbook.
+      # Consists of multiple Sheets accessible via {#sheets} or index/name access.
+      class Workbook
+        # Access Sheet objects in the workbook.
+        # @return [Array<Sheet>, nil]
+        # : Array[Sheet]?
+        attr_reader sheets: untyped
+
+        # Shared strings table array.
+        # @return [Array<String>, nil]
+        # : Array[String]?
+        attr_reader shared_strings: untyped
+
+        # Styles cell formatting records array.
+        # @return [Array<Hash[Symbol, Integer]>, nil]
+        # : Array[Hash[Symbol, Integer]]?
+        attr_reader xfs: untyped
+
+        # Number format definitions mapping id to format string.
+        # @return [Hash<Integer, String>, nil]
+        # : Hash[Integer, String]?
+        attr_reader num_fmts: untyped
+
+        # Parsed Elements::Styles definition.
+        # @return [Elements::Styles, nil]
+        # : Elements::Styles?
+        attr_reader styles: untyped
+
+        # Whether the 1904 date system is active.
+        # @return [Boolean]
+        # : bool
+        attr_reader date1904: untyped
+
+        # Whether empty trailing rows are trimmed.
+        # @return [Boolean]
+        # : bool
+        attr_reader trim_empty_rows: untyped
+
+        # Returns whether the workbook uses the 1904 date system.
+        # @return [Boolean]
+        # : () -> bool
+        def date1904?: () -> bool
+
+        # Returns whether empty trailing rows are trimmed.
+        # @return [Boolean]
+        # : () -> bool
+        def trim_empty_rows?: () -> bool
+
+        # Deprecated: use Xsv.open instead.
+        # @param data [String, IO]
+        # @param kws [Hash]
+        # : (untyped data, **untyped kws) ?{ (Workbook) -> untyped } -> untyped
+        def self.open: (untyped data, **untyped kws) ?{ (Workbook) -> untyped } -> untyped
+
+        # Converts an Xlsxrb::Elements::Workbook into an Xsv adapter Workbook.
+        #
+        # @param xlsxrb_wb [Xlsxrb::Elements::Workbook]
+        # @param trim_empty_rows [Boolean]
+        # @param parse_headers [Boolean]
+        # @return [Workbook]
+        # : (Xlsxrb::Elements::Workbook xlsxrb_wb, ?trim_empty_rows: bool, ?parse_headers: bool) -> Workbook
+        def self.from_xlsxrb: (Xlsxrb::Elements::Workbook xlsxrb_wb, ?trim_empty_rows: bool, ?parse_headers: bool) -> Workbook
+
+        # Open a workbook from an open ZipReader.
+        #
+        # @param zip_reader [Ooxml::ZipReader]
+        # @param trim_empty_rows [Boolean]
+        # @param parse_headers [Boolean]
+        # : (Ooxml::ZipReader zip_reader, ?trim_empty_rows: bool, ?parse_headers: bool) -> void
+        def initialize: (Ooxml::ZipReader zip_reader, ?trim_empty_rows: bool, ?parse_headers: bool) -> void
+
+        # Human-readable representation.
+        # @return [String]
+        # : () -> String
+        def inspect: () -> String
+
+        # Close the workbook handle and release resources.
+        # @return [true]
+        # : () -> bool
+        def close: () -> bool
+
+        # Returns an array of sheets matching the given sheet name.
+        #
+        # @param name [String]
+        # @return [Array<Sheet>]
+        # : (String name) -> Array[Sheet]
+        def sheets_by_name: (String name) -> Array[Sheet]
+
+        # Get number format string for given style index.
+        #
+        # @param style [Integer]
+        # @return [String, nil]
+        # : (Integer style) -> String?
+        def get_num_fmt: (Integer style) -> String?
+
+        # Iterate over worksheet instances.
+        #
+        # @yield [sheet]
+        # @yieldparam sheet [Sheet]
+        # @return [Enumerator, self]
+        # : () { (Sheet) -> void } -> untyped
+        # : () -> Enumerator[Sheet, void]
+        def each: () { (Sheet) -> void } -> untyped
+                | () -> Enumerator[Sheet, void]
+
+        # Access a worksheet by 0-based index or name.
+        #
+        # @param index_or_name [Integer, String]
+        # @return [Sheet, nil]
+        # : (Integer | String index_or_name) -> Sheet?
+        def []: (Integer | String index_or_name) -> Sheet?
+
+        # Converts this Xsv Workbook instance into an immutable Xlsxrb::Elements::Workbook.
+        #
+        # @return [Xlsxrb::Elements::Workbook]
+        # : () -> Xlsxrb::Elements::Workbook
+        def to_xlsxrb: () -> Xlsxrb::Elements::Workbook
+
+        private
+
+        # : () -> Array[String]
+        def fetch_shared_strings: () -> Array[String]
+
+        # : () -> [Array[Hash[Symbol, Integer]], Hash[Integer, String], Elements::Styles?]
+        def fetch_styles: () -> [ Array[Hash[Symbol, Integer]], Hash[Integer, String], Elements::Styles? ]
+
+        # : () -> [Array[Hash[Symbol, untyped]], bool]
+        def fetch_sheet_ids: () -> [ Array[Hash[Symbol, untyped]], bool ]
+
+        # : () -> Hash[String, String]
+        def fetch_relationships: () -> Hash[String, String]
+
+        # : (bool parse_headers) -> Array[Sheet]
+        def fetch_sheets: (bool parse_headers) -> Array[Sheet]
+      end
+    end
+  end
+end

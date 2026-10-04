@@ -1,0 +1,40 @@
+# Generated from lib/xlsxrb/adapters/xsv.rb with RBS::Inline
+
+module Xlsxrb
+  module Adapters
+    # Xsv adapter module providing a drop-in compatible interface for Xsv (ISO/IEC 29500 OOXML)
+    # without hijacking the global ::Xsv namespace by default.
+    module Xsv
+      class Error < StandardError
+      end
+
+      class DuplicateHeaders < StandardError
+      end
+
+      class AssertionFailed < StandardError
+      end
+
+      VERSION: ::String
+
+      # Open the workbook of the given filename, string or buffer.
+      #
+      # @param filename_or_string [String, IO, StringIO]
+      # @param trim_empty_rows [Boolean]
+      # @param parse_headers [Boolean]
+      # @yield [workbook]
+      # @yieldparam workbook [Workbook]
+      # @return [Workbook, Object]
+      # : (untyped filename_or_string, ?trim_empty_rows: bool, ?parse_headers: bool) ?{ (Workbook) -> untyped } -> untyped
+      def self.open: (untyped filename_or_string, ?trim_empty_rows: bool, ?parse_headers: bool) ?{ (Workbook) -> untyped } -> untyped
+
+      # Converts an Xlsxrb::Elements::Workbook into an Xsv Workbook adapter instance.
+      #
+      # @param xlsxrb_workbook [Xlsxrb::Elements::Workbook]
+      # @param trim_empty_rows [Boolean]
+      # @param parse_headers [Boolean]
+      # @return [Workbook]
+      # : (Xlsxrb::Elements::Workbook xlsxrb_workbook, ?trim_empty_rows: bool, ?parse_headers: bool) -> Workbook
+      def self.from_xlsxrb: (Xlsxrb::Elements::Workbook xlsxrb_workbook, ?trim_empty_rows: bool, ?parse_headers: bool) -> Workbook
+    end
+  end
+end

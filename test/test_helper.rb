@@ -21,6 +21,9 @@ require "caxlsx"
 # Require official roo for side-by-side comparison tests
 require "roo"
 
+# Require official xsv for side-by-side comparison tests
+require "xsv"
+
 module TestHelper
   def with_tempfile(ext = ".xlsx")
     Dir.mktmpdir do |dir|

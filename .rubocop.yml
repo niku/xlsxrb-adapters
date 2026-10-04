@@ -17,6 +17,7 @@ Naming/PredicatePrefix:
     - "lib/xlsxrb/adapters/ruby_xl/**/*"
     - "lib/xlsxrb/adapters/caxlsx/**/*"
     - "lib/xlsxrb/adapters/roo/**/*"
+    - "lib/xlsxrb/adapters/xsv/**/*"
 
 Naming/AccessorMethodName:
   Exclude:
@@ -205,6 +206,7 @@ Naming/PredicateMethod: # new in 1.76
   Exclude:
     - "lib/xlsxrb/adapters/caxlsx/**/*"
     - "lib/xlsxrb/adapters/roo/**/*"
+    - "lib/xlsxrb/adapters/xsv/**/*"
 Security/CompoundHash: # new in 1.28
   Enabled: true
 Security/IoMethods: # new in 1.22

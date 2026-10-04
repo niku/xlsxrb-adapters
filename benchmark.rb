@@ -239,6 +239,35 @@ RUNNER_SCRIPT = <<~'RUBY'
         end
       end
     end
+  when ["xsv", "read"]
+    require "xsv"
+    measure do
+      x = Xsv.open(filename)
+      count = 0
+      x.sheets.each do |sheet|
+        sheet.each do |row|
+          row.each do |cell|
+            _val = cell
+            count += 1
+          end
+        end
+      end
+    end
+  when ["xlsxrb_adapters_xsv", "read"]
+    require "xlsxrb"
+    require "xlsxrb/adapters/xsv"
+    measure do
+      x = Xlsxrb::Adapters::Xsv.open(filename)
+      count = 0
+      x.sheets.each do |sheet|
+        sheet.each do |row|
+          row.each do |cell|
+            _val = cell
+            count += 1
+          end
+        end
+      end
+    end
   else
     raise "Unknown benchmark target: #{lib} #{mode}"
   end
@@ -317,9 +346,9 @@ if %w[all caxlsx rubyxl].include?(CATEGORY)
   end
 end
 
-# 2. Benchmark Read (for libraries supporting read/parse, e.g. rubyXL, roo)
+# 2. Benchmark Read (for libraries supporting read/parse, e.g. rubyXL, roo, xsv)
 read_results = {}
-if %w[all rubyxl roo].include?(CATEGORY)
+if %w[all rubyxl roo xsv].include?(CATEGORY)
   ref_file = "tmp/bench_reference_data.xlsx"
   puts "\n[Setup] Generating reference file (#{ROWS} x #{COLS}) for read benchmarks..."
   run_isolated("xlsxrb_stream", "write", ROWS, COLS, ref_file)
@@ -336,6 +365,10 @@ if %w[all rubyxl roo].include?(CATEGORY)
   if %w[all roo].include?(CATEGORY)
     read_targets << ["xlsxrb-adapters (Roo)", "xlsxrb_adapters_roo"]
     read_targets << ["roo (Original 3.0.0)", "roo"]
+  end
+  if %w[all xsv].include?(CATEGORY)
+    read_targets << ["xlsxrb-adapters (Xsv)", "xlsxrb_adapters_xsv"]
+    read_targets << ["xsv (Original 1.4.1)", "xsv"]
   end
 
   read_targets.each do |name, lib|
@@ -408,6 +441,19 @@ if %w[all roo].include?(CATEGORY)
     read_results["xlsxrb_stream"]
   ]
   print_table("Roo Read Performance", roo_read)
+end
+
+if %w[all xsv].include?(CATEGORY)
+  puts "\n" + ("-" * 80)
+  puts "## Xsv Migration Benchmark (xsv vs. xlsxrb-adapters vs. xlsxrb)"
+
+  xsv_read = [
+    read_results["xsv"],
+    read_results["xlsxrb_adapters_xsv"],
+    read_results["xlsxrb_inmemory"],
+    read_results["xlsxrb_stream"]
+  ]
+  print_table("Xsv Read Performance", xsv_read)
 end
 
 puts "\n" + ("=" * 80)
