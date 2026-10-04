@@ -1,0 +1,127 @@
+# Generated from lib/xlsxrb/adapters/creek/sheet.rb with RBS::Inline
+
+module Xlsxrb
+  module Adapters
+    module Creek
+      # Represents a single worksheet matching Creek::Sheet.
+      class Sheet
+        include Utils
+
+        HEADERS_ROW_NUMBER: ::String
+
+        SPREADSHEETML_URI: ::String
+
+        ROW_RE: ::Regexp
+
+        CELL_RE: ::Regexp
+
+        # @return [Boolean]
+        attr_accessor with_headers: untyped
+
+        # @return [untyped]
+        attr_reader book: untyped
+
+        # @return [String]
+        attr_reader name: untyped
+
+        # @return [untyped]
+        attr_reader sheetid: untyped
+
+        # @return [String, nil]
+        attr_reader state: untyped
+
+        # @return [String, nil]
+        attr_reader visible: untyped
+
+        # @return [String, nil]
+        attr_reader rid: untyped
+
+        # @return [Integer, nil]
+        attr_reader index: untyped
+
+        # @return [Hash<String, untyped>, nil]
+        attr_reader headers: untyped
+
+        # @param book [untyped]
+        # @param name [String]
+        # @param sheetid [untyped]
+        # @param state [String, nil]
+        # @param visible [String, nil]
+        # @param rid [String, nil]
+        # @param sheetfile [String]
+        # : (untyped book, String name, untyped sheetid, String? state, String? visible, String? rid, String sheetfile) -> void
+        def initialize: (untyped book, String name, untyped sheetid, String? state, String? visible, String? rid, String sheetfile) -> void
+
+        # Preloads images info from related drawing.xml and drawing rels.
+        #
+        # @return [self]
+        # : () -> self
+        def with_images: () -> self
+
+        # Extracts images for a cell to a temporary folder.
+        #
+        # @param cell [String]
+        # @return [Array<Pathname>, nil]
+        # : (String cell) -> Array[Pathname]?
+        def images_at: (String cell) -> Array[Pathname]?
+
+        # Provides an Enumerator that returns a hash representing each row with column letters.
+        #
+        # @return [Enumerator]
+        # : () -> Enumerator[Hash[String, untyped], void]
+        def simple_rows: () -> Enumerator[Hash[String, untyped], void]
+
+        # Provides an Enumerator that returns a hash representing each row with cell coordinates.
+        #
+        # @return [Enumerator]
+        # : () -> Enumerator[Hash[String, untyped], void]
+        def rows: () -> Enumerator[Hash[String, untyped], void]
+
+        # Provides an Enumerator that returns a hash per row with metadata and a 'cells' sub-hash.
+        #
+        # @return [Enumerator]
+        # : () -> Enumerator[Hash[String, untyped], void]
+        def rows_with_meta_data: () -> Enumerator[Hash[String, untyped], void]
+
+        # Provides an Enumerator that returns a hash per row with metadata and simple column letters.
+        #
+        # @return [Enumerator]
+        # : () -> Enumerator[Hash[String, untyped], void]
+        def simple_rows_with_meta_data: () -> Enumerator[Hash[String, untyped], void]
+
+        # Converts this Creek Sheet into an immutable Xlsxrb::Elements::Worksheet.
+        #
+        # @return [Xlsxrb::Elements::Worksheet]
+        # : () -> Xlsxrb::Elements::Worksheet
+        def to_xlsxrb: () -> Xlsxrb::Elements::Worksheet
+
+        private
+
+        # Generates an Enumerator for iterating over sheet rows.
+        # : (bool include_meta_data, bool use_simple_rows_format) -> Enumerator[Hash[String, untyped], void]
+        def rows_generator: (bool include_meta_data, bool use_simple_rows_format) -> Enumerator[Hash[String, untyped], void]
+
+        # : (String? value, String? type, String? style_idx) -> untyped
+        def convert: (String? value, String? type, String? style_idx) -> untyped
+
+        # : () -> Hash[Symbol, untyped]
+        def converter_options: () -> Hash[Symbol, untyped]
+
+        # : (Hash[String, untyped] cells, String? row_number, String? last_col, bool use_simple_rows_format) -> Hash[String, untyped]
+        def fill_in_empty_cells: (Hash[String, untyped] cells, String? row_number, String? last_col, bool use_simple_rows_format) -> Hash[String, untyped]
+
+        # : (String column, bool use_simple_rows_format, String? row_number) -> untyped
+        def cell_id: (String column, bool use_simple_rows_format, String? row_number) -> untyped
+
+        # : () -> String?
+        def extract_drawing_filepath: () -> String?
+
+        # : (String attrs_str) -> Hash[String, String]
+        def parse_attributes: (String attrs_str) -> Hash[String, String]
+
+        # : (String str) -> String
+        def decode_entities: (String str) -> String
+      end
+    end
+  end
+end

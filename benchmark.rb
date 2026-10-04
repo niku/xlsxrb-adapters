@@ -268,6 +268,37 @@ RUNNER_SCRIPT = <<~'RUBY'
         end
       end
     end
+  when ["creek", "read"]
+    require "creek"
+    measure do
+      c = Creek::Book.new(filename)
+      count = 0
+      c.sheets.each do |sheet|
+        sheet.rows.each do |row|
+          row.each_value do |cell|
+            _val = cell
+            count += 1
+          end
+        end
+      end
+      c.close
+    end
+  when ["xlsxrb_adapters_creek", "read"]
+    require "xlsxrb"
+    require "xlsxrb/adapters/creek"
+    measure do
+      c = Xlsxrb::Adapters::Creek::Book.new(filename)
+      count = 0
+      c.sheets.each do |sheet|
+        sheet.rows.each do |row|
+          row.each_value do |cell|
+            _val = cell
+            count += 1
+          end
+        end
+      end
+      c.close
+    end
   else
     raise "Unknown benchmark target: #{lib} #{mode}"
   end
@@ -346,9 +377,9 @@ if %w[all caxlsx rubyxl].include?(CATEGORY)
   end
 end
 
-# 2. Benchmark Read (for libraries supporting read/parse, e.g. rubyXL, roo, xsv)
+# 2. Benchmark Read (for libraries supporting read/parse, e.g. rubyXL, roo, xsv, creek)
 read_results = {}
-if %w[all rubyxl roo xsv].include?(CATEGORY)
+if %w[all rubyxl roo xsv creek].include?(CATEGORY)
   ref_file = "tmp/bench_reference_data.xlsx"
   puts "\n[Setup] Generating reference file (#{ROWS} x #{COLS}) for read benchmarks..."
   run_isolated("xlsxrb_stream", "write", ROWS, COLS, ref_file)
@@ -369,6 +400,10 @@ if %w[all rubyxl roo xsv].include?(CATEGORY)
   if %w[all xsv].include?(CATEGORY)
     read_targets << ["xlsxrb-adapters (Xsv)", "xlsxrb_adapters_xsv"]
     read_targets << ["xsv (Original 1.4.1)", "xsv"]
+  end
+  if %w[all creek].include?(CATEGORY)
+    read_targets << ["xlsxrb-adapters (Creek)", "xlsxrb_adapters_creek"]
+    read_targets << ["creek (Original 2.6.3)", "creek"]
   end
 
   read_targets.each do |name, lib|
@@ -456,4 +491,18 @@ if %w[all xsv].include?(CATEGORY)
   print_table("Xsv Read Performance", xsv_read)
 end
 
+if %w[all creek].include?(CATEGORY)
+  puts "\n" + ("-" * 80)
+  puts "## Creek Migration Benchmark (creek vs. xlsxrb-adapters vs. xlsxrb)"
+
+  creek_read = [
+    read_results["creek"],
+    read_results["xlsxrb_adapters_creek"],
+    read_results["xlsxrb_inmemory"],
+    read_results["xlsxrb_stream"]
+  ]
+  print_table("Creek Read Performance", creek_read)
+end
+
 puts "\n" + ("=" * 80)
+

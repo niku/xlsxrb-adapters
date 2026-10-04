@@ -1,10 +1,11 @@
-# Benchmark Results: xlsxrb-adapters vs. caxlsx, rubyXL, roo, xsv & xlsxrb
+# Benchmark Results: xlsxrb-adapters vs. caxlsx, rubyXL, roo, xsv, creek & xlsxrb
 
 This document provides dedicated benchmarks comparing migration paths from peer XLSX libraries to `xlsxrb`:
 1. **Caxlsx Migration**: Comparing `caxlsx` (4.5.0), `xlsxrb-adapters (Caxlsx)` (both In-Memory and Streaming), and native `xlsxrb`.
 2. **RubyXL Migration**: Comparing `rubyXL` (3.4.38), `xlsxrb-adapters (RubyXL)`, and native `xlsxrb`.
 3. **Roo Migration**: Comparing `roo` (3.0.0), `xlsxrb-adapters (Roo)`, and native `xlsxrb`.
 4. **Xsv Migration**: Comparing `xsv` (1.4.1), `xlsxrb-adapters (Xsv)`, and native `xlsxrb`.
+5. **Creek Migration**: Comparing `creek` (2.6.3), `xlsxrb-adapters (Creek)`, and native `xlsxrb`.
 
 ## Methodology
 
@@ -217,7 +218,48 @@ The benchmark suite follows the isolated subprocess approach established in [`xl
 
 ---
 
-## 5. Key Takeaways
+## 5. Creek Migration Benchmarks (creek vs. xlsxrb-adapters vs. xlsxrb)
+
+### 5.1 Large-Scale (1,000,000 cells: 100,000 rows × 10 cols)
+
+#### Read Performance
+
+| Library / Mode | Adapter / Engine | Time (Median) | Peak Memory (VmHWM) | GC Count | vs. creek Speed | vs. creek Memory |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **`creek` (2.6.3)** | Upstream Streaming Reader | 8.359 s | 840.6 MB | 384.0 | 1.0x (baseline) | 100% (baseline) |
+| **`xlsxrb-adapters (Creek)`** | **Creek API + xlsxrb core** | **4.497 s** | **137.8 MB** | **165.0** | **~1.9x faster** | **83.6% reduced** |
+| `xlsxrb (In-Memory)` | Native `Xlsxrb::Elements` | 3.345 s | 448.0 MB | 19.0 | ~2.5x faster | 46.7% reduced |
+| `xlsxrb (Streaming)` | Native Streaming Reader | 2.090 s | 112.5 MB | 32.0 | ~4.0x faster | **86.6% reduced** |
+
+---
+
+### 5.2 Medium-Scale (100,000 cells: 10,000 rows × 10 cols)
+
+#### Read Performance
+
+| Library | Time (Median) | Peak Memory | GC Count | vs. creek Speed | vs. creek Memory |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **`creek` (Original 2.6.3)** | 0.668 s | 143.3 MB | 209.0 | 1.0x (baseline) | 100% (baseline) |
+| **`xlsxrb-adapters (Creek)`** | **0.420 s** | **65.0 MB** | **28.0** | **~1.6x faster** | **54.6% reduced** |
+| `xlsxrb (In-Memory)` | 0.308 s | 113.4 MB | 5.0 | ~2.2x faster | 20.9% reduced |
+| `xlsxrb (Streaming)` | 0.212 s | 88.3 MB | 3.0 | ~3.2x faster | 38.4% reduced |
+
+---
+
+### 5.3 Small-Scale (10,000 cells: 1,000 rows × 10 cols)
+
+#### Read Performance
+
+| Library | Time (Median) | Peak Memory | GC Count | vs. creek Speed |
+| :--- | :--- | :--- | :--- | :--- |
+| **`creek` (Original 2.6.3)** | 0.078 s | 51.9 MB | 8.0 | 1.0x (baseline) |
+| **`xlsxrb-adapters (Creek)`** | **0.054 s** | **60.6 MB** | **1.0** | **~1.4x faster** |
+| `xlsxrb (In-Memory)` | 0.028 s | 56.7 MB | 0.0 | ~2.8x faster |
+| `xlsxrb (Streaming)` | 0.022 s | 56.4 MB | 0.0 | ~3.5x faster |
+
+---
+
+## 6. Key Takeaways
 
 1. **Caxlsx Migration**:
    - `xlsxrb-adapters (Caxlsx)` provides 100% drop-in API compatibility for existing caxlsx generation code with zero application changes.
@@ -231,10 +273,12 @@ The benchmark suite follows the isolated subprocess approach established in [`xl
 4. **Xsv Migration**:
    - `xlsxrb-adapters (Xsv)` provides 100% drop-in API compatibility with `xsv` (including `Xsv.open`, `sheet.each_row`, `sheet.parse_headers!`, and `sheet[r]`) while running **~4.9x–5.3x faster** and reducing GC churn by **~95%** (63 GC cycles vs. 1,489 GC cycles on 1,000,000 cells).
    - Upgrading from `xsv` to `xlsxrb-adapters (Xsv)` requires only updating gem requirements or namespaces.
+5. **Creek Migration**:
+   - `xlsxrb-adapters (Creek)` provides 100% drop-in API compatibility with `creek` (including `Creek::Book.new`, `sheet.rows`, `sheet.simple_rows`, `sheet.rows_with_meta_data`, and `sheet.with_images`) while running **~1.9x faster**, slashing peak memory by **~83.6%** (137.8 MB vs. 840.6 MB), and cutting GC churn by **57.0%**.
 
 ---
 
-## 6. Reproducing Locally
+## 7. Reproducing Locally
 
 Run the benchmark suite with:
 
@@ -253,4 +297,7 @@ bundle exec ruby benchmark.rb 10000 10 roo
 
 # Run only Xsv migration benchmarks
 bundle exec ruby benchmark.rb 10000 10 xsv
+
+# Run only Creek migration benchmarks
+bundle exec ruby benchmark.rb 10000 10 creek
 ```

@@ -1,0 +1,80 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require "bundler/setup"
+require "open3"
+require "rbconfig"
+
+puts "=================================================="
+puts "Running Creek compatibility suite"
+puts "Target: Xlsxrb::Adapters::Creek (vs official creek 2.6.3)"
+puts "=================================================="
+
+test_files = Dir.glob(File.expand_path("../test/xlsxrb/adapters/creek*test.rb", __dir__)).sort
+
+results = {}
+
+test_files.each do |file_path|
+  file_name = File.basename(file_path)
+  cmd = [
+    RbConfig.ruby,
+    "-I#{File.expand_path('../lib', __dir__)}",
+    "-I#{File.expand_path('../test', __dir__)}",
+    file_path
+  ]
+  out, status = Open3.capture2e(*cmd)
+
+  if out =~ /(\d+)\s+tests?,\s+(\d+)\s+assertions?,\s+(\d+)\s+failures?,\s+(\d+)\s+errors?/
+    tests = Regexp.last_match(1).to_i
+    assertions = Regexp.last_match(2).to_i
+    failures = Regexp.last_match(3).to_i
+    errors = Regexp.last_match(4).to_i
+    failed_count = failures + errors
+    passed_count = tests - failed_count
+
+    results[file_name] = {
+      tests: tests,
+      assertions: assertions,
+      passed: passed_count,
+      failed: failed_count,
+      success: status.success? && failed_count.zero?
+    }
+  else
+    results[file_name] = {
+      tests: 0,
+      assertions: 0,
+      passed: 0,
+      failed: 1,
+      success: false
+    }
+    warn "Failed to parse test output for #{file_name}:\n#{out}"
+  end
+end
+
+puts "\n\n"
+puts "=================================================="
+puts "SUMMARY OF CREEK COMPATIBILITY SUITE RUN"
+puts "=================================================="
+printf "%-32s | %6s | %6s | %6s | %6s | %7s\n", "File", "Tests", "Assert", "Pass", "Fail", "Pass %"
+puts "-" * 74
+
+total_tests = 0
+total_asserts = 0
+total_passed = 0
+total_failed = 0
+
+results.each do |file, res|
+  total_tests += res[:tests]
+  total_asserts += res[:assertions]
+  total_passed += res[:passed]
+  total_failed += res[:failed]
+  pct = res[:tests].positive? ? (res[:passed].to_f / res[:tests] * 100).round(1) : 0
+  printf "%-32s | %6d | %6d | %6d | %6d | %6.1f%%\n", file, res[:tests], res[:assertions], res[:passed], res[:failed], pct
+end
+
+puts "-" * 74
+pct_all = total_tests.positive? ? (total_passed.to_f / total_tests * 100).round(1) : 0
+printf "%-32s | %6d | %6d | %6d | %6d | %6.1f%%\n", "TOTAL", total_tests, total_asserts, total_passed, total_failed, pct_all
+puts "=================================================="
+
+exit(total_failed.zero? ? 0 : 1)

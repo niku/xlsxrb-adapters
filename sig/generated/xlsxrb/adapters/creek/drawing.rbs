@@ -1,0 +1,83 @@
+# Generated from lib/xlsxrb/adapters/creek/drawing.rb with RBS::Inline
+
+module Xlsxrb
+  module Adapters
+    module Creek
+      # Extracts and maps embedded spreadsheet images matching Creek::Drawing.
+      class Drawing
+        include Utils
+
+        COLUMNS: untyped
+
+        # @return [untyped]
+        attr_reader book: untyped
+
+        # @return [String]
+        attr_reader drawing_filepath: untyped
+
+        # @return [Array<untyped>]
+        attr_reader drawings: untyped
+
+        # @return [untyped]
+        attr_reader drawings_rels: untyped
+
+        # @return [Hash<Array<Integer>, Array<Pathname>>]
+        attr_reader images_pathnames: untyped
+
+        # @param book [untyped]
+        # @param drawing_filepath [String]
+        # : (untyped book, String drawing_filepath) -> void
+        def initialize: (untyped book, String drawing_filepath) -> void
+
+        # Returns whether there are images in the drawing file.
+        #
+        # @return [Boolean]
+        # : () -> bool
+        def has_images?: () -> bool
+
+        # Extracts images for a cell coordinate to a temporary folder and returns Pathname objects.
+        #
+        # @param cell_name [String]
+        # @return [Array<Pathname>, nil]
+        # : (String cell_name) -> Array[Pathname]?
+        def images_at: (String cell_name) -> Array[Pathname]?
+
+        private
+
+        # Transforms cell coordinate name (e.g. "A1", "B3") into 0-based [row, col].
+        #
+        # @param cell_name [String]
+        # @return [Array<Integer>]
+        # : (String cell_name) -> [Integer, Integer]
+        def calc_coordinate: (String cell_name) -> [ Integer, Integer ]
+
+        # Returns the temporary directory path for extracted images.
+        #
+        # @return [String]
+        # : () -> String
+        def tmpdir: () -> String
+
+        # Loads drawing and drawing rels.
+        # : () -> void
+        def load_drawings_and_rels: () -> void
+
+        # Populates @images_pathnames by cell coordinate.
+        # : () -> void
+        def load_images_pathnames_by_cells: () -> void
+
+        # : () -> void
+        def load_images_pathnames_from_nokogiri: () -> void
+
+        # : () -> void
+        def load_images_pathnames_from_hashes: () -> void
+
+        # Resolves drawing target path from relationship ID.
+        #
+        # @param rid [String]
+        # @return [String]
+        # : (String rid) -> String
+        def extract_drawing_path: (String rid) -> String
+      end
+    end
+  end
+end

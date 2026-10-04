@@ -1,0 +1,164 @@
+# Generated from lib/xlsxrb/adapters/creek/styles.rb with RBS::Inline
+
+module Xlsxrb
+  module Adapters
+    module Creek
+      # Represents spreadsheet styles and cell formatting types matching Creek::Styles.
+      class Styles
+        # Map of non-custom numFmtId to casting symbol.
+        module Constants
+          NumFmtMap: untyped
+        end
+
+        # Back-calculates ruby type symbols from cell style formatting definitions.
+        class StyleTypes
+          include Constants
+
+          # @return [untyped]
+          attr_accessor styles_xml_doc: untyped
+
+          # @param styles_xml_doc [untyped] Nokogiri XML document, XML string, or IO
+          # : (untyped styles_xml_doc) -> void
+          def initialize: (untyped styles_xml_doc) -> void
+
+          # Returns an Array of style type symbols corresponding to the spreadsheet cellXfs list.
+          #
+          # @return [Array<Symbol?>]
+          # : () -> Array[Symbol?]
+          def call: () -> Array[Symbol?]
+
+          # Returns the numFmtId attribute value from an xstyle node.
+          #
+          # @param xstyle [untyped]
+          # @return [String, nil]
+          # : (untyped xstyle) -> String?
+          def num_fmt_id: (untyped xstyle) -> String?
+
+          # Finds the type symbol for a given number format ID.
+          #
+          # @param id [Integer, String, nil]
+          # @return [Symbol, nil]
+          # : (Integer | String | nil id) -> Symbol?
+          def style_type_by_num_fmt_id: (Integer | String | nil id) -> Symbol?
+
+          # Returns a mapping of custom numFmtId (>= 164) to inferred type symbols.
+          #
+          # @return [Hash<Integer, Symbol>]
+          # : () -> Hash[Integer, Symbol]
+          def custom_style_types: () -> Hash[Integer, Symbol]
+
+          # Inferred custom style type based on formatting pattern.
+          #
+          # @param string [String]
+          # @return [Symbol]
+          # : (String string) -> Symbol
+          def determine_custom_style_type: (String string) -> Symbol
+
+          private
+
+          # : (String raw_xml) -> Array[Symbol?]
+          def extract_style_types_from_xml: (String raw_xml) -> Array[Symbol?]
+
+          # : (String raw_xml) -> Hash[Integer, Symbol]
+          def extract_custom_style_types_from_xml: (String raw_xml) -> Hash[Integer, Symbol]
+        end
+
+        # Heart of typecasting in Creek: converts cell values based on type or style symbol.
+        class Converter
+          include Constants
+
+          # Excel non-printable character escape sequence.
+          HEX_ESCAPE_REGEXP: ::Regexp
+
+          DATE_TYPES: untyped
+
+          # Casts a cell value based on explicit cell type and style formatting type.
+          #
+          # @param value [String, nil]
+          # @param type [String, Symbol, nil]
+          # @param style [Symbol, nil]
+          # @param options [Hash]
+          # @return [Object]
+          # : (untyped value, untyped type, Symbol? style, ?Hash[Symbol, untyped] options) -> untyped
+          def self.call: (untyped value, untyped type, Symbol? style, ?Hash[Symbol, untyped] options) -> untyped
+
+          # Best-effort type deduction for unformatted numeric or string values.
+          #
+          # @param value [untyped]
+          # @return [untyped]
+          # : (untyped value) -> untyped
+          def self.convert_unknown: (untyped value) -> untyped
+
+          # Converts serial numeric date to Date object.
+          #
+          # @param value [Numeric, String]
+          # @param options [Hash]
+          # @return [Date]
+          # : (untyped value, ?Hash[Symbol, untyped] options) -> Date
+          def self.convert_date: (untyped value, ?Hash[Symbol, untyped] options) -> Date
+
+          # Converts serial numeric date/time to Time object.
+          #
+          # @param value [Numeric, String]
+          # @param options [Hash]
+          # @return [Time]
+          # : (untyped value, ?Hash[Symbol, untyped] options) -> Time
+          def self.convert_datetime: (untyped value, ?Hash[Symbol, untyped] options) -> Time
+
+          # Converts big numeric values to BigDecimal or Float.
+          #
+          # @param value [Numeric, String]
+          # @return [BigDecimal, Float]
+          # : (untyped value) -> (BigDecimal | Float)
+          def self.convert_bignum: (untyped value) -> (BigDecimal | Float)
+
+          # Unescapes Excel hex escape sequences (e.g. _x000D_ -> \r).
+          #
+          # @param value [String]
+          # @return [String]
+          # : (String value) -> String
+          def self.unescape_string: (String value) -> String
+
+          # Returns the base date for date serial arithmetic (1899-12-30 or 1904-01-01).
+          #
+          # @param options [Hash]
+          # @return [Date]
+          # : (?Hash[Symbol, untyped] options) -> Date
+          def self.base_date: (?Hash[Symbol, untyped] options) -> Date
+
+          # Rounds a datetime string to nearest whole second.
+          #
+          # @param datetime_string [String]
+          # @return [Time]
+          # : (String datetime_string) -> Time
+          def self.round_datetime: (String datetime_string) -> Time
+        end
+
+        # @return [untyped]
+        attr_accessor book: untyped
+
+        # @param book [untyped]
+        # : (untyped book) -> void
+        def initialize: (untyped book) -> void
+
+        # Path to styles entry in workbook.
+        #
+        # @return [String]
+        # : () -> String
+        def path: () -> String
+
+        # Returns the parsed styles XML document or string.
+        #
+        # @return [untyped]
+        # : () -> untyped
+        def styles_xml: () -> untyped
+
+        # Returns the array of style types for the workbook.
+        #
+        # @return [Array<Symbol?>]
+        # : () -> Array[Symbol?]
+        def style_types: () -> Array[Symbol?]
+      end
+    end
+  end
+end

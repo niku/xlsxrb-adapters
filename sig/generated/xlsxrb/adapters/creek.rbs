@@ -1,0 +1,19 @@
+# Generated from lib/xlsxrb/adapters/creek.rb with RBS::Inline
+
+module Xlsxrb
+  module Adapters
+    # Creek adapter module providing a drop-in compatible interface for Creek
+    # stream parser without hijacking the global ::Creek namespace by default.
+    module Creek
+      VERSION: ::String
+
+      # Converts an Xlsxrb::Elements::Workbook into a Creek Book adapter instance.
+      #
+      # @param xlsxrb_workbook [Xlsxrb::Elements::Workbook]
+      # @param options [Hash]
+      # @return [Book]
+      # : (Xlsxrb::Elements::Workbook xlsxrb_workbook, ?Hash[Symbol, untyped] options) -> Book
+      def self.from_xlsxrb: (Xlsxrb::Elements::Workbook xlsxrb_workbook, ?Hash[Symbol, untyped] options) -> Book
+    end
+  end
+end

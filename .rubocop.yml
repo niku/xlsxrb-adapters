@@ -18,6 +18,15 @@ Naming/PredicatePrefix:
     - "lib/xlsxrb/adapters/caxlsx/**/*"
     - "lib/xlsxrb/adapters/roo/**/*"
     - "lib/xlsxrb/adapters/xsv/**/*"
+    - "lib/xlsxrb/adapters/creek/**/*"
+
+Naming/ConstantName:
+  Exclude:
+    - "lib/xlsxrb/adapters/creek/**/*"
+
+Naming/MemoizedInstanceVariableName:
+  Exclude:
+    - "lib/xlsxrb/adapters/creek/**/*"
 
 Naming/AccessorMethodName:
   Exclude:
@@ -46,6 +55,7 @@ Style/OptionalBooleanParameter:
     - "lib/xlsxrb/adapters/ruby_xl/**/*"
     - "lib/xlsxrb/adapters/caxlsx/**/*"
     - "lib/xlsxrb/adapters/roo/**/*"
+    - "lib/xlsxrb/adapters/creek/**/*"
 
 Naming/MethodParameterName:
   Exclude:
@@ -59,6 +69,7 @@ Naming/MethodParameterName:
     - r
     - c
     - io
+    - id
 
 plugins:
   - rubocop-rake
@@ -207,6 +218,7 @@ Naming/PredicateMethod: # new in 1.76
     - "lib/xlsxrb/adapters/caxlsx/**/*"
     - "lib/xlsxrb/adapters/roo/**/*"
     - "lib/xlsxrb/adapters/xsv/**/*"
+    - "lib/xlsxrb/adapters/creek/**/*"
 Security/CompoundHash: # new in 1.28
   Enabled: true
 Security/IoMethods: # new in 1.22

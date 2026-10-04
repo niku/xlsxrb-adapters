@@ -14,6 +14,7 @@ gemspec
 # - No `require: false`: Bundler.require is not used; files are required explicitly.
 # - No version constraints: Gemfile.lock pins versions.
 gem "caxlsx"
+gem "creek"
 gem "irb"
 gem "matrix"
 gem "rake"

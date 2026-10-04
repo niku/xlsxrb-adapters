@@ -1,0 +1,57 @@
+# Generated from lib/xlsxrb/adapters/creek/shared_strings.rb with RBS::Inline
+
+module Xlsxrb
+  module Adapters
+    module Creek
+      # Shared strings table parser matching Creek::SharedStrings.
+      class SharedStrings
+        SPREADSHEETML_URI: ::String
+
+        # @return [untyped]
+        attr_reader book: untyped
+
+        # @return [Hash<Integer, String>]
+        attr_reader dictionary: untyped
+
+        # @param book [untyped]
+        # : (untyped book) -> void
+        def initialize: (untyped book) -> void
+
+        # Parses shared strings from xl/sharedStrings.xml in the book's archive.
+        #
+        # @return [Hash<Integer, String>, nil]
+        # : () -> Hash[Integer, String]?
+        def parse_shared_shared_strings: () -> Hash[Integer, String]?
+
+        # Parses shared strings from the provided XML document and updates dictionary.
+        #
+        # @param xml [untyped]
+        # @return [Hash<Integer, String>]
+        # : (untyped xml) -> Hash[Integer, String]
+        def parse_shared_string_from_document: (untyped xml) -> Hash[Integer, String]
+
+        # Parses shared strings dictionary from a Nokogiri document or XML string/IO.
+        #
+        # @param xml [untyped]
+        # @return [Hash<Integer, String>]
+        # : (untyped xml) -> Hash[Integer, String]
+        def self.parse_shared_string_from_document: (untyped xml) -> Hash[Integer, String]
+
+        # @param xml [untyped]
+        # @return [Hash<Integer, String>]
+        # : (untyped xml) -> Hash[Integer, String]
+        def self.parse_with_nokogiri: (untyped xml) -> Hash[Integer, String]
+
+        # @param xml_str [String]
+        # @return [Hash<Integer, String>]
+        # : (String xml_str) -> Hash[Integer, String]
+        def self.parse_with_fast_scan: (String xml_str) -> Hash[Integer, String]
+
+        # @param str [String]
+        # @return [String]
+        # : (String str) -> String
+        def self.decode_xml_entities: (String str) -> String
+      end
+    end
+  end
+end

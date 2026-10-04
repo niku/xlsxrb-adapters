@@ -1,6 +1,6 @@
 # xlsxrb-adapters
 
-Compatibility adapters for migrating from peer XLSX libraries ([`rubyXL`](https://github.com/weshatheleopard/rubyXL), [`caxlsx`](https://github.com/caxlsx/caxlsx), [`roo`](https://github.com/roo-rb/roo), [`xsv`](https://github.com/martijn/xsv)) to [`xlsxrb`](https://github.com/niku/xlsxrb) with zero downtime and drop-in safety.
+Compatibility adapters for migrating from peer XLSX libraries ([`rubyXL`](https://github.com/weshatheleopard/rubyXL), [`caxlsx`](https://github.com/caxlsx/caxlsx), [`roo`](https://github.com/roo-rb/roo), [`xsv`](https://github.com/martijn/xsv), [`creek`](https://github.com/pythonicrubyist/creek)) to [`xlsxrb`](https://github.com/niku/xlsxrb) with zero downtime and drop-in safety.
 
 ## Overview
 
@@ -9,19 +9,20 @@ This project provides adapters for the following widely used Ruby spreadsheet li
 - [`caxlsx`](https://github.com/caxlsx/caxlsx) (formerly `axlsx`): The de facto builder library for generating styled spreadsheets, rich typography, DrawingML charts, and financial reports.
 - [`roo`](https://github.com/roo-rb/roo): One of the most widely used spreadsheet reading libraries in Ruby, providing data access, formula and formatting inspection, and support for multiple spreadsheet formats.
 - [`xsv`](https://github.com/martijn/xsv): A fast, lightweight streaming reader designed specifically for pulling data out of tabular worksheets into arrays or hashes.
+- [`creek`](https://github.com/pythonicrubyist/creek): A stream-based reader designed for large Excel files with coordinate-keyed row iteration, row metadata inspection, and embedded DrawingML image extraction.
 
 [`xlsxrb`](https://github.com/niku/xlsxrb) is a pure Ruby, zero-dependency, streaming-capable, low-memory XLSX engine designed for high-throughput batch workloads.
 
 `xlsxrb-adapters` bridges the best of both worlds by providing drop-in compatible adapter layers to:
 1. Support gradual migration (Strangler Fig pattern) from peer XLSX libraries to `xlsxrb` without rewriting application logic.
-2. Enable high-throughput, low-memory execution in batch processing and resource-constrained environments while retaining `rubyXL`, `caxlsx`, `roo`, and `xsv` familiar and battle-tested APIs.
+2. Enable high-throughput, low-memory execution in batch processing and resource-constrained environments while retaining `rubyXL`, `caxlsx`, `roo`, `xsv`, and `creek` familiar and battle-tested APIs.
 3. Construct interoperability test harnesses against peer libraries and real-world fixtures.
 4. Keep `xlsxrb` core strictly zero-dependency, mutant-tested, and type-safe while providing rich compatibility layers.
 
 ## Design Principles
 
 1. **No Global Hijacking**:
-   Does not reopen or hijack top-level constants like `::RubyXL`, `::Axlsx`, `::Roo`, or `::Xsv`. Instead, exposes namespaces like `Xlsxrb::Adapters::RubyXL`, `Xlsxrb::Adapters::Caxlsx`, `Xlsxrb::Adapters::Roo`, and `Xlsxrb::Adapters::Xsv` so you can run side-by-side during migration or run comparison tests. Optional drop-in aliases (e.g. `Xsv = Xlsxrb::Adapters::Xsv`) are provided for seamless code transitions.
+   Does not reopen or hijack top-level constants like `::RubyXL`, `::Axlsx`, `::Roo`, `::Xsv`, or `::Creek`. Instead, exposes namespaces like `Xlsxrb::Adapters::RubyXL`, `Xlsxrb::Adapters::Caxlsx`, `Xlsxrb::Adapters::Roo`, `Xlsxrb::Adapters::Xsv`, and `Xlsxrb::Adapters::Creek` so you can run side-by-side during migration or run comparison tests. Optional drop-in aliases (e.g. `Xsv = Xlsxrb::Adapters::Xsv`, `Creek = Xlsxrb::Adapters::Creek`) are provided for seamless code transitions.
 2. **Mutable-to-Immutable Boundary**:
    Maintains a mutable in-memory wrapper structure compatible with legacy workflows, translating into `xlsxrb`'s immutable data models (`Data.define`, frozen) upon save/export.
 3. **Native Bridge Conversion**:
@@ -281,9 +282,83 @@ end
   - `wb.to_xlsxrb` (bridges to native `xlsxrb` workbook)
   - `Xlsxrb::Adapters::Xsv.from_xlsxrb(xlsxrb_wb)`
 
+### Creek (`Xlsxrb::Adapters::Creek` / `Creek`)
+
+Drop-in replacement for streaming and extracting tabular data, row metadata, and DrawingML images from XLSX spreadsheets using the [`creek`](https://github.com/pythonicrubyist/creek) API. Provides high-throughput streaming, zero external dependencies, coordinate-based cell mapping (`{"A1" => val}`), compact array rows, and one-cell/two-cell anchor image extraction.
+
+#### Drop-In Migration Example
+
+```ruby
+require "xlsxrb/adapters/creek"
+
+# Option A: Explicit namespace (recommended to avoid global pollution)
+creek = Xlsxrb::Adapters::Creek::Book.new("data.xlsx")
+
+# Option B: Drop-in alias (existing Creek code works unmodified)
+Creek = Xlsxrb::Adapters::Creek
+creek = Creek::Book.new("data.xlsx")
+
+sheet = creek.sheets[0]
+
+# Default: row hash keyed by cell coordinate
+sheet.rows.each do |row|
+  puts row["A1"] # => "Item Name"
+end
+
+# Simple rows: array of values
+sheet.simple_rows.each do |row|
+  puts row.inspect # => ["Item Name", 10, 25.5]
+end
+
+# Simple rows with header mapping
+sheet.simple_rows(with_headers: true).each do |row|
+  puts row["Item Name"]
+end
+
+# Row metadata inspection (XML attributes like ht, hidden, collapsed, outlineLevel)
+sheet.rows_with_meta_data.each do |row_meta|
+  puts "Row #{row_meta['row']} (height: #{row_meta['ht']}, hidden: #{row_meta['hidden']}): #{row_meta['cells']}"
+end
+
+# Extract embedded drawing images anchored to cells
+sheet.with_images do
+  sheet.rows.each do |row|
+    images = sheet.images_at("A1")
+    images.each { |img| puts "Found image at A1: #{img.path}" }
+  end
+end
+
+# Close and cleanup any temporary files
+creek.close
+```
+
+#### API Capabilities
+- **Document Loading & Book**:
+  - `Creek::Book.new(filepath_or_io, options)`
+  - Options: `check_file_extension` (validates `.xlsx` / `.xlsm`), `remote: true` (downloads remote URLs), IO / StringIO buffers
+  - `book.sheets` (array of `Creek::Sheet`)
+  - `book.style_types` (hash mapping `xf_id` to `:date`, `:time`, `:bignum`, etc.)
+  - `book.base_date` (Date object: 1899-12-30 for 1900 calendar, 1904-01-01 for 1904 calendar)
+  - `book.close` (cleans up any extracted temporary files)
+- **Worksheets & Row Iteration**:
+  - `sheet.rows` (Enumerator yielding `{ "A1" => val }` coordinate hash)
+  - `sheet.simple_rows(with_headers: false)` (Enumerator yielding Array or header Hash)
+  - `sheet.rows_with_meta_data` (Enumerator yielding metadata hash with `"cells"` and row attributes)
+  - `sheet.simple_rows_with_meta_data(with_headers: false)`
+  - `sheet.state` (`"visible"`, `"hidden"`, etc.)
+  - `sheet.name`, `sheet.rid`, `sheet.sheetid`
+- **DrawingML & Embedded Image Extraction**:
+  - `sheet.with_images { ... }` (extracts drawings and resolves images to tempfiles)
+  - `sheet.images_at(cell_ref)` (returns Array of `Pathname` objects for images anchored at cell coordinate)
+  - `sheet.ready_for_images?`
+- **Native Bridge**:
+  - `book.to_xlsxrb` (converts Creek book to native `Xlsxrb::Workbook`)
+  - `sheet.to_xlsxrb` (converts Creek sheet to native `Xlsxrb::Elements::Sheet`)
+  - `Xlsxrb::Adapters::Creek.from_xlsxrb(xlsxrb_wb)` (creates Creek Book from native `xlsxrb` workbook)
+
 ## Compatibility (100% Test Pass)
 
-`xlsxrb-adapters` verifies 100% behavioral compatibility and drop-in safety against both `rubyXL` and `caxlsx` through dedicated compatibility suites, official upstream test suites, and cross-validation fixtures:
+`xlsxrb-adapters` verifies 100% behavioral compatibility and drop-in safety against `rubyXL`, `caxlsx`, `roo`, `xsv`, and `creek` through dedicated compatibility suites, official upstream test suites, and cross-validation fixtures:
 
 ### Caxlsx Compatibility (`Xlsxrb::Adapters::Caxlsx`)
 
@@ -437,7 +512,38 @@ bundle exec rake compatibility:xsv
 bundle exec rake test:xsv
 ```
 
-Run all compatibility suites (RubyXL, Caxlsx, Roo, and Xsv):
+### Creek Compatibility (`Xlsxrb::Adapters::Creek`)
+
+Verified against official `creek` (2.6.3) behavior and fixtures across the full feature scope documented in [creek repository](https://github.com/pythonicrubyist/creek):
+
+#### Feature Compatibility Matrix
+
+| Feature Domain | Creek API / Construct | Compatibility Status | Notes |
+| :--- | :--- | :--- | :--- |
+| **Document Opening** | `Creek::Book.new`, extension checks, remote URLs | **100% Supported** | Supports file paths, Pathnames, StringIO, open IO buffers, and remote HTTP downloads |
+| **Sheet Iteration** | `sheet.rows`, `sheet.simple_rows` | **100% Supported** | Yields `{ "A1" => val }` coordinate hashes or compact value arrays with header mapping |
+| **Row Metadata** | `sheet.rows_with_meta_data`, `sheet.simple_rows_with_meta_data` | **100% Supported** | Parses `<row>` XML attributes (`cells`, `row`, `collapsed`, `hidden`, `ht`, `outlineLevel`, etc.) |
+| **Drawing & Images** | `sheet.with_images`, `sheet.images_at` | **100% Supported** | Extracts DrawingML one-cell/two-cell anchors to temporary files as `Pathname` objects |
+| **Styles & SharedStrings**| `book.style_types`, SharedStrings, base date | **100% Supported** | Maps `xf_id` to `:date`, `:time`, `:bignum`; supports rich text `<si><r><t>` and 1900/1904 calendars |
+| **Native Bridge** | `book.to_xlsxrb`, `sheet.to_xlsxrb`, `Creek.from_xlsxrb` | **100% Supported** | Seamless bidirectional translation to native `xlsxrb` models |
+
+#### Test Suite Breakdown
+
+| Test Suite | Scope | Total Tests | Passed | Failed | Pass Rate |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| `creek_test.rb` | Book, Sheet, Styles, SharedStrings, Drawing, and Bridge APIs | 20 | 20 | 0 | 100.0% |
+| `creek_compatibility_test.rb` | Side-by-side cross-validation against official `::Creek` across all 10 fixture files | 8 | 8 | 0 | 100.0% |
+| `creek_dropin_test.rb` | End-to-end drop-in replacement workflow (`Creek = Xlsxrb::Adapters::Creek`) | 2 | 2 | 0 | 100.0% |
+| **Total** | **Creek Adapter Compatibility Verification (3,415 assertions)** | **30** | **30** | **0** | **100.0%** |
+
+Run the Creek compatibility test suite:
+```bash
+bundle exec rake compatibility:creek
+# or
+bundle exec rake test:creek
+```
+
+Run all compatibility suites (RubyXL, Caxlsx, Roo, Xsv, and Creek):
 ```bash
 bundle exec rake compatibility
 # or
@@ -497,6 +603,17 @@ Official `roo` is a widely adopted spreadsheet extraction and parsing library. `
 | | `xlsxrb (In-Memory)` | 4.133 s | 446.9 MB | 19.0 | ~4.5x faster | 98.7% reduced |
 | | `xlsxrb (Streaming)` | 2.288 s | 112.4 MB | 68.0 | ~8.2x faster | 95.4% reduced |
 
+### 5. Creek Migration: 1,000,000 cells (100,000 rows × 10 cols)
+
+Official `creek` is a stream-based XLSX parser designed for reading large files with low memory. `xlsxrb-adapters (Creek)` provides 100% drop-in API compatibility for existing `creek` workflows while running **~1.9x faster**, reducing peak memory by **~83.6%**, and cutting GC cycles by **~57.0%**:
+
+| Operation | Library / Mode | Time (Median) | Peak Memory (VmHWM) | GC Count | vs. creek Speed | vs. creek Memory |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **Read** | `creek` (2.6.3) | 8.359 s | 840.6 MB | 384.0 | 1.0x (baseline) | 100% (baseline) |
+| | **`xlsxrb-adapters (Creek)`** | **4.497 s** | **137.8 MB** | **165.0** | **~1.9x faster** | **83.6% reduced** |
+| | `xlsxrb (In-Memory)` | 3.345 s | 448.0 MB | 19.0 | ~2.5x faster | 46.7% reduced |
+| | `xlsxrb (Streaming)` | 2.090 s | 112.5 MB | 32.0 | ~4.0x faster | **86.6% reduced** |
+
 Detailed scaling analysis across 10,000, 100,000, and 1,000,000 cells is documented in [docs/BENCHMARK.md](docs/BENCHMARK.md).
 
 ## Development & Dev Container
@@ -514,7 +631,7 @@ Run test suites, compatibility harnesses, and benchmarks with:
 ```bash
 bundle install
 
-# Run all unit and adapter tests (173 tests, 3,253 assertions)
+# Run all unit and adapter tests (203 tests, 6,668 assertions)
 bundle exec rake test
 
 # Run Caxlsx compatibility test suite (52 tests, 344 assertions)
@@ -529,10 +646,16 @@ bundle exec rake test:roo
 # Run Xsv adapter test suite (25 tests, 702 assertions)
 bundle exec rake test:xsv
 
+# Run Creek adapter test suite (30 tests, 3,415 assertions)
+bundle exec rake test:creek
+
 # Run official rubyXL RSpec compatibility suite (363 tests)
 bundle exec rake compatibility:ruby_xl
 
-# Run all compatibility suites (RubyXL, Caxlsx, Roo, and Xsv)
+# Run Creek compatibility suite against official fixtures
+bundle exec rake compatibility:creek
+
+# Run all compatibility suites (RubyXL, Caxlsx, Roo, Xsv, and Creek)
 bundle exec rake compatibility
 
 # Run static type checking with Steep
@@ -541,7 +664,7 @@ bundle exec rake typecheck
 # Run linter
 bundle exec rubocop
 
-# Run benchmarks (usage: rake benchmark [rows=10000] [cols=10] [runs=3] [category=all|caxlsx|rubyxl|roo|xsv])
+# Run benchmarks (usage: rake benchmark [rows=10000] [cols=10] [runs=3] [category=all|caxlsx|rubyxl|roo|xsv|creek])
 bundle exec rake benchmark
 ```
 
@@ -553,8 +676,9 @@ bundle exec rake benchmark
 - Randy Morgan ([randym](https://github.com/randym)), Jurriaan Pruis ([jurriaan](https://github.com/jurriaan)), and the [`caxlsx`](https://github.com/caxlsx/caxlsx) community for the builder API that has become the de facto standard for styled spreadsheets, charts, and reports in Ruby.
 - Thomas Preymesser, Hugh McGowan, and the [`roo`](https://github.com/roo-rb/roo) community for creating and maintaining one of the most widely used spreadsheet reading libraries in the Ruby ecosystem.
 - Martijn Storck ([martijn](https://github.com/martijn)) and contributors to [`xsv`](https://github.com/martijn/xsv) for showing how lightweight streaming with simple array/hash rows can make spreadsheet reading remarkably fast.
+- Ramtin Vaziri ([pythonicrubyist](https://github.com/pythonicrubyist)) and contributors to [`creek`](https://github.com/pythonicrubyist/creek) for a simple, streaming-oriented API with cell-reference-keyed rows, along with its approach to image extraction.
 
-`xlsxrb-adapters` builds directly on the APIs these projects designed and the test suites they published. The test fixtures under `test/fixtures/roo` are taken from the upstream project and remain under its original MIT license.
+`xlsxrb-adapters` builds directly on the APIs these projects designed and the test suites they published. The test fixtures under `test/fixtures/roo` and `test/fixtures/creek` are taken from the respective upstream projects and remain under their original MIT licenses.
 
 This is an independent project and is not affiliated with or endorsed by the authors or maintainers of the libraries listed above.
 

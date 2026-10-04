@@ -1,0 +1,118 @@
+# Generated from lib/xlsxrb/adapters/creek/book.rb with RBS::Inline
+
+module Xlsxrb
+  module Adapters
+    module Creek
+      # Workbook parser matching Creek::Book.
+      # Opens and extracts worksheets, styles, and shared strings from an XLSX / XLSM file.
+      class Book
+        DATE_1900: untyped
+
+        DATE_1904: untyped
+
+        # Wrapper mimicking Creek's @files.file.open / exist? interface over ZipReader.
+        class FilesWrapper
+          # File proxy supporting .open and .exist?
+          class FileProxy
+            # @param zip_reader [Xlsxrb::Ooxml::ZipReader]
+            # : (Xlsxrb::Ooxml::ZipReader zip_reader) -> void
+            def initialize: (Xlsxrb::Ooxml::ZipReader zip_reader) -> void
+
+            # @param path [String]
+            # @return [Boolean]
+            # : (String path) -> bool
+            def exist?: (String path) -> bool
+
+            # @param path [String]
+            # @yield [io]
+            # @return [StringIO, untyped]
+            # : (String path) ?{ (StringIO) -> untyped } -> untyped
+            def open: (String path) ?{ (StringIO) -> untyped } -> untyped
+          end
+
+          # @return [Xlsxrb::Ooxml::ZipReader, nil]
+          attr_reader zip_reader: untyped
+
+          # @param zip_reader [Xlsxrb::Ooxml::ZipReader]
+          # : (Xlsxrb::Ooxml::ZipReader zip_reader) -> void
+          def initialize: (Xlsxrb::Ooxml::ZipReader zip_reader) -> void
+
+          # Returns the entry file accessor.
+          #
+          # @return [FileProxy]
+          # : () -> FileProxy
+          attr_reader file: untyped
+
+          # Closes the archive reader.
+          #
+          # @return [void]
+          # : () -> void
+          def close: () -> void
+        end
+
+        # @return [FilesWrapper]
+        attr_reader files: untyped
+
+        # @return [SharedStrings]
+        attr_reader shared_strings: untyped
+
+        # @return [Boolean]
+        attr_reader with_headers: untyped
+
+        # Opens an XLSX file or buffer.
+        #
+        # @param path [String, IO, StringIO, Pathname]
+        # @param options [Hash]
+        # : (untyped path, ?Hash[Symbol, untyped] options) -> void
+        def initialize: (untyped path, ?Hash[Symbol, untyped] options) -> void
+
+        # Returns the list of Sheet objects parsed from xl/workbook.xml.
+        #
+        # @return [Array<Sheet>]
+        # : () -> Array[Sheet]
+        def sheets: () -> Array[Sheet]
+
+        # Returns array of style types defined in the workbook.
+        #
+        # @return [Array<Symbol?>]
+        # : () -> Array[Symbol?]
+        def style_types: () -> Array[Symbol?]
+
+        # Closes the workbook file handles.
+        #
+        # @return [void]
+        # : () -> void
+        def close: () -> void
+
+        # Returns base date for serial arithmetic (DATE_1900 or DATE_1904).
+        #
+        # @return [Date]
+        # : () -> Date
+        def base_date: () -> Date
+
+        # Converts this Creek Book into an immutable Xlsxrb::Elements::Workbook.
+        #
+        # @return [Xlsxrb::Elements::Workbook]
+        # : () -> Xlsxrb::Elements::Workbook
+        def to_xlsxrb: () -> Xlsxrb::Elements::Workbook
+
+        # Converts an Xlsxrb::Elements::Workbook into a Creek Book adapter instance.
+        #
+        # @param xlsxrb_wb [Xlsxrb::Elements::Workbook]
+        # @param options [Hash]
+        # @return [Book]
+        # : (Xlsxrb::Elements::Workbook xlsxrb_wb, ?Hash[Symbol, untyped] options) -> Book
+        def self.from_xlsxrb: (Xlsxrb::Elements::Workbook xlsxrb_wb, ?Hash[Symbol, untyped] options) -> Book
+
+        private
+
+        # Downloads a remote file to a temporary location.
+        #
+        # @param url [String]
+        # @return [String]
+        # : (String url) -> String
+        def download_file: (String url) -> String
+      end
+    end
+  end
+end
