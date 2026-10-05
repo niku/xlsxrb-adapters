@@ -106,6 +106,12 @@ module Xlsxrb
         # : (?String str) -> String
         def to_xml_string: (?String str) -> String
 
+        # Converts run font styling to a font hash for Xlsxrb
+        #
+        # @return [Hash{Symbol => untyped}]
+        # : () -> Hash[Symbol, untyped]
+        def to_font_hash: () -> Hash[Symbol, untyped]
+
         # Converts to native Xlsxrb::Elements::RichTextRun.
         #
         # @return [Xlsxrb::Elements::RichTextRun]

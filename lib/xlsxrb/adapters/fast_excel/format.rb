@@ -247,6 +247,13 @@ module Xlsxrb
           end
         end
 
+        # @param val [Integer, Symbol, String]
+        # @return [void]
+        #: (untyped val) -> void
+        def set_color(val)
+          send(:set_font_color, val)
+        end
+
         %i[bottom_color left_color right_color top_color].each do |prop|
           alias_method :"border_#{prop}=", :"#{prop}="
           alias_method :"border_#{prop}", prop
@@ -400,6 +407,26 @@ module Xlsxrb
         # @return [void]
         def set_font_script(val)
           self[:font_script] = val
+        end
+
+        # Converts format font properties to a hash suitable for Xlsxrb rich text and style builder.
+        #
+        # @return [Hash{Symbol => untyped}]
+        #: () -> Hash[Symbol, untyped]
+        def to_font_hash
+          color_hex = if self[:font_color]
+                        val = self[:font_color]
+                        val.is_a?(Integer) ? format("%06X", val & 0xFFFFFF) : Xlsxrb.to_hex_color(val)
+                      end
+          {
+            name: self[:font_name] || "Calibri",
+            sz: self[:font_size]&.positive? ? self[:font_size] : nil,
+            bold: [true, 1].include?(self[:bold]) || nil,
+            italic: [true, 1].include?(self[:italic]) || nil,
+            underline: [true, 1].include?(self[:underline]) || nil,
+            strike: [true, 1].include?(self[:font_strikeout]) || nil,
+            color: color_hex
+          }.compact
         end
       end
     end

@@ -66,6 +66,8 @@ module Xlsxrb
           @images = []
           @charts = []
           @state = :visible
+          @print_area = nil
+          @print_titles = nil
 
           @struct_fields = {
             name: name,
@@ -338,7 +340,7 @@ module Xlsxrb
         def write_url_opt(row, col, url, format = nil, string = nil, tooltip = nil)
           val = string || url
           ref = Xlsxrb::Utils.row_col_to_ref(row, col)
-          @hyperlinks[ref] = { url: url, display: string, tooltip: tooltip }
+          @hyperlinks[ref] = { cell: ref, ref: ref, url: url, display: string, tooltip: tooltip }
           record_cell(row, col, value: val, url: url, url_display: string, url_tooltip: tooltip, format: format)
           @last_row_number = row if row > @last_row_number
           :no_error
@@ -581,6 +583,52 @@ module Xlsxrb
           @struct_fields[:margin_bottom] = bottom
         end
 
+        # Sets print area.
+        #
+        # @param r1 [Integer, String] First row (or cell range string like "A1:H50")
+        # @param c1 [Integer, nil] First column
+        # @param r2 [Integer, nil] Last row
+        # @param c2 [Integer, nil] Last column
+        # @return [Symbol]
+        #: (Integer | String r1, ?Integer? c1, ?Integer? r2, ?Integer? c2) -> Symbol
+        def print_area(r1, c1 = nil, r2 = nil, c2 = nil)
+          if r1.is_a?(String) && c1.nil?
+            @print_area = r1
+          elsif r1.is_a?(Integer) && c1 && r2 && c2
+            ref1 = Xlsxrb::Utils.row_col_to_ref(r1, c1)
+            ref2 = Xlsxrb::Utils.row_col_to_ref(r2, c2)
+            @print_area = "#{ref1}:#{ref2}"
+          end
+          :no_error
+        end
+        alias set_print_area print_area
+
+        # Sets repeating rows for print titles.
+        #
+        # @param r1 [Integer] First row (0-based)
+        # @param r2 [Integer] Last row (0-based)
+        # @return [Symbol]
+        #: (Integer r1, Integer r2) -> Symbol
+        def repeat_rows(r1, r2)
+          @print_titles ||= {}
+          @print_titles[:rows] = "#{r1 + 1}:#{r2 + 1}"
+          :no_error
+        end
+
+        # Sets repeating columns for print titles.
+        #
+        # @param c1 [Integer, String] First col (0-based or column letter)
+        # @param c2 [Integer, String] Last col (0-based or column letter)
+        # @return [Symbol]
+        #: (Integer | String c1, Integer | String c2) -> Symbol
+        def repeat_columns(c1, c2)
+          c1_name = c1.is_a?(Integer) ? Xlsxrb::Utils.col_index_to_name(c1) : c1.to_s
+          c2_name = c2.is_a?(Integer) ? Xlsxrb::Utils.col_index_to_name(c2) : c2.to_s
+          @print_titles ||= {}
+          @print_titles[:cols] = "#{c1_name}:#{c2_name}"
+          :no_error
+        end
+
         # Sets vertical page breaks from buffer or array.
         #
         # @param breaks [Array<Integer>, untyped]
@@ -717,10 +765,15 @@ module Xlsxrb
 
         # Converts Worksheet to an immutable Xlsxrb::Elements::Worksheet.
         #
-        # @param style_map [Hash{Format => Integer}]
+        # @param style_map [Hash{Format => Integer}, nil]
         # @return [Xlsxrb::Elements::Worksheet]
-        #: (Hash[Format, Integer] style_map) -> Xlsxrb::Elements::Worksheet
-        def to_xlsxrb(style_map)
+        #: (?Hash[Format, Integer]? style_map) -> Xlsxrb::Elements::Worksheet
+        def to_xlsxrb(style_map = nil)
+          style_map ||= if @workbook.respond_to?(:compile_styles, true)
+                          @workbook.send(:compile_styles)[1]
+                        else
+                          {}
+                        end
           close if auto_width?
 
           elements_rows = []
@@ -783,6 +836,7 @@ module Xlsxrb
               index: c_idx,
               width: w,
               custom_width: true,
+              style_index: s_idx,
               unmapped_data: col_unmapped
             )
           end
@@ -829,7 +883,9 @@ module Xlsxrb
             unmapped_data: unmapped,
             state: @state,
             comments: @comments,
-            hyperlinks: @hyperlinks
+            hyperlinks: @hyperlinks,
+            print_area: @print_area,
+            print_titles: @print_titles
           )
         end
 

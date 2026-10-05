@@ -161,11 +161,11 @@ module Xlsxrb
           str
         end
 
-        # Converts to native Xlsxrb::Elements::RichTextRun.
+        # Converts run font styling to a font hash for Xlsxrb
         #
-        # @return [Xlsxrb::Elements::RichTextRun]
-        #: () -> Xlsxrb::Elements::RichTextRun
-        def to_xlsxrb
+        # @return [Hash{Symbol => untyped}]
+        #: () -> Hash[Symbol, untyped]
+        def to_font_hash
           font = {}
           font[:bold] = @b unless @b.nil?
           font[:italic] = @i unless @i.nil?
@@ -177,7 +177,15 @@ module Xlsxrb
           font[:name] = @font_name unless @font_name.nil?
           font[:family] = @family unless @family.nil?
           font[:scheme] = @scheme unless @scheme.nil?
-          font_h = font.compact
+          font.compact
+        end
+
+        # Converts to native Xlsxrb::Elements::RichTextRun.
+        #
+        # @return [Xlsxrb::Elements::RichTextRun]
+        #: () -> Xlsxrb::Elements::RichTextRun
+        def to_xlsxrb
+          font_h = to_font_hash
           Xlsxrb::Elements::RichTextRun.new(text: @value.to_s, font: font_h.empty? ? nil : font_h)
         end
 

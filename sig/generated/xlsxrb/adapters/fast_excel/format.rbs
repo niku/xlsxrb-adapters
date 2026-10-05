@@ -90,6 +90,11 @@ module Xlsxrb
         # : (Symbol | Integer value) -> void
         def set_align: (Symbol | Integer value) -> void
 
+        # @param val [Integer, Symbol, String]
+        # @return [void]
+        # : (untyped val) -> void
+        def set_color: (untyped val) -> void
+
         # @return [Symbol, Integer, nil]
         def border: () -> untyped
 
@@ -166,6 +171,12 @@ module Xlsxrb
         # @param val [Integer, Symbol]
         # @return [void]
         def set_font_script: (untyped val) -> untyped
+
+        # Converts format font properties to a hash suitable for Xlsxrb rich text and style builder.
+        #
+        # @return [Hash{Symbol => untyped}]
+        # : () -> Hash[Symbol, untyped]
+        def to_font_hash: () -> Hash[Symbol, untyped]
       end
     end
   end

@@ -1377,13 +1377,15 @@ module Xlsxrb
                         []
                       else
                         @column_info.map do |col|
+                          col_style = col.style if col.style&.positive?
                           col_unmapped = {}
-                          col_unmapped[:style_index] = col.style if col.style&.positive?
+                          col_unmapped[:style_index] = col_style if col_style
                           Xlsxrb::Elements::Column.new(
                             index: [(col.min || 1) - 1, 0].max,
                             width: col.width,
                             hidden: col.hidden || false,
                             custom_width: col.custom_width || false,
+                            style_index: col_style,
                             unmapped_data: col_unmapped
                           )
                         end

@@ -447,4 +447,52 @@ class XlsxrbAdaptersFastExcelTest < Test::Unit::TestCase
     assert_equal 1, reloaded_sheet.last_row_number
     wb.close
   end
+
+  def test_format_to_font_hash
+    wb = Xlsxrb::Adapters::FastExcel.open
+    fmt = wb.bold_format
+    fmt.set_color("red")
+    fmt.set_font_size(14)
+    fmt.set_italic
+
+    assert_respond_to fmt, :to_font_hash
+    f_hash = fmt.to_font_hash
+    assert_equal "Calibri", f_hash[:name]
+    assert_equal 14, f_hash[:sz]
+    assert_equal true, f_hash[:bold]
+    assert_equal true, f_hash[:italic]
+    assert_equal "FF0000", f_hash[:color]
+    wb.close
+  end
+
+  def test_print_area_and_repeat_titles
+    wb = Xlsxrb::Adapters::FastExcel.open
+    ws = wb.add_worksheet("FastPrint")
+    ws.print_area(0, 0, 19, 5)
+    ws.repeat_rows(0, 1)
+    ws.repeat_columns(0, 2)
+
+    xlsxrb_ws = ws.to_xlsxrb
+    assert_equal "A1:F20", xlsxrb_ws.print_area
+    assert_equal({ rows: "1:2", cols: "A:C" }, xlsxrb_ws.print_titles)
+    wb.close
+  end
+
+  def test_column_style_index_in_fastexcel
+    wb = Xlsxrb::Adapters::FastExcel.open
+    ws = wb.add_worksheet("Cols")
+    fmt = wb.bold_format
+    ws.set_column(0, 0, 30.0, fmt)
+
+    xlsxrb_ws = ws.to_xlsxrb
+    col = xlsxrb_ws.columns.first
+    assert_not_nil col.style_index
+    assert_equal 30.0, col.width
+    wb.close
+  end
+
+  def test_color_to_hex_fallback_to_xlsxrb_colors
+    assert_equal 0x000080, Xlsxrb::Adapters::FastExcel.color_to_hex(:navy)
+    assert_equal 0xFF0000, Xlsxrb::Adapters::FastExcel.color_to_hex("#FF0000")
+  end
 end

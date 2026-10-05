@@ -364,6 +364,34 @@ module Xlsxrb
         # : (Float left, Float right, Float top, Float bottom) -> void
         def set_margins: (Float left, Float right, Float top, Float bottom) -> void
 
+        # Sets print area.
+        #
+        # @param r1 [Integer, String] First row (or cell range string like "A1:H50")
+        # @param c1 [Integer, nil] First column
+        # @param r2 [Integer, nil] Last row
+        # @param c2 [Integer, nil] Last column
+        # @return [Symbol]
+        # : (Integer | String r1, ?Integer? c1, ?Integer? r2, ?Integer? c2) -> Symbol
+        def print_area: (Integer | String r1, ?Integer? c1, ?Integer? r2, ?Integer? c2) -> Symbol
+
+        alias set_print_area print_area
+
+        # Sets repeating rows for print titles.
+        #
+        # @param r1 [Integer] First row (0-based)
+        # @param r2 [Integer] Last row (0-based)
+        # @return [Symbol]
+        # : (Integer r1, Integer r2) -> Symbol
+        def repeat_rows: (Integer r1, Integer r2) -> Symbol
+
+        # Sets repeating columns for print titles.
+        #
+        # @param c1 [Integer, String] First col (0-based or column letter)
+        # @param c2 [Integer, String] Last col (0-based or column letter)
+        # @return [Symbol]
+        # : (Integer | String c1, Integer | String c2) -> Symbol
+        def repeat_columns: (Integer | String c1, Integer | String c2) -> Symbol
+
         # Sets vertical page breaks from buffer or array.
         #
         # @param breaks [Array<Integer>, untyped]
@@ -461,10 +489,10 @@ module Xlsxrb
 
         # Converts Worksheet to an immutable Xlsxrb::Elements::Worksheet.
         #
-        # @param style_map [Hash{Format => Integer}]
+        # @param style_map [Hash{Format => Integer}, nil]
         # @return [Xlsxrb::Elements::Worksheet]
-        # : (Hash[Format, Integer] style_map) -> Xlsxrb::Elements::Worksheet
-        def to_xlsxrb: (Hash[Format, Integer] style_map) -> Xlsxrb::Elements::Worksheet
+        # : (?Hash[Format, Integer]? style_map) -> Xlsxrb::Elements::Worksheet
+        def to_xlsxrb: (?Hash[Format, Integer]? style_map) -> Xlsxrb::Elements::Worksheet
 
         private
 

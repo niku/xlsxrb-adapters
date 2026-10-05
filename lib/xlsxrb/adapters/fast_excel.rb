@@ -123,6 +123,8 @@ module Xlsxrb
           elsif val_str =~ /^#?(0x)?([\da-f]){6}$/i
             cleaned = val_str.sub("#", "")
             return cleaned.start_with?("0x") ? cleaned.to_i(16) : "0x#{cleaned}".to_i(16)
+          elsif defined?(Xlsxrb.to_hex_color) && (hex = Xlsxrb.to_hex_color(val_str))
+            return hex.to_i(16)
           else
             raise ArgumentError, "Unknown color value #{orig_value.inspect}, expected hex string or color name"
           end
