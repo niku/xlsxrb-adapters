@@ -1,6 +1,6 @@
 # xlsxrb-adapters
 
-Compatibility adapters for migrating from peer XLSX libraries ([`rubyXL`](https://github.com/weshatheleopard/rubyXL), [`caxlsx`](https://github.com/caxlsx/caxlsx), [`roo`](https://github.com/roo-rb/roo), [`xsv`](https://github.com/martijn/xsv), [`creek`](https://github.com/pythonicrubyist/creek), [`fast_excel`](https://github.com/Paxa/fast_excel), [`write_xlsx`](https://github.com/cxn03651/write_xlsx)) to [`xlsxrb`](https://github.com/niku/xlsxrb) with zero downtime and drop-in safety.
+Compatibility adapters for migrating from peer XLSX libraries ([`rubyXL`](https://github.com/weshatheleopard/rubyXL), [`caxlsx`](https://github.com/caxlsx/caxlsx), [`roo`](https://github.com/roo-rb/roo), [`xsv`](https://github.com/martijn/xsv), [`creek`](https://github.com/pythonicrubyist/creek), [`fast_excel`](https://github.com/Paxa/fast_excel), [`write_xlsx`](https://github.com/cxn03651/write_xlsx), [`xlsxtream`](https://github.com/felixbuenemann/xlsxtream)) to [`xlsxrb`](https://github.com/niku/xlsxrb) with zero downtime and drop-in safety.
 
 ## Overview
 
@@ -12,19 +12,20 @@ This project provides adapters for the following widely used Ruby spreadsheet li
 - [`creek`](https://github.com/pythonicrubyist/creek): A stream-based reader designed for large Excel files with coordinate-keyed row iteration, row metadata inspection, and embedded DrawingML image extraction.
 - [`fast_excel`](https://github.com/Paxa/fast_excel): A high-performance writer library (wrapping C `libxlsxwriter`) designed for fast, memory-efficient XLSX writing with a concise API.
 - [`write_xlsx`](https://github.com/cxn03651/write_xlsx): A comprehensive pure-Ruby port of Perl's `Excel::Writer::XLSX`, supporting formatting, formulas, charts, tables, page setup, and cell coordinate utilities.
+- [`xlsxtream`](https://github.com/felixbuenemann/xlsxtream): A low-memory streaming XLSX writer intended as a replacement for CSV in large exports, with multiple worksheets, optional shared string deduplication, and auto-formatting.
 
 [`xlsxrb`](https://github.com/niku/xlsxrb) is a pure Ruby, zero-dependency, streaming-capable, low-memory XLSX engine designed for high-throughput batch workloads.
 
 `xlsxrb-adapters` bridges the best of both worlds by providing drop-in compatible adapter layers to:
 1. Support gradual migration (Strangler Fig pattern) from peer XLSX libraries to `xlsxrb` without rewriting application logic.
-2. Enable high-throughput, low-memory execution in batch processing and resource-constrained environments while retaining `rubyXL`, `caxlsx`, `roo`, `xsv`, `creek`, `fast_excel`, and `write_xlsx` familiar and battle-tested APIs.
+2. Enable high-throughput, low-memory execution in batch processing and resource-constrained environments while retaining `rubyXL`, `caxlsx`, `roo`, `xsv`, `creek`, `fast_excel`, `write_xlsx`, and `xlsxtream` familiar and battle-tested APIs.
 3. Construct interoperability test harnesses against peer libraries and real-world fixtures.
 4. Keep `xlsxrb` core strictly zero-dependency, mutant-tested, and type-safe while providing rich compatibility layers.
 
 ## Design Principles
 
 1. **No Global Hijacking**:
-   Does not reopen or hijack top-level constants like `::RubyXL`, `::Axlsx`, `::Roo`, `::Xsv`, `::Creek`, `::FastExcel`, or `::WriteXLSX`. Instead, exposes namespaces like `Xlsxrb::Adapters::RubyXL`, `Xlsxrb::Adapters::Caxlsx`, `Xlsxrb::Adapters::Roo`, `Xlsxrb::Adapters::Xsv`, `Xlsxrb::Adapters::Creek`, `Xlsxrb::Adapters::FastExcel`, and `Xlsxrb::Adapters::WriteXLSX` so you can run side-by-side during migration or run comparison tests. Optional drop-in aliases (e.g. `Xsv = Xlsxrb::Adapters::Xsv`, `Creek = Xlsxrb::Adapters::Creek`, `FastExcel = Xlsxrb::Adapters::FastExcel`, `WriteXLSX = Xlsxrb::Adapters::WriteXLSX`) are provided for seamless code transitions.
+   Does not reopen or hijack top-level constants like `::RubyXL`, `::Axlsx`, `::Roo`, `::Xsv`, `::Creek`, `::FastExcel`, `::WriteXLSX`, or `::Xlsxtream`. Instead, exposes namespaces like `Xlsxrb::Adapters::RubyXL`, `Xlsxrb::Adapters::Caxlsx`, `Xlsxrb::Adapters::Roo`, `Xlsxrb::Adapters::Xsv`, `Xlsxrb::Adapters::Creek`, `Xlsxrb::Adapters::FastExcel`, `Xlsxrb::Adapters::WriteXLSX`, and `Xlsxrb::Adapters::Xlsxtream` so you can run side-by-side during migration or run comparison tests. Optional drop-in aliases (e.g. `Xsv = Xlsxrb::Adapters::Xsv`, `Creek = Xlsxrb::Adapters::Creek`, `FastExcel = Xlsxrb::Adapters::FastExcel`, `WriteXLSX = Xlsxrb::Adapters::WriteXLSX`, `Xlsxtream = Xlsxrb::Adapters::Xlsxtream`) are provided for seamless code transitions.
 2. **Mutable-to-Immutable Boundary**:
    Maintains a mutable in-memory wrapper structure compatible with legacy workflows, translating into `xlsxrb`'s immutable data models (`Data.define`, frozen) upon save/export.
 3. **Native Bridge Conversion**:
@@ -546,9 +547,58 @@ xlsx_data = wb.read_string
   - `wb.to_xlsxrb` (compiles mutable builder into immutable `Xlsxrb::Elements::Workbook`)
   - `Xlsxrb::Adapters::WriteXLSX.from_xlsxrb(xlsxrb_wb)`
 
+### Xlsxtream Adapter (`Xlsxrb::Adapters::Xlsxtream`)
+
+Drop-in replacement for [`xlsxtream`](https://github.com/felixbuenemann/xlsxtream), the fast, low-memory streaming writer for Ruby. Enables pure Ruby streaming spreadsheet creation with multiple worksheets, sequential streaming row writing, optional shared string table deduplication, automated type casting (`auto_format`), custom font selection, and column width configurations.
+
+#### Basic Usage
+
+```ruby
+require "xlsxrb/adapters/xlsxtream"
+
+# Drop-in alias (optional)
+Xlsxtream = Xlsxrb::Adapters::Xlsxtream
+
+# Streaming directly to a file
+Xlsxtream::Workbook.open("streaming_report.xlsx") do |xlsx|
+  xlsx.write_worksheet("Orders") do |sheet|
+    # Values automatically map to OpenXML types (String, Number, Date, Time, Boolean)
+    sheet << ["Order ID", "Customer", "Amount", "Shipped", "Date"]
+    sheet << [1001, "Acme Corp", 1500.50, true, Date.new(2026, 10, 5)]
+  end
+end
+
+# Streaming to an in-memory buffer (StringIO)
+sio = StringIO.new
+Xlsxtream::Workbook.open(sio, use_shared_strings: true) do |xlsx|
+  xlsx.write_worksheet("SharedStrings") do |sheet|
+    sheet << ["repeated", "data", "repeated"]
+  end
+end
+```
+
+#### API Capabilities
+- **Workbook Operations**:
+  - `wb = Xlsxtream::Workbook.new(output, options)`
+  - `Xlsxtream::Workbook.open(output, options, &block)`
+  - `wb.add_worksheet(name, options)` (sequential generation guard)
+  - `wb.write_worksheet(name, options, &block)`
+  - `wb.close`
+- **Worksheet Operations**:
+  - `sheet << [values]` / `sheet.add_row([values])`
+  - `sheet.close`, `sheet.closed?`, `sheet.id`, `sheet.name`
+- **Formatting & Customization**:
+  - Font selection: `font: { name: "Times New Roman", size: 10, family: "Roman" }`
+  - Column widths: `columns: [{ width_pixels: 50 }, { width_chars: 15 }]`
+  - String deduplication: `use_shared_strings: true`
+  - Automatic type casting: `auto_format: true` (casts numeric, boolean, and ISO-8601 strings to native cells)
+- **Native Bridge**:
+  - `wb.to_xlsxrb` (converts streaming adapter workbook into immutable `Xlsxrb::Elements::Workbook`)
+  - `Xlsxrb::Adapters::Xlsxtream.from_xlsxrb(xlsxrb_wb)`
+
 ## Compatibility (100% Test Pass)
 
-`xlsxrb-adapters` verifies 100% behavioral compatibility and drop-in safety against `rubyXL`, `caxlsx`, `roo`, `xsv`, `creek`, `fast_excel`, and `write_xlsx` through dedicated compatibility suites, official upstream test suites, and cross-validation fixtures:
+`xlsxrb-adapters` verifies 100% behavioral compatibility and drop-in safety against `rubyXL`, `caxlsx`, `roo`, `xsv`, `creek`, `fast_excel`, `write_xlsx`, and `xlsxtream` through dedicated compatibility suites, official upstream test suites, and cross-validation fixtures:
 
 ### Caxlsx Compatibility (`Xlsxrb::Adapters::Caxlsx`)
 
@@ -799,7 +849,27 @@ bundle exec rake compatibility:write_xlsx
 bundle exec rake test:write_xlsx
 ```
 
-Run all compatibility suites (RubyXL, Caxlsx, Roo, Xsv, Creek, FastExcel, and WriteXLSX):
+### Xlsxtream Compatibility (`Xlsxrb::Adapters::Xlsxtream`)
+
+Verified against official `xlsxtream` (3.1.0) behavior across the full feature scope documented in [xlsxtream repository](https://github.com/felixbuenemann/xlsxtream):
+
+#### Test Suite Breakdown
+
+| Test Suite | Scope | Total Tests | Passed | Failed | Pass Rate |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| `xlsxtream_test.rb` | Constants, XML escaping, SST, Columns, Row serialization, Worksheet, Workbook lifecycle, Font validation, Bridge | 12 | 12 | 0 | 100.0% |
+| `xlsxtream_dropin_test.rb` | End-to-end drop-in replacement workflow (`Xlsxtream = Xlsxrb::Adapters::Xlsxtream`), in-memory StringIO, auto_format, columns | 5 | 5 | 0 | 100.0% |
+| `xlsxtream_compatibility_test.rb` | Side-by-side cross-validation against official `xlsxtream` gem (primitives, dates/times, SST, auto_format, multi-sheet) | 4 | 4 | 0 | 100.0% |
+| **Total** | **Xlsxtream Adapter Compatibility Verification (149 assertions)** | **21** | **21** | **0** | **100.0%** |
+
+Run the Xlsxtream compatibility test suite:
+```bash
+bundle exec rake compatibility:xlsxtream
+# or
+bundle exec rake test:xlsxtream
+```
+
+Run all compatibility suites (RubyXL, Caxlsx, Roo, Xsv, Creek, FastExcel, WriteXLSX, and Xlsxtream):
 ```bash
 bundle exec rake compatibility
 # or
@@ -883,6 +953,17 @@ Official `write_xlsx` is a pure Ruby Excel writer ported from Perl's `Excel::Wri
 
 Detailed scaling analysis across 10,000, 100,000, and 1,000,000 cells is documented in [docs/BENCHMARK.md](docs/BENCHMARK.md).
 
+### 7. Xlsxtream Migration: 10,000 cells (1,000 rows × 10 cols)
+
+Official `xlsxtream` is a streaming XLSX writer using inline strings (`t="inlineStr"`). `xlsxrb-adapters (Xlsxtream)` provides 100% drop-in compatibility for existing `xlsxtream` codebases, supporting sequential worksheet generation, optional SST string tables, auto-formatting, and custom column configurations:
+
+| Operation | Library / Mode | Time (Median) | Peak Memory (VmHWM) | GC Count |
+| :--- | :--- | :--- | :--- | :--- |
+| **Write** | `xlsxtream` (3.1.0) | 0.016 s | 24.3 MB | 2.0 |
+| | **`xlsxrb-adapters (Xlsxtream)`** | **0.017 s** | **50.1 MB** | **0.0** |
+| | `xlsxrb (In-Memory)` | 0.026 s | 50.5 MB | 0.0 |
+| | `xlsxrb (Streaming)` | 0.012 s | 47.9 MB | 0.0 |
+
 ## Development & Dev Container
 
 The Dev Container configuration mounts the sibling `../xlsxrb` repository at `/workspaces/xlsxrb` inside the container:
@@ -898,7 +979,7 @@ Run test suites, compatibility harnesses, and benchmarks with:
 ```bash
 bundle install
 
-# Run all unit and adapter tests (254 tests, 7,084 assertions)
+# Run all unit and adapter tests (285 tests, 7,280 assertions)
 bundle exec rake test
 
 # Run Caxlsx compatibility test suite (52 tests, 344 assertions)
@@ -922,6 +1003,9 @@ bundle exec rake test:fast_excel
 # Run WriteXLSX adapter test suite (17 tests, 212 assertions)
 bundle exec rake test:write_xlsx
 
+# Run Xlsxtream adapter test suite (21 tests, 149 assertions)
+bundle exec rake test:xlsxtream
+
 # Run official rubyXL RSpec compatibility suite (363 tests)
 bundle exec rake compatibility:ruby_xl
 
@@ -934,7 +1018,10 @@ bundle exec rake compatibility:fast_excel
 # Run WriteXLSX compatibility suite against official write_xlsx gem
 bundle exec rake compatibility:write_xlsx
 
-# Run all compatibility suites (RubyXL, Caxlsx, Roo, Xsv, Creek, FastExcel, and WriteXLSX)
+# Run Xlsxtream compatibility suite against official xlsxtream gem
+bundle exec rake compatibility:xlsxtream
+
+# Run all compatibility suites (RubyXL, Caxlsx, Roo, Xsv, Creek, FastExcel, WriteXLSX, and Xlsxtream)
 bundle exec rake compatibility
 
 # Run static type checking with Steep
@@ -943,7 +1030,7 @@ bundle exec rake typecheck
 # Run linter
 bundle exec rubocop
 
-# Run benchmarks (usage: rake benchmark [rows=10000] [cols=10] [runs=3] [category=all|caxlsx|rubyxl|roo|xsv|creek|write_xlsx])
+# Run benchmarks (usage: rake benchmark [rows=10000] [cols=10] [runs=3] [category=all|caxlsx|rubyxl|roo|xsv|creek|write_xlsx|xlsxtream])
 bundle exec rake benchmark
 ```
 
@@ -958,6 +1045,7 @@ bundle exec rake benchmark
 - Ramtin Vaziri ([pythonicrubyist](https://github.com/pythonicrubyist)) and contributors to [`creek`](https://github.com/pythonicrubyist/creek) for a simple, streaming-oriented API with cell-reference-keyed rows, along with its approach to image extraction.
 - Pavel Evstigneev ([Paxa](https://github.com/Paxa)) and contributors to [`fast_excel`](https://github.com/Paxa/fast_excel) for bringing fast, C-backed spreadsheet generation to Ruby with a clean formatting DSL.
 - Hideo Nakamura ([cxn03651](https://github.com/cxn03651)) for creating [`write_xlsx`](https://github.com/cxn03651/write_xlsx), a comprehensive pure-Ruby Excel writer, and John McNamara ([jmcnamara](https://github.com/jmcnamara)) for the Perl modules it is ported from, [`Excel::Writer::XLSX`](https://github.com/jmcnamara/excel-writer-xlsx) and its predecessor [`Spreadsheet::WriteExcel`](https://github.com/jmcnamara/spreadsheet-writeexcel), as well as [`libxlsxwriter`](https://github.com/jmcnamara/libxlsxwriter), the C library that powers `fast_excel`.
+- Felix Bünemann ([felixbuenemann](https://github.com/felixbuenemann)) for creating [`xlsxtream`](https://github.com/felixbuenemann/xlsxtream), which showed that large exports can be streamed to XLSX in pure Ruby with low memory usage, as a practical replacement for CSV.
 
 `xlsxrb-adapters` builds directly on the APIs these projects designed and the test suites they published. The test fixtures under `test/fixtures/roo` and `test/fixtures/creek` are taken from the respective upstream projects and remain under their original MIT licenses.
 

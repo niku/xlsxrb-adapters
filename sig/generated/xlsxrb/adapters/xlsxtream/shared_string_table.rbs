@@ -1,0 +1,22 @@
+# Generated from lib/xlsxrb/adapters/xlsxtream/shared_string_table.rb with RBS::Inline
+
+module Xlsxrb
+  module Adapters
+    module Xlsxtream
+      # Hash-based shared string table keeping track of unique strings and reference counts.
+      # @rbs inherits Hash[String, Integer]
+      class SharedStringTable < Hash[String, Integer]
+        # @return [Integer]
+        attr_reader references: untyped
+
+        def initialize: () -> untyped
+
+        # Fetches or records a string index and increments the reference counter.
+        #
+        # @param string [String]
+        # @return [Integer]
+        def []: (untyped string) -> untyped
+      end
+    end
+  end
+end

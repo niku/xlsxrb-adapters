@@ -1,0 +1,62 @@
+# Generated from lib/xlsxrb/adapters/xlsxtream/worksheet.rb with RBS::Inline
+
+module Xlsxrb
+  module Adapters
+    module Xlsxtream
+      # Represents a worksheet stream writing rows directly to the ZIP package.
+      class Worksheet
+        # @return [Integer, nil]
+        attr_reader id: untyped
+
+        # @return [String, nil]
+        attr_reader name: untyped
+
+        # @return [Array<Array<Object>>]
+        attr_reader rows: untyped
+
+        # @return [Hash{Symbol => untyped}]
+        attr_reader options: untyped
+
+        # @param io [Object] Target IO / ZIP writer.
+        # @param options [Hash{Symbol => untyped}] Worksheet options.
+        # : (untyped io, ?Hash[Symbol, untyped] options) -> void
+        def initialize: (untyped io, ?Hash[Symbol, untyped] options) -> void
+
+        # Appends a row of values to the worksheet.
+        #
+        # @param row [Enumerable<Object>] Row cell values.
+        # @return [void]
+        # : (untyped row) -> void
+        def <<: (untyped row) -> void
+
+        alias add_row <<
+
+        # Finalizes the worksheet and writes the XML closing tags.
+        #
+        # @return [void]
+        # : () -> void
+        def close: () -> void
+
+        # Returns whether the worksheet is closed.
+        #
+        # @return [Boolean]
+        # : () -> bool
+        def closed?: () -> bool
+
+        # Converts worksheet data to an immutable Xlsxrb::Elements::Worksheet.
+        #
+        # @param default_style_index [Integer] Default style index.
+        # @return [Xlsxrb::Elements::Worksheet]
+        def to_xlsxrb: (?untyped default_style_index) -> untyped
+
+        private
+
+        def auto_format_value: (untyped value) -> untyped
+
+        def write_header: () -> untyped
+
+        def write_footer: () -> untyped
+      end
+    end
+  end
+end

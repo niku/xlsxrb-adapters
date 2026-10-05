@@ -1,0 +1,24 @@
+# Generated from lib/xlsxrb/adapters/xlsxtream/columns.rb with RBS::Inline
+
+module Xlsxrb
+  module Adapters
+    module Xlsxtream
+      # Generates OpenXML <cols> element from column definitions.
+      class Columns
+        # Pass an Array of column options Hashes. Symbol Hash keys:
+        # +width_chars+:: Approximate column width in characters.
+        # +width_pixels+:: Exact width of column in pixels (overrides +width_chars+).
+        #
+        # @param column_options_array [Array<Hash{Symbol => untyped}>]
+        # : (Array[Hash[Symbol, untyped]] column_options_array) -> void
+        def initialize: (Array[Hash[Symbol, untyped]] column_options_array) -> void
+
+        # Renders the <cols>...</cols> XML chunk.
+        #
+        # @return [String]
+        # : () -> String
+        def to_xml: () -> String
+      end
+    end
+  end
+end

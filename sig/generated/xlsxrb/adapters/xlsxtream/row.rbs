@@ -1,0 +1,48 @@
+# Generated from lib/xlsxrb/adapters/xlsxtream/row.rb with RBS::Inline
+
+module Xlsxrb
+  module Adapters
+    module Xlsxtream
+      # Serializes a row of cell values into OpenXML markup.
+      class Row
+        ENCODING: untyped
+
+        NUMBER_PATTERN: ::Regexp
+
+        DATE_PATTERN: ::Regexp
+
+        TIME_PATTERN: ::Regexp
+
+        TRUE_STRING: ::String
+
+        FALSE_STRING: ::String
+
+        DATE_STYLE: ::Integer
+
+        TIME_STYLE: ::Integer
+
+        # @param row [Enumerable<Object>] Row values.
+        # @param rownum [Integer] Row index (1-based).
+        # @param options [Hash{Symbol => untyped}] Row formatting options.
+        # : (untyped row, Integer rownum, ?Hash[Symbol, untyped] options) -> void
+        def initialize: (untyped row, Integer rownum, ?Hash[Symbol, untyped] options) -> void
+
+        # Generates OpenXML <row r="..."> string.
+        #
+        # @return [String]
+        # : () -> String
+        def to_xml: () -> String
+
+        private
+
+        def auto_format: (untyped value) -> untyped
+
+        def time_to_oa_date: (untyped time) -> untyped
+
+        def datetime_to_oa_date: (untyped date) -> untyped
+
+        def date_to_oa_date: (untyped date) -> untyped
+      end
+    end
+  end
+end

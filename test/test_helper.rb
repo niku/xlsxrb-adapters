@@ -30,6 +30,12 @@ require "creek"
 # Require official fast_excel for side-by-side comparison tests
 require "fast_excel"
 
+# Require official write_xlsx for side-by-side comparison tests
+require "write_xlsx"
+
+# Require official xlsxtream for side-by-side comparison tests
+require "xlsxtream"
+
 module TestHelper
   def with_tempfile(ext = ".xlsx")
     Dir.mktmpdir do |dir|

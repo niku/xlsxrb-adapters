@@ -1,0 +1,55 @@
+# Generated from lib/xlsxrb/adapters/xlsxtream/xml.rb with RBS::Inline
+
+module Xlsxrb
+  module Adapters
+    module Xlsxtream
+      # XML utility helpers for character escaping and formatting.
+      module XML
+        XML_ESCAPES: untyped
+
+        HEX_ESCAPE_REGEXP: ::Regexp
+
+        XML_ESCAPE_UNDERSCORE: ::String
+
+        XML_DECLARATION: ::String
+
+        WS_AROUND_TAGS: ::Regexp
+
+        UNSAFE_ATTR_CHARS: ::Regexp
+
+        UNSAFE_VALUE_CHARS: ::Regexp
+
+        INVALID_XML10_CHARS: ::Regexp
+
+        ESCAPE_CHAR: untyped
+
+        # Returns the XML declaration header.
+        #
+        # @return [String]
+        # : () -> String
+        def self.header: () -> String
+
+        # Strips whitespace around XML tags.
+        #
+        # @param xml [String]
+        # @return [String]
+        # : (String xml) -> String
+        def self.strip: (String xml) -> String
+
+        # Escapes characters for XML attribute values.
+        #
+        # @param string [String]
+        # @return [String]
+        # : (String string) -> String
+        def self.escape_attr: (String string) -> String
+
+        # Escapes characters for XML element values.
+        #
+        # @param string [String]
+        # @return [String]
+        # : (String string) -> String
+        def self.escape_value: (String string) -> String
+      end
+    end
+  end
+end

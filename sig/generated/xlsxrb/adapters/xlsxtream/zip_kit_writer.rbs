@@ -1,0 +1,47 @@
+# Generated from lib/xlsxrb/adapters/xlsxtream/zip_kit_writer.rb with RBS::Inline
+
+module Xlsxrb
+  module Adapters
+    module Xlsxtream
+      # Streaming ZIP archive writer compatible with Xlsxtream::ZipKitWriter.
+      # Writes compressed entries using ZipKit::Streamer if available, or Xlsxrb::Ooxml::ZipWriter.
+      class ZipKitWriter
+        BUFFER_SIZE: untyped
+
+        # Wraps an output sink into a ZipKitWriter instance.
+        #
+        # @param output [String, IO, Object]
+        # @return [ZipKitWriter]
+        def self.with_output_to: (untyped output) -> untyped
+
+        def initialize: (untyped streamer, ?close: untyped, ?mode: untyped) -> untyped
+
+        # Appends data to internal buffer.
+        #
+        # @param data [String]
+        # @return [self]
+        # : (String data) -> self
+        def <<: (String data) -> self
+
+        # Opens a new compressed file entry in the ZIP package.
+        #
+        # @param path [String]
+        # @return [void]
+        # : (String path) -> void
+        def add_file: (String path) -> void
+
+        # Closes current entry and finalized ZIP archive.
+        #
+        # @return [void]
+        # : () -> void
+        def close: () -> void
+
+        private
+
+        def flush_buffer: () -> untyped
+
+        def flush_file: () -> untyped
+      end
+    end
+  end
+end

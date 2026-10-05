@@ -1,0 +1,81 @@
+# Generated from lib/xlsxrb/adapters/xlsxtream/workbook.rb with RBS::Inline
+
+module Xlsxrb
+  module Adapters
+    module Xlsxtream
+      # Streaming XLSX workbook generator compatible with Xlsxtream::Workbook.
+      class Workbook
+        FONT_FAMILY_IDS: untyped
+
+        # @return [Array<Worksheet>]
+        attr_reader worksheets: untyped
+
+        alias sheets worksheets
+
+        # @return [Hash{Symbol => untyped}]
+        attr_reader options: untyped
+
+        # Opens or creates a new workbook and yields it to the block, ensuring it closes.
+        #
+        # @param output [String, IO, ZipKit::Streamer] Destination target.
+        # @param options [Hash{Symbol => untyped}] Workbook options.
+        # @yield [workbook]
+        # @yieldparam workbook [Workbook]
+        # @return [Workbook, untyped]
+        def self.open: (untyped output, ?untyped options) -> untyped
+
+        # @param output [String, IO, ZipKit::Streamer] Destination target.
+        # @param options [Hash{Symbol => untyped}] Workbook options.
+        def initialize: (untyped output, ?untyped options) -> untyped
+
+        # Adds a new worksheet sequentially.
+        #
+        # @param args [Array<Object>] Worksheet arguments (name and/or options).
+        # @yield [worksheet]
+        # @return [Worksheet]
+        def add_worksheet: (*untyped) ?{ (?) -> untyped } -> untyped
+
+        # Opens, yields, and closes a worksheet sequentially.
+        #
+        # @param args [Array<Object>] Worksheet arguments.
+        # @yield [worksheet]
+        # @return [nil]
+        def write_worksheet: (*untyped) -> untyped
+
+        # Finalizes workbook metadata and writes package structures.
+        #
+        # @return [nil]
+        def close: () -> untyped
+
+        # Converts mutable workbook to an immutable Xlsxrb::Elements::Workbook.
+        #
+        # @return [Xlsxrb::Elements::Workbook]
+        def to_xlsxrb: () -> untyped
+
+        # Builds an Xlsxtream::Workbook adapter instance from an Xlsxrb::Elements::Workbook.
+        #
+        # @param xlsxrb_workbook [Xlsxrb::Elements::Workbook]
+        # @param output [Object, nil]
+        # @param options [Hash{Symbol => untyped}]
+        # @return [Workbook]
+        def self.from_xlsxrb: (untyped xlsxrb_workbook, ?untyped output, ?untyped options) -> untyped
+
+        private
+
+        def build_worksheet: (?untyped name, ?untyped options) -> untyped
+
+        def write_root_rels: () -> untyped
+
+        def write_workbook: () -> untyped
+
+        def write_styles: () -> untyped
+
+        def write_sst: () -> untyped
+
+        def write_workbook_rels: () -> untyped
+
+        def write_content_types: () -> untyped
+      end
+    end
+  end
+end

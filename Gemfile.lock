@@ -176,8 +176,11 @@ GEM
     write_xlsx (1.15.1)
       nkf
       rubyzip (>= 2.4.0, < 4.0)
+    xlsxtream (3.1.0)
+      zip_kit (>= 6.2, < 7)
     xsv (1.4.1)
       rubyzip (>= 1.3, < 4)
+    zip_kit (6.3.6)
 
 PLATFORMS
   aarch64-linux-gnu
@@ -207,6 +210,7 @@ DEPENDENCIES
   write_xlsx
   xlsxrb!
   xlsxrb-adapters!
+  xlsxtream
   xsv
 
 CHECKSUMS
@@ -290,7 +294,9 @@ CHECKSUMS
   write_xlsx (1.15.1) sha256=6a97a5ea9af2fd2f248af4aa61cdced0933b6887c96826b6a04f8384a656d3a2
   xlsxrb (0.1.13)
   xlsxrb-adapters (0.1.0)
+  xlsxtream (3.1.0) sha256=68ce0cac504d86beb9bc626defd5977146c68e5ca2a4ab76c5c61c48e0a66fcd
   xsv (1.4.1) sha256=32a2949b6be2bfb6d5dc0335aebcc265bf7f781cb757f2292f31abb24996e70d
+  zip_kit (6.3.6) sha256=648866d9a1f18df420f9fdba18e310e76115a17a575a80f8537d97670c520c04
 
 BUNDLED WITH
   4.0.20

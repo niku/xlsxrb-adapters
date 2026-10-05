@@ -1,0 +1,40 @@
+# Generated from lib/xlsxrb/adapters/xlsxtream.rb with RBS::Inline
+
+module Xlsxrb
+  module Adapters
+    # Xlsxtream adapter module providing a drop-in compatible interface for xlsxtream
+    # without hijacking the global ::Xlsxtream namespace by default.
+    module Xlsxtream
+      # Opens or creates a new workbook compatible with Xlsxtream::Workbook.open.
+      #
+      # @param output [String, IO, Object] Destination target.
+      # @param options [Hash{Symbol => untyped}] Options.
+      # @yield [workbook]
+      # @yieldparam workbook [Workbook]
+      # @return [Workbook, untyped]
+      def self.open: (untyped output, ?untyped options) ?{ (?) -> untyped } -> untyped
+
+      # Creates a new workbook instance.
+      #
+      # @param output [String, IO, Object] Destination target.
+      # @param options [Hash{Symbol => untyped}] Options.
+      # @return [Workbook]
+      def self.new: (untyped output, ?untyped options) -> untyped
+
+      # Converts an adapter Workbook to an immutable Xlsxrb::Elements::Workbook.
+      #
+      # @param obj [Workbook]
+      # @return [Xlsxrb::Elements::Workbook]
+      # : (Workbook obj) -> Xlsxrb::Elements::Workbook
+      def self.to_xlsxrb: (Workbook obj) -> Xlsxrb::Elements::Workbook
+
+      # Converts an Xlsxrb::Elements::Workbook into an Xlsxtream Workbook adapter instance.
+      #
+      # @param xlsxrb_workbook [Xlsxrb::Elements::Workbook]
+      # @param output [Object, nil]
+      # @param options [Hash{Symbol => untyped}]
+      # @return [Workbook]
+      def self.from_xlsxrb: (untyped xlsxrb_workbook, ?untyped output, ?untyped options) -> untyped
+    end
+  end
+end

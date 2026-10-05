@@ -205,6 +205,29 @@ RUNNER_SCRIPT = <<~'RUBY'
       end
       wb.close
     end
+  when ["xlsxtream", "write"]
+    require "xlsxtream"
+    measure do
+      Xlsxtream::Workbook.open(filename) do |wb|
+        wb.write_worksheet("Data") do |ws|
+          rows.times do |r|
+            ws << generate_row(r, cols)
+          end
+        end
+      end
+    end
+  when ["xlsxrb_adapters_xlsxtream", "write"]
+    require "xlsxrb"
+    require "xlsxrb/adapters/xlsxtream"
+    measure do
+      Xlsxrb::Adapters::Xlsxtream::Workbook.open(filename) do |wb|
+        wb.write_worksheet("Data") do |ws|
+          rows.times do |r|
+            ws << generate_row(r, cols)
+          end
+        end
+      end
+    end
 
   when ["xlsxrb_stream", "write"]
     require "xlsxrb"
@@ -396,7 +419,7 @@ end
 
 # 1. Benchmark Write
 write_results = {}
-if %w[all caxlsx rubyxl write_xlsx fast_excel].include?(CATEGORY)
+if %w[all caxlsx rubyxl write_xlsx fast_excel xlsxtream].include?(CATEGORY)
   puts "\n=== Benchmarking Write Performance ==="
   write_targets = []
   write_targets << ["xlsxrb (Streaming)", "xlsxrb_stream"]
@@ -417,6 +440,10 @@ if %w[all caxlsx rubyxl write_xlsx fast_excel].include?(CATEGORY)
   if %w[all fast_excel].include?(CATEGORY)
     write_targets << ["xlsxrb-adapters (FastExcel)", "xlsxrb_adapters_fast_excel"]
     write_targets << ["fast_excel (Original 0.5.0)", "fast_excel"]
+  end
+  if %w[all xlsxtream].include?(CATEGORY)
+    write_targets << ["xlsxrb-adapters (Xlsxtream)", "xlsxrb_adapters_xlsxtream"]
+    write_targets << ["xlsxtream (Original 3.1.0)", "xlsxtream"]
   end
 
   write_targets.each do |name, lib|
@@ -578,6 +605,19 @@ if %w[all fast_excel].include?(CATEGORY)
     write_results["xlsxrb_stream"]
   ]
   print_table("FastExcel Write Performance", fast_excel_write)
+end
+
+if %w[all xlsxtream].include?(CATEGORY)
+  puts "\n" + ("-" * 80)
+  puts "## Xlsxtream Migration Benchmark (xlsxtream vs. xlsxrb-adapters vs. xlsxrb)"
+
+  xlsxtream_write = [
+    write_results["xlsxtream"],
+    write_results["xlsxrb_adapters_xlsxtream"],
+    write_results["xlsxrb_inmemory"],
+    write_results["xlsxrb_stream"]
+  ]
+  print_table("Xlsxtream Write Performance", xlsxtream_write)
 end
 
 puts "\n" + ("=" * 80)

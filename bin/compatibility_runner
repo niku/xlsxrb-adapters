@@ -16,6 +16,7 @@ xsv_runner = File.join(dir, "compatibility_runner_xsv")
 creek_runner = File.join(dir, "compatibility_runner_creek")
 fast_excel_runner = File.join(dir, "compatibility_runner_fast_excel")
 write_xlsx_runner = File.join(dir, "compatibility_runner_write_xlsx")
+xlsxtream_runner = File.join(dir, "compatibility_runner_xlsxtream")
 
 exit_codes = []
 
@@ -34,6 +35,8 @@ when "fast_excel", "fastexcel"
   exit_codes << (system(ruby, fast_excel_runner) ? 0 : 1)
 when "write_xlsx", "writexlsx"
   exit_codes << (system(ruby, write_xlsx_runner) ? 0 : 1)
+when "xlsxtream"
+  exit_codes << (system(ruby, xlsxtream_runner) ? 0 : 1)
 when "all"
   puts ">>> Running RubyXL compatibility suite..."
   exit_codes << (system(ruby, ruby_xl_runner) ? 0 : 1)
@@ -49,8 +52,10 @@ when "all"
   exit_codes << (system(ruby, fast_excel_runner) ? 0 : 1)
   puts "\n>>> Running WriteXLSX compatibility suite..."
   exit_codes << (system(ruby, write_xlsx_runner) ? 0 : 1)
+  puts "\n>>> Running Xlsxtream compatibility suite..."
+  exit_codes << (system(ruby, xlsxtream_runner) ? 0 : 1)
 else
-  warn "Unknown compatibility target: #{target}. Valid targets: all, ruby_xl, caxlsx, roo, xsv, creek, fast_excel, write_xlsx"
+  warn "Unknown compatibility target: #{target}. Valid targets: all, ruby_xl, caxlsx, roo, xsv, creek, fast_excel, write_xlsx, xlsxtream"
   exit 1
 end
 
