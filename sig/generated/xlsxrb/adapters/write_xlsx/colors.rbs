@@ -1,0 +1,42 @@
+# Generated from lib/xlsxrb/adapters/write_xlsx/colors.rb with RBS::Inline
+
+module Xlsxrb
+  module Adapters
+    module Writexlsx
+      # Manages standard Excel palette colors and RGB color conversions
+      class Colors
+        COLORS: untyped
+
+        # Standard Excel 56-color palette (indices 8..63)
+        DEFAULT_PALETTE: untyped
+
+        # @return [Array<Array<Integer>>]
+        attr_reader palette: untyped
+
+        # : () -> void
+        def initialize: () -> void
+
+        # Converts a color argument into an integer color index (0..63) or hex string
+        #
+        # @param color_code [Integer, String, Symbol, nil]
+        # @return [Integer, String]
+        # : (untyped color_code) -> untyped
+        def color: (untyped color_code) -> untyped
+
+        # Converts a color representation to an OpenXML 6-character hex string ("RRGGBB")
+        #
+        # @param color_val [Integer, String, Symbol, nil]
+        # @return [String, nil]
+        # : (untyped color_val) -> String?
+        def to_hex: (untyped color_val) -> String?
+
+        # Class-level helper to resolve color to hex
+        #
+        # @param color_val [Integer, String, Symbol, nil]
+        # @return [String, nil]
+        # : (untyped color_val) -> String?
+        def self.to_hex: (untyped color_val) -> String?
+      end
+    end
+  end
+end

@@ -1,0 +1,137 @@
+# Generated from lib/xlsxrb/adapters/write_xlsx/utility.rb with RBS::Inline
+
+module Xlsxrb
+  module Adapters
+    module Writexlsx
+      # Collection of utilities for cell references, coordinates, and conversions
+      module Utility
+        # Cell coordinate and reference calculation utilities
+        module CellReference
+          # Converts 0-based row and column to an A1 cell reference string
+          #
+          # @param row_or_name [Integer, String]
+          # @param col [Integer]
+          # @param row_absolute [Boolean]
+          # @param col_absolute [Boolean]
+          # @return [String]
+          # : (Integer | String row_or_name, Integer col, ?bool row_absolute, ?bool col_absolute) -> String
+          def xl_rowcol_to_cell: (Integer | String row_or_name, Integer col, ?bool row_absolute, ?bool col_absolute) -> String
+
+          # Converts an A1 cell reference into 0-based [row, col, row_abs, col_abs]
+          #
+          # @param cell [String]
+          # @return [Array<Integer, Integer, Boolean, Boolean>]
+          # : (String cell) -> [Integer, Integer, bool, bool]
+          def xl_cell_to_rowcol: (String cell) -> [ Integer, Integer, bool, bool ]
+
+          # Converts 0-based column index to Excel column name (e.g. 0 -> "A", 27 -> "AB")
+          #
+          # @param col [Integer]
+          # @param col_absolute [Boolean]
+          # @return [String]
+          # : (Integer col, ?bool col_absolute) -> String
+          def xl_col_to_name: (Integer col, ?bool col_absolute) -> String
+
+          # Returns an A1 range string for two cell coordinates
+          #
+          # @param row_1 [Integer]
+          # @param row_2 [Integer]
+          # @param col_1 [Integer]
+          # @param col_2 [Integer]
+          # @param row_abs_1 [Boolean]
+          # @param row_abs_2 [Boolean]
+          # @param col_abs_1 [Boolean]
+          # @param col_abs_2 [Boolean]
+          # @return [String]
+          # : (Integer row_1, Integer row_2, Integer col_1, Integer col_2, ?bool row_abs_1, ?bool row_abs_2, ?bool col_abs_1, ?bool col_abs_2) -> String
+          def xl_range: (Integer row_1, Integer row_2, Integer col_1, Integer col_2, ?bool row_abs_1, ?bool row_abs_2, ?bool col_abs_1, ?bool col_abs_2) -> String
+
+          # Returns a formula string pointing to a sheet and cell range
+          #
+          # @param sheetname [String]
+          # @param row_1 [Integer]
+          # @param row_2 [Integer]
+          # @param col_1 [Integer]
+          # @param col_2 [Integer]
+          # @return [String]
+          # : (String sheetname, Integer row_1, Integer row_2, Integer col_1, Integer col_2) -> String
+          def xl_range_formula: (String sheetname, Integer row_1, Integer row_2, Integer col_1, Integer col_2) -> String
+
+          # Quotes a worksheet name with single quotes if required
+          #
+          # @param sheetname [String]
+          # @return [String]
+          # : (String sheetname) -> String
+          def quote_sheetname: (String sheetname) -> String
+
+          # Returns "$" if absolute is true, else empty string
+          #
+          # @param absolute [Boolean]
+          # @return [String]
+          # : (bool absolute) -> String
+          def absolute_char: (bool absolute) -> String
+
+          # Substitute an A1 reference into 0-based row/col arguments
+          #
+          # @param cell [String]
+          # @param args [Array<untyped>]
+          # @return [Array<untyped>]
+          def substitute_cellref: (untyped cell, *untyped args) -> untyped
+
+          # Checks if row parameter is in A1 notation and substitutes row/col
+          #
+          # @param row_or_a1 [Object]
+          # @return [Array<untyped>, nil]
+          def row_col_notation: (untyped row_or_a1) -> untyped
+        end
+
+        # General utility helpers
+        module Common
+          # Tests if a value is truthy under Perl/WriteXLSX conventions
+          #
+          # @param val [Object]
+          # @return [Boolean]
+          # : (untyped val) -> bool
+          def ptrue?: (untyped val) -> bool
+
+          # Emits deprecation warning message
+          #
+          # @param msg [String]
+          # @return [void]
+          # : (String msg) -> void
+          def put_deprecate_message: (String msg) -> void
+
+          # Converts a float to an Excel-compatible string
+          #
+          # @param val [Numeric]
+          # @return [String]
+          # : (Numeric val) -> String
+          def float_to_str: (Numeric val) -> String
+        end
+
+        # Date and time parsing / serial conversion helpers
+        module DateTime
+          # Converts an ISO 8601 date/time string or Ruby date/time to Excel serial number
+          #
+          # @param value [String, Date, Time, DateTime]
+          # @param date1904 [Boolean]
+          # @return [Float, nil]
+          # : (untyped value, ?bool date1904) -> Float?
+          def convert_date_time: (untyped value, ?bool date1904) -> Float?
+        end
+
+        include CellReference
+
+        include Common
+
+        include DateTime
+
+        extend CellReference
+
+        extend Common
+
+        extend DateTime
+      end
+    end
+  end
+end

@@ -1,0 +1,168 @@
+# Generated from lib/xlsxrb/adapters/write_xlsx/chart.rb with RBS::Inline
+
+module Xlsxrb
+  module Adapters
+    module Writexlsx
+      # Represents a chart object in WriteXLSX
+      class Chart
+        # @return [Object]
+        attr_accessor workbook: untyped
+
+        # @return [String, Symbol]
+        attr_accessor type: untyped
+
+        # @return [String, Symbol, nil]
+        attr_accessor subtype: untyped
+
+        # @return [Array<Hash{Symbol => untyped}>]
+        attr_accessor series: untyped
+
+        # @return [Hash{Symbol => untyped}]
+        attr_accessor title: untyped
+
+        # @return [Hash{Symbol => untyped}]
+        attr_accessor x_axis: untyped
+
+        # @return [Hash{Symbol => untyped}]
+        attr_accessor y_axis: untyped
+
+        # @return [Hash{Symbol => untyped}]
+        attr_accessor legend: untyped
+
+        # @return [Integer, nil]
+        attr_accessor style_id: untyped
+
+        # @return [Numeric, nil]
+        attr_accessor width: untyped
+
+        # @return [Numeric, nil]
+        attr_accessor height: untyped
+
+        # @return [Numeric, nil]
+        attr_accessor x_scale: untyped
+
+        # @return [Numeric, nil]
+        attr_accessor y_scale: untyped
+
+        # @return [Object, nil]
+        attr_accessor palette: untyped
+
+        # @return [String, nil]
+        attr_accessor name: untyped
+
+        # @return [Integer, nil]
+        attr_accessor index: untyped
+
+        # @return [Boolean, nil]
+        attr_accessor embedded: untyped
+
+        # @param workbook_or_subtype [Object, nil]
+        # @param options [Hash{Symbol => untyped}]
+        # : (?untyped workbook_or_subtype, ?Hash[Symbol, untyped] options) -> void
+        def initialize: (?untyped workbook_or_subtype, ?Hash[Symbol, untyped] options) -> void
+
+        def default_chart_type: () -> untyped
+
+        # Adds a data series to the chart
+        #
+        # @param options [Hash{Symbol => untyped}]
+        # @return [Hash{Symbol => untyped}]
+        # : (Hash[Symbol, untyped] options) -> Hash[Symbol, untyped]
+        def add_series: (Hash[Symbol, untyped] options) -> Hash[Symbol, untyped]
+
+        # Sets the chart title options
+        #
+        # @param options [Hash{Symbol => untyped}, String]
+        # @return [Hash{Symbol => untyped}]
+        # : (untyped options) -> Hash[Symbol, untyped]
+        def set_title: (untyped options) -> Hash[Symbol, untyped]
+
+        # Sets the X axis options
+        #
+        # @param options [Hash{Symbol => untyped}, String]
+        # @return [Hash{Symbol => untyped}]
+        # : (untyped options) -> Hash[Symbol, untyped]
+        def set_x_axis: (untyped options) -> Hash[Symbol, untyped]
+
+        # Sets the Y axis options
+        #
+        # @param options [Hash{Symbol => untyped}, String]
+        # @return [Hash{Symbol => untyped}]
+        # : (untyped options) -> Hash[Symbol, untyped]
+        def set_y_axis: (untyped options) -> Hash[Symbol, untyped]
+
+        # Sets the legend options
+        #
+        # @param options [Hash{Symbol => untyped}]
+        # @return [Hash{Symbol => untyped}]
+        # : (Hash[Symbol, untyped] options) -> Hash[Symbol, untyped]
+        def set_legend: (Hash[Symbol, untyped] options) -> Hash[Symbol, untyped]
+
+        # Sets the chart style preset ID
+        #
+        # @param style_id [Integer]
+        # @return [Integer]
+        # : (Integer style_id) -> Integer
+        def set_style: (Integer style_id) -> Integer
+
+        # Sets the dimensions / scaling of the chart
+        #
+        # @param options [Hash{Symbol => untyped}]
+        # @return [void]
+        # : (Hash[Symbol, untyped] options) -> void
+        def set_size: (Hash[Symbol, untyped] options) -> void
+
+        # Compiles this chart into an options hash for xlsxrb
+        #
+        # @return [Hash{Symbol => untyped}]
+        # : () -> Hash[Symbol, untyped]
+        def to_chart_options: () -> Hash[Symbol, untyped]
+
+        # Factory method to create appropriate Chart subclass instance
+        #
+        # @param type [String, Symbol]
+        # @param subtype [String, Symbol, nil]
+        # @return [Chart]
+        # : (untyped type, ?untyped subtype) -> Chart
+        def self.factory: (untyped type, ?untyped subtype) -> Chart
+
+        # Subclasses for WriteXLSX chart types
+        class Area < Chart
+          def default_chart_type: () -> untyped
+        end
+
+        class Bar < Chart
+          def default_chart_type: () -> untyped
+        end
+
+        class Column < Chart
+          def default_chart_type: () -> untyped
+        end
+
+        class Line < Chart
+          def default_chart_type: () -> untyped
+        end
+
+        class Pie < Chart
+          def default_chart_type: () -> untyped
+        end
+
+        class Scatter < Chart
+          def default_chart_type: () -> untyped
+        end
+
+        class Radar < Chart
+          def default_chart_type: () -> untyped
+        end
+
+        class Doughnut < Chart
+          def default_chart_type: () -> untyped
+        end
+
+        class Stock < Chart
+          def default_chart_type: () -> untyped
+        end
+      end
+    end
+  end
+end

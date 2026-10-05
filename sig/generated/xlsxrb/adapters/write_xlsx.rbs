@@ -1,0 +1,95 @@
+# Generated from lib/xlsxrb/adapters/write_xlsx.rb with RBS::Inline
+
+module Xlsxrb
+  module Adapters
+    # WriteXLSX adapter class providing drop-in compatibility with the write_xlsx gem
+    class WriteXLSX < Writexlsx::Workbook
+      ROW_MAX: untyped
+
+      COL_MAX: untyped
+
+      STR_MAX: untyped
+
+      SHEETNAME_MAX: untyped
+
+      MAX_URL_LENGTH: untyped
+
+      URL_MAX: untyped
+
+      OFFICE_URL: untyped
+
+      Workbook: untyped
+
+      Worksheet: untyped
+
+      Format: untyped
+
+      Chart: untyped
+
+      Colors: untyped
+
+      Utility: untyped
+
+      WriteXLSXInsufficientArgumentError: untyped
+
+      WriteXLSXDimensionError: untyped
+
+      WriteXLSXOptionParameterError: untyped
+
+      InsufficientArgumentError: untyped
+
+      DimensionError: untyped
+
+      OptionParameterError: untyped
+
+      # Converts an adapter Workbook to an immutable Xlsxrb::Elements::Workbook.
+      #
+      # @param obj [Writexlsx::Workbook]
+      # @return [Xlsxrb::Elements::Workbook]
+      # : (Writexlsx::Workbook obj) -> Xlsxrb::Elements::Workbook
+      def self.to_xlsxrb: (Writexlsx::Workbook obj) -> Xlsxrb::Elements::Workbook
+
+      # Converts an Xlsxrb::Elements::Workbook into a WriteXLSX adapter instance.
+      #
+      # @param xlsxrb_workbook [Xlsxrb::Elements::Workbook]
+      # @param file [Object, nil]
+      # @param options [Hash{Symbol => untyped}]
+      # @return [Workbook]
+      def self.from_xlsxrb: (untyped xlsxrb_workbook, ?untyped file, ?untyped options) -> untyped
+    end
+
+    # Module namespace matching upstream Writexlsx
+    module Writexlsx
+      WriteXLSX: untyped
+
+      # Compatibility namespaces matching write_xlsx structure
+      # rubocop:disable Lint/EmptyClass
+      module Package
+        class Table
+        end
+
+        class ConditionalFormat
+        end
+
+        class XMLWriterSimple
+        end
+      end
+
+      class Shape
+      end
+
+      class Sparkline
+      end
+
+      # @param obj [Workbook]
+      # @return [Xlsxrb::Elements::Workbook]
+      def self.to_xlsxrb: (untyped obj) -> untyped
+
+      # @param xlsxrb_workbook [Xlsxrb::Elements::Workbook]
+      # @param file [Object, nil]
+      # @param options [Hash{Symbol => untyped}]
+      # @return [Workbook]
+      def self.from_xlsxrb: (untyped xlsxrb_workbook, ?untyped file, ?untyped options) -> untyped
+    end
+  end
+end

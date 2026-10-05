@@ -10,6 +10,7 @@ require_relative "adapters/roo"
 require_relative "adapters/xsv"
 require_relative "adapters/creek"
 require_relative "adapters/fast_excel"
+require_relative "adapters/write_xlsx"
 
 module Xlsxrb
   # Namespace for compatibility adapters helping gradual migration to xlsxrb.

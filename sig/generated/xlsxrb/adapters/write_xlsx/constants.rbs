@@ -1,0 +1,52 @@
+# Generated from lib/xlsxrb/adapters/write_xlsx/constants.rb with RBS::Inline
+
+module Xlsxrb
+  module Adapters
+    module Writexlsx
+      # Maximum number of rows supported in Excel 2007+ (OOXML)
+      ROW_MAX: ::Integer
+
+      # Maximum number of columns supported in Excel 2007+ (OOXML)
+      COL_MAX: ::Integer
+
+      # Maximum string length in a single cell
+      STR_MAX: ::Integer
+
+      # Maximum length of a worksheet name
+      SHEETNAME_MAX: ::Integer
+
+      # Maximum length of a hyperlink URL in Excel
+      MAX_URL_LENGTH: ::Integer
+
+      URL_MAX: untyped
+
+      # Microsoft Office schema URL namespace prefix
+      OFFICE_URL: ::String
+
+      # Raised when insufficient arguments are passed to a WriteXLSX method
+      class WriteXLSXInsufficientArgumentError < StandardError
+      end
+
+      # Raised when cell row/column coordinates exceed Excel dimensions
+      class WriteXLSXDimensionError < StandardError
+      end
+
+      # Raised when an invalid option parameter is provided
+      class WriteXLSXOptionParameterError < StandardError
+      end
+
+      InsufficientArgumentError: untyped
+
+      DimensionError: untyped
+
+      OptionParameterError: untyped
+    end
+  end
+end
+
+# Top-level error compatibility matching upstream write_xlsx
+WriteXLSXInsufficientArgumentError: untyped
+
+WriteXLSXDimensionError: untyped
+
+WriteXLSXOptionParameterError: untyped

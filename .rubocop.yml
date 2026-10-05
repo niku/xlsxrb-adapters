@@ -20,6 +20,7 @@ Naming/PredicatePrefix:
     - "lib/xlsxrb/adapters/xsv/**/*"
     - "lib/xlsxrb/adapters/creek/**/*"
     - "lib/xlsxrb/adapters/fast_excel/**/*"
+    - "lib/xlsxrb/adapters/write_xlsx/**/*"
 
 Naming/ConstantName:
   Exclude:
@@ -34,22 +35,27 @@ Naming/AccessorMethodName:
     - "lib/xlsxrb/adapters/ruby_xl/**/*"
     - "lib/xlsxrb/adapters/caxlsx/**/*"
     - "lib/xlsxrb/adapters/fast_excel/**/*"
+    - "lib/xlsxrb/adapters/write_xlsx/**/*"
 
 Naming/MethodName:
   Exclude:
     - "lib/xlsxrb/adapters/caxlsx/**/*"
+    - "lib/xlsxrb/adapters/write_xlsx/**/*"
 
 Naming/VariableName:
   Exclude:
     - "lib/xlsxrb/adapters/caxlsx/**/*"
+    - "lib/xlsxrb/adapters/write_xlsx/**/*"
 
 Naming/VariableNumber:
   Exclude:
     - "lib/xlsxrb/adapters/caxlsx/**/*"
+    - "lib/xlsxrb/adapters/write_xlsx/**/*"
 
 Style/Documentation:
   Exclude:
     - "lib/xlsxrb/adapters/caxlsx/**/*"
+    - "lib/xlsxrb/adapters/write_xlsx/**/*"
     - "test/**/*"
 
 Style/OptionalBooleanParameter:
@@ -59,11 +65,13 @@ Style/OptionalBooleanParameter:
     - "lib/xlsxrb/adapters/roo/**/*"
     - "lib/xlsxrb/adapters/creek/**/*"
     - "lib/xlsxrb/adapters/fast_excel/**/*"
+    - "lib/xlsxrb/adapters/write_xlsx/**/*"
 
 Naming/MethodParameterName:
   Exclude:
     - "lib/xlsxrb/adapters/caxlsx/**/*"
     - "lib/xlsxrb/adapters/fast_excel/**/*"
+    - "lib/xlsxrb/adapters/write_xlsx/**/*"
   AllowedNames:
     - xf
     - mc
@@ -77,6 +85,10 @@ Naming/MethodParameterName:
 
 plugins:
   - rubocop-rake
+
+Style/ModuleFunction:
+  Exclude:
+    - "lib/xlsxrb/adapters/write_xlsx/**/*"
 
 Style/StringLiterals:
   EnforcedStyle: double_quotes

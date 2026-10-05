@@ -1,0 +1,349 @@
+# Generated from lib/xlsxrb/adapters/write_xlsx/format.rb with RBS::Inline
+
+module Xlsxrb
+  module Adapters
+    module Writexlsx
+      # Represents cell formatting properties in WriteXLSX
+      class Format
+        # @return [String, nil]
+        attr_accessor font: untyped
+
+        # @return [Numeric, nil]
+        attr_accessor size: untyped
+
+        # @return [Integer, String, nil]
+        attr_accessor font_color: untyped
+
+        # @return [Integer, Boolean, nil]
+        attr_accessor bold: untyped
+
+        # @return [Integer, Boolean, nil]
+        attr_accessor italic: untyped
+
+        # @return [Integer, Boolean, nil]
+        attr_accessor underline: untyped
+
+        # @return [Integer, Boolean, nil]
+        attr_accessor font_strikeout: untyped
+
+        # @return [Integer, Boolean, nil]
+        attr_accessor font_outline: untyped
+
+        # @return [Integer, Boolean, nil]
+        attr_accessor font_shadow: untyped
+
+        # @return [Integer, nil]
+        attr_accessor font_script: untyped
+
+        # @return [Integer, nil]
+        attr_accessor font_family: untyped
+
+        # @return [Integer, nil]
+        attr_accessor font_charset: untyped
+
+        # @return [Integer, nil]
+        attr_accessor font_condense: untyped
+
+        # @return [Integer, nil]
+        attr_accessor font_extend: untyped
+
+        # @return [Integer, nil]
+        attr_accessor text_h_align: untyped
+
+        alias align text_h_align
+
+        alias align= text_h_align=
+
+        # @return [Integer, nil]
+        attr_accessor text_v_align: untyped
+
+        alias valign text_v_align
+
+        alias valign= text_v_align=
+
+        # @return [Integer, nil]
+        attr_accessor rotation: untyped
+
+        # @return [Integer, Boolean, nil]
+        attr_accessor text_wrap: untyped
+
+        # @return [Integer, Boolean, nil]
+        attr_accessor text_justlast: untyped
+
+        # @return [Integer, nil]
+        attr_accessor indent: untyped
+
+        # @return [Integer, Boolean, nil]
+        attr_accessor shrink: untyped
+
+        # @return [Integer, nil]
+        attr_accessor reading_order: untyped
+
+        # @return [String, nil]
+        attr_accessor num_format: untyped
+
+        # @return [Integer, nil]
+        attr_accessor num_format_index: untyped
+
+        # @return [Integer, String, nil]
+        attr_accessor pattern: untyped
+
+        # @return [Integer, String, nil]
+        attr_accessor bg_color: untyped
+
+        # @return [Integer, String, nil]
+        attr_accessor fg_color: untyped
+
+        # @return [Integer, Boolean, nil]
+        attr_accessor has_fill: untyped
+
+        # @return [Integer, Symbol, nil]
+        attr_accessor bottom: untyped
+
+        alias border bottom
+
+        # @return [Integer, Symbol, nil]
+        attr_accessor top: untyped
+
+        # @return [Integer, Symbol, nil]
+        attr_accessor left: untyped
+
+        # @return [Integer, Symbol, nil]
+        attr_accessor right: untyped
+
+        # @return [Integer, String, nil]
+        attr_accessor bottom_color: untyped
+
+        alias border_color bottom_color
+
+        # @return [Integer, String, nil]
+        attr_accessor top_color: untyped
+
+        # @return [Integer, String, nil]
+        attr_accessor left_color: untyped
+
+        # @return [Integer, String, nil]
+        attr_accessor right_color: untyped
+
+        # @return [Integer, nil]
+        attr_accessor diag_border: untyped
+
+        # @return [Integer, String, nil]
+        attr_accessor diag_color: untyped
+
+        # @return [Integer, nil]
+        attr_accessor diag_type: untyped
+
+        # @return [Integer, Boolean, nil]
+        attr_accessor locked: untyped
+
+        # @return [Integer, Boolean, nil]
+        attr_accessor hidden: untyped
+
+        # @return [String, nil]
+        attr_accessor hyperlink: untyped
+
+        # @return [Integer, Boolean, nil]
+        attr_accessor quote_prefix: untyped
+
+        # @return [Integer, nil]
+        attr_accessor xf_index: untyped
+
+        # @return [Integer, nil]
+        attr_accessor dxf_index: untyped
+
+        # @return [Integer, nil]
+        attr_accessor xf_id: untyped
+
+        # @return [Integer, nil]
+        attr_accessor theme: untyped
+
+        # @param formats [Object, nil]
+        # @param params [Hash{Symbol => untyped}]
+        # : (?untyped formats, ?Hash[Symbol, untyped] params) -> void
+        def initialize: (?untyped formats, ?Hash[Symbol, untyped] params) -> void
+
+        # Copies attributes from another Format
+        #
+        # @param other [Format]
+        # @return [self]
+        # : (Format other) -> self
+        def copy: (Format other) -> self
+
+        # Sets multiple properties on format
+        #
+        # @param properties [Array<Hash{Symbol => untyped}>]
+        # @return [self]
+        def set_format_properties: (*untyped properties) -> untyped
+
+        # Resolves color code through Colors helper
+        #
+        # @param color_code [untyped]
+        # @return [Integer, String]
+        # : (untyped color_code) -> untyped
+        def color: (untyped color_code) -> untyped
+
+        # Font setters & aliases
+        def set_font: (untyped val) -> untyped
+
+        def set_size: (untyped val) -> untyped
+
+        def set_color: (untyped val) -> untyped
+
+        def set_bold: (?untyped val) -> untyped
+
+        def set_italic: (?untyped val) -> untyped
+
+        def set_underline: (?untyped val) -> untyped
+
+        def set_font_strikeout: (?untyped val) -> untyped
+
+        alias set_strikeout set_font_strikeout
+
+        alias strikeout font_strikeout
+
+        alias strikeout= font_strikeout=
+
+        def set_font_outline: (?untyped val) -> untyped
+
+        def set_font_shadow: (?untyped val) -> untyped
+
+        def set_font_script: (untyped val) -> untyped
+
+        def set_font_family: (untyped val) -> untyped
+
+        def set_font_charset: (untyped val) -> untyped
+
+        def set_font_condense: (?untyped val) -> untyped
+
+        def set_font_extend: (?untyped val) -> untyped
+
+        # Alignment setters & aliases
+        def set_text_h_align: (untyped val) -> untyped
+
+        def set_text_v_align: (untyped val) -> untyped
+
+        def set_align: (untyped location) -> untyped
+
+        def set_valign: (untyped location) -> untyped
+
+        def set_center_across: (?untyped _val) -> untyped
+
+        def set_merge: (?untyped _val) -> untyped
+
+        def set_rotation: (untyped rot) -> untyped
+
+        def set_text_wrap: (?untyped val) -> untyped
+
+        def set_text_justlast: (?untyped val) -> untyped
+
+        def set_indent: (?untyped val) -> untyped
+
+        def set_shrink: (?untyped val) -> untyped
+
+        def set_reading_order: (untyped val) -> untyped
+
+        # Number format setters
+        def set_num_format: (untyped fmt) -> untyped
+
+        def set_num_format_index: (untyped val) -> untyped
+
+        # Fill setters
+        def set_fg_color: (untyped val) -> untyped
+
+        def set_bg_color: (untyped val) -> untyped
+
+        def set_pattern: (untyped val) -> untyped
+
+        def set_has_fill: (?untyped val) -> untyped
+
+        # Border setters
+        def set_border: (untyped val) -> untyped
+
+        def set_border_color: (untyped val) -> untyped
+
+        def set_bottom: (untyped val) -> untyped
+
+        def set_top: (untyped val) -> untyped
+
+        def set_left: (untyped val) -> untyped
+
+        def set_right: (untyped val) -> untyped
+
+        def set_bottom_color: (untyped val) -> untyped
+
+        def set_top_color: (untyped val) -> untyped
+
+        def set_left_color: (untyped val) -> untyped
+
+        def set_right_color: (untyped val) -> untyped
+
+        def set_diag_border: (untyped val) -> untyped
+
+        def set_diag_color: (untyped val) -> untyped
+
+        def set_diag_type: (untyped val) -> untyped
+
+        # Protection setters
+        def set_locked: (?untyped val) -> untyped
+
+        def set_hidden: (?untyped val) -> untyped
+
+        # Hyperlink & misc setters
+        def set_hyperlink: (untyped val) -> untyped
+
+        def set_quote_prefix: (?untyped val) -> untyped
+
+        def set_xf_index: (untyped val) -> untyped
+
+        def set_dxf_index: (untyped val) -> untyped
+
+        def set_xf_id: (untyped val) -> untyped
+
+        def set_theme: (untyped val) -> untyped
+
+        # Predicates matching write_xlsx methods
+        def bold?: () -> untyped
+
+        def italic?: () -> untyped
+
+        def underline?: () -> untyped
+
+        def strikeout?: () -> untyped
+
+        def outline?: () -> untyped
+
+        def shadow?: () -> untyped
+
+        def has_border?: () -> untyped
+
+        def has_fill?: () -> untyped
+
+        def has_font?: () -> untyped
+
+        def force_text_format?: () -> untyped
+
+        # Returns border style proxy
+        def border_style: () -> untyped
+
+        # Hash-like property access
+        def []: (untyped key) -> untyped
+
+        def []=: (untyped key, untyped val) -> untyped
+
+        # Converts format properties to a style hash for xlsxrb
+        #
+        # @return [Hash{Symbol => untyped}]
+        def to_style_hash: () -> untyped
+
+        # Converts format font properties to a hash suitable for Xlsxrb rich text and style builder
+        #
+        # @return [Hash{Symbol => untyped}]
+        # : () -> Hash[Symbol, untyped]
+        def to_font_hash: () -> Hash[Symbol, untyped]
+
+        alias to_xlsxrb_style to_style_hash
+      end
+    end
+  end
+end

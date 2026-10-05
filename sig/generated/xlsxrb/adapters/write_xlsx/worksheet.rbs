@@ -1,0 +1,312 @@
+# Generated from lib/xlsxrb/adapters/write_xlsx/worksheet.rb with RBS::Inline
+
+module Xlsxrb
+  module Adapters
+    module Writexlsx
+      # Represents a worksheet in WriteXLSX
+      class Worksheet
+        include Utility::Common
+
+        include Utility::CellReference
+
+        include Utility::DateTime
+
+        # Record representing a single cell entry in the worksheet
+        class CellRecord < Struct[untyped]
+          attr_accessor value(): untyped
+
+          attr_accessor format(): untyped
+
+          attr_accessor formula(): untyped
+
+          attr_accessor cached_value(): untyped
+
+          attr_accessor url(): untyped
+
+          attr_accessor comment(): untyped
+
+          attr_accessor rich_text(): untyped
+
+          attr_accessor array_formula(): untyped
+
+          attr_accessor boolean(): untyped
+
+          def self.new: (?untyped value, ?untyped format, ?untyped formula, ?untyped cached_value, ?untyped url, ?untyped comment, ?untyped rich_text, ?untyped array_formula, ?untyped boolean) -> instance
+                      | (?value: untyped, ?format: untyped, ?formula: untyped, ?cached_value: untyped, ?url: untyped, ?comment: untyped, ?rich_text: untyped, ?array_formula: untyped, ?boolean: untyped) -> instance
+        end
+
+        # @return [Object]
+        attr_accessor workbook: untyped
+
+        # @return [String]
+        attr_accessor name: untyped
+
+        # @return [Integer]
+        attr_accessor index: untyped
+
+        # @return [Numeric]
+        attr_accessor default_row_height: untyped
+
+        # @return [Hash{Array<Integer> => CellRecord}]
+        attr_reader table: untyped
+
+        # @param workbook [Object]
+        # @param name [String]
+        # @param index [Integer]
+        # : (untyped workbook, String name, ?Integer index) -> void
+        def initialize: (untyped workbook, String name, ?Integer index) -> void
+
+        attr_reader dim_rowmin: untyped
+
+        attr_reader dim_rowmax: untyped
+
+        attr_reader dim_colmin: untyped
+
+        attr_reader dim_colmax: untyped
+
+        attr_reader tab_color: untyped
+
+        attr_reader sparklines: untyped
+
+        attr_reader clean_print_area: untyped
+
+        # Returns dimensions of used area
+        #
+        # @return [Hash{Symbol => Integer}]
+        # : () -> Hash[Symbol, Integer]
+        def dimension: () -> Hash[Symbol, Integer]
+
+        # Primary cell write dispatcher supporting A1 and (row, col) notation
+        #
+        # @param row [Integer, String]
+        # @param col [Integer, Object]
+        # @param token [Object, nil]
+        # @param format [Format, nil]
+        # @param value1 [Object, nil]
+        # @param value2 [Object, nil]
+        # @return [Object]
+        def write: (untyped row, ?untyped col, ?untyped token, ?untyped format, ?untyped value1, ?untyped value2) -> untyped
+
+        # Writes a row of values starting at (row, col)
+        #
+        # @param row [Integer, String]
+        # @param col [Integer, Object]
+        # @param tokens [Array<Object>, nil]
+        # @param options [Array<Object>]
+        # @return [void]
+        def write_row: (untyped row, ?untyped col, ?untyped tokens, *untyped options) -> untyped
+
+        # Writes a column of values starting at (row, col)
+        #
+        # @param row [Integer, String]
+        # @param col [Integer, Object]
+        # @param tokens [Array<Object>, nil]
+        # @param options [Array<Object>]
+        # @return [void]
+        def write_col: (untyped row, ?untyped col, ?untyped tokens, *untyped options) -> untyped
+
+        # Writes a string to a cell
+        #
+        # @param row [Integer, String]
+        # @param col [Integer, Object]
+        # @param str [Object, nil]
+        # @param format [Format, nil]
+        # @return [void]
+        def write_string: (untyped row, ?untyped col, ?untyped str, ?untyped format) -> untyped
+
+        # Writes a numeric value to a cell
+        #
+        # @param row [Integer, String]
+        # @param col [Integer, Object]
+        # @param num [Numeric, String, nil]
+        # @param format [Format, nil]
+        # @return [void]
+        def write_number: (untyped row, ?untyped col, ?untyped num, ?untyped format) -> untyped
+
+        # Writes a blank formatted cell
+        #
+        # @param row [Integer, String]
+        # @param col [Integer, Object]
+        # @param format [Format, nil]
+        # @return [void]
+        def write_blank: (untyped row, ?untyped col, ?untyped format) -> untyped
+
+        # Writes a formula to a cell
+        #
+        # @param row [Integer, String]
+        # @param col [Integer, Object]
+        # @param formula [String]
+        # @param format [Format, nil]
+        # @param value [Object, nil]
+        # @return [void]
+        def write_formula: (untyped row, ?untyped col, ?untyped formula, ?untyped format, ?untyped value) -> untyped
+
+        # Writes an array formula to a cell or cell range
+        def write_array_formula: (untyped row1, ?untyped col1, ?untyped row2, ?untyped col2, ?untyped formula, ?untyped format, ?untyped value) -> untyped
+
+        alias write_dynamic_array_formula write_array_formula
+
+        # Writes a hyperlink to a cell
+        def write_url: (untyped row, ?untyped col, ?untyped url, ?untyped format, ?untyped str, ?untyped tip, ?untyped _ignore) -> untyped
+
+        # Writes a date or time to a cell
+        def write_date_time: (untyped row, ?untyped col, ?untyped str, ?untyped format) -> untyped
+
+        # Writes a boolean to a cell
+        def write_boolean: (untyped row, ?untyped col, ?untyped val, ?untyped format) -> untyped
+
+        # Writes a rich text formatted string to a cell
+        def write_rich_string: (untyped row, ?untyped col, *untyped fragments) -> untyped
+
+        # Writes a comment to a cell
+        def write_comment: (untyped row, ?untyped col, ?untyped string, ?untyped options) -> untyped
+
+        # Sets row properties (height, format, hidden, level, collapsed)
+        def set_row: (untyped row, ?untyped height, ?untyped format, ?untyped hidden, ?untyped level, ?untyped collapsed) -> untyped
+
+        def set_row_pixels: (untyped row, untyped pixels, *untyped) -> untyped
+
+        # Sets column properties (width, format, hidden, level, collapsed)
+        def set_column: (*untyped args) -> untyped
+
+        def set_column_pixels: (untyped firstcol, untyped lastcol, untyped pixels, *untyped) -> untyped
+
+        # Merges a range of cells with data in the first cell
+        def merge_range: (*untyped args) -> untyped
+
+        def merge_range_type: (untyped _type, *untyped) -> untyped
+
+        # Sets autofilter range on the sheet
+        def autofilter: (untyped row1, ?untyped col1, ?untyped row2, ?untyped col2) -> untyped
+
+        def filter_column: (untyped col, untyped string) -> untyped
+
+        def filter_column_list: (untyped col, untyped list) -> untyped
+
+        # Freezes rows/columns panes
+        def freeze_panes: (*untyped args) -> untyped
+
+        # Splits worksheet panes
+        def split_panes: (*untyped args) -> untyped
+
+        def set_top_left_cell: (untyped row, ?untyped col) -> untyped
+
+        # Adds an Excel table to the worksheet
+        def add_table: (*untyped args) -> untyped
+
+        # Adds sparklines to the worksheet
+        #
+        # @param options [Hash{Symbol => untyped}]
+        # @return [void]
+        # : (Hash[Symbol, untyped] options) -> void
+        def add_sparkline: (Hash[Symbol, untyped] options) -> void
+
+        # Adds data validation rule
+        def data_validation: (*untyped args) -> untyped
+
+        # Adds conditional formatting rule
+        def conditional_formatting: (*untyped args) -> untyped
+
+        # Inserts image into worksheet
+        def insert_image: (*untyped args) -> untyped
+
+        # Inserts chart into worksheet
+        def insert_chart: (*untyped args) -> untyped
+
+        # Page setup & print option methods
+        def set_landscape: () -> untyped
+
+        def set_portrait: () -> untyped
+
+        def set_paper: (untyped paper_size) -> untyped
+
+        def set_margins: (untyped left, untyped right, untyped top, untyped bottom) -> untyped
+
+        def set_margin_left: (untyped m) -> untyped
+
+        def set_margin_right: (untyped m) -> untyped
+
+        def set_margin_top: (untyped m) -> untyped
+
+        def set_margin_bottom: (untyped m) -> untyped
+
+        def set_margins_LR: (untyped m) -> untyped
+
+        def set_margins_TB: (untyped m) -> untyped
+
+        def set_header: (untyped string, ?untyped margin) -> untyped
+
+        def set_footer: (untyped string, ?untyped margin) -> untyped
+
+        def print_area: (*untyped args) -> untyped
+
+        def fit_to_pages: (untyped width, untyped height) -> untyped
+
+        def print_scale=: (untyped scale) -> untyped
+
+        def set_print_scale: (untyped scale) -> untyped
+
+        def repeat_rows: (untyped r1, untyped r2) -> untyped
+
+        def repeat_columns: (untyped c1, untyped c2) -> untyped
+
+        def print_across: (?untyped _val) -> untyped
+
+        def print_row_col_headers: (?untyped val) -> untyped
+
+        def print_black_and_white: (?untyped val) -> untyped
+
+        def center_horizontally: (?untyped val) -> untyped
+
+        def center_vertically: (?untyped val) -> untyped
+
+        def set_h_pagebreaks: (*untyped breaks) -> untyped
+
+        def set_v_pagebreaks: (*untyped breaks) -> untyped
+
+        def set_page_view: (?untyped type) -> untyped
+
+        # Worksheet state and display options
+        def hide: () -> untyped
+
+        def hidden?: () -> untyped
+
+        def activate: () -> untyped
+
+        def select: () -> untyped
+
+        def hide_gridlines: (?untyped option) -> untyped
+
+        def hide_row_col_headers: (?untyped option) -> untyped
+
+        def hide_zero: (?untyped option) -> untyped
+
+        def right_to_left: (?untyped option) -> untyped
+
+        def right_to_left?: () -> untyped
+
+        def set_tab_color: (untyped color) -> untyped
+
+        def set_zoom: (untyped zoom) -> untyped
+
+        def keep_leading_zeros: (?untyped option) -> untyped
+
+        # Converts mutable worksheet to an immutable Xlsxrb::Elements::Worksheet
+        #
+        # @param style_map [Hash{Format => Integer}, nil]
+        # @return [Xlsxrb::Elements::Worksheet]
+        def to_xlsxrb: (?untyped style_map) -> untyped
+
+        private
+
+        def normalize_cell_args: (untyped row, untyped col, untyped value, untyped format) -> untyped
+
+        def update_dimensions: (untyped row, untyped col) -> untyped
+
+        def format_datetime_val: (untyped val) -> untyped
+
+        def store_cell_record: (untyped row, untyped col, untyped record) -> untyped
+      end
+    end
+  end
+end

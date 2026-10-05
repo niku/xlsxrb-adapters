@@ -1,0 +1,183 @@
+# Generated from lib/xlsxrb/adapters/write_xlsx/workbook.rb with RBS::Inline
+
+module Xlsxrb
+  module Adapters
+    module Writexlsx
+      # Represents a workbook in WriteXLSX
+      class Workbook
+        include Utility::Common
+
+        include Utility::CellReference
+
+        include Utility::DateTime
+
+        # Built-in OpenXML number format mappings
+        BUILTIN_NUM_FMTS: untyped
+
+        # @return [Object]
+        attr_reader file: untyped
+
+        # @return [Array<Worksheet>]
+        attr_reader worksheets: untyped
+
+        alias sheets worksheets
+
+        # @return [Array<Format>]
+        attr_reader formats: untyped
+
+        # @return [Array<Chart>]
+        attr_reader charts: untyped
+
+        # @return [Colors]
+        attr_reader palette: untyped
+
+        # @return [Format]
+        attr_reader default_url_format: untyped
+
+        # @return [Boolean]
+        attr_accessor strings_to_urls: untyped
+
+        # @return [Hash{Symbol => untyped}]
+        attr_reader doc_properties: untyped
+
+        # @return [Array<Hash{Symbol => untyped}>]
+        attr_reader custom_properties: untyped
+
+        # @return [Array<Hash{Symbol => untyped}>]
+        attr_reader defined_names: untyped
+
+        # @param file [String, Pathname, IO, StringIO, nil]
+        # @param options [Hash{Symbol => untyped}]
+        # : (?untyped file, ?Hash[Symbol, untyped] options) -> void
+        def initialize: (?untyped file, ?Hash[Symbol, untyped] options) -> void
+
+        # Returns whether 1904 date system is active
+        #
+        # @return [Boolean]
+        # : () -> bool
+        def date_1904?: () -> bool
+
+        # Sets whether 1904 date system is active
+        #
+        # @param val [Boolean]
+        # @return [Boolean]
+        # : (?bool val) -> bool
+        def set_1904: (?bool val) -> bool
+
+        # Adds a new worksheet to the workbook
+        #
+        # @param name [String, nil]
+        # @yield [worksheet]
+        # @return [Worksheet]
+        # : (?String? name) ?{ (Worksheet) -> void } -> Worksheet
+        def add_worksheet: (?String? name) ?{ (Worksheet) -> void } -> Worksheet
+
+        # Adds a new format to the workbook
+        #
+        # @param properties [Hash{Symbol => untyped}]
+        # @return [Format]
+        # : (?Hash[Symbol, untyped] properties) -> Format
+        def add_format: (?Hash[Symbol, untyped] properties) -> Format
+
+        # Adds a chart to the workbook
+        #
+        # @param options [Hash{Symbol => untyped}]
+        # @return [Chart]
+        # : (?Hash[Symbol, untyped] options) -> Chart
+        def add_chart: (?Hash[Symbol, untyped] options) -> Chart
+
+        # Adds a chartsheet to the workbook
+        #
+        # @param name [String, nil]
+        # @return [Worksheet]
+        def add_chartsheet: (?untyped name) -> untyped
+
+        # Adds a shape to the workbook
+        #
+        # @param options [Hash{Symbol => untyped}]
+        # @return [Hash{Symbol => untyped}]
+        def add_shape: (?untyped options) -> untyped
+
+        # Defines a global defined name / named range
+        #
+        # @param name [String]
+        # @param formula [String]
+        # @return [void]
+        # : (String name, String formula) -> void
+        def define_name: (String name, String formula) -> void
+
+        # Sets document properties
+        #
+        # @param properties [Hash{Symbol => untyped}]
+        # @return [void]
+        def set_properties: (untyped properties) -> untyped
+
+        # Sets a custom document property
+        #
+        # @param name [String]
+        # @param value [Object]
+        # @param type [Symbol, String, nil]
+        # @return [void]
+        def set_custom_property: (untyped name, untyped value, ?untyped type) -> untyped
+
+        # Sets window size
+        def set_size: (untyped width, untyped height) -> untyped
+
+        # Sets tab ratio
+        def set_tab_ratio: (untyped ratio) -> untyped
+
+        # Sets calculation mode
+        def set_calc_mode: (untyped mode) -> untyped
+
+        # Looks up worksheet by name
+        #
+        # @param name [String]
+        # @return [Worksheet, nil]
+        # : (String name) -> Worksheet?
+        def worksheet_by_name: (String name) -> Worksheet?
+
+        alias get_worksheet_by_name worksheet_by_name
+
+        # Closes the workbook and serializes contents
+        #
+        # @return [void]
+        # : () -> void
+        def close: () -> void
+
+        # Finalizes workbook and returns binary content string
+        #
+        # @return [String]
+        # : () -> String
+        def read_string: () -> String
+
+        # Converts mutable workbook into an immutable Xlsxrb::Elements::Workbook
+        #
+        # @return [Xlsxrb::Elements::Workbook]
+        # : () -> Xlsxrb::Elements::Workbook
+        def to_xlsxrb: () -> Xlsxrb::Elements::Workbook
+
+        # Builds a WriteXLSX::Workbook instance from an Xlsxrb::Elements::Workbook
+        #
+        # @param xlsxrb_workbook [Xlsxrb::Elements::Workbook]
+        # @param file [Object, nil]
+        # @param options [Hash{Symbol => untyped}]
+        # @return [Workbook]
+        def self.from_xlsxrb: (untyped xlsxrb_workbook, ?untyped file, ?untyped options) -> untyped
+
+        private
+
+        def compile_styles: () -> untyped
+
+        def compile_font_key: (untyped fmt) -> untyped
+
+        def compile_fill_key: (untyped fmt) -> untyped
+
+        def compile_border_key: (untyped fmt) -> untyped
+
+        def resolve_num_fmt: (untyped fmt, untyped cache, untyped num_fmts_list, untyped current_custom_id) -> untyped
+
+        def compile_alignment: (untyped fmt) -> untyped
+      end
+    end
+  end
+end

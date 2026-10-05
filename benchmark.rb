@@ -163,6 +163,48 @@ RUNNER_SCRIPT = <<~'RUBY'
         end
       end
     end
+  when ["write_xlsx", "write"]
+    require "write_xlsx"
+    measure do
+      wb = WriteXLSX.new(filename)
+      ws = wb.add_worksheet("Data")
+      rows.times do |r|
+        ws.write_row(r, 0, generate_row(r, cols))
+      end
+      wb.close
+    end
+  when ["xlsxrb_adapters_write_xlsx", "write"]
+    require "xlsxrb"
+    require "xlsxrb/adapters/write_xlsx"
+    measure do
+      wb = Xlsxrb::Adapters::WriteXLSX::Workbook.new(filename)
+      ws = wb.add_worksheet("Data")
+      rows.times do |r|
+        ws.write_row(r, 0, generate_row(r, cols))
+      end
+      wb.close
+    end
+  when ["fast_excel", "write"]
+    require "fast_excel"
+    measure do
+      wb = FastExcel.open(filename)
+      ws = wb.add_worksheet("Data")
+      rows.times do |r|
+        ws.append_row(generate_row(r, cols))
+      end
+      wb.close
+    end
+  when ["xlsxrb_adapters_fast_excel", "write"]
+    require "xlsxrb"
+    require "xlsxrb/adapters/fast_excel"
+    measure do
+      wb = Xlsxrb::Adapters::FastExcel.open(filename)
+      ws = wb.add_worksheet("Data")
+      rows.times do |r|
+        ws.append_row(generate_row(r, cols))
+      end
+      wb.close
+    end
 
   when ["xlsxrb_stream", "write"]
     require "xlsxrb"
@@ -354,7 +396,7 @@ end
 
 # 1. Benchmark Write
 write_results = {}
-if %w[all caxlsx rubyxl].include?(CATEGORY)
+if %w[all caxlsx rubyxl write_xlsx fast_excel].include?(CATEGORY)
   puts "\n=== Benchmarking Write Performance ==="
   write_targets = []
   write_targets << ["xlsxrb (Streaming)", "xlsxrb_stream"]
@@ -367,6 +409,14 @@ if %w[all caxlsx rubyxl].include?(CATEGORY)
   if %w[all rubyxl].include?(CATEGORY)
     write_targets << ["xlsxrb-adapters (RubyXL)", "xlsxrb_adapters"]
     write_targets << ["rubyXL (Original)", "rubyXL"]
+  end
+  if %w[all write_xlsx].include?(CATEGORY)
+    write_targets << ["xlsxrb-adapters (WriteXLSX)", "xlsxrb_adapters_write_xlsx"]
+    write_targets << ["write_xlsx (Original 1.15.1)", "write_xlsx"]
+  end
+  if %w[all fast_excel].include?(CATEGORY)
+    write_targets << ["xlsxrb-adapters (FastExcel)", "xlsxrb_adapters_fast_excel"]
+    write_targets << ["fast_excel (Original 0.5.0)", "fast_excel"]
   end
 
   write_targets.each do |name, lib|
@@ -502,6 +552,32 @@ if %w[all creek].include?(CATEGORY)
     read_results["xlsxrb_stream"]
   ]
   print_table("Creek Read Performance", creek_read)
+end
+
+if %w[all write_xlsx].include?(CATEGORY)
+  puts "\n" + ("-" * 80)
+  puts "## WriteXLSX Migration Benchmark (write_xlsx vs. xlsxrb-adapters vs. xlsxrb)"
+
+  write_xlsx_write = [
+    write_results["write_xlsx"],
+    write_results["xlsxrb_adapters_write_xlsx"],
+    write_results["xlsxrb_inmemory"],
+    write_results["xlsxrb_stream"]
+  ]
+  print_table("WriteXLSX Write Performance", write_xlsx_write)
+end
+
+if %w[all fast_excel].include?(CATEGORY)
+  puts "\n" + ("-" * 80)
+  puts "## FastExcel Migration Benchmark (fast_excel vs. xlsxrb-adapters vs. xlsxrb)"
+
+  fast_excel_write = [
+    write_results["fast_excel"],
+    write_results["xlsxrb_adapters_fast_excel"],
+    write_results["xlsxrb_inmemory"],
+    write_results["xlsxrb_stream"]
+  ]
+  print_table("FastExcel Write Performance", fast_excel_write)
 end
 
 puts "\n" + ("=" * 80)
