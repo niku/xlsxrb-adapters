@@ -145,7 +145,7 @@ module Xlsxrb
               sheetid = attrs_str[/sheetid="([^"]*)"/, 1]
               state = attrs_str[/state="([^"]*)"/, 1]
               visible = attrs_str[/visible="([^"]*)"/, 1]
-              rid = attrs_str[/(?:r:id|id)="([^"]*)"/, 1]
+              rid = attrs_str[/(?:[A-Za-z0-9_]+:)?id="([^"]*)"/, 1]
               sheetfile = rels[rid] || ""
 
               sheet = Sheet.new(self, name || "", sheetid, state, visible, rid, sheetfile)

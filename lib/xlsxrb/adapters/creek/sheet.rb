@@ -180,8 +180,11 @@ module Xlsxrb
 
             xml_str = @book.files.file.open(path).read
 
+            current_row_num = 0
             xml_str.scan(ROW_RE) do |attrs_str, close_type, body|
               row = parse_attributes(attrs_str)
+              current_row_num = row["r"] ? row["r"].to_i : (current_row_num + 1)
+              row["r"] ||= current_row_num.to_s
               row["cells"] = {}
               cells = {}
               last_cell = nil
@@ -189,10 +192,17 @@ module Xlsxrb
               if close_type == "/>" || body.nil? || body.empty?
                 y << (include_meta_data ? row : cells)
               else
+                col_idx = 0
                 body.scan(CELL_RE) do |c_attrs_str, c_close, c_body|
                   c_attrs = parse_attributes(c_attrs_str)
-                  cell_ref = c_attrs["r"]
-                  last_cell = cell_ref if cell_ref
+                  cell_ref = c_attrs["r"] || "#{Utils.index_to_column(col_idx)}#{row["r"]}"
+                  col_idx = if c_attrs["r"]
+                              row_col = Xlsxrb::Utils.ref_to_row_col(c_attrs["r"])
+                              row_col ? row_col[1] + 1 : col_idx + 1
+                            else
+                              col_idx + 1
+                            end
+                  last_cell = cell_ref
 
                   next if c_close == "/>" || c_body.nil? || c_body.empty?
 
@@ -204,7 +214,7 @@ module Xlsxrb
                   val_raw = v_match || t_match
 
                   if val_raw && cell_ref
-                    val_decoded = decode_entities(val_raw)
+                    val_decoded = decode_entities(val_raw.strip)
                     cells[cell_ref] = convert(val_decoded, cell_type, cell_style_idx)
                   end
                 end
@@ -270,7 +280,7 @@ module Xlsxrb
           return nil unless file_exist?(sheet_filepath)
 
           sheet_xml = @book.files.file.open(sheet_filepath).read
-          drawing_rid = sheet_xml[/<(?:[A-Za-z0-9_]+:)?drawing\b[^>]*?(?:r:id|id)="([^"]*)"/, 1]
+          drawing_rid = sheet_xml[/<(?:[A-Za-z0-9_]+:)?drawing\b[^>]*?(?:[A-Za-z0-9_]+:)?id="([^"]*)"/, 1]
           return nil unless drawing_rid
 
           sheet_rels_filepath = expand_to_rels_path(sheet_filepath)

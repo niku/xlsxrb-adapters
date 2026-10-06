@@ -17,7 +17,7 @@ module Xlsxrb
         include Helpers
 
         ROW_RE = %r{<row\b([^>]*?)>(.*?)</row>|<row\b([^>]*?)/>}m
-        CELL_RE = %r{<c\b([^>]*?)(?:>(?:<f\b[^>]*?(?:/>|>([^<]*)</f>))?(?:<v>([^<]*)</v>)?(?:<is>(.*?)</is>)?.*?</c>|/>)}m
+        CELL_RE = %r{<c\b([^>]*?)(?:>\s*(?:<f\b[^>]*?(?:/>|>([^<]*)</f>))?\s*(?:<v>([^<]*)</v>)?\s*(?:<is>(.*?)</is>)?.*?</c>|/>)}m
 
         # Returns current mode (:array or :hash).
         # @return [Symbol]
@@ -367,7 +367,7 @@ module Xlsxrb
           end
 
           xml = raw_sheet_xml
-          max_column = 0
+          max_column = -1
           dim_match = xml[/<dimension\s+ref="([^"]+)"/, 1]
           if dim_match
             _first_cell, last_cell = dim_match.split(":")
@@ -375,7 +375,7 @@ module Xlsxrb
               max_column = column_index(last_cell)
               unless @workbook&.trim_empty_rows
                 max_row = last_cell[/\d+$/].to_i
-                return [max_row, max_column.zero? ? 0 : max_column + 1]
+                return [max_row, max_column.negative? ? 0 : max_column + 1]
               end
             end
           end
@@ -383,19 +383,25 @@ module Xlsxrb
           # Scan sheetData looking for cell bounds
           max_row = 0
           curr_row = 0
-          xml.scan(%r{<row\b([^>]*?)>(.*?)</row>}m) do |attrs, body|
+          xml.scan(ROW_RE) do |attrs1, body, attrs2|
+            attrs = attrs1 || attrs2
             r_attr = attrs[/r="(\d+)"/, 1]
             curr_row = r_attr ? r_attr.to_i : (curr_row + 1)
-            body.scan(%r{<c\s+r="([A-Za-z0-9]+)"[^>]*>(?:<f\b[^>]*?(?:/>|>([^<]*)</f>))?(?:<v>([^<]*)</v>|<is>(.*?)</is>)}m) do |ref, _f, v, is|
+            next unless body
+
+            col_idx = 0
+            body.scan(CELL_RE) do |c_attrs, _f, v, is|
+              r = c_attrs[/r="([A-Za-z0-9]+)"/, 1]
+              col = r ? column_index(r) : col_idx
               if (v && !v.empty?) || (is && !is.empty?)
-                col = column_index(ref)
                 max_column = col if col > max_column
                 max_row = curr_row if curr_row > max_row
               end
+              col_idx = col + 1
             end
           end
 
-          [max_row, max_column.zero? ? 0 : max_column + 1]
+          [max_row, max_column.negative? ? 0 : max_column + 1]
         end
 
         #: (String? cell_type, String? style_id, String? val_str, String? is_xml) -> untyped
@@ -405,7 +411,7 @@ module Xlsxrb
                   is_xml.scan(%r{<t\b[^>]*>(.*?)</t>}m) { |m| text << m[0] }
                   text
                 else
-                  val_str
+                  val_str&.strip
                 end
           return nil if val.nil? || val.empty?
 

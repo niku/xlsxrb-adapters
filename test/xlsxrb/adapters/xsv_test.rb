@@ -370,4 +370,64 @@ class XlsxrbAdaptersXsvTest < Test::Unit::TestCase
     assert_equal 13, wb_trim[0].last_row
     wb_trim.close
   end
+
+  def test_whitespace_and_newlines_in_cell_tags
+    sheet_xml = <<~XML
+      <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+      <worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">
+        <sheetData>
+          <row r="1">
+            <c r="A1" t="str">
+              <f>SUM(1, 2)</f>
+              <v>
+                3
+              </v>
+            </c>
+            <c r="B1" t="inlineStr">
+              <is>
+                <t>Hello World</t>
+              </is>
+            </c>
+          </row>
+        </sheetData>
+      </worksheet>
+    XML
+
+    sheet = Xlsxrb::Adapters::Xsv::Sheet.new(nil, sheet_xml, { sheet_id: 1, name: "Test" })
+    rows = sheet.to_a
+    assert_equal 1, rows.size
+    assert_equal ["3", "Hello World"], rows[0]
+  end
+
+  def test_omitted_row_r_attribute_sequential_fallback
+    sheet_xml = <<~XML
+      <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+      <worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">
+        <sheetData>
+          <row>
+            <c r="A1" t="str"><v>Row 1</v></c>
+          </row>
+          <row>
+            <c r="A2" t="str"><v>Row 2</v></c>
+          </row>
+          <row r="5">
+            <c r="A5" t="str"><v>Row 5</v></c>
+          </row>
+          <row>
+            <c r="A6" t="str"><v>Row 6</v></c>
+          </row>
+        </sheetData>
+      </worksheet>
+    XML
+
+    sheet = Xlsxrb::Adapters::Xsv::Sheet.new(nil, sheet_xml, { sheet_id: 1, name: "Test" })
+    rows = sheet.to_a
+    assert_equal 6, rows.size
+    assert_equal ["Row 1"], rows[0]
+    assert_equal ["Row 2"], rows[1]
+    assert_equal [nil], rows[2]
+    assert_equal [nil], rows[3]
+    assert_equal ["Row 5"], rows[4]
+    assert_equal ["Row 6"], rows[5]
+  end
 end

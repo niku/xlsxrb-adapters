@@ -340,4 +340,76 @@ class XlsxrbAdaptersCreekTest < Test::Unit::TestCase
     assert_equal "A2", img.cell_ref
     book.close
   end
+
+  def test_omitted_row_r_attribute_sequential_fallback
+    sheet_xml = <<~XML
+      <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+      <worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">
+        <sheetData>
+          <row>
+            <c r="A1" t="str"><v>Row 1</v></c>
+          </row>
+          <row>
+            <c r="A2" t="str"><v>Row 2</v></c>
+          </row>
+          <row r="5">
+            <c r="A5" t="str"><v>Row 5</v></c>
+          </row>
+          <row>
+            <c r="A6" t="str"><v>Row 6</v></c>
+          </row>
+        </sheetData>
+      </worksheet>
+    XML
+
+    file_mock = Object.new
+    file_mock.define_singleton_method(:exist?) { |_path| true }
+    file_mock.define_singleton_method(:open) { |_path| StringIO.new(sheet_xml) }
+    files_mock = Struct.new(:file).new(file_mock)
+    shared_strings_mock = Struct.new(:dictionary).new({})
+    book_mock = Struct.new(:files, :shared_strings, :base_date, :style_types).new(files_mock, shared_strings_mock, Date.new(1899, 12, 30), [])
+
+    sheet = Xlsxrb::Adapters::Creek::Sheet.new(book_mock, "Test", 1, "visible", true, "rId1", "worksheets/sheet1.xml")
+    rows = sheet.rows.to_a
+    assert_equal 4, rows.size
+    assert_equal "Row 1", rows[0]["A1"]
+    assert_equal "Row 2", rows[1]["A2"]
+    assert_equal "Row 5", rows[2]["A5"]
+    assert_equal "Row 6", rows[3]["A6"]
+  end
+
+  def test_flexible_namespace_sheet_rid
+    wb_xml = <<~XML
+      <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+      <workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:d3p1="http://schemas.openxmlformats.org/officeDocument/2006/relationships">
+        <sheets>
+          <sheet name="CustomPrefix" sheetId="1" d3p1:id="rId1"/>
+        </sheets>
+      </workbook>
+    XML
+    rels_xml = <<~XML
+      <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+      <Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+        <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml"/>
+      </Relationships>
+    XML
+
+    file_mock = Object.new
+    file_mock.define_singleton_method(:exist?) { |_path| true }
+    file_mock.define_singleton_method(:open) do |path|
+      case path
+      when "xl/workbook.xml" then StringIO.new(wb_xml)
+      when "xl/_rels/workbook.xml.rels" then StringIO.new(rels_xml)
+      else StringIO.new("")
+      end
+    end
+    files_mock = Struct.new(:file).new(file_mock)
+    book = Xlsxrb::Adapters::Creek::Book.allocate
+    book.instance_variable_set(:@files, files_mock)
+    sheets = book.sheets
+    assert_equal 1, sheets.size
+    assert_equal "CustomPrefix", sheets.first.name
+    assert_equal "rId1", sheets.first.rid
+    assert_equal "worksheets/sheet1.xml", sheets.first.instance_variable_get(:@sheetfile)
+  end
 end

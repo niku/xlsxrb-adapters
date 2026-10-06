@@ -172,7 +172,7 @@ module Xlsxrb
         def load_images_pathnames_from_hashes
           @drawings.each do |entry|
             body = entry[:body]
-            embed = body[/<(?:[A-Za-z0-9_]+:)?blip\b[^>]*?(?:r:embed|embed)="([^"]*)"/, 1]
+            embed = body[/<(?:[A-Za-z0-9_]+:)?blip\b[^>]*?(?:[A-Za-z0-9_]+:)?embed="([^"]*)"/, 1]
             next unless embed
 
             target = @drawings_rels.is_a?(Hash) ? @drawings_rels[embed] : nil

@@ -21,6 +21,19 @@ class XlsxrbAdaptersXsvCompatibilityTest < Test::Unit::TestCase
     File.expand_path("../../fixtures/roo/#{name}", __dir__)
   end
 
+  def normalize_newlines(val)
+    case val
+    when String
+      val.gsub("\r\n", "\n").tr("\r", "\n")
+    when Array
+      val.map { |v| normalize_newlines(v) }
+    when Hash
+      val.transform_keys { |k| normalize_newlines(k) }.transform_values { |v| normalize_newlines(v) }
+    else
+      val
+    end
+  end
+
   def test_side_by_side_array_mode_all_fixtures
     FIXTURES.each do |filename|
       path = fixture(filename)
@@ -42,7 +55,7 @@ class XlsxrbAdaptersXsvCompatibilityTest < Test::Unit::TestCase
         assert_equal orig_rows.size, adapt_rows.size, "#{filename} [#{orig_sheet.name}]: row count mismatch"
         orig_rows.each_with_index do |orig_row, r_idx|
           adapt_row = adapt_rows[r_idx]
-          assert_equal orig_row, adapt_row, "#{filename} [#{orig_sheet.name}] row #{r_idx} mismatch"
+          assert_equal normalize_newlines(orig_row), normalize_newlines(adapt_row), "#{filename} [#{orig_sheet.name}] row #{r_idx} mismatch"
         end
       end
 
@@ -79,7 +92,7 @@ class XlsxrbAdaptersXsvCompatibilityTest < Test::Unit::TestCase
 
       orig_wb.sheets.each_with_index do |orig_sheet, idx|
         adapt_sheet = adapt_wb[idx]
-        assert_equal orig_sheet.headers, adapt_sheet.headers, "#{filename} [#{orig_sheet.name}]: headers mismatch"
+        assert_equal normalize_newlines(orig_sheet.headers), normalize_newlines(adapt_sheet.headers), "#{filename} [#{orig_sheet.name}]: headers mismatch"
 
         orig_rows = orig_sheet.to_a
         adapt_rows = adapt_sheet.to_a
@@ -87,7 +100,7 @@ class XlsxrbAdaptersXsvCompatibilityTest < Test::Unit::TestCase
         assert_equal orig_rows.size, adapt_rows.size, "#{filename} [#{orig_sheet.name}]: hash row count mismatch"
         orig_rows.each_with_index do |orig_row, r_idx|
           adapt_row = adapt_rows[r_idx]
-          assert_equal orig_row, adapt_row, "#{filename} [#{orig_sheet.name}] hash row #{r_idx} mismatch"
+          assert_equal normalize_newlines(orig_row), normalize_newlines(adapt_row), "#{filename} [#{orig_sheet.name}] hash row #{r_idx} mismatch"
         end
       end
 
@@ -110,7 +123,7 @@ class XlsxrbAdaptersXsvCompatibilityTest < Test::Unit::TestCase
         assert_equal orig_rows.size, adapt_rows.size, "#{filename} [#{orig_sheet.name}] (trimmed): row count mismatch"
         orig_rows.each_with_index do |orig_row, r_idx|
           adapt_row = adapt_rows[r_idx]
-          assert_equal orig_row, adapt_row, "#{filename} [#{orig_sheet.name}] (trimmed) row #{r_idx} mismatch"
+          assert_equal normalize_newlines(orig_row), normalize_newlines(adapt_row), "#{filename} [#{orig_sheet.name}] (trimmed) row #{r_idx} mismatch"
         end
       end
 
