@@ -364,6 +364,35 @@ RUNNER_SCRIPT = <<~'RUBY'
       end
       c.close
     end
+  when ["simple_xlsx_reader", "read"]
+    require "simple_xlsx_reader"
+    measure do
+      doc = SimpleXlsxReader.open(filename)
+      count = 0
+      doc.sheets.each do |sheet|
+        sheet.rows.each do |row|
+          row.each do |cell|
+            _val = cell
+            count += 1
+          end
+        end
+      end
+    end
+  when ["xlsxrb_adapters_simple_xlsx_reader", "read"]
+    require "xlsxrb"
+    require "xlsxrb/adapters/simple_xlsx_reader"
+    measure do
+      doc = Xlsxrb::Adapters::SimpleXlsxReader.open(filename)
+      count = 0
+      doc.sheets.each do |sheet|
+        sheet.rows.each do |row|
+          row.each do |cell|
+            _val = cell
+            count += 1
+          end
+        end
+      end
+    end
   else
     raise "Unknown benchmark target: #{lib} #{mode}"
   end
@@ -456,7 +485,7 @@ end
 
 # 2. Benchmark Read (for libraries supporting read/parse, e.g. rubyXL, roo, xsv, creek)
 read_results = {}
-if %w[all rubyxl roo xsv creek].include?(CATEGORY)
+if %w[all rubyxl roo xsv creek simple_xlsx_reader].include?(CATEGORY)
   ref_file = "tmp/bench_reference_data.xlsx"
   puts "\n[Setup] Generating reference file (#{ROWS} x #{COLS}) for read benchmarks..."
   run_isolated("xlsxrb_stream", "write", ROWS, COLS, ref_file)
@@ -481,6 +510,10 @@ if %w[all rubyxl roo xsv creek].include?(CATEGORY)
   if %w[all creek].include?(CATEGORY)
     read_targets << ["xlsxrb-adapters (Creek)", "xlsxrb_adapters_creek"]
     read_targets << ["creek (Original 2.6.3)", "creek"]
+  end
+  if %w[all simple_xlsx_reader].include?(CATEGORY)
+    read_targets << ["xlsxrb-adapters (SimpleXlsxReader)", "xlsxrb_adapters_simple_xlsx_reader"]
+    read_targets << ["simple_xlsx_reader (Original 5.1.0)", "simple_xlsx_reader"]
   end
 
   read_targets.each do |name, lib|
@@ -618,6 +651,19 @@ if %w[all xlsxtream].include?(CATEGORY)
     write_results["xlsxrb_stream"]
   ]
   print_table("Xlsxtream Write Performance", xlsxtream_write)
+end
+
+if %w[all simple_xlsx_reader].include?(CATEGORY)
+  puts "\n" + ("-" * 80)
+  puts "## SimpleXlsxReader Migration Benchmark (simple_xlsx_reader vs. xlsxrb-adapters vs. xlsxrb)"
+
+  simple_xlsx_reader_read = [
+    read_results["simple_xlsx_reader"],
+    read_results["xlsxrb_adapters_simple_xlsx_reader"],
+    read_results["xlsxrb_inmemory"],
+    read_results["xlsxrb_stream"]
+  ]
+  print_table("SimpleXlsxReader Read Performance", simple_xlsx_reader_read)
 end
 
 puts "\n" + ("=" * 80)

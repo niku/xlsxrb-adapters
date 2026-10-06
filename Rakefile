@@ -58,6 +58,12 @@ namespace :test do
     t.libs << "lib"
     t.test_files = FileList["test/xlsxrb/adapters/xlsxtream*test.rb"]
   end
+
+  Rake::TestTask.new(:simple_xlsx_reader) do |t|
+    t.libs << "test"
+    t.libs << "lib"
+    t.test_files = FileList["test/xlsxrb/adapters/simple_xlsx_reader*test.rb"]
+  end
 end
 
 RuboCop::RakeTask.new
@@ -73,8 +79,8 @@ task typecheck: :sig do
   sh "bundle exec steep check"
 end
 
-desc "Run all compatibility suites (rubyXL, caxlsx, roo, xsv, creek, fast_excel, write_xlsx, and xlsxtream)"
-task compatibility: ["compatibility:ruby_xl", "compatibility:caxlsx", "compatibility:roo", "compatibility:xsv", "compatibility:creek", "compatibility:fast_excel", "compatibility:write_xlsx", "compatibility:xlsxtream"]
+desc "Run all compatibility suites (rubyXL, caxlsx, roo, xsv, creek, fast_excel, write_xlsx, xlsxtream, and simple_xlsx_reader)"
+task compatibility: ["compatibility:ruby_xl", "compatibility:caxlsx", "compatibility:roo", "compatibility:xsv", "compatibility:creek", "compatibility:fast_excel", "compatibility:write_xlsx", "compatibility:xlsxtream", "compatibility:simple_xlsx_reader"]
 
 namespace :compatibility do
   desc "Run official rubyXL RSpec compatibility suite"
@@ -115,6 +121,11 @@ namespace :compatibility do
   desc "Run xlsxtream compatibility test suite"
   task :xlsxtream do
     sh "bundle exec ruby bin/compatibility_runner xlsxtream"
+  end
+
+  desc "Run simple_xlsx_reader compatibility test suite"
+  task :simple_xlsx_reader do
+    sh "bundle exec ruby bin/compatibility_runner simple_xlsx_reader"
   end
 end
 

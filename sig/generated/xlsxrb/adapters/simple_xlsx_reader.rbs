@@ -1,0 +1,59 @@
+# Generated from lib/xlsxrb/adapters/simple_xlsx_reader.rb with RBS::Inline
+
+module Xlsxrb
+  module Adapters
+    # SimpleXlsxReader adapter module providing a drop-in compatible interface for
+    # simple_xlsx_reader without hijacking the global ::SimpleXlsxReader namespace by default.
+    module SimpleXlsxReader
+      # Base date for the 1900 date system.
+      DATE_SYSTEM_1900: untyped
+
+      # Base date for the 1904 date system.
+      DATE_SYSTEM_1904: untyped
+
+      # Raised when a cell fails to cast into its designated type.
+      class CellLoadError < StandardError
+      end
+
+      # Alias for Document::Sheet
+      Sheet: untyped
+
+      # Configuration options container matching SimpleXlsxReader.configuration.
+      class Configuration < Struct[untyped]
+        attr_accessor catch_cell_load_errors(): untyped
+
+        attr_accessor auto_slurp(): untyped
+
+        def self.new: (?untyped catch_cell_load_errors, ?untyped auto_slurp) -> instance
+                    | (?catch_cell_load_errors: untyped, ?auto_slurp: untyped) -> instance
+      end
+
+      # Global configuration object.
+      #
+      # @return [Configuration]
+      # : () -> Configuration
+      def self.configuration: () -> Configuration
+
+      # Opens and loads an XLSX spreadsheet from a file path.
+      #
+      # @param file_path [String]
+      # @return [Document, Object]
+      # : (String file_path) ?{ (Document) -> untyped } -> untyped
+      def self.open: (String file_path) ?{ (Document) -> untyped } -> untyped
+
+      # Parses an XLSX spreadsheet from a string or IO stream.
+      #
+      # @param string_or_io [String, IO, StringIO]
+      # @return [Document, Object]
+      # : (untyped string_or_io) ?{ (Document) -> untyped } -> untyped
+      def self.parse: (untyped string_or_io) ?{ (Document) -> untyped } -> untyped
+
+      # Converts an Xlsxrb::Elements::Workbook into a SimpleXlsxReader Document adapter instance.
+      #
+      # @param xlsxrb_workbook [Xlsxrb::Elements::Workbook]
+      # @return [Document]
+      # : (Xlsxrb::Elements::Workbook xlsxrb_workbook) -> Document
+      def self.from_xlsxrb: (Xlsxrb::Elements::Workbook xlsxrb_workbook) -> Document
+    end
+  end
+end

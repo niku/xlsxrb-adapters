@@ -1,0 +1,26 @@
+# Generated from lib/xlsxrb/adapters/simple_xlsx_reader/hyperlink.rb with RBS::Inline
+
+module Xlsxrb
+  module Adapters
+    module SimpleXlsxReader
+      # Represents a cell hyperlink value as a String subclass with #url and #friendly_name.
+      # Matches SimpleXlsxReader::Hyperlink.
+      class Hyperlink < String
+        # Target URL of the hyperlink.
+        # @return [String, nil]
+        # : String?
+        attr_reader url: untyped
+
+        # Visible label or friendly name of the hyperlink.
+        # @return [String, nil]
+        # : String?
+        attr_reader friendly_name: untyped
+
+        # @param url [String] Target URL.
+        # @param friendly_name [Object, nil] Optional display name.
+        # : (String url, ?untyped friendly_name) -> void
+        def initialize: (String url, ?untyped friendly_name) -> void
+      end
+    end
+  end
+end

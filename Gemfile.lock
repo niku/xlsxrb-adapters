@@ -147,6 +147,9 @@ GEM
       rubyzip (>= 3.2.2)
     rubyzip (3.7.0)
     securerandom (0.4.1)
+    simple_xlsx_reader (5.1.0)
+      nokogiri
+      rubyzip
     steep (2.1.0)
       concurrent-ruby (>= 1.1.10)
       csv (>= 3.0.9)
@@ -205,6 +208,7 @@ DEPENDENCIES
   rubocop
   rubocop-rake
   rubyXL
+  simple_xlsx_reader
   steep
   test-unit
   write_xlsx
@@ -283,6 +287,7 @@ CHECKSUMS
   rubyXL (3.4.38) sha256=6b3f46a5ff8ec9903a562604a379a6b79b67cdec73515162b1785bd6092e6ce6
   rubyzip (3.7.0) sha256=65c19294da75297a939006f3516deacc33185fbd721ff1954f7a231db6d3e121
   securerandom (0.4.1) sha256=cc5193d414a4341b6e225f0cb4446aceca8e50d5e1888743fac16987638ea0b1
+  simple_xlsx_reader (5.1.0) sha256=95b6e1ab6fbefcd70d1d127cc816098ff89d114f4fbf552515852c1a798eb6d9
   steep (2.1.0) sha256=1daf53573283b0e6d404a7273cca41fe5c15b14ece05167934f5ffc179e171d9
   strscan (3.1.8) sha256=aae2db611a225559f21ffbb71765c9a4e60fd262534a9ea84f4f11c7f32f679e
   terminal-table (4.0.0) sha256=f504793203f8251b2ea7c7068333053f0beeea26093ec9962e62ea79f94301d2

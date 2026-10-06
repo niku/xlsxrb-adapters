@@ -1,0 +1,198 @@
+# Generated from lib/xlsxrb/adapters/simple_xlsx_reader/loader.rb with RBS::Inline
+
+module Xlsxrb
+  module Adapters
+    module SimpleXlsxReader
+      # Main loading and parsing coordinator matching SimpleXlsxReader::Loader.
+      class Loader
+        # Shared strings table array.
+        # @return [Array<String>, nil]
+        # : Array[String]?
+        attr_accessor shared_strings: untyped
+
+        # Worksheet parsers array.
+        # @return [Array<SheetParser>, nil]
+        # : Array[SheetParser]?
+        attr_accessor sheet_parsers: untyped
+
+        # Table of contents mapping sheet name to 0-based sheet index.
+        # @return [Hash<String, Integer>, nil]
+        # : Hash[String, Integer]?
+        attr_accessor sheet_toc: untyped
+
+        # Style types array matching cellXfs indices.
+        # @return [Array<Symbol>, nil]
+        # : Array[Symbol]?
+        attr_accessor style_types: untyped
+
+        # Base date for date serial calculation.
+        # @return [Date, nil]
+        # : Date?
+        attr_accessor base_date: untyped
+
+        # Sheet relationship IDs mapping sheet name to r:id.
+        # @return [Hash<String, String>, nil]
+        # : Hash[String, String]?
+        attr_accessor sheet_r_ids: untyped
+
+        # Initializes and returns worksheet representations for all sheets in the document.
+        #
+        # @return [Array<Document::Sheet>]
+        # : () -> Array[Document::Sheet]
+        def init_sheets: () -> Array[Document::Sheet]
+
+        # Entry proxy wrapping raw entry data with an IO-like interface.
+        class EntryProxy
+          # @param data [String]
+          # : (String data) -> void
+          def initialize: (String data) -> void
+
+          # Yields or returns a StringIO stream for this entry.
+          #
+          # @yield [io]
+          # @return [StringIO, untyped]
+          # : () ?{ (StringIO) -> untyped } -> untyped
+          def get_input_stream: () ?{ (StringIO) -> untyped } -> untyped
+
+          # Returns decoded entry string (auto-decoding UTF-16LE/BE if BOM is detected).
+          #
+          # @return [String]
+          # : () -> String
+          def read: () -> String
+        end
+
+        # Internal archive reader matching SimpleXlsxReader::Loader::ZipReader.
+        class ZipReader < Struct[untyped]
+          attr_accessor string_or_io(): untyped
+
+          attr_accessor loader(): untyped
+
+          def self.new: (?untyped string_or_io, ?untyped loader) -> instance
+                      | (?string_or_io: untyped, ?loader: untyped) -> instance
+        end
+
+        # Core cell typecasting method matching SimpleXlsxReader::Loader.cast.
+        #
+        # @param value [String, nil] Raw string value from cell.
+        # @param type [String, Symbol, nil] Cell type code or style symbol.
+        # @param style [Symbol, String, nil] Resolved style symbol.
+        # @param options [Hash] Context options (:shared_strings, :base_date, :url).
+        # @return [Object, nil]
+        # rubocop:disable Lint/DuplicateBranch
+        # : (String? value, (String | Symbol | nil) type, (Symbol | String | nil) style, ?Hash[Symbol, untyped] options) -> untyped
+        def self.cast: (String? value, String | Symbol | nil type, Symbol | String | nil style, ?Hash[Symbol, untyped] options) -> untyped
+
+        # Workbook XML parser matching SimpleXlsxReader::Loader::WorkbookParser.
+        class WorkbookParser < Struct[untyped]
+          attr_accessor file_io(): untyped
+
+          def self.new: (?untyped file_io) -> instance
+                      | (?file_io: untyped) -> instance
+        end
+
+        # Map of non-custom numFmtId to casting symbol
+        NUM_FMT_MAP: untyped
+
+        NumFmtMap: untyped
+
+        # Styles XML parser matching SimpleXlsxReader::Loader::StyleTypesParser.
+        class StyleTypesParser < Struct[untyped]
+          attr_accessor file_io(): untyped
+
+          def self.new: (?untyped file_io) -> instance
+                      | (?file_io: untyped) -> instance
+        end
+
+        # Shared strings parser matching SimpleXlsxReader::Loader::SharedStringsParser.
+        class SharedStringsParser < Struct[untyped]
+          attr_accessor file(): untyped
+
+          def self.new: (?untyped file) -> instance
+                      | (?file: untyped) -> instance
+        end
+
+        # Worksheet parser matching SimpleXlsxReader::Loader::SheetParser.
+        class SheetParser
+          # Stream IO for worksheet relationships file (_rels/sheetN.xml.rels).
+          # @return [IO, StringIO, nil]
+          # : untyped
+          attr_accessor xrels_file: untyped
+
+          # Hyperlinks mapping cell coordinate (e.g. "A1") to URL.
+          # @return [Hash<String, String>, nil]
+          # : Hash[String, String]?
+          attr_accessor hyperlinks_by_cell: untyped
+
+          # Sheet name.
+          # @return [String, nil]
+          # : String?
+          attr_accessor name: untyped
+
+          # Cell load errors recorded during parsing.
+          # @return [Hash<Array(Integer, Integer), String>]
+          # : Hash[[Integer, Integer], String]
+          attr_reader load_errors: untyped
+
+          # @param file_io [IO, StringIO]
+          # @param loader [Loader]
+          # : (file_io: untyped, loader: Loader) -> void
+          def initialize: (file_io: untyped, loader: Loader) -> void
+
+          # Parses worksheet rows, invoking the block for each row.
+          #
+          # @param headers [Boolean, Proc, Hash]
+          # @yield [row]
+          # @return [void]
+          # : (?headers: untyped) { (untyped) -> void } -> void
+          def parse: (?headers: untyped) { (untyped) -> void } -> void
+
+          # Returns the column length (number of columns) defined for the sheet.
+          #
+          # @return [Integer]
+          # : () -> Integer
+          def column_length: () -> Integer
+
+          # Returns the column letter string of the last cell from sheet dimension.
+          #
+          # @return [String, nil]
+          # : () -> String?
+          def last_cell_letter: () -> String?
+
+          # Converts a column letter string (e.g. "A", "Z", "AA") to a 1-based column number.
+          #
+          # @param column_letter [String]
+          # @return [Integer]
+          # : (String column_letter) -> Integer
+          def column_letter_to_number: (String column_letter) -> Integer
+
+          # Converts a 0-based column number to a column letter string (e.g. 0 -> "A").
+          #
+          # @param col_num [Integer]
+          # @return [String]
+          # : (Integer col_num) -> String
+          def column_number_to_letter: (Integer col_num) -> String
+
+          private
+
+          # : (Array[untyped] current_row) -> void
+          def process_row: (Array[untyped] current_row) -> void
+
+          # : (Array[untyped] current_row) -> void
+          def test_headers_hash_against_current_row: (Array[untyped] current_row) -> void
+
+          # : (headers: bool) -> void
+          def possibly_yield_empty_rows: (headers: bool) -> void
+
+          # : (Array[untyped] row, headers: bool) -> void
+          def yield_row: (Array[untyped] row, headers: bool) -> void
+
+          # : (String sheet_xml) -> void
+          def load_gui_hyperlinks: (String sheet_xml) -> void
+
+          # : (String? str) -> String
+          def decode_xml: (String? str) -> String
+        end
+      end
+    end
+  end
+end

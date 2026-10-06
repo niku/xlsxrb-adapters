@@ -1,0 +1,9 @@
+# Generated from lib/xlsxrb/adapters/simple_xlsx_reader/version.rb with RBS::Inline
+
+module Xlsxrb
+  module Adapters
+    module SimpleXlsxReader
+      VERSION: ::String
+    end
+  end
+end
