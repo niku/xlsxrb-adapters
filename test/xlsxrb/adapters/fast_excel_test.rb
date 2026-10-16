@@ -494,5 +494,21 @@ class XlsxrbAdaptersFastExcelTest < Test::Unit::TestCase
   def test_color_to_hex_fallback_to_xlsxrb_colors
     assert_equal 0x000080, Xlsxrb::Adapters::FastExcel.color_to_hex(:navy)
     assert_equal 0xFF0000, Xlsxrb::Adapters::FastExcel.color_to_hex("#FF0000")
+    assert_raise(ArgumentError) { Xlsxrb::Adapters::FastExcel.color_to_hex(:aaa) }
+  end
+
+  def test_auto_width_with_nil_and_close_transform
+    wb = Xlsxrb::Adapters::FastExcel.open
+    ws = wb.add_worksheet
+    ws.auto_width = true
+    ws << [nil, "hello"]
+    assert_include ws.calculated_column_widths.keys, 0
+    assert_nil ws.calculated_column_widths[0]
+    assert ws.calculated_column_widths[1].positive?
+    before_width = ws.calculated_column_widths[1]
+    ws.close
+    assert_equal Xlsxrb::Adapters::FastExcel::DEF_COL_WIDTH, ws.calculated_column_widths[0]
+    assert_equal before_width, ws.calculated_column_widths[1]
+    wb.close
   end
 end

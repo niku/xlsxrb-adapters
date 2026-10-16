@@ -352,4 +352,23 @@ class XlsxrbAdaptersRooTest < Test::Unit::TestCase
     assert_equal ["B4 (mit Kommentar)"], sheet_values[0]
     assert_equal ["B5 (mit Kommentar)"], sheet_values[1]
   end
+
+  def test_missing_file_raises_io_error
+    err = assert_raise(IOError) do
+      Xlsxrb::Adapters::Roo::Excelx.new("nonexistent_dir/missing.xlsx")
+    end
+    assert_include err.message, "does not exist"
+  end
+
+  def test_non_xlsx_zip_raises_argument_error
+    io = StringIO.new
+    Xlsxrb::Ooxml::ZipWriter.open(io) do |zw|
+      zw.add_entry("content.xml", "<office/>")
+    end
+    io.rewind
+    err = assert_raise(ArgumentError) do
+      Xlsxrb::Adapters::Roo::Excelx.new(io)
+    end
+    assert_include err.message, "missing required workbook file"
+  end
 end

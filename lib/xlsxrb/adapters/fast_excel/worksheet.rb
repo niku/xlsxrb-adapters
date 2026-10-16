@@ -150,6 +150,7 @@ module Xlsxrb
             add_text_width(value.url, format, cell_number) if auto_width?
           elsif value.nil?
             write_blank(row_number, cell_number, format)
+            add_text_width(value, format, cell_number) if auto_width?
           else
             str = value.to_s
             write_string(row_number, cell_number, str, format)
@@ -758,7 +759,7 @@ module Xlsxrb
         def close
           return unless auto_width?
 
-          @column_widths.transform_values { |w| w || DEF_COL_WIDTH }.each do |num, width|
+          @column_widths.transform_values! { |w| w || DEF_COL_WIDTH }.each do |num, width|
             set_column_width(num, width + 0.2)
           end
         end

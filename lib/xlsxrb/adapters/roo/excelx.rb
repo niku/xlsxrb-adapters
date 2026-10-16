@@ -482,33 +482,46 @@ module Xlsxrb
         private
 
         #: (untyped source, untyped packed, untyped file_warning) -> untyped
-        def prepare_input(source, _packed, file_warning)
+        def prepare_input(source, packed, file_warning)
           return source if is_stream?(source)
 
-          if source.is_a?(String) || (defined?(Pathname) && source.is_a?(Pathname))
-            str = source.to_s
-            validate_file_extension(str, file_warning)
-            if str.start_with?("http://", "https://")
-              download_to_io(str)
-            else
-              File.open(str, "rb")
-            end
-          elsif source.respond_to?(:path)
-            validate_file_extension(source.path, file_warning)
-            File.open(source.path, "rb")
-          else
-            source
-          end
+          path = if source.is_a?(String) || (defined?(Pathname) && source.is_a?(Pathname))
+                   source.to_s
+                 elsif source.respond_to?(:path)
+                   source.path.to_s
+                 end
+          return source unless path
+
+          validate_file_extension(path, file_warning, packed)
+          target = if path.start_with?("http://", "https://", "ftp://")
+                     download_to_io(path)
+                   else
+                     raise IOError, "file #{path} does not exist" unless File.file?(path)
+
+                     path
+                   end
+          packed == :zip ? extract_packed_zip(target) : target
         end
 
-        #: (String path, Symbol file_warning) -> void
-        def validate_file_extension(path, file_warning)
+        #: (untyped io) -> StringIO
+        def extract_packed_zip(io)
+          outer_zip = Xlsxrb::Ooxml::ZipReader.open(io)
+          first_entry = outer_zip.entry_names.first
+          data = first_entry ? outer_zip.read_entry(first_entry) : ""
+          outer_zip.close
+          StringIO.new((data || "").b)
+        end
+
+        #: (String path, Symbol file_warning, ?untyped packed) -> void
+        def validate_file_extension(path, file_warning, packed = nil)
           return if file_warning == :ignore
 
-          ext = File.extname(path.split("?").first.to_s).downcase
+          check_path = path.split("?").first.to_s
+          check_path = File.basename(check_path, File.extname(check_path)) if packed == :zip
+          ext = File.extname(check_path).downcase
           return if %w[.xlsx .xlsm].include?(ext)
 
-          msg = "#{path} is not an Excel 2007 file"
+          msg = "#{check_path} is not an Excel 2007 file"
           raise TypeError, msg unless file_warning == :warning
 
           warn msg
@@ -520,6 +533,8 @@ module Xlsxrb
           require "open-uri"
           data = URI.open(uri_str, "rb", &:read)
           StringIO.new(data.b)
+        rescue OpenURI::HTTPError
+          raise "could not open #{uri_str}"
         end
         # rubocop:enable Security/Open
 
@@ -555,7 +570,9 @@ module Xlsxrb
           # 3. Workbook
           wb_xml = read_xml(zip, "xl/workbook.xml")
           wb_rels_xml = read_xml(zip, "xl/_rels/workbook.xml.rels")
-          wb_rels = wb_rels_xml ? Xlsxrb::Ooxml::RelationshipsParser.parse(wb_rels_xml) : {}
+          raise ArgumentError, "missing required workbook file" if wb_xml.nil? || wb_rels_xml.nil?
+
+          wb_rels = Xlsxrb::Ooxml::RelationshipsParser.parse(wb_rels_xml)
 
           sheets_info, defined_names, base_date = parse_workbook_xml(wb_xml, only_visible)
           @workbook = WorkbookProxy.new(defined_names, base_date, sheets_info)
