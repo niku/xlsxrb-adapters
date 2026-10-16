@@ -407,12 +407,42 @@ module Xlsxrb
         def initialize
           super(Break, "rowBreaks")
         end
+
+        #: (Hash[Symbol, untyped] options) -> Break
+        def add_break(options)
+          self << Break.new(options.merge(max: 16_383, man: true))
+          last
+        end
+
+        #: (?String str) -> String?
+        def to_xml_string(str = +"")
+          return if empty?
+
+          str << '<rowBreaks count="' << size.to_s << '" manualBreakCount="' << size.to_s << '">'
+          each { |brk| brk.to_xml_string(str) }
+          str << "</rowBreaks>"
+        end
       end
 
       # ColBreaks collection
       class ColBreaks < SimpleTypedList
         def initialize
           super(Break, "colBreaks")
+        end
+
+        #: (Hash[Symbol, untyped] options) -> Break
+        def add_break(options)
+          self << Break.new(options.merge(max: 1_048_575, man: true))
+          last
+        end
+
+        #: (?String str) -> String?
+        def to_xml_string(str = +"")
+          return if empty?
+
+          str << '<colBreaks count="' << size.to_s << '" manualBreakCount="' << size.to_s << '">'
+          each { |brk| brk.to_xml_string(str) }
+          str << "</colBreaks>"
         end
       end
     end

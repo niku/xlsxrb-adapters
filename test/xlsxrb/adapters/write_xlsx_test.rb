@@ -451,4 +451,17 @@ class XlsxrbAdaptersWriteXLSXTest < Test::Unit::TestCase
       assert_match(/display="GitHub"/, sheet_xml)
     end
   end
+
+  def test_delete_tempdir_removes_directory_tree
+    Dir.mktmpdir do |dir|
+      target = File.join(dir, "to_delete")
+      FileUtils.mkdir_p(File.join(target, "sub"))
+      File.write(File.join(target, "file"), "x")
+
+      wb = Xlsxrb::Adapters::WriteXLSX::Workbook.new(StringIO.new)
+      wb.send(:delete_tempdir, target)
+
+      assert_false File.exist?(target)
+    end
+  end
 end

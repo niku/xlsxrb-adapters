@@ -266,11 +266,23 @@ module Xlsxrb
       # RowBreaks collection
       class RowBreaks < SimpleTypedList
         def initialize: () -> untyped
+
+        # : (Hash[Symbol, untyped] options) -> Break
+        def add_break: (Hash[Symbol, untyped] options) -> Break
+
+        # : (?String str) -> String?
+        def to_xml_string: (?String str) -> String?
       end
 
       # ColBreaks collection
       class ColBreaks < SimpleTypedList
         def initialize: () -> untyped
+
+        # : (Hash[Symbol, untyped] options) -> Break
+        def add_break: (Hash[Symbol, untyped] options) -> Break
+
+        # : (?String str) -> String?
+        def to_xml_string: (?String str) -> String?
       end
     end
   end

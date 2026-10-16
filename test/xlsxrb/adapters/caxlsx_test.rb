@@ -235,4 +235,19 @@ class XlsxrbAdaptersCaxlsxTest < Test::Unit::TestCase
     assert_equal %w[A1 B1], values[0]
     assert_equal %w[A2 B2 C2], values[1]
   end
+
+  def test_page_break_serializes_row_and_col_breaks
+    pkg = Xlsxrb::Adapters::Caxlsx::Package.new
+    ws = pkg.workbook.add_worksheet(name: "Breaks")
+    ws.add_row [1, 2, 3]
+    ws.add_page_break("B2")
+
+    row_xml = ws.row_breaks.to_xml_string
+    col_xml = ws.col_breaks.to_xml_string
+    assert_include row_xml, '<rowBreaks count="1" manualBreakCount="1">'
+    assert_include row_xml, 'max="16383"'
+    assert_include col_xml, '<colBreaks count="1" manualBreakCount="1">'
+    assert_include col_xml, 'max="1048575"'
+    assert_nil Xlsxrb::Adapters::Caxlsx::RowBreaks.new.to_xml_string
+  end
 end

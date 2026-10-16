@@ -522,6 +522,11 @@ module Xlsxrb
             shrink_to_fit: [1, true].include?(fmt.shrink) || nil
           }.compact
         end
+
+        #: (String? dir_path) -> void
+        def delete_tempdir(dir_path)
+          FileUtils.rm_rf(dir_path) if dir_path
+        end
       end
     end
   end

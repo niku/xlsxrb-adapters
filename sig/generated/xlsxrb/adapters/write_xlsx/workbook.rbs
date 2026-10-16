@@ -177,6 +177,9 @@ module Xlsxrb
         def resolve_num_fmt: (untyped fmt, untyped cache, untyped num_fmts_list, untyped current_custom_id) -> untyped
 
         def compile_alignment: (untyped fmt) -> untyped
+
+        # : (String? dir_path) -> void
+        def delete_tempdir: (String? dir_path) -> void
       end
     end
   end
