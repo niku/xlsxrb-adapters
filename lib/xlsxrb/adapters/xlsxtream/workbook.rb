@@ -117,18 +117,27 @@ module Xlsxrb
           font_family_id = FONT_FAMILY_IDS[font_family] || 2
 
           styles_hash = {
-            fonts: [{ name: font_name, sz: font_size, family: font_family_id }],
+            fonts: [
+              { name: font_name, sz: font_size, family: font_family_id },
+              { name: font_name, sz: font_size, family: font_family_id, b: true }
+            ],
             fills: [{ pattern: "none" }, { pattern: "gray125" }],
             borders: [{}],
             cell_xfs: [
               { num_fmt_id: 0, font_id: 0, fill_id: 0, border_id: 0 },
               { num_fmt_id: 164, font_id: 0, fill_id: 0, border_id: 0, apply_number_format: 1 },
-              { num_fmt_id: 165, font_id: 0, fill_id: 0, border_id: 0, apply_number_format: 1 }
+              { num_fmt_id: 165, font_id: 0, fill_id: 0, border_id: 0, apply_number_format: 1 },
+              { num_fmt_id: 0, font_id: 1, fill_id: 0, border_id: 0, apply_alignment: 1, alignment: { horizontal: "center", vertical: "center" } },
+              { num_fmt_id: 164, font_id: 1, fill_id: 0, border_id: 0, apply_alignment: 1, apply_number_format: 1, alignment: { horizontal: "center", vertical: "center" } },
+              { num_fmt_id: 165, font_id: 1, fill_id: 0, border_id: 0, apply_alignment: 1, apply_number_format: 1, alignment: { horizontal: "center", vertical: "center" } }
             ],
             xf_entries: [
               { num_fmt_id: 0, font_id: 0, fill_id: 0, border_id: 0 },
               { num_fmt_id: 164, font_id: 0, fill_id: 0, border_id: 0, apply_number_format: 1 },
-              { num_fmt_id: 165, font_id: 0, fill_id: 0, border_id: 0, apply_number_format: 1 }
+              { num_fmt_id: 165, font_id: 0, fill_id: 0, border_id: 0, apply_number_format: 1 },
+              { num_fmt_id: 0, font_id: 1, fill_id: 0, border_id: 0, apply_alignment: 1, alignment: { horizontal: "center", vertical: "center" } },
+              { num_fmt_id: 164, font_id: 1, fill_id: 0, border_id: 0, apply_alignment: 1, apply_number_format: 1, alignment: { horizontal: "center", vertical: "center" } },
+              { num_fmt_id: 165, font_id: 1, fill_id: 0, border_id: 0, apply_alignment: 1, apply_number_format: 1, alignment: { horizontal: "center", vertical: "center" } }
             ],
             num_fmts: [
               { id: 164, code: 'yyyy\\-mm\\-dd' },
@@ -185,6 +194,7 @@ module Xlsxrb
           use_sst = options.fetch(:use_shared_strings, @options[:use_shared_strings])
           auto_format = options.fetch(:auto_format, @options[:auto_format])
           columns = options.fetch(:columns, @options[:columns])
+          has_header_row = options.fetch(:has_header_row, @options[:has_header_row])
           retain_rows = options.fetch(:retain_rows, @options.fetch(:retain_rows, true))
           sst = use_sst ? @sst : nil
 
@@ -200,6 +210,7 @@ module Xlsxrb
             sst: sst,
             auto_format: auto_format,
             columns: columns,
+            has_header_row: has_header_row,
             retain_rows: retain_rows
           )
           @worksheets << worksheet
@@ -252,8 +263,14 @@ module Xlsxrb
                 <numFmt numFmtId="164" formatCode="yyyy\\-mm\\-dd"/>
                 <numFmt numFmtId="165" formatCode="yyyy\\-mm\\-dd hh:mm:ss"/>
               </numFmts>
-              <fonts count="1">
+              <fonts count="2">
                 <font>
+                  <sz val="#{XML.escape_attr font_size}"/>
+                  <name val="#{XML.escape_attr font_name}"/>
+                  <family val="#{font_family_id}"/>
+                </font>
+                <font>
+                  <b val="1"/>
                   <sz val="#{XML.escape_attr font_size}"/>
                   <name val="#{XML.escape_attr font_name}"/>
                   <family val="#{font_family_id}"/>
@@ -273,10 +290,19 @@ module Xlsxrb
               <cellStyleXfs count="1">
                 <xf numFmtId="0" fontId="0" fillId="0" borderId="0"/>
               </cellStyleXfs>
-              <cellXfs count="3">
+              <cellXfs count="6">
                 <xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/>
                 <xf numFmtId="164" fontId="0" fillId="0" borderId="0" xfId="0" applyNumberFormat="1"/>
                 <xf numFmtId="165" fontId="0" fillId="0" borderId="0" xfId="0" applyNumberFormat="1"/>
+                <xf numFmtId="0" fontId="1" fillId="0" borderId="0" xfId="0" applyAlignment="1">
+                  <alignment horizontal="center" vertical="center"/>
+                </xf>
+                <xf numFmtId="164" fontId="1" fillId="0" borderId="0" xfId="0" applyAlignment="1" applyNumberFormat="1">
+                  <alignment horizontal="center" vertical="center"/>
+                </xf>
+                <xf numFmtId="165" fontId="1" fillId="0" borderId="0" xfId="0" applyAlignment="1" applyNumberFormat="1">
+                  <alignment horizontal="center" vertical="center"/>
+                </xf>
               </cellXfs>
               <cellStyles count="1">
                 <cellStyle name="Normal" xfId="0" builtinId="0"/>

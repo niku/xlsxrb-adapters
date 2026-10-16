@@ -250,4 +250,19 @@ class XlsxrbAdaptersXlsxtreamTest < Test::Unit::TestCase
       assert_equal 120.0, roo.cell(2, 3)
     end
   end
+
+  def test_has_header_row_styling
+    row_xml = Xlsxrb::Adapters::Xlsxtream::Row.new(["Header", 42, Date.new(2026, 1, 1)], 1, is_header: true).to_xml
+    assert_include row_xml, '<c r="A1" s="3" t="inlineStr"><is><t>Header</t></is></c>'
+    assert_include row_xml, '<c r="B1" s="3" t="n"><v>42</v></c>'
+    assert_include row_xml, '<c r="C1" s="4">'
+
+    io = +""
+    ws = Xlsxrb::Adapters::Xlsxtream::Worksheet.new(io, has_header_row: true)
+    ws << ["Col1"]
+    ws << ["Val1"]
+    ws.close
+    assert_include io, '<row r="1"><c r="A1" s="3" t="inlineStr"><is><t>Col1</t></is></c></row>'
+    assert_include io, '<row r="2"><c r="A2" t="inlineStr"><is><t>Val1</t></is></c></row>'
+  end
 end

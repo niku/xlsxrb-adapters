@@ -32,6 +32,7 @@ module Xlsxrb
           @rownum = rownum
           @sst = options[:sst]
           @auto_format = options[:auto_format]
+          @is_header = options[:is_header]
         end
 
         # Generates OpenXML <row r="..."> string.
@@ -42,6 +43,16 @@ module Xlsxrb
           column = String.new("A")
           xml = %(<row r="#{@rownum}">)
 
+          if @is_header
+            normal_style = ' s="3"'
+            date_style   = ' s="4"'
+            time_style   = ' s="5"'
+          else
+            normal_style = ""
+            date_style   = ' s="1"'
+            time_style   = ' s="2"'
+          end
+
           @row.each do |value|
             cid = "#{column}#{@rownum}"
             column.next!
@@ -50,15 +61,15 @@ module Xlsxrb
 
             case value
             when Numeric
-              xml << %(<c r="#{cid}" t="n"><v>#{value}</v></c>)
+              xml << %(<c r="#{cid}"#{normal_style} t="n"><v>#{value}</v></c>)
             when TrueClass, FalseClass
-              xml << %(<c r="#{cid}" t="b"><v>#{value ? 1 : 0}</v></c>)
+              xml << %(<c r="#{cid}"#{normal_style} t="b"><v>#{value ? 1 : 0}</v></c>)
             when Time
-              xml << %(<c r="#{cid}" s="#{TIME_STYLE}"><v>#{time_to_oa_date(value)}</v></c>)
+              xml << %(<c r="#{cid}"#{time_style}><v>#{time_to_oa_date(value)}</v></c>)
             when DateTime
-              xml << %(<c r="#{cid}" s="#{TIME_STYLE}"><v>#{datetime_to_oa_date(value)}</v></c>)
+              xml << %(<c r="#{cid}"#{time_style}><v>#{datetime_to_oa_date(value)}</v></c>)
             when Date
-              xml << %(<c r="#{cid}" s="#{DATE_STYLE}"><v>#{date_to_oa_date(value)}</v></c>)
+              xml << %(<c r="#{cid}"#{date_style}><v>#{date_to_oa_date(value)}</v></c>)
             else
               value = value.to_s
 
@@ -66,9 +77,9 @@ module Xlsxrb
                 value = value.encode(ENCODING) if value.encoding != ENCODING
 
                 xml << if @sst
-                         %(<c r="#{cid}" t="s"><v>#{@sst[value]}</v></c>)
+                         %(<c r="#{cid}"#{normal_style} t="s"><v>#{@sst[value]}</v></c>)
                        else
-                         %(<c r="#{cid}" t="inlineStr"><is><t>#{XML.escape_value(value)}</t></is></c>)
+                         %(<c r="#{cid}"#{normal_style} t="inlineStr"><is><t>#{XML.escape_value(value)}</t></is></c>)
                        end
               end
             end

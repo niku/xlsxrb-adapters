@@ -34,6 +34,7 @@ module Xlsxrb
           @rownum = 1
           @closed = false
           @options = options
+          @has_header_row = options.delete(:has_header_row)
           @id = options[:id]
           @name = options[:name]
           @retain_rows = options.fetch(:retain_rows, true)
@@ -55,7 +56,8 @@ module Xlsxrb
                       end
           @rows << row_array if @retain_rows
 
-          @io << Row.new(row, @rownum, @options).to_xml
+          options = @has_header_row && @rownum == 1 ? @options.merge(is_header: true) : @options
+          @io << Row.new(row, @rownum, options).to_xml
           @rownum += 1
         end
         alias add_row <<
