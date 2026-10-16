@@ -16,8 +16,8 @@ module Xlsxrb
         [Enumerable].each { |m| include m }
         include Helpers
 
-        ROW_RE = %r{<row\b([^>]*?)>(.*?)</row>|<row\b([^>]*?)/>}m
-        CELL_RE = %r{<c\b([^>]*?)(?:>\s*(?:<f\b[^>]*?(?:/>|>([^<]*)</f>))?\s*(?:<v>([^<]*)</v>)?\s*(?:<is>(.*?)</is>)?.*?</c>|/>)}m
+        ROW_RE = %r{<(?:[a-zA-Z0-9_]+:)?row\b([^>]*?)>(.*?)</(?:[a-zA-Z0-9_]+:)?row>|<(?:[a-zA-Z0-9_]+:)?row\b([^>]*?)/>}m
+        CELL_RE = %r{<(?:[a-zA-Z0-9_]+:)?c\b([^>]*?)(?:>\s*(?:<(?:[a-zA-Z0-9_]+:)?f\b[^>]*?(?:/>|>([^<]*)</(?:[a-zA-Z0-9_]+:)?f>))?\s*(?:<(?:[a-zA-Z0-9_]+:)?v>([^<]*)</(?:[a-zA-Z0-9_]+:)?v>)?\s*(?:<(?:[a-zA-Z0-9_]+:)?is>(.*?)</(?:[a-zA-Z0-9_]+:)?is>)?.*?</(?:[a-zA-Z0-9_]+:)?c>|/>)}m
 
         # Returns current mode (:array or :hash).
         # @return [Symbol]
@@ -48,7 +48,7 @@ module Xlsxrb
         # @return [String, nil]
         #: () -> String?
         def dimension
-          @stream_sheet&.dimension || raw_sheet_xml[/<dimension\s+ref="([^"]+)"/, 1]
+          @stream_sheet&.dimension || raw_sheet_xml[/<(?:[a-zA-Z0-9_]+:)?dimension\s+ref="([^"]+)"/, 1]
         end
 
         # Returns the 1-based index of the first row.
@@ -176,20 +176,20 @@ module Xlsxrb
           adjusted_last_row = @last_row - @row_skip
 
           xml = raw_sheet_xml
-          sd_start = xml.index("<sheetData")
-          return true unless sd_start
+          sd_match = xml.match(/<([a-zA-Z0-9_]+:)?sheetData\b[^>]*>/)
+          return true unless sd_match
 
-          sd_open_end = xml.index(">", sd_start)
-          return true unless sd_open_end
-
-          sd_end = xml.index("</sheetData>", sd_open_end)
-          sd_xml = xml.byteslice(sd_open_end + 1, (sd_end || xml.bytesize) - sd_open_end - 1)
+          sd_open_end = sd_match.end(0)
+          ns_prefix = sd_match[1]
+          sd_end = xml.index("</#{ns_prefix}sheetData>", sd_open_end)
+          sd_xml = xml.byteslice(sd_open_end, (sd_end || xml.bytesize) - sd_open_end)
           return true if sd_xml.nil? || sd_xml.empty?
 
           sd_xml.scan(ROW_RE) do |attrs1, body, attrs2|
             attrs = attrs1 || attrs2
             r_attr = attrs[/r="(\d+)"/, 1]
             curr_row_num = r_attr ? r_attr.to_i : (curr_row_num + 1)
+            next if attrs2
             next if curr_row_num <= @row_skip
 
             adjusted_row_num = curr_row_num - @row_skip
@@ -360,7 +360,7 @@ module Xlsxrb
 
         #: () -> [Integer, Integer]
         def compute_bounds
-          if @stream_sheet && !@workbook&.trim_empty_rows
+          if @stream_sheet && !@workbook&.trim_empty_rows && @stream_sheet.dimension&.include?(":")
             dim_last_row = @stream_sheet.last_row
             dim_last_col = @stream_sheet.last_column
             return [dim_last_row, dim_last_col] if dim_last_row && dim_last_col
@@ -368,7 +368,7 @@ module Xlsxrb
 
           xml = raw_sheet_xml
           max_column = -1
-          dim_match = xml[/<dimension\s+ref="([^"]+)"/, 1]
+          dim_match = xml[/<(?:[a-zA-Z0-9_]+:)?dimension\s+ref="([^"]+)"/, 1]
           if dim_match
             _first_cell, last_cell = dim_match.split(":")
             if last_cell
@@ -408,12 +408,14 @@ module Xlsxrb
         def format_cell_value(cell_type, style_id, val_str, is_xml)
           val = if is_xml
                   text = +""
-                  is_xml.scan(%r{<t\b[^>]*>(.*?)</t>}m) { |m| text << m[0] }
+                  is_xml.scan(%r{<(?:[a-zA-Z0-9_]+:)?t\b[^>]*>(.*?)</(?:[a-zA-Z0-9_]+:)?t>}m) { |m| text << m[0] }
                   text
                 else
                   val_str&.strip
                 end
           return nil if val.nil? || val.empty?
+
+          val = Ooxml::XmlBuilder.unescape(val) if val.include?("&")
 
           case cell_type
           when "s"

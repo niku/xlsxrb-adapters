@@ -4,6 +4,7 @@
 
 require "xlsxrb"
 require_relative "xsv/helpers"
+require_relative "xsv/parsers"
 require_relative "xsv/sheet"
 require_relative "xsv/workbook"
 

@@ -60,6 +60,12 @@ module Xlsxrb
         # @return [Object]
         # : (untyped number, String? format, ?style_id: Integer?) -> untyped
         def parse_number_format: (untyped number, String? format, ?style_id: Integer?) -> untyped
+
+        # Returns :date, :time or :datetime for number formats that represent these, or nil.
+        # @param format [String, nil]
+        # @return [Symbol, nil]
+        # : (String? format) -> Symbol?
+        def number_format_kind: (String? format) -> Symbol?
       end
     end
   end

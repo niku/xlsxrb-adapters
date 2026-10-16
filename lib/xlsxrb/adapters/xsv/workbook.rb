@@ -90,6 +90,8 @@ module Xlsxrb
         # @param parse_headers [Boolean]
         #: (Ooxml::ZipReader zip_reader, ?trim_empty_rows: bool, ?parse_headers: bool) -> void
         def initialize(zip_reader, trim_empty_rows: false, parse_headers: false)
+          raise ArgumentError, "Passed argument is not an instance of Zip::File. Did you mean to use Workbook.open?" unless zip_reader.respond_to?(:read_entry) || (defined?(::Zip::File) && zip_reader.is_a?(::Zip::File))
+
           @zip = zip_reader
           @trim_empty_rows = trim_empty_rows ? true : false
 
@@ -196,7 +198,16 @@ module Xlsxrb
           sst_xml = @zip&.read_entry("xl/sharedStrings.xml")
           return [] unless sst_xml
 
-          Ooxml::SharedStringsParser.parse(sst_xml)
+          Ooxml::SharedStringsParser.parse(sst_xml).map do |str|
+            next str unless str.include?("&#")
+
+            str.gsub(/&#(?:(\d+)|x([0-9a-fA-F]+));/) do
+              cp = ::Regexp.last_match(1) ? ::Regexp.last_match(1).to_i : ::Regexp.last_match(2).to_i(16)
+              cp.chr(Encoding::UTF_8)
+            rescue RangeError
+              ::Regexp.last_match(0)
+            end
+          end
         end
 
         #: () -> [Array[Hash[Symbol, Integer]], Hash[Integer, String], Elements::Styles?]

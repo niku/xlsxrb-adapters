@@ -174,6 +174,25 @@ module Xlsxrb
             parse_time(num)
           end
         end
+
+        # Returns :date, :time or :datetime for number formats that represent these, or nil.
+        # @param format [String, nil]
+        # @return [Symbol, nil]
+        #: (String? format) -> Symbol?
+        def number_format_kind(format)
+          return nil if format.nil?
+
+          is_date_format = format.scan(/[dmy]+/).length > 1
+          is_time_format = format.scan(/[hms]+/).length > 1
+
+          if is_date_format && is_time_format
+            :datetime
+          elsif is_date_format
+            :date
+          elsif is_time_format
+            :time
+          end
+        end
       end
     end
   end

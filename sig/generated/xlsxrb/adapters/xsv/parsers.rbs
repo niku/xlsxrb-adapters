@@ -1,0 +1,168 @@
+# Generated from lib/xlsxrb/adapters/xsv/parsers.rb with RBS::Inline
+
+module Xlsxrb
+  module Adapters
+    module Xsv
+      # Minimal streaming XML parser compatible with Xsv::SaxParser.
+      class SaxParser
+        CHUNK_SIZE: ::Integer
+
+        # @param io [String, IO]
+        # @return [void]
+        # : (untyped io) -> void
+        def parse: (untyped io) -> void
+
+        private
+
+        # : (untyped io) -> String?
+        def read_chunk: (untyped io) -> String?
+      end
+
+      # SharedStringsParser compatible with Xsv::SharedStringsParser.
+      class SharedStringsParser < SaxParser
+        # @param io [String, IO]
+        # @return [Array<String>]
+        # : (untyped io) -> Array[String]
+        def self.parse: (untyped io) -> Array[String]
+
+        # : () ?{ (String) -> void } -> void
+        def initialize: () ?{ (String) -> void } -> void
+
+        # : (String name, Hash[Symbol, String]? _attrs) -> void
+        def start_element: (String name, Hash[Symbol, String]? _attrs) -> void
+
+        # : (String value) -> void
+        def characters: (String value) -> void
+
+        # : (String name) -> void
+        def end_element: (String name) -> void
+      end
+
+      # SheetBoundsHandler compatible with Xsv::SheetBoundsHandler.
+      class SheetBoundsHandler < SaxParser
+        include Helpers
+
+        # @param sheet [IO, String]
+        # @param workbook [Workbook]
+        # @return [Array<Integer>]
+        # : (untyped sheet, Workbook workbook) -> [Integer, Integer]
+        def self.get_bounds: (untyped sheet, Workbook workbook) -> [ Integer, Integer ]
+
+        # : (bool trim_empty_rows) ?{ (Integer, Integer) -> void } -> void
+        def initialize: (bool trim_empty_rows) ?{ (Integer, Integer) -> void } -> void
+
+        # : (String name, Hash[Symbol, String]? attrs) -> void
+        def start_element: (String name, Hash[Symbol, String]? attrs) -> void
+
+        # : (String name) -> void
+        def end_element: (String name) -> void
+      end
+
+      # SheetRowsHandler compatible with Xsv::SheetRowsHandler.
+      class SheetRowsHandler < SaxParser
+        include Helpers
+
+        SLASH: ::Integer
+
+        LOWER_C: ::Integer
+
+        LOWER_I: ::Integer
+
+        LOWER_O: ::Integer
+
+        LOWER_R: ::Integer
+
+        LOWER_S: ::Integer
+
+        LOWER_T: ::Integer
+
+        LOWER_V: ::Integer
+
+        LOWER_W: ::Integer
+
+        SPACE: ::Integer
+
+        QUOTE: ::Integer
+
+        COLON: ::Integer
+
+        LT: ::Integer
+
+        EQUALS: ::Integer
+
+        GT: ::Integer
+
+        ZERO: ::Integer
+
+        NINE: ::Integer
+
+        SINGLE_BYTE_CELL_TYPES: untyped
+
+        CELL_TYPES: untyped
+
+        # : (Symbol mode, Array[untyped]? headers, untyped empty_row, Workbook workbook, Integer row_skip, Integer last_row) ?{ (untyped) -> void } -> void
+        def initialize: (Symbol mode, Array[untyped]? headers, untyped empty_row, Workbook workbook, Integer row_skip, Integer last_row) ?{ (untyped) -> void } -> void
+
+        # @param io [String, IO]
+        # @return [void]
+        # : (untyped io) -> void
+        def parse: (untyped io) -> void
+
+        private
+
+        def parse_next: (untyped buf, untyped pos) -> untyped
+
+        def row_number: (untyped buf, untyped offset, untyped gt_pos) -> untyped
+
+        def parse_row: (untyped buf, untyped row_gt, untyped number) -> untyped
+
+        def integer_at: (untyped buf, untyped offset) -> untyped
+
+        def end_row: () -> untyped
+
+        def format_cell: (untyped value, untyped type, untyped style) -> untyped
+
+        def format_number: (untyped value, untyped style) -> untyped
+      end
+
+      # RelationshipsHandler compatible with Xsv::RelationshipsHandler.
+      class RelationshipsHandler < SaxParser
+        # : (untyped io) -> Array[Hash[Symbol, String]]
+        def self.get_relations: (untyped io) -> Array[Hash[Symbol, String]]
+
+        # : () ?{ (Hash[Symbol, String]) -> void } -> void
+        def initialize: () ?{ (Hash[Symbol, String]) -> void } -> void
+
+        # : (String name, Hash[Symbol, String]? attrs) -> void
+        def start_element: (String name, Hash[Symbol, String]? attrs) -> void
+      end
+
+      # SheetsIdsHandler compatible with Xsv::SheetsIdsHandler.
+      class SheetsIdsHandler < SaxParser
+        # : (untyped io) -> Array[Hash[Symbol, String]]
+        def self.get_sheets_ids: (untyped io) -> Array[Hash[Symbol, String]]
+
+        # : () ?{ (Hash[Symbol, String]) -> void } -> void
+        def initialize: () ?{ (Hash[Symbol, String]) -> void } -> void
+
+        # : (String name, Hash[Symbol, String]? attrs) -> void
+        def start_element: (String name, Hash[Symbol, String]? attrs) -> void
+      end
+
+      # StylesHandler compatible with Xsv::StylesHandler.
+      class StylesHandler < SaxParser
+        # : (untyped io) -> [Array[Hash[Symbol, Integer]], Hash[Integer, String]]
+        def self.get_styles: (untyped io) -> [ Array[Hash[Symbol, Integer]], Hash[Integer, String] ]
+
+        # : (Hash[Integer, String] num_fmts) ?{ (Array[Hash[Symbol, Integer]], Hash[Integer, String]) -> void } -> void
+        def initialize: (Hash[Integer, String] num_fmts) ?{ (Array[Hash[Symbol, Integer]], Hash[Integer, String]) -> void } -> void
+
+        # : (String name, Hash[Symbol, String]? attrs) -> void
+        def start_element: (String name, Hash[Symbol, String]? attrs) -> void
+
+        # : (String name) -> void
+        def end_element: (String name) -> void
+      end
+    end
+  end
+end
