@@ -277,8 +277,11 @@ module Xlsxrb
         # : (untyped source, untyped packed, untyped file_warning) -> untyped
         def prepare_input: (untyped source, untyped packed, untyped file_warning) -> untyped
 
-        # : (String path, Symbol file_warning) -> void
-        def validate_file_extension: (String path, Symbol file_warning) -> void
+        # : (untyped io) -> StringIO
+        def extract_packed_zip: (untyped io) -> StringIO
+
+        # : (String path, Symbol file_warning, ?untyped packed) -> void
+        def validate_file_extension: (String path, Symbol file_warning, ?untyped packed) -> void
 
         # rubocop:disable Security/Open
         # : (String uri_str) -> StringIO
