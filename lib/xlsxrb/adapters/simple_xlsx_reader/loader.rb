@@ -157,7 +157,7 @@ module Xlsxrb
             rels = {}
             if (wb_rels_entry = entry_at("xl/_rels/workbook.xml.rels"))
               wb_rels_entry.get_input_stream do |file|
-                rels = Xlsxrb::Ooxml::RelationshipsParser.parse(file.read)
+                rels = Loader.parse_relationships(file.read)
               end
             end
 
@@ -230,6 +230,27 @@ module Xlsxrb
               proxy
             end
           end
+        end
+
+        # Parses an OOXML .rels XML string into an { "rId..." => "target" } hash,
+        # tolerating leading whitespace or duplicate XML declarations.
+        #
+        # @param xml_string [String, nil]
+        # @return [Hash<String, String>]
+        #: (String? xml_string) -> Hash[String, String]
+        def self.parse_relationships(xml_string)
+          return {} if xml_string.nil? || xml_string.empty?
+
+          sanitized = xml_string.gsub(/<\?xml\b[^?]*\?>/, "")
+          Xlsxrb::Ooxml::RelationshipsParser.parse(sanitized)
+        rescue StandardError
+          rels = {}
+          xml_string.scan(%r{<(?:[a-zA-Z0-9_]+:)?Relationship\b([^>]*?)/?>}m) do |(attrs)|
+            id = attrs[/\bId="([^"]+)"/, 1]
+            target = attrs[/\bTarget="([^"]+)"/, 1]
+            rels[id] = target if id && target
+          end
+          rels
         end
 
         # Core cell typecasting method matching SimpleXlsxReader::Loader.cast.
@@ -783,7 +804,7 @@ module Xlsxrb
 
             xrels_file.rewind if xrels_file.respond_to?(:rewind)
             xrels_content = xrels_file.read
-            rels_map = Xlsxrb::Ooxml::RelationshipsParser.parse(xrels_content)
+            rels_map = Loader.parse_relationships(xrels_content)
 
             sheet_xml.scan(%r{<(?:[a-zA-Z0-9_]+:)?hyperlink\b([^>]*?)/>}m) do |(attrs)|
               ref = attrs[/ref="([^"]+)"/, 1]

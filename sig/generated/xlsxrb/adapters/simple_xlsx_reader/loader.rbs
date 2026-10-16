@@ -71,6 +71,14 @@ module Xlsxrb
                       | (?string_or_io: untyped, ?loader: untyped) -> instance
         end
 
+        # Parses an OOXML .rels XML string into an { "rId..." => "target" } hash,
+        # tolerating leading whitespace or duplicate XML declarations.
+        #
+        # @param xml_string [String, nil]
+        # @return [Hash<String, String>]
+        # : (String? xml_string) -> Hash[String, String]
+        def self.parse_relationships: (String? xml_string) -> Hash[String, String]
+
         # Core cell typecasting method matching SimpleXlsxReader::Loader.cast.
         #
         # @param value [String, nil] Raw string value from cell.

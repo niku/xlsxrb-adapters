@@ -246,4 +246,16 @@ class XlsxrbAdaptersSimpleXlsxReaderTest < Test::Unit::TestCase
     assert_equal 13, sheet2.rows.to_a.size
     assert_equal "File Name", sheet2.rows.to_a[0][0]
   end
+
+  def test_parse_relationships_with_duplicate_xml_declarations
+    xml = <<~XML
+      <?xml version="1.0"?>
+        <?xml version="1.0" encoding="UTF-8"?>
+        <Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+          <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink" Target="https://example.com" TargetMode="External"/>
+        </Relationships>
+    XML
+    rels = Xlsxrb::Adapters::SimpleXlsxReader::Loader.parse_relationships(xml)
+    assert_equal({ "rId1" => "https://example.com" }, rels)
+  end
 end
