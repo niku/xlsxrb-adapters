@@ -2,6 +2,10 @@
 
 # rbs_inline: enabled
 
+require "date"
+require "stringio"
+require "time"
+require "xlsxrb"
 require_relative "caxlsx/constants"
 require_relative "caxlsx/util"
 require_relative "caxlsx/relationship"

@@ -2,6 +2,10 @@
 
 # rbs_inline: enabled
 
+require "date"
+require "stringio"
+require "time"
+require "xlsxrb"
 require_relative "roo/constants"
 require_relative "roo/link"
 require_relative "roo/font"

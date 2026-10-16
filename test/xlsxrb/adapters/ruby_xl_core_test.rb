@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "English"
+require "rbconfig"
 require "test_helper"
 
 class XlsxrbAdaptersRubyXLCoreTest < Test::Unit::TestCase
@@ -210,5 +212,28 @@ class XlsxrbAdaptersRubyXLCoreTest < Test::Unit::TestCase
     assert_equal 1, parsed_wb.worksheets.size
     assert_equal "& < > \"", parsed_wb[0][0][0].value
     assert_equal "Parser Tester", parsed_wb.creator
+  end
+
+  def test_convenience_methods_entrypoints
+    %w[
+      xlsxrb/adapters/ruby_xl/convenience_methods
+      xlsxrb/adapters/ruby_xl/convenience_methods/cell
+      xlsxrb/adapters/ruby_xl/convenience_methods/color
+      xlsxrb/adapters/ruby_xl/convenience_methods/font
+      xlsxrb/adapters/ruby_xl/convenience_methods/workbook
+      xlsxrb/adapters/ruby_xl/convenience_methods/worksheet
+    ].each do |subpath|
+      assert_nothing_raised { require subpath }
+    end
+  end
+
+  def test_standalone_adapter_requires_without_test_helper
+    lib_dir = File.expand_path("../../../lib", __dir__)
+    xlsxrb_lib = File.expand_path("../../../../xlsxrb/lib", __dir__)
+    adapters = %w[caxlsx creek fast_excel roo ruby_xl simple_xlsx_reader write_xlsx xlsxtream xsv]
+    script = adapters.map { |a| "require 'xlsxrb/adapters/#{a}'" }.join("; ")
+    cmd = [RbConfig.ruby, "-I#{lib_dir}", "-I#{xlsxrb_lib}", "-e", script]
+    output = IO.popen(cmd, err: %i[child out], &:read)
+    assert $CHILD_STATUS.success?, "Standalone adapter require failed:\n#{output}"
   end
 end

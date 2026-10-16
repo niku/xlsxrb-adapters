@@ -2,7 +2,10 @@
 
 # rbs_inline: enabled
 
+require "bigdecimal"
 require "date"
+require "stringio"
+require "time"
 require "xlsxrb"
 require_relative "simple_xlsx_reader/version"
 require_relative "simple_xlsx_reader/hyperlink"

@@ -2,6 +2,8 @@
 
 # rbs_inline: enabled
 
+require "uri"
+
 module Xlsxrb
   module Adapters
     module Caxlsx
