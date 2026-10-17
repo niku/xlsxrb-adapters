@@ -56,6 +56,7 @@ require_relative "support/upstream_suite"
 # Run the upstream gem's own test suite against the adapter (skipped if no checkout is available).
 upstream = UpstreamSuite.run("creek")
 if upstream[:skipped]
+  abort "Error: Upstream creek suite was skipped: #{upstream[:note]}" if ENV["CI"] || ENV["XLSXRB_REQUIRE_UPSTREAM"]
   warn "Skipping upstream creek suite: #{upstream[:note]}"
 else
   warn upstream[:note] if upstream[:note]

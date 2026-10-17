@@ -15,28 +15,33 @@ RSpec.configure do |c|
   c.color = true
 end
 
-# Locate official rubyXL spec files
-spec_dir = nil
-candidates = [
-  File.expand_path("../../gems/rubyXL-*/spec/lib", __dir__),
-  "/usr/local/bundle/gems/rubyXL-3.4.38/spec/lib",
-  "/home/vscode/src/rubyXL/spec/lib"
-]
+require_relative "support/upstream_suite"
 
-candidates.each do |candidate|
-  matches = Dir.glob(candidate)
-  unless matches.empty?
-    spec_dir = matches.first
-    break
+# Locate official rubyXL spec files
+spec_dir = ENV["RUBYXL_SPEC_DIR"]
+
+unless spec_dir && Dir.exist?(spec_dir)
+  begin
+    spec = Gem.loaded_specs["rubyXL"] || Gem::Specification.find_by_name("rubyXL")
+    gem_spec = File.join(spec.gem_dir, "spec", "lib")
+    spec_dir = gem_spec if Dir.exist?(gem_spec)
+  rescue Gem::MissingSpecError
+    nil
   end
 end
 
 unless spec_dir && Dir.exist?(spec_dir)
-  begin
-    spec = Gem::Specification.find_by_name("rubyXL")
-    spec_dir = File.join(spec.gem_dir, "spec", "lib")
-  rescue Gem::MissingSpecError
-    abort "Error: rubyXL gem with spec suite not found."
+  repo_spec = File.join(UpstreamSuite.repo_path("rubyXL"), "spec", "lib")
+  spec_dir = repo_spec if Dir.exist?(repo_spec)
+end
+
+unless spec_dir && Dir.exist?(spec_dir)
+  msg = "rubyXL upstream spec suite not found in rubyXL gem or upstream repository."
+  if ENV["CI"] || ENV["XLSXRB_REQUIRE_UPSTREAM"]
+    abort "Error: #{msg} (required by CI/XLSXRB_REQUIRE_UPSTREAM)"
+  else
+    warn "Skipping rubyXL official spec suite: #{msg}"
+    exit 0
   end
 end
 

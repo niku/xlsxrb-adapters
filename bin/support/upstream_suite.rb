@@ -50,14 +50,47 @@ module UpstreamSuite
   module_function
 
   def upstream_root
-    File.expand_path(ENV.fetch("XLSXRB_UPSTREAM_DIR", "~/src"))
+    if (dir = ENV["XLSXRB_UPSTREAM_DIR"])
+      return File.expand_path(dir)
+    end
+
+    candidates = [
+      File.expand_path("../../vendor/upstream", __dir__),
+      File.expand_path("~/src")
+    ]
+    candidates.find { |d| Dir.exist?(d) } || candidates.first
+  end
+
+  def repo_path(name)
+    if (dir = ENV["XLSXRB_UPSTREAM_DIR"])
+      return File.join(File.expand_path(dir), name)
+    end
+
+    candidates = [
+      File.expand_path("../../vendor/upstream/#{name}", __dir__),
+      File.expand_path("~/src/#{name}")
+    ]
+    candidates.find { |d| Dir.exist?(d) } || candidates.first
   end
 
   # Returns { tests:, assertions:, passed:, failed:, success:, skipped:, note: }
   def run(name)
     cfg = CONFIG.fetch(name)
-    repo = File.join(upstream_root, name)
-    return { tests: 0, assertions: 0, passed: 0, failed: 0, success: true, skipped: true, note: "#{repo} not found" } unless Dir.exist?(repo)
+    repo = repo_path(name)
+    unless Dir.exist?(repo)
+      if ENV["CI"] || ENV["XLSXRB_REQUIRE_UPSTREAM"]
+        return {
+          tests: 0,
+          assertions: 0,
+          passed: 0,
+          failed: 1,
+          success: false,
+          skipped: false,
+          note: "#{name} upstream repository not found at #{repo} (required by CI/XLSXRB_REQUIRE_UPSTREAM)"
+        }
+      end
+      return { tests: 0, assertions: 0, passed: 0, failed: 0, success: true, skipped: true, note: "#{repo} not found" }
+    end
 
     out, status = Open3.capture2e(RbConfig.ruby, __FILE__, name)
     parse(out, status, cfg)
@@ -82,10 +115,13 @@ module UpstreamSuite
   # ---- child process side -------------------------------------------------
 
   def gem_lib_dirs(*names)
-    roots = (Gem.path + [Gem.default_dir]).uniq
-    names.filter_map do |n|
-      dirs = roots.flat_map { |r| Dir.glob(File.join(r, "gems", "#{n}-[0-9]*", "lib")) }
-      dirs.max_by { |d| Gem::Version.new(d[%r{/#{Regexp.escape(n)}-([0-9][^/]*)/lib\z}, 1]) }
+    names.flat_map do |n|
+      spec = Gem.loaded_specs[n] || (begin
+        Gem::Specification.find_by_name(n)
+      rescue Gem::MissingSpecError
+        nil
+      end)
+      spec ? spec.load_paths : []
     end
   end
 
@@ -194,7 +230,7 @@ module UpstreamSuite
   def child_main(name)
     cfg = CONFIG.fetch(name)
     project_root = File.expand_path("../..", __dir__)
-    repo = File.join(upstream_root, name)
+    repo = repo_path(name)
 
     $LOAD_PATH.unshift(File.join(project_root, "lib"))
     gem_lib_dirs("minitest", "rspec-core", "rspec-expectations", "rspec-support", "rspec-mocks", "rspec", "diff-lcs")
