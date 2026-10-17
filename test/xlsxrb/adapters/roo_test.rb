@@ -371,4 +371,29 @@ class XlsxrbAdaptersRooTest < Test::Unit::TestCase
     end
     assert_include err.message, "missing required workbook file"
   end
+
+  def test_cell_presence_and_default_types
+    cell_cls = Xlsxrb::Adapters::Roo::Excelx::Cell
+    base_cell = cell_cls::Base.new("hello", nil, nil, 1, nil, nil)
+    assert_same base_cell, base_cell.presence
+    assert_nil base_cell.cell_type
+
+    empty_cell = cell_cls::Empty.new
+    assert_nil empty_cell.presence
+    assert_nil empty_cell.cell_type
+
+    bool_cell = cell_cls::Boolean.new("1", nil, nil, nil, nil)
+    assert_equal :boolean, bool_cell.cell_type
+    assert_same bool_cell, bool_cell.presence
+
+    string_cell = cell_cls::String.new("text", nil, nil, nil, nil)
+    assert_equal :string, string_cell.cell_type
+    assert_same string_cell, string_cell.presence
+
+    # Cell::Time supports integer base_timestamp as well as Date
+    ts = Date.new(1899, 12, 30).to_time.to_i
+    time_cell = cell_cls::Time.new("0.5", nil, [:numeric_or_formula, "hh:mm"], 6, nil, ts, nil)
+    assert_equal :time, time_cell.default_type
+    assert_equal 43_200, time_cell.value
+  end
 end

@@ -10,8 +10,6 @@ module Xlsxrb
           class Base
             attr_reader cell_value: untyped
 
-            attr_reader cell_type: untyped
-
             attr_reader formula: untyped
 
             attr_reader coordinate: untyped
@@ -28,6 +26,22 @@ module Xlsxrb
             # @param coordinate [Coordinate, nil]
             # : (untyped value, ::String? formula, untyped excelx_type, Integer? style, ::String? link, Coordinate? coordinate) -> void
             def initialize: (untyped value, ::String? formula, untyped excelx_type, Integer? style, ::String? link, Coordinate? coordinate) -> void
+
+            # Explicit cell type, falling back to the per-class default.
+            #
+            # @return [Symbol, Array, nil]
+            # : () -> untyped
+            def cell_type: () -> untyped
+
+            # @return [Symbol, nil]
+            # : () -> Symbol?
+            def default_cell_type: () -> Symbol?
+
+            # Mirrors ActiveSupport's Object#presence for upstream Roo compatibility.
+            #
+            # @return [Base, nil]
+            # : () -> Base?
+            def presence: () -> Base?
 
             # @return [Integer, nil]
             # : () -> Integer?
@@ -221,6 +235,10 @@ module Xlsxrb
             # : () -> Symbol
             def default_type: () -> Symbol
 
+            # @return [Symbol]
+            # : () -> Symbol
+            def default_cell_type: () -> Symbol
+
             # @return [String]
             # : () -> ::String
             def formatted_value: () -> ::String
@@ -240,6 +258,10 @@ module Xlsxrb
             # @param coordinate [Coordinate, nil]
             # : (untyped value, ::String? formula, Integer? style, ::String? link, Coordinate? coordinate) -> void
             def initialize: (untyped value, ::String? formula, Integer? style, ::String? link, Coordinate? coordinate) -> void
+
+            # @return [Symbol]
+            # : () -> Symbol
+            def default_cell_type: () -> Symbol
 
             # @return [Symbol]
             # : () -> Symbol

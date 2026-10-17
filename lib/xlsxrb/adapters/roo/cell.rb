@@ -17,7 +17,7 @@ module Xlsxrb
         class Cell
           # Base class for all Excelx cell types.
           class Base
-            attr_reader :cell_value, :cell_type, :formula, :coordinate, :format
+            attr_reader :cell_value, :formula, :coordinate, :format
             attr_accessor :value
 
             # @param value [Object]
@@ -35,6 +35,28 @@ module Xlsxrb
               @coordinate = coordinate
               @format = excelx_type.is_a?(Array) ? excelx_type.last : excelx_type
               @value = link ? Link.new(link, value.to_s) : value
+            end
+
+            # Explicit cell type, falling back to the per-class default.
+            #
+            # @return [Symbol, Array, nil]
+            #: () -> untyped
+            def cell_type
+              defined?(@cell_type) ? @cell_type : default_cell_type
+            end
+
+            # @return [Symbol, nil]
+            #: () -> Symbol?
+            def default_cell_type
+              nil
+            end
+
+            # Mirrors ActiveSupport's Object#presence for upstream Roo compatibility.
+            #
+            # @return [Base, nil]
+            #: () -> Base?
+            def presence
+              empty? ? nil : self
             end
 
             # @return [Integer, nil]
@@ -410,7 +432,11 @@ module Xlsxrb
             def initialize(value, formula, excelx_type, style, link, base_date, coordinate)
               super(value, formula, excelx_type, style, nil, nil, coordinate)
               @format = excelx_type.is_a?(Array) ? excelx_type.last.to_s : excelx_type.to_s
-              base_ts = base_date ? base_date.to_datetime.to_time.to_i : 0
+              base_ts = if base_date.respond_to?(:to_datetime)
+                          base_date.to_datetime.to_time.to_i
+                        else
+                          base_date.to_i
+                        end
               @datetime = create_datetime(base_ts, value)
               @value = link ? Link.new(link, value.to_s) : (value.to_f * 86_400).round.to_i
             end
@@ -443,13 +469,18 @@ module Xlsxrb
             #: (untyped value, ::String? formula, Integer? style, ::String? link, Coordinate? coordinate) -> void
             def initialize(value, formula, style, link, coordinate)
               super(value, formula, nil, style, nil, coordinate)
-              @cell_type = :boolean
               @value = link ? Link.new(link, value.to_s) : create_boolean(value)
             end
 
             # @return [Symbol]
             #: () -> Symbol
             def default_type
+              :boolean
+            end
+
+            # @return [Symbol]
+            #: () -> Symbol
+            def default_cell_type
               :boolean
             end
 
@@ -477,7 +508,12 @@ module Xlsxrb
             #: (untyped value, ::String? formula, Integer? style, ::String? link, Coordinate? coordinate) -> void
             def initialize(value, formula, style, link, coordinate)
               super(value, formula, nil, style, link, coordinate)
-              @cell_type = :string
+            end
+
+            # @return [Symbol]
+            #: () -> Symbol
+            def default_cell_type
+              :string
             end
 
             # @return [Symbol]
