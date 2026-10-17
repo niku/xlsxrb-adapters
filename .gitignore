@@ -7,3 +7,4 @@
 /tmp/
 *.gem
 /.gem_rbs_collection/
+/vendor/upstream/

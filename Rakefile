@@ -136,4 +136,14 @@ task :benchmark do
   sh "bundle exec ruby benchmark.rb #{rows} #{cols}"
 end
 
+namespace :upstream do
+  desc "Clone 9 peer upstream repositories into vendor/upstream (or $XLSXRB_UPSTREAM_DIR)"
+  task :clone do
+    sh "bin/setup_upstream"
+  end
+
+  desc "Alias for upstream:clone"
+  task setup: :clone
+end
+
 task default: %i[rubocop typecheck test]

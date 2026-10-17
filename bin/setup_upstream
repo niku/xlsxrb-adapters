@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# ==============================================================================
+# bin/setup_upstream
+# Clones official upstream repositories into vendor/upstream (or $XLSXRB_UPSTREAM_DIR)
+# to run upstream test suites against xlsxrb adapters in CI and local environments.
+# ==============================================================================
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
+
+TARGET_DIR="${XLSXRB_UPSTREAM_DIR:-${PROJECT_ROOT}/vendor/upstream}"
+mkdir -p "${TARGET_DIR}"
+
+declare -A REPOS=(
+  ["caxlsx"]="https://github.com/caxlsx/caxlsx.git"
+  ["creek"]="https://github.com/pythonicrubyist/creek.git"
+  ["fast_excel"]="https://github.com/paxa/fast_excel.git"
+  ["roo"]="https://github.com/roo-rb/roo.git"
+  ["rubyXL"]="https://github.com/weshatheleopard/rubyXL.git"
+  ["simple_xlsx_reader"]="https://github.com/woahdae/simple_xlsx_reader.git"
+  ["write_xlsx"]="https://github.com/cxn03651/write_xlsx.git"
+  ["xlsxtream"]="https://github.com/felixbuenemann/xlsxtream.git"
+  ["xsv"]="https://github.com/martijn/xsv.git"
+)
+
+echo "=== Setting up 9 upstream repositories in ${TARGET_DIR} ==="
+
+for name in "${!REPOS[@]}"; do
+  url="${REPOS[$name]}"
+  dest="${TARGET_DIR}/${name}"
+
+  if [ -d "${dest}/.git" ]; then
+    echo "✓ ${name} already exists at ${dest}"
+  else
+    echo "⬇ Cloning ${name} from ${url}..."
+    git clone --depth 1 "${url}" "${dest}"
+  fi
+done
+
+echo "=== All 9 upstream repositories are ready in ${TARGET_DIR}! ==="
