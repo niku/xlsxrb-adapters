@@ -50,3 +50,21 @@ jobs:
       - name: Run Tests
         working-directory: xlsxrb-adapters
         run: bundle exec rake test
+
+      - name: Cache upstream repositories
+        uses: actions/cache@v4
+        with:
+          path: xlsxrb-adapters/vendor/upstream
+          key: ${{ runner.os }}-upstream-v1-${{ hashFiles('xlsxrb-adapters/bin/setup_upstream') }}
+          restore-keys: |
+            ${{ runner.os }}-upstream-v1-
+
+      - name: Setup upstream repositories
+        working-directory: xlsxrb-adapters
+        run: bin/setup_upstream
+
+      - name: Run Upstream Compatibility Tests
+        working-directory: xlsxrb-adapters
+        env:
+          XLSXRB_REQUIRE_UPSTREAM: "1"
+        run: bundle exec rake compatibility
