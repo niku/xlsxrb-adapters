@@ -232,25 +232,13 @@ module Xlsxrb
           end
         end
 
-        # Parses an OOXML .rels XML string into an { "rId..." => "target" } hash,
-        # tolerating leading whitespace or duplicate XML declarations.
+        # Parses an OOXML .rels XML string into an { "rId..." => "target" } hash.
         #
         # @param xml_string [String, nil]
         # @return [Hash<String, String>]
         #: (String? xml_string) -> Hash[String, String]
         def self.parse_relationships(xml_string)
-          return {} if xml_string.nil? || xml_string.empty?
-
-          sanitized = xml_string.gsub(/<\?xml\b[^?]*\?>/, "")
-          Xlsxrb::Ooxml::RelationshipsParser.parse(sanitized)
-        rescue StandardError
-          rels = {}
-          xml_string.scan(%r{<(?:[a-zA-Z0-9_]+:)?Relationship\b([^>]*?)/?>}m) do |(attrs)|
-            id = attrs[/\bId="([^"]+)"/, 1]
-            target = attrs[/\bTarget="([^"]+)"/, 1]
-            rels[id] = target if id && target
-          end
-          rels
+          Xlsxrb::Ooxml::RelationshipsParser.parse(xml_string)
         end
 
         # Core cell typecasting method matching SimpleXlsxReader::Loader.cast.

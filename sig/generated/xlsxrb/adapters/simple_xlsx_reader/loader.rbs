@@ -71,8 +71,7 @@ module Xlsxrb
                       | (?string_or_io: untyped, ?loader: untyped) -> instance
         end
 
-        # Parses an OOXML .rels XML string into an { "rId..." => "target" } hash,
-        # tolerating leading whitespace or duplicate XML declarations.
+        # Parses an OOXML .rels XML string into an { "rId..." => "target" } hash.
         #
         # @param xml_string [String, nil]
         # @return [Hash<String, String>]
