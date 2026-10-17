@@ -51,6 +51,17 @@ test_files.each do |file_path|
   end
 end
 
+require_relative "support/upstream_suite"
+
+# Run the upstream gem's own test suite against the adapter (skipped if no checkout is available).
+upstream = UpstreamSuite.run("write_xlsx")
+if upstream[:skipped]
+  warn "Skipping upstream write_xlsx suite: #{upstream[:note]}"
+else
+  warn upstream[:note] if upstream[:note]
+  results["[upstream] write_xlsx"] = upstream.slice(:tests, :assertions, :passed, :failed, :success)
+end
+
 puts "\n\n"
 puts "=================================================="
 puts "SUMMARY OF WRITE_XLSX COMPATIBILITY SUITE RUN"

@@ -1,0 +1,36 @@
+# Upstream write_xlsx test files that currently pass against Xlsxrb::Adapters::WriteXLSX.
+# Add files here as adapter compatibility improves.
+test/drawing/test_drawing_chart_01.rb
+test/drawing/test_drawing_image_01.rb
+test/drawing/test_drawing_shape_01.rb
+test/drawing/test_drawing_shape_02.rb
+test/drawing/test_drawing_shape_04.rb
+test/package/app/test_app01.rb
+test/package/app/test_app02.rb
+test/package/app/test_app03.rb
+test/package/content_types/test_content_types.rb
+test/package/content_types/test_write_default.rb
+test/package/content_types/test_write_override.rb
+test/package/core/test_core01.rb
+test/package/core/test_core02.rb
+test/package/relationships/test_relationships.rb
+test/package/relationships/test_sheet_rels.rb
+test/package/shared_strings/test_shared_strings01.rb
+test/package/shared_strings/test_shared_strings02.rb
+test/package/shared_strings/test_write_si.rb
+test/package/table/test_table13.rb
+test/package/vml/test_write_auto_fill.rb
+test/package/vml/test_write_div.rb
+test/package/vml/test_write_idmap.rb
+test/package/vml/test_write_path.rb
+test/package/vml/test_write_shapelayout.rb
+test/package/vml/test_write_shapetype.rb
+test/package/vml/test_write_stroke.rb
+test/test_delete_tempdir.rb
+test/test_xml_writer_simple.rb
+test/utility/test_range.rb
+test/workbook/test_define_name.rb
+test/worksheet/test_convert_date_time_01.rb
+test/worksheet/test_convert_date_time_03.rb
+test/worksheet/test_convert_date_time_04.rb
+test/worksheet/test_write_formula_does_not_change_formula_string.rb

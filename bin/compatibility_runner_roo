@@ -51,6 +51,17 @@ test_files.each do |file_path|
   end
 end
 
+require_relative "support/upstream_suite"
+
+# Run the upstream gem's own test suite against the adapter (skipped if no checkout is available).
+upstream = UpstreamSuite.run("roo")
+if upstream[:skipped]
+  warn "Skipping upstream roo suite: #{upstream[:note]}"
+else
+  warn upstream[:note] if upstream[:note]
+  results["[upstream] roo"] = upstream.slice(:tests, :assertions, :passed, :failed, :success)
+end
+
 puts "\n\n"
 puts "=================================================="
 puts "SUMMARY OF ROO COMPATIBILITY SUITE RUN"

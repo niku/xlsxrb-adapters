@@ -4,6 +4,7 @@ AllCops:
   SuggestExtensions: false
   Exclude:
     - "bin/**/*"
+    - "proposals/**/*"
     - "sig/**/*"
     - "tmp/**/*"
     - "vendor/**/*"

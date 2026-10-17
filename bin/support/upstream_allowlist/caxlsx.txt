@@ -1,0 +1,31 @@
+# Upstream caxlsx test files that currently pass against Xlsxrb::Adapters::Caxlsx.
+# Add files here as adapter compatibility improves; regenerate with the probe loop in docs.
+test/content_type/tc_default.rb
+test/content_type/tc_override.rb
+test/drawing/tc_d_lbls.rb
+test/drawing/tc_data_source.rb
+test/drawing/tc_marker.rb
+test/drawing/tc_num_data.rb
+test/drawing/tc_num_val.rb
+test/drawing/tc_picture_locking.rb
+test/drawing/tc_pie_series.rb
+test/drawing/tc_series.rb
+test/drawing/tc_str_data.rb
+test/drawing/tc_str_val.rb
+test/drawing/tc_val_axis.rb
+test/drawing/tc_vml_drawing.rb
+test/drawing/tc_vml_shape.rb
+test/integration/tc_excel_windows.rb
+test/stylesheet/tc_fill.rb
+test/workbook/worksheet/auto_filter/tc_auto_filter.rb
+test/workbook/worksheet/auto_filter/tc_filter_column.rb
+test/workbook/worksheet/auto_filter/tc_sort_condition.rb
+test/workbook/worksheet/auto_filter/tc_sort_state.rb
+test/workbook/worksheet/tc_cfvo.rb
+test/workbook/worksheet/tc_color_scale.rb
+test/workbook/worksheet/tc_comment.rb
+test/workbook/worksheet/tc_date_time_converter.rb
+test/workbook/worksheet/tc_outline_pr.rb
+test/workbook/worksheet/tc_print_options.rb
+test/workbook/worksheet/tc_protected_range.rb
+test/workbook/worksheet/tc_sheet_format_pr.rb
