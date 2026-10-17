@@ -1,7 +1,7 @@
 PATH
   remote: ../xlsxrb
   specs:
-    xlsxrb (0.1.13)
+    xlsxrb (0.1.14)
       bigdecimal (~> 4.1)
       rexml (~> 3.0)
 
@@ -297,7 +297,7 @@ CHECKSUMS
   unicode-emoji (4.3.0) sha256=11c02fa73290378c066bb0562cd4c87d8e1b706fbbe0059ca12746a4244de8ce
   uri (1.1.1) sha256=379fa58d27ffb1387eaada68c749d1426738bd0f654d812fcc07e7568f5c57c6
   write_xlsx (1.15.1) sha256=6a97a5ea9af2fd2f248af4aa61cdced0933b6887c96826b6a04f8384a656d3a2
-  xlsxrb (0.1.13)
+  xlsxrb (0.1.14)
   xlsxrb-adapters (0.1.0)
   xlsxtream (3.1.0) sha256=68ce0cac504d86beb9bc626defd5977146c68e5ca2a4ab76c5c61c48e0a66fcd
   xsv (1.4.1) sha256=32a2949b6be2bfb6d5dc0335aebcc265bf7f781cb757f2292f31abb24996e70d
