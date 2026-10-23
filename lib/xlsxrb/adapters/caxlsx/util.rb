@@ -27,7 +27,7 @@ module Xlsxrb
         # @return [Boolean]
         #: () -> bool
         def escape_formulas
-          !defined?(@escape_formulas) || @escape_formulas.nil? ? true : @escape_formulas
+          !defined?(@escape_formulas) || @escape_formulas.nil? ? false : @escape_formulas
         end
 
         # @param value [Boolean]

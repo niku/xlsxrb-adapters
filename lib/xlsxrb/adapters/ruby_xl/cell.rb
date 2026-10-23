@@ -53,7 +53,7 @@ module Xlsxrb
           @datatype = datatype
           @formula = normalize_formula(formula)
           @is = is
-          @value = value || is&.to_s
+          @value = value.nil? ? is&.to_s : value
           @raw_value = raw_value
         end
 
