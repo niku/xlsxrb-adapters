@@ -54,7 +54,7 @@ module Xlsxrb
         # @param output [String, IO, ZipKit::Streamer] Destination target.
         # @param options [Hash{Symbol => untyped}] Workbook options.
         def initialize(output, options = {})
-          @writer = ZipKitWriter.with_output_to(output)
+          @writer = ZipKitWriter.with_output_to(output, io_wrapper: options[:io_wrapper])
           @options = options
           @sst = SharedStringTable.new
           @worksheets = []

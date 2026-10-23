@@ -20,8 +20,11 @@ module Xlsxrb
         # Wraps an output sink into a ZipKitWriter instance.
         #
         # @param output [String, IO, Object]
+        # @param io_wrapper [Symbol, nil] Explicit wrapper selection (:zip_kit or :xlsxrb). Defaults to :xlsxrb.
         # @return [ZipKitWriter]
-        def self.with_output_to(output)
+        def self.with_output_to(output, io_wrapper: nil)
+          use_zip_kit = io_wrapper == :zip_kit
+
           if output.is_a?(self)
             output
           elsif defined?(::ZipKit::Streamer) && output.is_a?(::ZipKit::Streamer)
@@ -29,7 +32,9 @@ module Xlsxrb
           elsif output.is_a?(String)
             # rubocop:disable-next Style/FileOpen
             file = File.open(output, "wb")
-            if defined?(::ZipKit::Streamer)
+            if use_zip_kit
+              raise LoadError, "zip_kit is requested but not available" unless defined?(::ZipKit::Streamer)
+
               streamer = ::ZipKit::Streamer.new(file)
               new(streamer, close: [streamer, file])
             else
@@ -37,7 +42,9 @@ module Xlsxrb
               new(zip_writer, close: [zip_writer, file], mode: :xlsxrb)
             end
           elsif output.respond_to?(:<<) || output.respond_to?(:write)
-            if defined?(::ZipKit::Streamer)
+            if use_zip_kit
+              raise LoadError, "zip_kit is requested but not available" unless defined?(::ZipKit::Streamer)
+
               streamer = ::ZipKit::Streamer.new(output)
               new(streamer, close: [streamer])
             else

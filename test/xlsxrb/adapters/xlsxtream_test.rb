@@ -265,4 +265,20 @@ class XlsxrbAdaptersXlsxtreamTest < Test::Unit::TestCase
     assert_include io, '<row r="1"><c r="A1" s="3" t="inlineStr"><is><t>Col1</t></is></c></row>'
     assert_include io, '<row r="2"><c r="A2" t="inlineStr"><is><t>Val1</t></is></c></row>'
   end
+
+  def test_io_wrapper_selection
+    sio = StringIO.new
+    # Default selection uses deterministic xlsxrb zip writer mode
+    wb = Xlsxrb::Adapters::Xlsxtream::Workbook.new(sio)
+    wb.write_worksheet("Test") { |ws| ws << ["A"] }
+    wb.close
+    assert sio.string.bytesize.positive?
+
+    # Explicit :xlsxrb wrapper
+    sio2 = StringIO.new
+    wb2 = Xlsxrb::Adapters::Xlsxtream::Workbook.new(sio2, io_wrapper: :xlsxrb)
+    wb2.write_worksheet("Test") { |ws| ws << ["B"] }
+    wb2.close
+    assert sio2.string.bytesize.positive?
+  end
 end
