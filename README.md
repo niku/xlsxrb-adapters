@@ -62,6 +62,13 @@ This project provides adapters for the following widely used Ruby spreadsheet li
   - `cell.change_contents(data, formula_expression)`
   - `cell.remove_formula`
 
+#### Round-Trip Preservation & Compatibility Notes
+
+- **Template Preservation**: When parsing an existing workbook with `Xlsxrb::Adapters::RubyXL::Parser`, underlying unmodeled elements (such as freeze panes, comments, hyperlinks, drawings/images, page setup, print options, tables, and sparklines) are retained and preserved upon saving (`wb.write`), preventing template regressions during round-trip edits.
+- **Data Type Fidelity**: Cells containing text that resembles numbers (such as `"0001"` or `"202502"`) are marked with raw string data types, ensuring they remain strings through round-trip parsing and serialization without turning into numbers.
+- **Validations & Conditional Formatting**: `worksheet.data_validations` and `worksheet.conditional_formatting` return lightweight wrapper objects supporting both object method access (`validation.type`, `validation.sqref`) and hash-style access (`validation[:type]`, `validation[:sqref]`).
+- **Defined Names**: Extended properties including `local_sheet_id` and `hidden` are preserved.
+
 ### Caxlsx (`Xlsxrb::Adapters::Caxlsx` / `Axlsx`)
 
 Drop-in replacement for the popular [`caxlsx`](https://github.com/caxlsx/caxlsx) / `axlsx` gem without polluting the global `::Axlsx` namespace. Includes an internal alias `Xlsxrb::Adapters::Caxlsx::Axlsx = Xlsxrb::Adapters::Caxlsx` and opt-in top-level aliasing.
@@ -223,6 +230,11 @@ matrix = xlsx.to_matrix
   - `xlsx.to_matrix(sheet = nil)`
   - `xlsx.to_xml(sheet = nil)`
   - `xlsx.to_yaml(options = {}, sheet = nil)`
+
+#### Lazy Loading & Performance Best Practices
+
+- **Lazy Sheet Parsing**: `Xlsxrb::Adapters::Roo::Excelx` loads sheet metadata on initialization and defers parsing individual sheet XML and cell DOM until a sheet is actually accessed via `sheet_for`, `cell`, or `default_sheet=`. This drastically minimizes memory consumption for multi-sheet workbooks.
+- **Direct Native Engine for Massive Datasets**: For massive batch workloads (e.g. hundreds of thousands or millions of rows), generating wrapper cell objects introduces unavoidable Ruby object overhead. For maximum throughput and near-zero memory footprint, bypass the adapter layer and call `Xlsxrb.read("file.xlsx") do |row| ... end` directly.
 
 ### Xsv (`Xlsxrb::Adapters::Xsv` / `Xsv`)
 
@@ -593,6 +605,7 @@ end
   - Column widths: `columns: [{ width_pixels: 50 }, { width_chars: 15 }]`
   - String deduplication: `use_shared_strings: true`
   - Automatic type casting: `auto_format: true` (casts numeric, boolean, and ISO-8601 strings to native cells)
+  - Zip writer selection: Deterministic pure-Ruby `ZipWriter` by default; optional `io_wrapper: :zip_kit` when `zip_kit` streaming is explicitly desired.
 - **Native Bridge**:
   - `wb.to_xlsxrb` (converts streaming adapter workbook into immutable `Xlsxrb::Elements::Workbook`)
   - `Xlsxrb::Adapters::Xlsxtream.from_xlsxrb(xlsxrb_wb)`
@@ -1150,6 +1163,30 @@ bundle exec rubocop
 # Run benchmarks (usage: rake benchmark [rows=10000] [cols=10] [runs=3] [category=all|caxlsx|rubyxl|roo|xsv|creek|fast_excel|write_xlsx|xlsxtream|simple_xlsx_reader])
 bundle exec rake benchmark
 ```
+
+## Migration & Exception Handling Compatibility
+
+When replacing upstream gems (such as `rubyXL` or `roo`) with `xlsxrb-adapters`, exception classes may differ because `xlsxrb` relies on a zero-dependency pure-Ruby ZIP reader rather than `rubyzip`.
+
+### Exception Mapping
+
+| Condition | Upstream Gem (e.g. rubyXL) | `xlsxrb-adapters` | Recommended Rescue Clause |
+| :--- | :--- | :--- | :--- |
+| **Missing file** | `Errno::ENOENT` or `Zip::Error` | `StandardError` (`Errno::ENOENT`) | `rescue Errno::ENOENT, StandardError` |
+| **Corrupted or non-ZIP file** | `Zip::Error` (via `rubyzip`) | `Xlsxrb::ZipError` | `rescue Xlsxrb::ZipError` |
+
+> [!NOTE]
+> In environments where `rubyzip` is removed from your `Gemfile`, referencing `Zip::Error` directly can raise `NameError: uninitialized constant Zip`. For smooth gradual migration, consider rescuing both:
+> ```ruby
+> zip_error_classes = [Xlsxrb::ZipError]
+> zip_error_classes << ::Zip::Error if defined?(::Zip::Error)
+>
+> begin
+>   wb = Xlsxrb::Adapters::RubyXL::Parser.parse(path)
+> rescue *zip_error_classes => e
+>   handle_corrupted_file(e)
+> end
+> ```
 
 ## Acknowledgements
 
