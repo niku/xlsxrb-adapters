@@ -396,4 +396,24 @@ class XlsxrbAdaptersRooTest < Test::Unit::TestCase
     assert_equal :time, time_cell.default_type
     assert_equal 43_200, time_cell.value
   end
+
+  def test_lazy_sheet_loading
+    doc = Xlsxrb::Adapters::Roo::Excelx.new(fixture("numbers1.xlsx"))
+    assert_equal 5, doc.sheets.size
+
+    # Initially, sheets array should be empty (lazy loaded)
+    internal_sheets = doc.instance_variable_get(:@sheets)
+    assert_empty internal_sheets
+
+    # Accessing default sheet only loads the first sheet
+    val = doc.cell(1, 1)
+    refute_nil val
+    assert_equal 1, internal_sheets.compact.size
+
+    # Accessing specific sheet loads only that sheet
+    doc.default_sheet = doc.sheets[2]
+    val2 = doc.cell(1, 1)
+    refute_nil val2
+    assert_equal 2, internal_sheets.compact.size
+  end
 end

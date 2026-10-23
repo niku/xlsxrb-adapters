@@ -125,7 +125,43 @@ module Xlsxrb
         def sheet_for(sheet = nil)
           target = sheet || default_sheet
           validate_sheet!(target)
-          target.is_a?(String) ? @sheets_by_name[target] : @sheets[target]
+          idx = target.is_a?(String) ? (@sheet_names.index(target) || @sheet_names.map(&:downcase).index(target.downcase)) : target
+          return nil unless idx && idx < @sheet_names.size
+
+          load_sheet_at(idx)
+        end
+
+        # Loads sheet on-demand (lazy parsing).
+        #
+        # @param idx [Integer]
+        # @return [Excelx::Sheet, nil]
+        def load_sheet_at(idx)
+          return @sheets[idx] if @sheets[idx]
+
+          defn = @sheet_definitions[idx]
+          return nil unless defn
+
+          ctx = @sheet_context
+          sheet_xml = read_xml(ctx[:zip], defn[:sheet_path]) || ""
+          sheet_rels_xml = read_xml(ctx[:zip], defn[:sheet_rels_path])
+
+          sheet_obj = parse_sheet(
+            defn[:name],
+            sheet_xml,
+            sheet_rels_xml,
+            ctx[:zip],
+            ctx[:shared_strings],
+            ctx[:html_strings],
+            ctx[:num_fmts],
+            ctx[:base_date],
+            ctx[:media_images],
+            state: defn[:state]
+          )
+
+          @sheets[idx] = sheet_obj
+          @sheets_by_name[defn[:name]] = sheet_obj
+          @sheets_by_name[defn[:name].downcase] ||= sheet_obj
+          sheet_obj
         end
 
         # Returns whether the specified sheet is hidden.
@@ -398,7 +434,10 @@ module Xlsxrb
         #: () -> Xlsxrb::Elements::Workbook
         def to_xlsxrb
           date1904_active = date1904?
-          elements_sheets = @sheets.map do |s|
+          elements_sheets = (0...@sheet_names.size).filter_map do |idx|
+            s = load_sheet_at(idx)
+            next unless s
+
             rows_hash = {}
             sheet_hyperlinks = {}
             sheet_comments = []
@@ -580,10 +619,19 @@ module Xlsxrb
           # 4. Images in archive
           media_images = zip.entry_names.select { |name| name.start_with?("xl/media/") }
 
-          # 5. Parse Worksheets
+          # 5. Worksheet definitions (lazy loaded on demand to prevent heavy memory spikes)
           @sheet_names = []
           @sheets = []
           @sheets_by_name = {}
+          @sheet_definitions = []
+          @sheet_context = {
+            zip: zip,
+            shared_strings: shared_strings,
+            html_strings: html_strings,
+            num_fmts: num_fmts,
+            base_date: base_date,
+            media_images: media_images
+          }
 
           sheets_info.each_with_index do |s_info, idx|
             s_name = s_info[:name]
@@ -594,30 +642,22 @@ module Xlsxrb
             sheet_path = target.start_with?("/") ? target.delete_prefix("/") : "xl/#{target}"
             next unless zip.entry?(sheet_path)
 
-            sheet_xml = read_xml(zip, sheet_path) || ""
             sheet_rels_path = sheet_path.sub(%r{([^/]+)$}, '_rels/\1.rels')
-            sheet_rels_xml = read_xml(zip, sheet_rels_path)
-
-            sheet_obj = parse_sheet(
-              s_name,
-              sheet_xml,
-              sheet_rels_xml,
-              zip,
-              shared_strings,
-              html_strings,
-              num_fmts,
-              base_date,
-              media_images,
+            @sheet_definitions << {
+              index: idx,
+              name: s_name,
+              sheet_path: sheet_path,
+              sheet_rels_path: sheet_rels_path,
               state: s_info[:state] || :visible
-            )
-
+            }
             @sheet_names << s_name
-            @sheets[idx] = sheet_obj
-            @sheets_by_name[s_name] = sheet_obj
-            @sheets_by_name[s_name.downcase] ||= sheet_obj
           end
 
           @default_sheet = @sheet_names.first
+        end
+
+        def close
+          @sheet_context&.[](:zip)&.close
         end
 
         #: (String? xml) -> [Array[String], Hash[Integer, String]]
