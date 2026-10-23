@@ -408,7 +408,10 @@ module Xlsxrb
           r_idx ||= @row.row_index
           c_idx ||= index
 
-          cell_val = if contains_rich_text?
+          cell_val = if is_formula?
+                       # A formula cell holds its cached result; the expression itself goes into formula_obj below
+                       @formula_value
+                     elsif contains_rich_text?
                        @value.to_xlsxrb
                      elsif is_text_run?
                        font = {}
