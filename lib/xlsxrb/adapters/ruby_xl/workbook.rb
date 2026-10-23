@@ -66,6 +66,16 @@ module Xlsxrb
         attr_accessor :appversion #: String
         attr_accessor :date1904 #: bool
         attr_accessor :defined_names #: DefinedNames
+        attr_accessor :calc_pr #: CalculationProperties
+        attr_accessor :book_views #: Array[WorkbookView]
+        # Accepted for RubyXL compatibility. xlsxrb does not carry <mc:AlternateContent>, so it is never written.
+        attr_accessor :mc_alternate_content #: untyped
+        attr_accessor :source_element #: Xlsxrb::Elements::Workbook?
+
+        # Calculation settings (<calcPr>). Only full_calc_on_load is written.
+        CalculationProperties = Struct.new(:full_calc_on_load)
+        # Workbook window settings (<workbookView>). Only active_tab is written.
+        WorkbookView = Struct.new(:active_tab)
 
         # Returns whether workbook uses 1904 date system.
         # @return [Boolean]
@@ -97,7 +107,12 @@ module Xlsxrb
               charts: sheet.charts || [],
               unmapped_data: sheet.unmapped_data || {}
             )
+            ws.source_element = sheet
             ws.data_validations = (sheet.data_validations || sheet.unmapped_data&.dig(:facade, :data_validations) || []).dup
+            ws.state = Worksheet.rubyxl_state(sheet.state) if sheet.respond_to?(:state)
+            ws.conditional_formatting = sheet.conditional_formatting.dup if sheet.respond_to?(:conditional_formatting) && sheet.conditional_formatting&.any?
+            ws.sheet_format_pr = sheet.sheet_format.dup if sheet.respond_to?(:sheet_format) && sheet.sheet_format&.any?
+            ws.sheet_views = sheet.sheet_view.dup if sheet.respond_to?(:sheet_view) && sheet.sheet_view&.any?
 
             # Load column styles and widths into ColumnRanges (cols)
             if sheet.columns && !sheet.columns.empty?
@@ -111,10 +126,11 @@ module Xlsxrb
             end
 
             # Load merged_cells if present in unmapped_data or worksheet
-            if sheet.unmapped_data && sheet.unmapped_data[:merged_cells]
+            merged_list = sheet.merged_cells || sheet.unmapped_data&.dig(:facade, :merge_cells) || sheet.unmapped_data&.dig(:merged_cells)
+            if merged_list && !merged_list.empty?
               ws.merged_cells = MergedCells.new
-              sheet.unmapped_data[:merged_cells].each do |mc_ref|
-                ws.merged_cells << MergedCell.new(ref: mc_ref)
+              merged_list.each do |mc_ref|
+                ws.merged_cells << MergedCell.new(ref: mc_ref.to_s)
               end
             end
 
@@ -132,13 +148,18 @@ module Xlsxrb
                 f_val = if cell.formula
                           Formula.new(cell.formula.is_a?(Xlsxrb::Elements::Formula) ? cell.formula.expression : cell.formula.to_s)
                         end
+                datatype = case cell.value
+                           when String then DataType::RAW_STRING
+                           when Xlsxrb::Elements::RichText then DataType::INLINE_STRING
+                           end
                 adapter_cell = Cell.new(
                   worksheet: ws,
                   row: cell.row_index,
                   column: cell.column_index,
                   value: cell.value,
                   formula: f_val,
-                  style_index: cell.style_index
+                  style_index: cell.style_index,
+                  datatype: datatype
                 )
                 adapter_row[cell.column_index] = adapter_cell
               end
@@ -148,6 +169,7 @@ module Xlsxrb
           end
 
           instance = new(adapter_sheets)
+          instance.source_element = wb
           instance.shared_strings = wb.shared_strings || []
           instance.shared_strings.each { |s| instance.shared_strings_container.add(s) }
           instance.styles = wb.styles || {}
@@ -170,7 +192,9 @@ module Xlsxrb
               raw_dns.each do |dn|
                 name = dn[:name] || dn["name"]
                 ref = dn[:value] || dn["value"] || dn[:reference] || dn["reference"]
-                instance.defined_names << DefinedName.new(name: name, reference: ref)
+                local_id = dn[:local_sheet_id] || dn["local_sheet_id"]
+                hidden = dn.key?(:hidden) ? dn[:hidden] : dn["hidden"]
+                instance.defined_names << DefinedName.new(name: name, reference: ref, local_sheet_id: local_id, hidden: hidden)
               end
             end
           end
@@ -218,6 +242,10 @@ module Xlsxrb
           @appversion = appversion
           @date1904 = date1904
           @defined_names = DefinedNames.new
+          @calc_pr = CalculationProperties.new
+          @book_views = [WorkbookView.new]
+          @mc_alternate_content = nil
+          @source_element = nil
         end
 
         # Iterates through worksheets.
@@ -549,10 +577,17 @@ module Xlsxrb
           end
           dns = if @defined_names && !@defined_names.empty?
                   @defined_names.map do |dn|
-                    { name: dn.name, value: dn.reference }
+                    entry = { name: dn.name, value: dn.reference }
+                    entry[:local_sheet_id] = dn.local_sheet_id if dn.local_sheet_id
+                    entry[:hidden] = dn.hidden unless dn.hidden.nil?
+                    entry
                   end
+                elsif @source_element&.defined_names
+                  @source_element.defined_names
                 end
+          facade_meta[:app_properties] = { company: @company } if @company && !@company.empty?
           merged_unmapped[:facade] = facade_meta unless facade_meta.empty?
+          merged_unmapped[:workbook_properties] = workbook_properties_for_xlsxrb(merged_unmapped[:workbook_properties])
 
           sst = @shared_strings_container
           sst_strings = sst && !sst.empty? ? sst.strings.map(&:to_s) : @shared_strings
@@ -565,6 +600,19 @@ module Xlsxrb
             defined_names: dns,
             date1904: date1904?
           )
+        end
+
+        # Merges the RubyXL-style calc and view settings into xlsxrb workbook properties.
+        #
+        # @param base [Hash, nil] Workbook properties read from the source file.
+        # @return [Hash]
+        #: (Hash[Symbol, untyped]? base) -> Hash[Symbol, untyped]
+        def workbook_properties_for_xlsxrb(base)
+          props = (base || { update_links: "never" }).dup
+          active_tab = @book_views&.first&.active_tab
+          props[:active_tab] = active_tab if active_tab
+          props[:full_calc_on_load] = true if @calc_pr&.full_calc_on_load
+          props
         end
 
         # Writes workbook out to an XLSX file.

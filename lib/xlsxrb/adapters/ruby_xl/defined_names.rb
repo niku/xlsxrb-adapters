@@ -10,6 +10,7 @@ module Xlsxrb
         attr_accessor :name #: String
         attr_accessor :reference #: String
         attr_accessor :local_sheet_id #: Integer?
+        attr_accessor :hidden #: bool?
 
         # @param params [Hash]
         #: (?Hash[Symbol, untyped] params) -> void
@@ -17,6 +18,7 @@ module Xlsxrb
           @name = params[:name].to_s
           @reference = (params[:reference] || params[:value]).to_s
           @local_sheet_id = params[:local_sheet_id]
+          @hidden = params[:hidden]
         end
 
         # @param other [untyped]

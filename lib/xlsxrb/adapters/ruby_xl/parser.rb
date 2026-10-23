@@ -93,9 +93,14 @@ module Xlsxrb
               wb.modified_at = Time.parse(modified) if modified
             end
 
-            # Defined names from workbook.xml
+            # Defined names and properties from workbook.xml
             workbook_xml = zip.read_entry("xl/workbook.xml")
             if workbook_xml
+              active_tab = workbook_xml[/<workbookView\b[^>]*\bactiveTab="(\d+)"/, 1]
+              wb.book_views.first.active_tab = active_tab.to_i if active_tab
+              full_calc = workbook_xml[/<calcPr\b[^>]*\bfullCalcOnLoad="(1|true)"/, 1]
+              wb.calc_pr.full_calc_on_load = true if full_calc
+
               wb_props = Xlsxrb::Ooxml::WorkbookParser.parse_with_properties(workbook_xml)
               parsed_dns = wb_props[:defined_names]
               if parsed_dns && !parsed_dns.empty?
@@ -103,34 +108,70 @@ module Xlsxrb
                 parsed_dns.each do |dn|
                   next if wb.defined_names.any? { |d| d.name == dn[:name] }
 
-                  wb.defined_names << DefinedName.new(name: dn[:name], reference: dn[:value])
+                  wb.defined_names << DefinedName.new(
+                    name: dn[:name],
+                    reference: dn[:value],
+                    local_sheet_id: dn[:local_sheet_id],
+                    hidden: dn[:hidden]
+                  )
                 end
               end
             end
 
-            # Merged cells per sheet
-            wb.worksheets.each_with_index do |ws, idx|
-              sheet_entry = "xl/worksheets/sheet#{idx + 1}.xml"
-              sheet_xml = zip.read_entry(sheet_entry)
-              next unless sheet_xml
+            # Merged cells per sheet fallback via workbook relationships
+            unresolved_sheets = wb.worksheets.select { |ws| ws.merged_cells.nil? || ws.merged_cells.empty? }
+            if unresolved_sheets.any? && workbook_xml
+              wb_rels_xml = zip.read_entry("xl/_rels/workbook.xml.rels")
+              sheet_targets = resolve_sheet_targets(workbook_xml, wb_rels_xml)
 
-              merge_matches = sheet_xml.scan(/<mergeCell\s+ref="([^"]+)"/)
-              next if merge_matches.empty?
+              wb.worksheets.each do |ws|
+                next if ws.merged_cells && !ws.merged_cells.empty?
 
-              ws.merged_cells ||= MergedCells.new
-              merge_matches.each do |match|
-                ref = match.first
-                next unless ref
+                target_path = sheet_targets[ws.sheet_name]
+                next unless target_path && zip.entry?(target_path)
 
-                ws.merged_cells << MergedCell.new(ref: ref) unless ws.merged_cells.any? { |m| m.ref.to_s == ref }
+                sheet_xml = zip.read_entry(target_path)
+                next unless sheet_xml
+
+                merge_matches = sheet_xml.scan(/<mergeCell\s+ref="([^"]+)"/)
+                next if merge_matches.empty?
+
+                ws.merged_cells ||= MergedCells.new
+                merge_matches.each do |match|
+                  ref = match.first
+                  next unless ref
+
+                  ws.merged_cells << MergedCell.new(ref: ref) unless ws.merged_cells.any? { |m| m.ref.to_s == ref }
+                end
               end
             end
           ensure
             zip.close
             io.close if io.is_a?(File)
           end
-        rescue StandardError
-          # Best effort metadata recovery
+        rescue StandardError => e
+          # Best effort metadata recovery; log or warn in debug mode
+          warn "[Xlsxrb::Adapters::RubyXL::Parser] enrich_workbook encountered error: #{e.message}" if $DEBUG
+        end
+
+        # Resolves sheet name to target XML entry path in ZIP using workbook relationships.
+        #
+        # @param wb_xml [String, nil]
+        # @param rels_xml [String, nil]
+        # @return [Hash<String, String>]
+        def self.resolve_sheet_targets(wb_xml, rels_xml)
+          return {} unless wb_xml && rels_xml
+
+          rels = Xlsxrb::Ooxml::RelationshipsParser.parse(rels_xml)
+          targets = {}
+          wb_xml.scan(/<sheet\b[^>]*\bname="([^"]+)"[^>]*\br:id="([^"]+)"/) do |name, rid|
+            target = rels[rid]
+            next unless target
+
+            normalized = target.start_with?("/") ? target.delete_prefix("/") : "xl/#{target}"
+            targets[unescape_xml(name) || name] = normalized
+          end
+          targets
         end
 
         # @param str [String, nil]

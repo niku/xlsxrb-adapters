@@ -8,6 +8,8 @@ require_relative "color"
 require_relative "reference"
 require_relative "column_range"
 require_relative "merged_cells"
+require_relative "data_validation"
+require_relative "conditional_formatting"
 
 module Xlsxrb
   module Adapters
@@ -32,8 +34,17 @@ module Xlsxrb
         attr_accessor :unmapped_data #: Hash[untyped, untyped]
         attr_accessor :cols #: ColumnRanges
         attr_accessor :merged_cells #: MergedCells?
-        attr_accessor :data_validations #: Array[untyped]?
         attr_accessor :sheet_id #: Integer?
+        attr_accessor :source_element #: Xlsxrb::Elements::Worksheet?
+        # Sheet visibility as RubyXL exposes it: nil when visible, "hidden" or "veryHidden" otherwise.
+        attr_accessor :state #: String?
+        # Default row height / column width settings (<sheetFormatPr>), as an xlsxrb sheet_format Hash.
+        attr_accessor :sheet_format_pr #: Hash[Symbol, untyped]?
+        # Sheet view settings (<sheetViews>), as an xlsxrb sheet_view Hash. Assign nil to drop them.
+        attr_accessor :sheet_views #: Hash[Symbol, untyped]?
+
+        XLSXRB_STATES = { "hidden" => :hidden, "veryHidden" => :very_hidden }.freeze
+        RUBYXL_STATES = XLSXRB_STATES.invert.freeze
 
         # Proxy to support RubyXL's `worksheet.sheet_data[r][c]` and `sheet_data.rows` idiom.
         class SheetDataProxy
@@ -83,6 +94,35 @@ module Xlsxrb
           @cols = ColumnRanges.new
           @merged_cells = nil
           @data_validations = nil
+          @conditional_formatting = nil
+          @state = nil
+          @sheet_format_pr = nil
+          @sheet_views = nil
+          @source_element = nil
+        end
+
+        # Converts an xlsxrb sheet state Symbol (:visible, :hidden, :very_hidden) to the RubyXL String form.
+        #
+        # @param state [Symbol, String, nil]
+        # @return [String, nil]
+        #: (untyped state) -> String?
+        def self.rubyxl_state(state)
+          RUBYXL_STATES[state&.to_sym]
+        end
+
+        attr_reader :data_validations #: Array[DataValidation]?
+        attr_reader :conditional_formatting #: Array[ConditionalFormatting]?
+
+        def data_validations=(vals)
+          @data_validations = vals&.map do |v|
+            v.is_a?(DataValidation) ? v : DataValidation.new(v)
+          end
+        end
+
+        def conditional_formatting=(cfs)
+          @conditional_formatting = cfs&.map do |cf|
+            cf.is_a?(ConditionalFormatting) ? cf : ConditionalFormatting.new(cf)
+          end
         end
 
         alias name sheet_name
@@ -1402,11 +1442,23 @@ module Xlsxrb
         # @return [Xlsxrb::Elements::Worksheet]
         #: () -> Xlsxrb::Elements::Worksheet
         def to_xlsxrb
+          base = @source_element
           sorted_rows = @rows.compact.sort_by(&:index).map(&:to_xlsxrb)
 
           merged_unmapped = @unmapped_data.dup
           facade_meta = (merged_unmapped[:facade] || {}).dup
-          facade_meta[:merge_cells] = @merged_cells.map { |mc| mc.ref.to_s } if @merged_cells && !@merged_cells.empty?
+          merged_cells_data = if @merged_cells && !@merged_cells.empty?
+                                @merged_cells.map { |mc| mc.ref.to_s }
+                              else
+                                base&.merged_cells || []
+                              end
+          facade_meta[:merge_cells] = merged_cells_data unless merged_cells_data.empty?
+
+          if @sheet_views && !@sheet_views.empty?
+            facade_meta[:sheet_view] = @sheet_views
+          else
+            facade_meta.delete(:sheet_view)
+          end
           merged_unmapped[:facade] = facade_meta unless facade_meta.empty?
 
           # Convert cols to xlsxrb columns if present
@@ -1428,15 +1480,70 @@ module Xlsxrb
                         end
                       end
 
+          state_val = XLSXRB_STATES.fetch(@state.to_s, :visible)
+          sheet_format_val = @sheet_format_pr || {}
+
+          dv_data = if @data_validations
+                      @data_validations.map do |v|
+                        if v.respond_to?(:to_xlsxrb)
+                          v.to_xlsxrb
+                        elsif v.respond_to?(:to_h)
+                          v.to_h
+                        else
+                          v
+                        end
+                      end
+                    else
+                      base&.data_validations || []
+                    end
+
+          cf_data = if @conditional_formatting
+                      @conditional_formatting.map do |cf|
+                        if cf.respond_to?(:to_xlsxrb)
+                          cf.to_xlsxrb
+                        elsif cf.respond_to?(:to_h)
+                          cf.to_h
+                        else
+                          cf
+                        end
+                      end
+                    else
+                      base&.conditional_formatting || []
+                    end
+
           Xlsxrb::Elements::Worksheet.new(
             name: @sheet_name,
             rows: sorted_rows,
             columns: cols_data,
-            charts: @charts,
-            data_validations: @data_validations || [],
+            charts: @charts.empty? && base ? (base.charts || []) : @charts,
+            data_validations: dv_data,
+            conditional_formatting: cf_data,
+            state: state_val,
+            sheet_format: sheet_format_val,
             unmapped_data: merged_unmapped,
             date1904: date1904?,
-            dimension: dimension
+            dimension: dimension,
+            merged_cells: merged_cells_data,
+            comments: base&.comments,
+            hyperlinks: base&.hyperlinks,
+            images: base&.images,
+            tables: base&.tables,
+            shapes: base&.shapes,
+            page_setup: base&.page_setup,
+            page_margins: base&.page_margins,
+            header_footer: base&.header_footer,
+            print_options: base&.print_options,
+            sheet_protection: base&.sheet_protection,
+            sparkline_groups: base&.sparkline_groups,
+            auto_filter: base&.auto_filter,
+            print_area: base&.print_area,
+            print_titles: base&.print_titles,
+            freeze_pane: base&.freeze_pane,
+            sheet_properties: base&.sheet_properties,
+            protected_ranges: base&.protected_ranges,
+            cell_watches: base&.cell_watches,
+            row_breaks: base&.row_breaks,
+            col_breaks: base&.col_breaks
           )
         end
 
