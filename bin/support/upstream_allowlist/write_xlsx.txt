@@ -5,6 +5,7 @@ test/drawing/test_drawing_image_01.rb
 test/drawing/test_drawing_shape_01.rb
 test/drawing/test_drawing_shape_02.rb
 test/drawing/test_drawing_shape_04.rb
+test/helper.rb
 test/package/app/test_app01.rb
 test/package/app/test_app02.rb
 test/package/app/test_app03.rb
@@ -31,6 +32,7 @@ test/test_xml_writer_simple.rb
 test/utility/test_range.rb
 test/workbook/test_define_name.rb
 test/worksheet/test_convert_date_time_01.rb
+test/worksheet/test_convert_date_time_02.rb
 test/worksheet/test_convert_date_time_03.rb
 test/worksheet/test_convert_date_time_04.rb
 test/worksheet/test_write_formula_does_not_change_formula_string.rb
