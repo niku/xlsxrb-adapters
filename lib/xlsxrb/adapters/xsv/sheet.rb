@@ -182,7 +182,7 @@ module Xlsxrb
           sd_open_end = sd_match.end(0)
           ns_prefix = sd_match[1]
           sd_end = xml.index("</#{ns_prefix}sheetData>", sd_open_end)
-          sd_xml = xml.byteslice(sd_open_end, (sd_end || xml.bytesize) - sd_open_end)
+          sd_xml = sd_end ? xml[sd_open_end...sd_end] : xml[sd_open_end..]
           return true if sd_xml.nil? || sd_xml.empty?
 
           sd_xml.scan(ROW_RE) do |attrs1, body, attrs2|
