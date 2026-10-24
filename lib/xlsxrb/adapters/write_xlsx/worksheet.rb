@@ -329,7 +329,8 @@ module Xlsxrb
           clean_fml = fml.to_s
           clean_fml = clean_fml.sub(/^\{/, "").sub(/\}$/, "") if clean_fml =~ /^\{=.*\}$/
 
-          record = CellRecord.new(val || 0, fmt, clean_fml, val || 0, nil, nil, nil, nil, nil)
+          cached_val = val.nil? ? 0 : val
+          record = CellRecord.new(cached_val, fmt, clean_fml, cached_val, nil, nil, nil, nil, nil)
           store_cell_record(r, c, record)
         end
 
@@ -372,7 +373,8 @@ module Xlsxrb
             (c1..c2).each do |c|
               is_top_left = r == r1 && c == c1
               f_expr = is_top_left ? clean_fml : nil
-              record = CellRecord.new(val || 0, fmt, f_expr, val || 0, nil, nil, nil, range_ref, nil)
+              cached_val = val.nil? ? 0 : val
+              record = CellRecord.new(cached_val, fmt, f_expr, cached_val, nil, nil, nil, range_ref, nil)
               store_cell_record(r, c, record)
             end
           end
@@ -981,16 +983,17 @@ module Xlsxrb
                 val = rec.value
                 val = format_datetime_val(val) if val.is_a?(Time) || val.is_a?(Date)
 
+                cached = rec.cached_value.nil? ? 0 : rec.cached_value
                 fml = if rec.array_formula && rec.formula
-                        Xlsxrb.array_formula(rec.formula, rec.array_formula, cached_value: rec.cached_value || 0)
+                        Xlsxrb.array_formula(rec.formula, rec.array_formula, cached_value: cached)
                       elsif rec.formula
-                        Xlsxrb.formula(rec.formula, cached_value: rec.cached_value || 0)
+                        Xlsxrb.formula(rec.formula, cached_value: cached)
                       end
 
                 fmt = rec.format || @col_info.dig(c_idx, :format) || @set_rows.dig(r_idx, :format)
                 s_idx = fmt ? style_map[fmt] : nil
 
-                cell_val = rec.formula ? (rec.cached_value || 0) : val
+                cell_val = rec.formula ? cached : val
 
                 row_cells << Xlsxrb::Elements::Cell.fast_create(
                   r_idx,

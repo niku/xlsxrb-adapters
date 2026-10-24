@@ -266,8 +266,8 @@ module Xlsxrb
                      value
                    when nil, :string
                      retval = Integer(value, exception: false)
-                     retval ||= Float(value, exception: false)
-                     retval || value
+                     retval = Float(value, exception: false) if retval.nil?
+                     retval.nil? ? value : retval
                    when :unsupported
                      value
                    when :fixnum

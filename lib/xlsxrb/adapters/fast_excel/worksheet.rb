@@ -791,11 +791,18 @@ module Xlsxrb
                 val = rec.value
                 val = format_datetime_value(val) if val.is_a?(Datetime)
 
-                fml = rec.formula ? Xlsxrb.formula(rec.formula, cached_value: rec.cached_value || 0) : nil
+                cached = if !rec.cached_value.nil?
+                           rec.cached_value
+                         elsif !rec.value.nil?
+                           rec.value
+                         else
+                           0
+                         end
+                fml = rec.formula ? Xlsxrb.formula(rec.formula, cached_value: cached) : nil
                 fmt = rec.format || @col_formats[c_idx] || @row_formats[r_idx]
                 s_idx = fmt ? style_map[fmt] : nil
 
-                cell_val = rec.formula ? (rec.value || rec.cached_value || 0) : val
+                cell_val = rec.formula ? cached : val
 
                 row_cells << Xlsxrb::Elements::Cell.fast_create(
                   r_idx,
