@@ -115,7 +115,7 @@ class XlsxrbAdaptersCrossAdapterRoundTripTest < Test::Unit::TestCase
             if expected_val.is_a?(Numeric)
               assert_in_delta expected_val.to_f, actual_val.to_f, 0.001, "#{w} -> #{r} row #{idx} numeric mismatch"
             elsif expected_val.is_a?(Date)
-              date_matched = actual_val.to_s.start_with?("2026-10-24") || actual_val.to_f.round == 46319
+              date_matched = actual_val.to_s.start_with?("2026-10-24") || actual_val.to_f.round == 46_319
               assert date_matched, "#{w} -> #{r} row #{idx} date mismatch: expected #{expected_val}, got #{actual_val}"
             else
               assert_equal expected_val.to_s, actual_val.to_s, "#{w} -> #{r} row #{idx} string mismatch"

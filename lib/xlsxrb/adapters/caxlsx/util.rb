@@ -194,7 +194,6 @@ module Xlsxrb
           end
         end
 
-
         # If value is boolean return '1' or '0', else return the value
         # @param value [Object]
         # @return [Object]
@@ -236,7 +235,6 @@ module Xlsxrb
           end
           res
         end
-
 
         # Converts snake_case to CamelCase or camelCase
         # @param s [String, Symbol]
