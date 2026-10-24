@@ -44,10 +44,18 @@ module Xlsxrb
             #: (String path) ?{ (StringIO) -> untyped } -> untyped
             def open(path, &block)
               norm = path.delete_prefix("/")
-              data = @zip_reader.read_entry(norm) || @zip_reader.read_entry(path)
-              raise Errno::ENOENT, "No such entry in archive: #{path}" unless data
+              entry_name = if @zip_reader.entry?(norm)
+                             norm
+                           elsif @zip_reader.entry?(path)
+                             path
+                           end
+              raise Errno::ENOENT, "No such entry in archive: #{path}" unless entry_name
 
-              io = StringIO.new(data.b)
+              stream = @zip_reader.open_entry_io(entry_name)
+              str = stream.read
+              stream.close
+
+              io = StringIO.new(str)
               if block
                 begin
                   block.call(io)

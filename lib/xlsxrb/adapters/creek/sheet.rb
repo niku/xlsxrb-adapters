@@ -178,7 +178,7 @@ module Xlsxrb
             @headers = nil
             next unless @book.files.file.exist?(path)
 
-            xml_str = @book.files.file.open(path).read.force_encoding(Encoding::UTF_8)
+            xml_str = @book.files.file.open(path).read
 
             current_row_num = 0
             xml_str.scan(ROW_RE) do |attrs_str, close_type, body|
