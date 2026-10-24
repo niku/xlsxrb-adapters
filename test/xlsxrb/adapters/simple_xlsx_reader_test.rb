@@ -258,4 +258,10 @@ class XlsxrbAdaptersSimpleXlsxReaderTest < Test::Unit::TestCase
     rels = Xlsxrb::Adapters::SimpleXlsxReader::Loader.parse_relationships(xml)
     assert_equal({ "rId1" => "https://example.com" }, rels)
   end
+
+  def test_sheet_name_utf8_encoding
+    doc = Xlsxrb::Adapters::SimpleXlsxReader.open("vendor/upstream/roo/test/files/name_with_leading_slash.xlsx")
+    assert_equal ["Лист1"], doc.sheets.map(&:name)
+    assert_equal Encoding::UTF_8, doc.sheets.first.name.encoding
+  end
 end

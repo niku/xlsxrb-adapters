@@ -338,7 +338,7 @@ module Xlsxrb
             @raw_xml.scan(%r{<(?:[a-zA-Z0-9_]+:)?sheet\b([^>]*?)(?:/>|>(?:.*?)</(?:[a-zA-Z0-9_]+:)?sheet>)}m) do |(attrs)|
               name = attrs[/name="([^"]+)"/, 1]
               sheet_id = attrs[/sheetId="(\d+)"/, 1]
-              name = decode_entities(name) if name
+              name = decode_entities(name).force_encoding(Encoding::UTF_8) if name
               toc[name] = sheet_id.to_i - 1 if name && sheet_id
             end
             toc
@@ -353,7 +353,7 @@ module Xlsxrb
             @raw_xml.scan(%r{<(?:[a-zA-Z0-9_]+:)?sheet\b([^>]*?)(?:/>|>(?:.*?)</(?:[a-zA-Z0-9_]+:)?sheet>)}m) do |(attrs)|
               name = attrs[/name="([^"]+)"/, 1]
               rid = attrs[/(?:[a-zA-Z0-9_]+:)?id="([^"]+)"/, 1]
-              name = decode_entities(name) if name
+              name = decode_entities(name).force_encoding(Encoding::UTF_8) if name
               r_ids[name] = rid if name && rid
             end
             r_ids
