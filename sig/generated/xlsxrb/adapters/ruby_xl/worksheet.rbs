@@ -147,8 +147,8 @@ module Xlsxrb
         #
         # @param row_idx [Integer]
         # @return [Row, nil]
-        # : (Integer row_idx) -> Row?
-        def []: (Integer row_idx) -> Row?
+        # : (?Integer row_idx) -> Row?
+        def []: (?Integer row_idx) -> Row?
 
         # Sets a row at 0-based row index.
         #

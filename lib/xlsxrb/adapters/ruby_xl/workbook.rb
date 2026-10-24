@@ -63,6 +63,7 @@ module Xlsxrb
         attr_accessor :title #: String?
         attr_accessor :company #: String
         attr_accessor :application #: String
+        attr_accessor :filepath #: String?
         attr_accessor :appversion #: String
         attr_accessor :date1904 #: bool
         attr_accessor :defined_names #: DefinedNames
@@ -633,16 +634,20 @@ module Xlsxrb
         # Writes workbook out to an XLSX file.
         # Trims sheet names exceeding 31 characters to 31 characters as per Excel compatibility.
         #
-        # @param filepath [String, IO]
+        # @param filepath [String, IO, nil]
         # @return [void]
-        #: (String | IO filepath) -> void
-        def write(filepath)
+        #: (?String | IO | nil filepath) -> void
+        def write(filepath = nil)
+          dest = filepath || @filepath
+          raise ArgumentError, "write requires filepath" unless dest
+
           @worksheets.each do |ws|
             validate_sheet_name!(ws.sheet_name)
             ws.sheet_name = ws.sheet_name[0..30] if ws.sheet_name && ws.sheet_name.length > 31
           end
-          Xlsxrb.write(filepath, to_xlsxrb)
+          Xlsxrb.write(dest, to_xlsxrb)
         end
+        alias save write
 
         # Exports workbook as a binary StringIO stream.
         #

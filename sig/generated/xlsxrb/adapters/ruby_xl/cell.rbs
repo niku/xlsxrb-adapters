@@ -82,6 +82,14 @@ module Xlsxrb
         # : () -> String
         def r: () -> String
 
+        # @return [Boolean]
+        # : () -> bool
+        def error?: () -> bool
+
+        # @return [Integer]
+        # : () -> Integer
+        def index_in_collection: () -> Integer
+
         # Sets the cell value.
         #
         # @param val [Object, nil]

@@ -219,8 +219,8 @@ module Xlsxrb
         #
         # @param row_idx [Integer]
         # @return [Row, nil]
-        #: (Integer row_idx) -> Row?
-        def [](row_idx)
+        #: (?Integer row_idx) -> Row?
+        def [](row_idx = 0)
           @rows[row_idx]
         end
 

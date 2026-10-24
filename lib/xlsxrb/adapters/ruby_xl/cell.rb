@@ -154,6 +154,18 @@ module Xlsxrb
           Reference.ind2ref(@row, @column)
         end
 
+        # @return [Boolean]
+        #: () -> bool
+        def error?
+          datatype == DataType::ERROR
+        end
+
+        # @return [Integer]
+        #: () -> Integer
+        def index_in_collection
+          @column
+        end
+
         # Sets the cell value.
         #
         # @param val [Object, nil]

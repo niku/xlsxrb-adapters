@@ -58,6 +58,8 @@ module Xlsxrb
 
         attr_accessor application: String
 
+        attr_accessor filepath: String?
+
         attr_accessor appversion: String
 
         attr_accessor date1904: bool
@@ -279,10 +281,12 @@ module Xlsxrb
         # Writes workbook out to an XLSX file.
         # Trims sheet names exceeding 31 characters to 31 characters as per Excel compatibility.
         #
-        # @param filepath [String, IO]
+        # @param filepath [String, IO, nil]
         # @return [void]
-        # : (String | IO filepath) -> void
-        def write: (String | IO filepath) -> void
+        # : (?String | IO | nil filepath) -> void
+        def write: (?String | IO | nil filepath) -> void
+
+        alias save write
 
         # Exports workbook as a binary StringIO stream.
         #

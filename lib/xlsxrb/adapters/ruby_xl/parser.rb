@@ -26,6 +26,7 @@ module Xlsxrb
 
           xlsxrb_wb = Xlsxrb.read(file_path).load
           wb = Workbook.from_xlsxrb(xlsxrb_wb)
+          wb.filepath = file_path.to_s
           enrich_workbook(file_path, wb)
           wb
         rescue StandardError => e

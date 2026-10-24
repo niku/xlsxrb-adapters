@@ -350,4 +350,23 @@ class XlsxrbAdaptersRubyXLTest < Test::Unit::TestCase
     assert_nil doc[0][2][0].value
     assert_include doc[0][1][7].value, "\r\n"
   end
+
+  def test_public_api_extensions
+    wb = Xlsxrb::Adapters::RubyXL::Workbook.new
+    ws = wb[0]
+    cell = ws.add_cell(0, 2, "Test")
+    assert_equal 2, cell.index_in_collection
+    assert_equal false, cell.error?
+
+    # Default index for ws.[] is 0
+    assert_same ws[0], ws.[]
+
+    # write with default filepath and save alias
+    Tempfile.create(["rubyxl_test", ".xlsx"]) do |tmp|
+      wb.filepath = tmp.path
+      wb.save
+      assert File.exist?(tmp.path)
+      assert File.size(tmp.path).positive?
+    end
+  end
 end
