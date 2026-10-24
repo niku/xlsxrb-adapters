@@ -517,7 +517,10 @@ module Xlsxrb
           @xf_id = val
         end
 
-        def set_theme(val)
+        # @param val [Integer]
+        # @return [Integer]
+        #: (?Integer val) -> Integer
+        def set_theme(val = 0)
           @theme = val
         end
 
@@ -642,6 +645,38 @@ module Xlsxrb
         end
 
         alias to_xlsxrb_style to_style_hash
+
+        # Returns string representation of format object.
+        #
+        # @return [String]
+        #: () -> String
+        def inspect
+          "#<#{self.class}:0x#{object_id.to_s(16)}>"
+        end
+
+        # Resolves color code / name to integer palette index or hex.
+        #
+        # @param color_code [String, Integer, Symbol, nil]
+        # @return [Integer, String]
+        #: (untyped color_code) -> (Integer | String)
+        def self.color(color_code)
+          return 0x00 unless color_code
+
+          colors = Colors::COLORS
+          str = color_code.to_s
+          return str if str =~ /^#[0-9A-Fa-f]{6}$/
+          return colors[str.downcase.to_sym] if colors[str.downcase.to_sym]
+
+          if color_code.is_a?(Numeric)
+            int_c = color_code.to_i
+            return int_c + 8 if int_c < 8
+            return 0x00 if int_c > 63
+
+            int_c
+          else
+            0x00
+          end
+        end
       end
     end
   end

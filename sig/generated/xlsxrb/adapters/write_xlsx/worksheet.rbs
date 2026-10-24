@@ -172,7 +172,7 @@ module Xlsxrb
         def write_comment: (untyped row, ?untyped col, ?untyped string, ?untyped options) -> untyped
 
         # Sets row properties (height, format, hidden, level, collapsed)
-        def set_row: (untyped row, ?untyped height, ?untyped format, ?untyped hidden, ?untyped level, ?untyped collapsed) -> untyped
+        def set_row: (untyped row, *untyped args) -> untyped
 
         def set_row_pixels: (*untyped data) -> untyped
 
@@ -191,7 +191,7 @@ module Xlsxrb
 
         def filter_column: (untyped col, untyped string) -> untyped
 
-        def filter_column_list: (untyped col, untyped list) -> untyped
+        def filter_column_list: (untyped col, *untyped tokens) -> untyped
 
         # Freezes rows/columns panes
         def freeze_panes: (*untyped args) -> untyped
@@ -230,19 +230,19 @@ module Xlsxrb
 
         def set_paper: (untyped paper_size) -> untyped
 
-        def set_margins: (untyped left, untyped right, untyped top, untyped bottom) -> untyped
+        def set_margins: (untyped left, ?untyped right, ?untyped top, ?untyped bottom) -> untyped
 
-        def set_margin_left: (untyped m) -> untyped
+        def set_margin_left: (?untyped m) -> untyped
 
-        def set_margin_right: (untyped m) -> untyped
+        def set_margin_right: (?untyped m) -> untyped
 
-        def set_margin_top: (untyped m) -> untyped
+        def set_margin_top: (?untyped m) -> untyped
 
-        def set_margin_bottom: (untyped m) -> untyped
+        def set_margin_bottom: (?untyped m) -> untyped
 
-        def set_margins_LR: (untyped m) -> untyped
+        def set_margins_LR: (?untyped m) -> untyped
 
-        def set_margins_TB: (untyped m) -> untyped
+        def set_margins_TB: (?untyped m) -> untyped
 
         # @param string [String]
         # @param margin [Numeric, Hash{Symbol => untyped}, nil]
@@ -260,15 +260,15 @@ module Xlsxrb
 
         def print_area: (*untyped args) -> untyped
 
-        def fit_to_pages: (untyped width, untyped height) -> untyped
+        def fit_to_pages: (?untyped width, ?untyped height) -> untyped
 
-        def print_scale=: (untyped scale) -> untyped
+        def print_scale=: (?untyped scale) -> untyped
 
-        def set_print_scale: (untyped scale) -> untyped
+        def set_print_scale: (?untyped scale) -> untyped
 
-        def repeat_rows: (untyped r1, untyped r2) -> untyped
+        def repeat_rows: (untyped r1, ?untyped r2) -> untyped
 
-        def repeat_columns: (untyped c1, untyped c2) -> untyped
+        def repeat_columns: (*untyped args) -> untyped
 
         def print_across: (?untyped _val) -> untyped
 

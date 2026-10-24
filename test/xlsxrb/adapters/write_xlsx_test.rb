@@ -522,4 +522,53 @@ class XlsxrbAdaptersWriteXLSXTest < Test::Unit::TestCase
     assert_equal "=Ext!$A$2:$A$5", opts[:series].first[:cat_ref]
     assert_equal "=Ext!$B$2:$B$5", opts[:series].first[:val_ref]
   end
+
+  def test_public_api_signatures_and_defaults
+    wb = Xlsxrb::Adapters::WriteXLSX.new
+    ws = wb.add_worksheet("Defaults")
+
+    # Margins with 1 argument sets all 4 margins
+    ws.set_margins(0.5)
+    margins = ws.instance_variable_get(:@page_margins)
+    assert_equal 0.5, margins[:left]
+    assert_equal 0.5, margins[:right]
+    assert_equal 0.5, margins[:top]
+    assert_equal 0.5, margins[:bottom]
+
+    # Individual margin with defaults
+    ws.set_margin_left
+    assert_equal 0.7, margins[:left]
+
+    # fit_to_pages defaults
+    ws.fit_to_pages
+    setup = ws.instance_variable_get(:@page_setup)
+    assert_equal 0, setup[:fit_to_width]
+    assert_equal 0, setup[:fit_to_height]
+
+    # repeat rows/cols with defaults
+    ws.repeat_rows(1)
+    assert_equal [1, 1], ws.instance_variable_get(:@repeat_rows)
+    ws.repeat_columns(2)
+    assert_equal [2, 2], ws.instance_variable_get(:@repeat_cols)
+
+    # filter_column_list with splat
+    ws.autofilter("A1:C10")
+    ws.filter_column_list(0, "Apple", "Banana", "Cherry")
+    assert_equal %w[Apple Banana Cherry], ws.instance_variable_get(:@filter_columns)[0]
+
+    # Format methods
+    fmt = wb.add_format
+    fmt.set_theme
+    assert_equal 0, fmt.instance_variable_get(:@theme)
+    assert_includes fmt.inspect, "Format"
+    assert_equal 0x00, Xlsxrb::Adapters::WriteXLSX::Format.color("invalid")
+    assert_equal 0x0C, Xlsxrb::Adapters::WriteXLSX::Format.color(:blue)
+
+    # Chart defaults
+    chart = wb.add_chart(type: "line")
+    chart.set_x_axis
+    chart.set_y_axis
+    chart.set_style
+    assert_equal 2, chart.instance_variable_get(:@style_id)
+  end
 end

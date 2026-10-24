@@ -102,15 +102,15 @@ module Xlsxrb
         #
         # @param options [Hash{Symbol => untyped}, String]
         # @return [Hash{Symbol => untyped}]
-        # : (untyped options) -> Hash[Symbol, untyped]
-        def set_x2_axis: (untyped options) -> Hash[Symbol, untyped]
+        # : (?untyped options) -> Hash[Symbol, untyped]
+        def set_x2_axis: (?untyped options) -> Hash[Symbol, untyped]
 
         # Sets the secondary Y axis options
         #
         # @param options [Hash{Symbol => untyped}, String]
         # @return [Hash{Symbol => untyped}]
-        # : (untyped options) -> Hash[Symbol, untyped]
-        def set_y2_axis: (untyped options) -> Hash[Symbol, untyped]
+        # : (?untyped options) -> Hash[Symbol, untyped]
+        def set_y2_axis: (?untyped options) -> Hash[Symbol, untyped]
 
         # Sets the data table options
         #
@@ -158,43 +158,43 @@ module Xlsxrb
         #
         # @param options [Hash{Symbol => untyped}]
         # @return [Hash{Symbol => untyped}]
-        # : (Hash[Symbol, untyped] options) -> Hash[Symbol, untyped]
-        def set_chartarea: (Hash[Symbol, untyped] options) -> Hash[Symbol, untyped]
+        # : (?Hash[Symbol, untyped] options) -> Hash[Symbol, untyped]
+        def set_chartarea: (?Hash[Symbol, untyped] options) -> Hash[Symbol, untyped]
 
         # Sets the chart title options
         #
         # @param options [Hash{Symbol => untyped}, String]
         # @return [Hash{Symbol => untyped}]
-        # : (untyped options) -> Hash[Symbol, untyped]
-        def set_title: (untyped options) -> Hash[Symbol, untyped]
+        # : (?untyped options) -> Hash[Symbol, untyped]
+        def set_title: (?untyped options) -> Hash[Symbol, untyped]
 
         # Sets the X axis options
         #
         # @param options [Hash{Symbol => untyped}, String]
         # @return [Hash{Symbol => untyped}]
-        # : (untyped options) -> Hash[Symbol, untyped]
-        def set_x_axis: (untyped options) -> Hash[Symbol, untyped]
+        # : (?untyped options) -> Hash[Symbol, untyped]
+        def set_x_axis: (?untyped options) -> Hash[Symbol, untyped]
 
         # Sets the Y axis options
         #
         # @param options [Hash{Symbol => untyped}, String]
         # @return [Hash{Symbol => untyped}]
-        # : (untyped options) -> Hash[Symbol, untyped]
-        def set_y_axis: (untyped options) -> Hash[Symbol, untyped]
+        # : (?untyped options) -> Hash[Symbol, untyped]
+        def set_y_axis: (?untyped options) -> Hash[Symbol, untyped]
 
         # Sets the legend options
         #
         # @param options [Hash{Symbol => untyped}]
         # @return [Hash{Symbol => untyped}]
-        # : (Hash[Symbol, untyped] options) -> Hash[Symbol, untyped]
-        def set_legend: (Hash[Symbol, untyped] options) -> Hash[Symbol, untyped]
+        # : (?Hash[Symbol, untyped] options) -> Hash[Symbol, untyped]
+        def set_legend: (?Hash[Symbol, untyped] options) -> Hash[Symbol, untyped]
 
         # Sets the chart style preset ID
         #
         # @param style_id [Integer]
         # @return [Integer]
-        # : (Integer style_id) -> Integer
-        def set_style: (Integer style_id) -> Integer
+        # : (?Integer style_id) -> Integer
+        def set_style: (?Integer style_id) -> Integer
 
         # Sets the dimensions / scaling of the chart
         #

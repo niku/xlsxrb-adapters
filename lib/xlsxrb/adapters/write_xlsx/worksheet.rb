@@ -495,8 +495,14 @@ module Xlsxrb
         end
 
         # Sets row properties (height, format, hidden, level, collapsed)
-        def set_row(row, height = nil, format = nil, hidden = 0, level = 0, collapsed = 0)
+        def set_row(row, *args)
           return unless row
+
+          height = args[0]
+          format = args[1]
+          hidden = args[2] || 0
+          level = args[3] || 0
+          collapsed = args[4] || 0
 
           update_dimensions(row, 0)
           h = height || @default_row_height
@@ -619,9 +625,10 @@ module Xlsxrb
           @filter_columns[c] = string
         end
 
-        def filter_column_list(col, list)
+        def filter_column_list(col, *tokens)
+          tokens.flatten!
           c = col.is_a?(String) ? xl_cell_to_rowcol("#{col}1")[1] : col
-          @filter_columns[c] = list
+          @filter_columns[c] = tokens
         end
 
         # Freezes rows/columns panes
@@ -807,35 +814,41 @@ module Xlsxrb
           @page_setup[:paper_size] = paper_size
         end
 
-        def set_margins(left, right, top, bottom)
+        def set_margins(left, right = nil, top = nil, bottom = nil)
           @page_margins[:left] = left
-          @page_margins[:right] = right
-          @page_margins[:top] = top
-          @page_margins[:bottom] = bottom
+          if right.nil? && top.nil? && bottom.nil?
+            @page_margins[:right] = left
+            @page_margins[:top] = left
+            @page_margins[:bottom] = left
+          else
+            @page_margins[:right] = right
+            @page_margins[:top] = top
+            @page_margins[:bottom] = bottom
+          end
         end
 
-        def set_margin_left(m)
+        def set_margin_left(m = 0.7)
           @page_margins[:left] = m
         end
 
-        def set_margin_right(m)
+        def set_margin_right(m = 0.7)
           @page_margins[:right] = m
         end
 
-        def set_margin_top(m)
+        def set_margin_top(m = 0.75)
           @page_margins[:top] = m
         end
 
-        def set_margin_bottom(m)
+        def set_margin_bottom(m = 0.75)
           @page_margins[:bottom] = m
         end
 
-        def set_margins_LR(m)
+        def set_margins_LR(m = 0.7)
           @page_margins[:left] = m
           @page_margins[:right] = m
         end
 
-        def set_margins_TB(m)
+        def set_margins_TB(m = 0.75)
           @page_margins[:top] = m
           @page_margins[:bottom] = m
         end
@@ -880,25 +893,29 @@ module Xlsxrb
           @clean_print_area = "#{xl_rowcol_to_cell(r1, c1)}:#{xl_rowcol_to_cell(r2, c2)}"
         end
 
-        def fit_to_pages(width, height)
+        def fit_to_pages(width = 0, height = 0)
           @page_setup[:fit_to_width] = width
           @page_setup[:fit_to_height] = height
           @page_setup[:fit_to_page] = true
         end
 
-        def print_scale=(scale)
+        def print_scale=(scale = 100)
           @page_setup[:scale] = scale
         end
 
-        def set_print_scale(scale)
+        def set_print_scale(scale = 100)
           self.print_scale = scale
         end
 
-        def repeat_rows(r1, r2)
+        def repeat_rows(r1, r2 = nil)
+          r2 ||= r1
           @repeat_rows = [r1, r2]
         end
 
-        def repeat_columns(c1, c2)
+        def repeat_columns(*args)
+          tokens = args.flatten
+          c1 = tokens[0]
+          c2 = tokens[1] || c1
           @repeat_cols = [c1, c2]
         end
 

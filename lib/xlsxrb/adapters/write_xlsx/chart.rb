@@ -159,8 +159,8 @@ module Xlsxrb
         #
         # @param options [Hash{Symbol => untyped}, String]
         # @return [Hash{Symbol => untyped}]
-        #: (untyped options) -> Hash[Symbol, untyped]
-        def set_x2_axis(options)
+        #: (?untyped options) -> Hash[Symbol, untyped]
+        def set_x2_axis(options = {})
           opts = options.is_a?(Hash) ? options : { name: options.to_s }
           @x2_axis = opts
         end
@@ -169,8 +169,8 @@ module Xlsxrb
         #
         # @param options [Hash{Symbol => untyped}, String]
         # @return [Hash{Symbol => untyped}]
-        #: (untyped options) -> Hash[Symbol, untyped]
-        def set_y2_axis(options)
+        #: (?untyped options) -> Hash[Symbol, untyped]
+        def set_y2_axis(options = {})
           opts = options.is_a?(Hash) ? options : { name: options.to_s }
           @y2_axis = opts
         end
@@ -233,8 +233,8 @@ module Xlsxrb
         #
         # @param options [Hash{Symbol => untyped}]
         # @return [Hash{Symbol => untyped}]
-        #: (Hash[Symbol, untyped] options) -> Hash[Symbol, untyped]
-        def set_chartarea(options)
+        #: (?Hash[Symbol, untyped] options) -> Hash[Symbol, untyped]
+        def set_chartarea(options = {})
           @chartarea = options
         end
 
@@ -242,8 +242,8 @@ module Xlsxrb
         #
         # @param options [Hash{Symbol => untyped}, String]
         # @return [Hash{Symbol => untyped}]
-        #: (untyped options) -> Hash[Symbol, untyped]
-        def set_title(options)
+        #: (?untyped options) -> Hash[Symbol, untyped]
+        def set_title(options = {})
           opts = options.is_a?(Hash) ? options : { name: options.to_s }
           @title = opts
         end
@@ -252,8 +252,8 @@ module Xlsxrb
         #
         # @param options [Hash{Symbol => untyped}, String]
         # @return [Hash{Symbol => untyped}]
-        #: (untyped options) -> Hash[Symbol, untyped]
-        def set_x_axis(options)
+        #: (?untyped options) -> Hash[Symbol, untyped]
+        def set_x_axis(options = {})
           opts = options.is_a?(Hash) ? options : { name: options.to_s }
           @x_axis = opts
         end
@@ -262,8 +262,8 @@ module Xlsxrb
         #
         # @param options [Hash{Symbol => untyped}, String]
         # @return [Hash{Symbol => untyped}]
-        #: (untyped options) -> Hash[Symbol, untyped]
-        def set_y_axis(options)
+        #: (?untyped options) -> Hash[Symbol, untyped]
+        def set_y_axis(options = {})
           opts = options.is_a?(Hash) ? options : { name: options.to_s }
           @y_axis = opts
         end
@@ -272,8 +272,8 @@ module Xlsxrb
         #
         # @param options [Hash{Symbol => untyped}]
         # @return [Hash{Symbol => untyped}]
-        #: (Hash[Symbol, untyped] options) -> Hash[Symbol, untyped]
-        def set_legend(options)
+        #: (?Hash[Symbol, untyped] options) -> Hash[Symbol, untyped]
+        def set_legend(options = {})
           @legend = options
         end
 
@@ -281,8 +281,8 @@ module Xlsxrb
         #
         # @param style_id [Integer]
         # @return [Integer]
-        #: (Integer style_id) -> Integer
-        def set_style(style_id)
+        #: (?Integer style_id) -> Integer
+        def set_style(style_id = 2)
           @style_id = style_id
         end
 

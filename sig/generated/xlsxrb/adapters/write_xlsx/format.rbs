@@ -300,7 +300,10 @@ module Xlsxrb
 
         def set_xf_id: (untyped val) -> untyped
 
-        def set_theme: (untyped val) -> untyped
+        # @param val [Integer]
+        # @return [Integer]
+        # : (?Integer val) -> Integer
+        def set_theme: (?Integer val) -> Integer
 
         # Predicates matching write_xlsx methods
         def bold?: () -> untyped
@@ -343,6 +346,19 @@ module Xlsxrb
         def to_font_hash: () -> Hash[Symbol, untyped]
 
         alias to_xlsxrb_style to_style_hash
+
+        # Returns string representation of format object.
+        #
+        # @return [String]
+        # : () -> String
+        def inspect: () -> String
+
+        # Resolves color code / name to integer palette index or hex.
+        #
+        # @param color_code [String, Integer, Symbol, nil]
+        # @return [Integer, String]
+        # : (untyped color_code) -> (Integer | String)
+        def self.color: (untyped color_code) -> (Integer | String)
       end
     end
   end
