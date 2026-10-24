@@ -182,8 +182,11 @@ module UpstreamSuite
   end
 
   def test_files(cfg, repo, project_root)
-    files = if cfg[:files].is_a?(String)
-              File.readlines(ENV.fetch("XLSXRB_ALLOWLIST", File.join(project_root, cfg[:files])), chomp: true)
+    files = if ENV["XLSXRB_ALLOWLIST"]
+              File.readlines(ENV["XLSXRB_ALLOWLIST"], chomp: true)
+                  .reject { |l| l.empty? || l.start_with?("#") }.map { |l| File.join(repo, l) }
+            elsif cfg[:files].is_a?(String)
+              File.readlines(File.join(project_root, cfg[:files]), chomp: true)
                   .reject { |l| l.empty? || l.start_with?("#") }.map { |l| File.join(repo, l) }
             else
               cfg[:files].flat_map { |g| Dir.glob(File.join(repo, g)) }
