@@ -256,6 +256,7 @@ module Xlsxrb
           @sheet_ids.map do |sheet_id_info|
             target = @relationships[sheet_id_info[:id]]
             next nil unless target
+            next nil if target.include?("chartsheets")
 
             sheet_path = target.start_with?("/") ? target.delete_prefix("/") : "xl/#{target}"
             next nil unless @zip.entry?(sheet_path)

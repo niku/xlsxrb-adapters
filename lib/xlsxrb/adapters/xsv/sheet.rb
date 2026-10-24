@@ -16,7 +16,7 @@ module Xlsxrb
         [Enumerable].each { |m| include m }
         include Helpers
 
-        ROW_RE = %r{<(?:[a-zA-Z0-9_]+:)?row\b([^>]*?)>(.*?)</(?:[a-zA-Z0-9_]+:)?row>|<(?:[a-zA-Z0-9_]+:)?row\b([^>]*?)/>}m
+        ROW_RE = %r{<(?:[a-zA-Z0-9_]+:)?row\b([^>]*?)/>|<(?:[a-zA-Z0-9_]+:)?row\b([^>]*?)(?<!/)>(.*?)</(?:[a-zA-Z0-9_]+:)?row>}m
         CELL_RE = %r{<(?:[a-zA-Z0-9_]+:)?c\b([^>]*?)(?:>\s*(?:<(?:[a-zA-Z0-9_]+:)?f\b[^>]*?(?:/>|>([^<]*)</(?:[a-zA-Z0-9_]+:)?f>))?\s*(?:<(?:[a-zA-Z0-9_]+:)?v>([^<]*)</(?:[a-zA-Z0-9_]+:)?v>)?\s*(?:<(?:[a-zA-Z0-9_]+:)?is>(.*?)</(?:[a-zA-Z0-9_]+:)?is>)?.*?</(?:[a-zA-Z0-9_]+:)?c>|/>)}m
 
         # Returns current mode (:array or :hash).
@@ -185,11 +185,10 @@ module Xlsxrb
           sd_xml = sd_end ? xml[sd_open_end...sd_end] : xml[sd_open_end..]
           return true if sd_xml.nil? || sd_xml.empty?
 
-          sd_xml.scan(ROW_RE) do |attrs1, body, attrs2|
-            attrs = attrs1 || attrs2
+          sd_xml.scan(ROW_RE) do |self_attrs, open_attrs, body|
+            attrs = self_attrs || open_attrs
             r_attr = attrs[/r="(\d+)"/, 1]
             curr_row_num = r_attr ? r_attr.to_i : (curr_row_num + 1)
-            next if attrs2
             next if curr_row_num <= @row_skip
 
             adjusted_row_num = curr_row_num - @row_skip
@@ -383,8 +382,8 @@ module Xlsxrb
           # Scan sheetData looking for cell bounds
           max_row = 0
           curr_row = 0
-          xml.scan(ROW_RE) do |attrs1, body, attrs2|
-            attrs = attrs1 || attrs2
+          xml.scan(ROW_RE) do |self_attrs, open_attrs, body|
+            attrs = self_attrs || open_attrs
             r_attr = attrs[/r="(\d+)"/, 1]
             curr_row = r_attr ? r_attr.to_i : (curr_row + 1)
             next unless body

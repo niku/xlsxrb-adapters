@@ -430,4 +430,27 @@ class XlsxrbAdaptersXsvTest < Test::Unit::TestCase
     assert_equal ["Row 5"], rows[4]
     assert_equal ["Row 6"], rows[5]
   end
+
+  def test_self_closing_empty_row_not_swallowing_next_row
+    sheet_xml = <<~XML
+      <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+      <worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">
+        <dimension ref="A1:A4"/>
+        <sheetData>
+          <row r="1"><c r="A1" t="str"><v>Row 1</v></c></row>
+          <row r="2" ht="12" customHeight="1"/>
+          <row r="3"><c r="A3" t="str"><v>Row 3</v></c></row>
+          <row r="4" ht="15"/>
+        </sheetData>
+      </worksheet>
+    XML
+
+    sheet = Xlsxrb::Adapters::Xsv::Sheet.new(nil, sheet_xml, { sheet_id: 1, name: "Test" })
+    rows = sheet.to_a
+    assert_equal 4, rows.size
+    assert_equal ["Row 1"], rows[0]
+    assert_equal [nil], rows[1]
+    assert_equal ["Row 3"], rows[2]
+    assert_equal [nil], rows[3]
+  end
 end
