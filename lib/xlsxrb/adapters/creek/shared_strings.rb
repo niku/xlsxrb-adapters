@@ -100,6 +100,7 @@ module Xlsxrb
         # @return [Hash<Integer, String>]
         #: (String xml_str) -> Hash[Integer, String]
         def self.parse_with_fast_scan(xml_str)
+          xml_str = xml_str.dup.force_encoding(Encoding::UTF_8)
           dict = {}
           idx = 0
           xml_str.scan(%r{<(?:[A-Za-z0-9_]+:)?si\b[^>]*>(.*?)</(?:[A-Za-z0-9_]+:)?si>}m) do |m|
