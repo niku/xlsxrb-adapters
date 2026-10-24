@@ -413,8 +413,7 @@ module Xlsxrb
           r, c, val, fmt = normalize_cell_args(row, col, str, format)
           update_dimensions(r, c)
 
-          is_1904 = @workbook.respond_to?(:date_1904?) && @workbook.date_1904?
-          serial = convert_date_time(val, is_1904)
+          serial = convert_date_time(val)
 
           record = if serial
                      CellRecord.new(serial, fmt, nil, nil, nil, nil, nil, nil, nil)
@@ -422,6 +421,14 @@ module Xlsxrb
                      CellRecord.new(val.to_s, fmt, nil, nil, nil, nil, nil, nil, nil)
                    end
           store_cell_record(r, c, record)
+        end
+
+        def date_1904?
+          @workbook.respond_to?(:date_1904?) && @workbook.date_1904?
+        end
+
+        def convert_date_time(val)
+          Utility.convert_date_time(val, date_1904?)
         end
 
         # Writes a boolean to a cell
@@ -1170,8 +1177,7 @@ module Xlsxrb
         end
 
         def format_datetime_val(val)
-          is_1904 = @workbook.respond_to?(:date_1904?) && @workbook.date_1904?
-          convert_date_time(val, is_1904)
+          convert_date_time(val)
         end
 
         def store_cell_record(row, col, record)

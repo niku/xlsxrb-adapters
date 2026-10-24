@@ -238,11 +238,19 @@ module Xlsxrb
 
             return seconds_fraction if date_part.nil? || date_part.empty?
 
+            unless date1904
+              return seconds_fraction if date_part == "1899-12-31" || date_part == "1900-01-00"
+              return 60.0 + seconds_fraction if date_part == "1900-02-29"
+            end
+
             return unless date_part =~ /^(\d{4})-(\d{2})-(\d{2})$/
 
             year = ::Regexp.last_match(1).to_i
             month = ::Regexp.last_match(2).to_i
             day = ::Regexp.last_match(3).to_i
+
+            epoch = date1904 ? 1904 : 1900
+            return nil if year < epoch || year > 9999
             begin
               d = ::Date.new(year, month, day)
               days = Xlsxrb::Ooxml::Utils.date_to_serial(d, date1904: date1904)
