@@ -209,12 +209,13 @@ module Xlsxrb
                   cell_type = c_attrs["t"]
                   cell_style_idx = c_attrs["s"]
 
-                  v_match = c_body[%r{<(?:[A-Za-z0-9_]+:)?v>([^<]*)</(?:[A-Za-z0-9_]+:)?v>}, 1]
+                  v_match = c_body[%r{<(?:[A-Za-z0-9_]+:)?v\b[^>]*>([^<]*)</(?:[A-Za-z0-9_]+:)?v>}, 1]
                   t_match = c_body[%r{<(?:[A-Za-z0-9_]+:)?t\b[^>]*>([^<]*)</(?:[A-Za-z0-9_]+:)?t>}, 1]
                   val_raw = v_match || t_match
 
                   if val_raw && cell_ref
-                    val_decoded = decode_entities(val_raw.strip)
+                    val_str = c_body.include?('xml:space="preserve"') ? val_raw : val_raw.strip
+                    val_decoded = decode_entities(val_str)
                     cells[cell_ref] = convert(val_decoded, cell_type, cell_style_idx)
                   end
                 end

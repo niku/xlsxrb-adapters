@@ -55,6 +55,8 @@ module Xlsxrb
               str = stream.read
               stream.close
 
+              str = str.sub(/encoding=["']UTF-16["']/i, 'encoding="UTF-8"') if str.include?("UTF-16") || str.include?("utf-16")
+
               io = StringIO.new(str)
               if block
                 begin
@@ -149,7 +151,8 @@ module Xlsxrb
           if @files.file.exist?(wb_path)
             wb_doc = @files.file.open(wb_path).read
             wb_doc.scan(%r{<(?:[A-Za-z0-9_]+:)?sheet\b([^>]*?)(?:/>|>.*?</(?:[A-Za-z0-9_]+:)?sheet>)}m) do |attrs_str,|
-              name = attrs_str[/name="([^"]*)"/, 1]
+              raw_name = attrs_str[/name="([^"]*)"/, 1]
+              name = raw_name ? SharedStrings.decode_xml_entities(raw_name) : ""
               sheetid = attrs_str[/sheetid="([^"]*)"/, 1]
               state = attrs_str[/state="([^"]*)"/, 1]
               visible = attrs_str[/visible="([^"]*)"/, 1]

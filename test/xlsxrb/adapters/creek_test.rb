@@ -412,4 +412,22 @@ class XlsxrbAdaptersCreekTest < Test::Unit::TestCase
     assert_equal "rId1", sheets.first.rid
     assert_equal "worksheets/sheet1.xml", sheets.first.instance_variable_get(:@sheetfile)
   end
+
+  def test_sheet_name_xml_entities_unescaped
+    book = Xlsxrb::Adapters::Creek::Book.new("vendor/upstream/write_xlsx/test/regression/xlsx_files/escapes01.xlsx")
+    assert_equal ["5&4"], book.sheets.map(&:name)
+    book.close
+  end
+
+  def test_xml_space_preserve_and_utf16_prolog
+    book1 = Xlsxrb::Adapters::Creek::Book.new("vendor/upstream/xsv/test/files/no-shared-strings.xlsx")
+    r1 = book1.sheets.first.rows.to_a
+    assert_equal "      PRO-196150", r1[1]["A2"]
+    book1.close
+
+    book2 = Xlsxrb::Adapters::Creek::Book.new("vendor/upstream/roo/test/files/Pfand_from_windows_phone.xlsx")
+    r2 = book2.sheets.first.rows.to_a
+    assert_equal Time.utc(2011, 9, 14), r2[1]["A2"]
+    book2.close
+  end
 end
