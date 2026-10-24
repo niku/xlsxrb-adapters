@@ -85,6 +85,10 @@ class XlsxrbAdaptersWriteXLSXTest < Test::Unit::TestCase
 
     iso_serial = dt_mod.convert_date_time("2026-01-01T12:00:00", false)
     assert_in_delta 46_023.5, iso_serial, 0.001
+
+    # Out-of-range dates return nil
+    assert_nil dt_mod.convert_date_time(Date.new(1800, 1, 1), false)
+    assert_nil dt_mod.convert_date_time(Time.utc(1850, 1, 1), false)
   end
 
   def test_format_properties_and_styles

@@ -211,10 +211,14 @@ module Xlsxrb
           def convert_date_time(value, date1904 = false)
             return nil if value.nil?
 
-            if value.is_a?(Time) || (defined?(DateTime) && value.is_a?(DateTime))
-              return Xlsxrb::Ooxml::Utils.datetime_to_serial(value, date1904: date1904)
-            elsif value.is_a?(Date)
-              return Xlsxrb::Ooxml::Utils.date_to_serial(value, date1904: date1904).to_f
+            begin
+              if value.is_a?(Time) || (defined?(DateTime) && value.is_a?(DateTime))
+                return Xlsxrb::Ooxml::Utils.datetime_to_serial(value, date1904: date1904)
+              elsif value.is_a?(Date)
+                return Xlsxrb::Ooxml::Utils.date_to_serial(value, date1904: date1904).to_f
+              end
+            rescue ArgumentError
+              return nil
             end
 
             str = value.to_s.strip.sub(/Z$/, "")
