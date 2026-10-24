@@ -250,4 +250,46 @@ class XlsxrbAdaptersCaxlsxTest < Test::Unit::TestCase
     assert_include col_xml, 'max="1048575"'
     assert_nil Xlsxrb::Adapters::Caxlsx::RowBreaks.new.to_xml_string
   end
+
+  def test_fit_to_convenience_method
+    setup = Xlsxrb::Adapters::Caxlsx::PageSetup.new
+    res = setup.fit_to(width: 2, height: 3)
+    assert_equal [2, 3], res
+    assert_equal 2, setup.fit_to_width
+    assert_equal 3, setup.fit_to_height
+    assert setup.fit_to_page?
+  end
+
+  def test_add_border_with_array_and_options
+    pkg = Xlsxrb::Adapters::Caxlsx::Package.new
+    ws = pkg.workbook.add_worksheet(name: "Borders")
+    ws.add_row [1, 2, 3]
+    ws.add_row [4, 5, 6]
+    ws.add_border "A1:C2"
+    ws.add_border ["A1:B1", "B2:C2"], { edges: [:top], style: :thick }
+    assert_equal 2, ws.rows.size
+  end
+
+  def test_conditional_formatting_color_scale_and_data_bar
+    pkg = Xlsxrb::Adapters::Caxlsx::Package.new
+    ws = pkg.workbook.add_worksheet(name: "CF")
+    ws.add_row [1, 2, 3, 4, 5]
+    cs = Xlsxrb::Adapters::Caxlsx::ColorScale.three_tone
+    ws.add_conditional_formatting("A1:E1", type: :colorScale, color_scale: cs)
+    db = Xlsxrb::Adapters::Caxlsx::DataBar.new
+    ws.add_conditional_formatting("A1:E1", type: :dataBar, data_bar: db)
+    stream = pkg.to_stream
+    refute_nil stream
+    assert stream.size.positive?
+  end
+
+  def test_cell_serializer_and_shared_strings
+    pkg = Xlsxrb::Adapters::Caxlsx::Package.new
+    ws = pkg.workbook.add_worksheet(name: "SST")
+    ws.add_row %w[Apple Banana Orange]
+    pkg.use_shared_strings = true
+    stream = pkg.to_stream
+    refute_nil stream
+    assert stream.size.positive?
+  end
 end

@@ -220,6 +220,9 @@ module Xlsxrb
       def self.validate_relationship_type: (untyped v) -> void
 
       # : (untyped v) -> void
+      def self.validate_sheet_view_type: (untyped v) -> void
+
+      # : (untyped v) -> void
       def self.validate_table_element_type: (untyped v) -> void
 
       # : (untyped v) -> void

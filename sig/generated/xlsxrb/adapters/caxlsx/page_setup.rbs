@@ -163,6 +163,11 @@ module Xlsxrb
 
         alias fit_to_page fit_to_page?
 
+        # @param options [Hash{Symbol => untyped}]
+        # @return [Array[Integer]]
+        # : (?Hash[Symbol, untyped] options) -> Array[Integer]
+        def fit_to: (?Hash[Symbol, untyped] options) -> Array[Integer]
+
         # : (?String str) -> String
         def to_xml_string: (?String str) -> String
 

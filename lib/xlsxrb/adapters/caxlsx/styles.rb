@@ -372,7 +372,7 @@ module Xlsxrb
 
       # Border definition
       class Border
-        EDGES = %i[left right top bottom diagonal].freeze
+        EDGES = %i[left right top bottom].freeze
 
         attr_reader :prs #: SimpleTypedList
         attr_accessor :diagonalUp #: bool?

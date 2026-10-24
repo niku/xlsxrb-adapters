@@ -401,6 +401,11 @@ module Xlsxrb
         end
 
         #: (untyped v) -> void
+        def validate_sheet_view_type(v)
+          RestrictionValidator.validate :sheet_view_type, VALID_SHEET_VIEW_TYPE_VALUES, v
+        end
+
+        #: (untyped v) -> void
         def validate_table_element_type(v)
           RestrictionValidator.validate :table_element_type, VALID_TABLE_ELEMENT_TYPE_VALUES, v
         end

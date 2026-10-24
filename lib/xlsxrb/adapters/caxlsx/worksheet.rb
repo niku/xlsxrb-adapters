@@ -1306,9 +1306,34 @@ module Xlsxrb
                             std_dev: rule.stdDev,
                             equal_average: rule.equalAverage
                           }
-                          h[:color_scale] = rule.color_scale if rule.instance_variable_get(:@color_scale)
-                          h[:data_bar] = rule.data_bar if rule.instance_variable_get(:@data_bar)
-                          h[:icon_set] = rule.icon_set if rule.instance_variable_get(:@icon_set)
+                          if rule.instance_variable_get(:@color_scale) && rule.color_scale
+                            cs = rule.color_scale
+                            cs_cfvos = cs.value_objects.map { |c| { type: c.type, val: c.val } }
+                            cs_colors = cs.colors.map { |c| c.rgb || "FF000000" }
+                            h[:color_scale] = { cfvo: cs_cfvos, colors: cs_colors }
+                          end
+                          if rule.instance_variable_get(:@data_bar) && rule.data_bar
+                            db = rule.data_bar
+                            db_cfvos = db.value_objects.map { |c| { type: c.type, val: c.val } }
+                            h[:data_bar] = {
+                              min_length: db.min_length,
+                              max_length: db.max_length,
+                              show_value: db.show_value,
+                              cfvo: db_cfvos,
+                              color: db.color&.rgb || "FF5A8DD4"
+                            }
+                          end
+                          if rule.instance_variable_get(:@icon_set) && rule.icon_set
+                            is = rule.icon_set
+                            is_cfvos = is.interpolationPoints.map { |pt| { type: "percent", val: pt } }
+                            h[:icon_set] = {
+                              icon_set: is.iconSet,
+                              percent: is.percent,
+                              reverse: is.reverse,
+                              show_value: is.showValue,
+                              cfvo: is_cfvos
+                            }
+                          end
                           h.compact
                         end
                       end
@@ -1361,13 +1386,22 @@ module Xlsxrb
             drw = @worksheet_drawing.drawing
             if drw
               facade_meta[:images] = drw.images.map do |img|
+                raw_data = if img.image_src && File.file?(img.image_src)
+                             File.binread(img.image_src)
+                           else
+                             +""
+                           end
+                img_ext = img.image_src ? File.extname(img.image_src).delete_prefix(".").downcase : "png"
+                img_ext = "png" if img_ext.empty?
                 {
                   image_src: img.image_src,
                   name: img.name,
                   descr: img.descr,
                   width: img.width,
                   height: img.height,
-                  start_at: [img.anchor.from.col, img.anchor.from.row]
+                  start_at: [img.anchor.from.col, img.anchor.from.row],
+                  file_data: raw_data,
+                  ext: img_ext
                 }.compact
               end
             end

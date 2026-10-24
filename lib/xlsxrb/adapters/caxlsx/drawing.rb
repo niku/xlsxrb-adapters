@@ -285,7 +285,7 @@ module Xlsxrb
           @anchor = anchor
           @picture_locking = PictureLocking.new(options)
           @name = ""
-          @remote = false
+          @remote = options[:remote] ? true : false
           @image_src = nil
           @descr = ""
           @hyperlink = nil

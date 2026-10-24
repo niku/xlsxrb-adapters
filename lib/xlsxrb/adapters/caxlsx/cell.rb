@@ -539,6 +539,25 @@ module Xlsxrb
           end
         end
       end
+
+      # CellSerializer helper
+      class CellSerializer
+        class << self
+          # @param cell [Cell]
+          # @param str [String]
+          # @return [String]
+          #: (Cell cell, ?String str) -> String
+          def run_xml_string(cell, str = +"")
+            if cell.respond_to?(:contains_rich_text?) && cell.contains_rich_text?
+              cell.value.to_xml_string(str)
+            else
+              clean = cell.respond_to?(:clean_value) ? cell.clean_value : cell.value.to_s
+              str << "<t>" << clean.to_s << "</t>"
+            end
+            str
+          end
+        end
+      end
     end
   end
 end

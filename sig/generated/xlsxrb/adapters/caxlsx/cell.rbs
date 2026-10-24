@@ -217,6 +217,15 @@ module Xlsxrb
 
         def cast_value: (untyped v) -> untyped
       end
+
+      # CellSerializer helper
+      class CellSerializer
+        # @param cell [Cell]
+        # @param str [String]
+        # @return [String]
+        # : (Cell cell, ?String str) -> String
+        def self.run_xml_string: (Cell cell, ?String str) -> String
+      end
     end
   end
 end

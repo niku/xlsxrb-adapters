@@ -229,6 +229,15 @@ module Xlsxrb
         end
         alias fit_to_page fit_to_page?
 
+        # @param options [Hash{Symbol => untyped}]
+        # @return [Array[Integer]]
+        #: (?Hash[Symbol, untyped] options) -> Array[Integer]
+        def fit_to(options = {})
+          self.fit_to_width = (options[:width] || 999).to_i
+          self.fit_to_height = (options[:height] || 999).to_i
+          [@fit_to_width || 999, @fit_to_height || 999]
+        end
+
         #: (?String str) -> String
         def to_xml_string(str = +"")
           attrs = +""
