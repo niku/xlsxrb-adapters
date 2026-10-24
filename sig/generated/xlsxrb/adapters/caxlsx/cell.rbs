@@ -127,6 +127,11 @@ module Xlsxrb
         # : () -> String
         def r_abs: () -> String
 
+        # @param absolute [Boolean]
+        # @return [String]
+        # : (?bool absolute) -> String
+        def reference: (?bool absolute) -> String
+
         # : () -> Array[Integer]
         def pos: () -> Array[Integer]
 

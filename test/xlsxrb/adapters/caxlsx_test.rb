@@ -53,6 +53,9 @@ class XlsxrbAdaptersCaxlsxTest < Test::Unit::TestCase
 
     assert_equal :string, c_str.type
     assert_equal "Text", c_str.value
+    assert_equal "A1", c_str.reference(false)
+    assert_equal "$A$1", c_str.reference(true)
+    assert_equal "$A$1", c_str.reference
 
     assert_equal :integer, c_int.type
     assert_equal 12_345, c_int.value

@@ -225,6 +225,13 @@ module Xlsxrb
           m ? "$#{m[1]}$#{m[2]}" : "$A$1"
         end
 
+        # @param absolute [Boolean]
+        # @return [String]
+        #: (?bool absolute) -> String
+        def reference(absolute = true)
+          absolute ? r_abs : r
+        end
+
         #: () -> Array[Integer]
         def pos
           [index, @row.row_index]
