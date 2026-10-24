@@ -7,6 +7,7 @@ require "time"
 require "stringio"
 require "tempfile"
 require "uri"
+require "cgi/escape"
 require "xlsxrb"
 require_relative "constants"
 require_relative "coordinate"
@@ -975,10 +976,23 @@ module Xlsxrb
 
               # Value <v>
               v_str = nil
-              v_idx = inner.index("<v>".b)
+              v_idx = inner.index("<v".b)
               if v_idx
-                v_end = inner.index("</v>".b, v_idx + 3)
-                v_str = inner.byteslice(v_idx + 3, v_end - v_idx - 3).force_encoding(Encoding::UTF_8) if v_end
+                next_byte = inner.getbyte(v_idx + 2)
+                v_tag_end = if next_byte == 62 # '>'
+                              v_idx + 2
+                            elsif [32, 9, 10, 13, 47].include?(next_byte)
+                              inner.index(">".b, v_idx + 2)
+                            end
+
+                if v_tag_end
+                  if inner.getbyte(v_tag_end - 1) == 47
+                    v_str = ""
+                  else
+                    v_end = inner.index("</v>".b, v_tag_end + 1)
+                    v_str = inner.byteslice(v_tag_end + 1, v_end - v_tag_end - 1).force_encoding(Encoding::UTF_8) if v_end
+                  end
+                end
               end
 
               # InlineStr <is>
@@ -1009,11 +1023,7 @@ module Xlsxrb
                            v_clean = unescape_xml(v_str).gsub("_x000D_", "\n").gsub("\r\n", "\n").gsub("\r", "\n")
                            Cell::String.new(v_clean, formula_str, style_id, link_url, coord)
                          elsif v_str && !v_str.empty?
-                           cell_val_type = if @parsed_styles.is_a?(Xlsxrb::Elements::Styles)
-                                             @parsed_styles.format_type(style_id)
-                                           else
-                                             Format.to_type(format_code)
-                                           end
+                           cell_val_type = Format.to_type(format_code)
                            numeric_raw = v_str.strip
                            excelx_type_arg = [:numeric_or_formula, format_code]
 
@@ -1138,11 +1148,7 @@ module Xlsxrb
         def unescape_xml(str)
           return nil unless str
 
-          str.gsub("&amp;", "&")
-             .gsub("&lt;", "<")
-             .gsub("&gt;", ">")
-             .gsub("&quot;", '"')
-             .gsub("&apos;", "'")
+          CGI.unescapeHTML(str)
         end
       end
     end

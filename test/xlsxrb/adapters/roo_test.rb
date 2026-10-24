@@ -416,4 +416,30 @@ class XlsxrbAdaptersRooTest < Test::Unit::TestCase
     refute_nil val2
     assert_equal 2, internal_sheets.compact.size
   end
+
+  def test_upstream_fixtures_edge_cases
+    # 1. Unescape numeric XML entities in shared strings
+    utf8_path = File.expand_path("../../vendor/upstream/xsv/test/files/utf8.xlsx", __dir__)
+    if File.exist?(utf8_path)
+      doc = Xlsxrb::Adapters::Roo::Excelx.new(utf8_path)
+      assert_equal "entities \"&'<>ä", doc.cell(2, 1)
+    end
+
+    # 2. Preserve whitespace with <v xml:space="preserve">
+    no_ss_path = File.expand_path("../../vendor/upstream/xsv/test/files/no-shared-strings.xlsx", __dir__)
+    if File.exist?(no_ss_path)
+      doc = Xlsxrb::Adapters::Roo::Excelx.new(no_ss_path)
+      assert_equal "      PRO-196150", doc.cell(2, 1)
+      assert_equal "    ", doc.cell(5, 1)
+    end
+
+    # 3. Format type classification for h:mm AM/PM
+    formats_path = File.expand_path("../../vendor/upstream/write_xlsx/test/perl_output/formats.xlsx", __dir__)
+    return unless File.exist?(formats_path)
+
+    doc = Xlsxrb::Adapters::Roo::Excelx.new(formats_path)
+    doc.default_sheet = "Numeric formats"
+    assert_equal Date.new(2001, 1, 1), doc.cell(20, 4)
+    assert_equal :date, doc.celltype(20, 4)
+  end
 end
