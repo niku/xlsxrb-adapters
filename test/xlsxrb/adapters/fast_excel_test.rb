@@ -164,6 +164,23 @@ class XlsxrbAdaptersFastExcelTest < Test::Unit::TestCase
     wb.close
   end
 
+  def test_write_blank_and_empty_string_without_format_does_not_emit_cell
+    with_tempfile do |path|
+      Xlsxrb::Adapters::FastExcel.open(path) do |wb|
+        ws = wb.add_worksheet("Sheet1")
+        ws.write_value(0, 0, "A")
+        ws.write_value(1, 0, "")
+        ws.write_value(2, 0, "C")
+      end
+
+      doc = Xlsxrb.read(path)
+      rows = doc.sheet(0).to_a
+      assert_equal [0, 2], rows.map(&:index)
+      assert_equal ["A"], rows[0].values
+      assert_equal ["C"], rows[1].values
+    end
+  end
+
   def test_get_worksheet_by_name
     wb = Xlsxrb::Adapters::FastExcel.open
     ws = wb.add_worksheet("Report")

@@ -220,7 +220,10 @@ module Xlsxrb
         # @return [Symbol]
         #: (Integer row, Integer col, String string, ?Format? format) -> Symbol
         def write_string(row, col, string, format = nil)
-          record_cell(row, col, value: string.to_s, format: format)
+          str = string.to_s
+          return write_blank(row, col, format) if str.empty?
+
+          record_cell(row, col, value: str, format: format)
           @last_row_number = row if row > @last_row_number
           :no_error
         end
@@ -368,8 +371,10 @@ module Xlsxrb
         # @return [Symbol]
         #: (Integer row, Integer col, ?Format? format) -> Symbol
         def write_blank(row, col, format = nil)
-          record_cell(row, col, value: nil, format: format)
           @last_row_number = row if row > @last_row_number
+          return :no_error if format.nil?
+
+          record_cell(row, col, value: nil, format: format)
           :no_error
         end
 
