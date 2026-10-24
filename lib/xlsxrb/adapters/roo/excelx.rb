@@ -518,6 +518,63 @@ module Xlsxrb
           )
         end
 
+        # Styles proxy object compatible with Roo::Excelx::Styles.
+        class Styles
+          #: (?Hash[Symbol, untyped] parsed_styles, ?Array[Font] fonts) -> void
+          def initialize(parsed_styles = {}, fonts = [])
+            @parsed_styles = parsed_styles
+            @fonts = fonts
+            @num_fmts = parsed_styles[:num_fmts] || {}
+            @cell_xfs = parsed_styles[:cell_xfs] || []
+          end
+
+          #: (Integer | String style) -> String
+          def style_format(style)
+            xf = @cell_xfs[style.to_i] || {}
+            num_fmt_id = xf[:num_fmt_id] || 0
+            @num_fmts[num_fmt_id] || Format::STANDARD_FORMATS[num_fmt_id] || "General"
+          end
+
+          #: () -> Array[Font]
+          def definitions
+            @definitions ||= @cell_xfs.map do |xf|
+              @fonts[xf[:font_id].to_i] || Font.new
+            end
+          end
+        end
+
+        # Returns styles proxy object compatible with Roo::Excelx::Styles.
+        #
+        # @return [Styles]
+        #: () -> Styles
+        def styles
+          @styles ||= Styles.new(@parsed_styles.is_a?(Hash) ? @parsed_styles : {}, @fonts || [])
+        end
+
+        # Closes underlying zip archive resources.
+        #
+        # @return [void]
+        #: () -> void
+        def close
+          @sheet_context&.[](:zip)&.close
+        end
+
+        # Reloads the workbook file.
+        #
+        # @return [void]
+        #: () -> void
+        def reload
+          @sheets = []
+          @sheets_by_name = {}
+          @styles = nil
+          packed = @options[:packed]
+          file_warning = @options.fetch(:file_warning, :error)
+          only_visible = @options[:only_visible_sheets] || false
+          io = prepare_input(@filename, packed, file_warning)
+          parse_archive(io, only_visible)
+          @default_sheet = @sheet_names.first
+        end
+
         # Constructs an Excelx instance from an Xlsxrb::Elements::Workbook.
         #
         # @param xlsxrb_wb [Xlsxrb::Elements::Workbook]
@@ -664,10 +721,6 @@ module Xlsxrb
           end
 
           @default_sheet = @sheet_names.first
-        end
-
-        def close
-          @sheet_context&.[](:zip)&.close
         end
 
         #: (String? xml) -> [Array[String], Hash[Integer, String]]

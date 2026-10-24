@@ -442,4 +442,20 @@ class XlsxrbAdaptersRooTest < Test::Unit::TestCase
     assert_equal Date.new(2001, 1, 1), doc.cell(20, 4)
     assert_equal :date, doc.celltype(20, 4)
   end
+
+  def test_styles_proxy_and_lifecycle
+    doc = Xlsxrb::Adapters::Roo::Excelx.new(fixture("numbers1.xlsx"))
+    assert_respond_to doc, :styles
+    assert_respond_to doc, :close
+    assert_respond_to doc, :reload
+
+    styles = doc.styles
+    assert_equal "General", styles.style_format(0)
+    assert_kind_of Array, styles.definitions
+
+    doc.reload
+    assert_equal 5, doc.sheets.size
+
+    doc.close
+  end
 end

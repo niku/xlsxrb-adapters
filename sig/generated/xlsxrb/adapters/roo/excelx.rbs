@@ -278,6 +278,36 @@ module Xlsxrb
         # : () -> Xlsxrb::Elements::Workbook
         def to_xlsxrb: () -> Xlsxrb::Elements::Workbook
 
+        # Styles proxy object compatible with Roo::Excelx::Styles.
+        class Styles
+          # : (?Hash[Symbol, untyped] parsed_styles, ?Array[Font] fonts) -> void
+          def initialize: (?Hash[Symbol, untyped] parsed_styles, ?Array[Font] fonts) -> void
+
+          # : (Integer | String style) -> String
+          def style_format: (Integer | String style) -> String
+
+          # : () -> Array[Font]
+          def definitions: () -> Array[Font]
+        end
+
+        # Returns styles proxy object compatible with Roo::Excelx::Styles.
+        #
+        # @return [Styles]
+        # : () -> Styles
+        def styles: () -> Styles
+
+        # Closes underlying zip archive resources.
+        #
+        # @return [void]
+        # : () -> void
+        def close: () -> void
+
+        # Reloads the workbook file.
+        #
+        # @return [void]
+        # : () -> void
+        def reload: () -> void
+
         # Constructs an Excelx instance from an Xlsxrb::Elements::Workbook.
         #
         # @param xlsxrb_wb [Xlsxrb::Elements::Workbook]
@@ -305,8 +335,6 @@ module Xlsxrb
 
         # : (untyped io, bool only_visible) -> void
         def parse_archive: (untyped io, bool only_visible) -> void
-
-        def close: () -> untyped
 
         # : (String? xml) -> [Array[String], Hash[Integer, String]]
         def parse_shared_strings: (String? xml) -> [ Array[String], Hash[Integer, String] ]
