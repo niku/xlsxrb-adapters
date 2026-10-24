@@ -468,4 +468,58 @@ class XlsxrbAdaptersWriteXLSXTest < Test::Unit::TestCase
       assert_false File.exist?(target)
     end
   end
+
+  def test_extended_worksheet_and_chart_methods
+    wb = Xlsxrb::Adapters::WriteXLSX.new(StringIO.new)
+    ws = wb.add_worksheet("Ext")
+
+    # Worksheet settings
+    ws.set_selection("B2:D5")
+    ws.set_selection(1, 1, 3, 3)
+    ws.zoom = 150
+    assert_equal 150, ws.zoom
+    ws.set_zoom(200)
+    assert_equal 200, ws.zoom
+    ws.set_default_row(30, true)
+    ws.show_comments(true)
+    ws.comments_author = "Alice"
+    ws.ignore_errors(number_stored_as_text: "A1:C10")
+    ws.autofit(120)
+    ws.set_column_pixels("E:E", 100)
+    ws.set_vba_name("CustomSheet")
+    ws.insert_button("B2", caption: "Click me")
+
+    ws.update_format_with_params("A1", bold: 1)
+    ws.update_range_format_with_params("A2:B3", bold: 1)
+    assert_not_nil ws.table[[0, 0]]
+
+    # Workbook settings
+    shape = wb.add_shape(type: "rect")
+    assert_not_nil shape
+    ws.insert_shape(shape)
+    wb.add_vba_project("dummy.bin")
+    wb.set_vba_name("MyWorkbook")
+    wb.read_only_recommended
+
+    # Chart extensions
+    chart = wb.add_chart(type: "line")
+    chart.add_series(
+      categories: ["Ext", 1, 4, 0, 0],
+      values: ["Ext", 1, 4, 1, 1]
+    )
+    chart.combine(wb.add_chart(type: "column"))
+    chart.set_x2_axis(name: "X2 Axis")
+    chart.set_y2_axis(name: "Y2 Axis")
+    chart.set_table(show_keys: true)
+    chart.set_up_down_bars
+    chart.set_rotation(45)
+    chart.set_high_low_lines
+    chart.set_drop_lines
+    chart.set_hole_size(50)
+    chart.set_chartarea(color: "red")
+
+    opts = chart.to_chart_options
+    assert_equal "=Ext!$A$2:$A$5", opts[:series].first[:cat_ref]
+    assert_equal "=Ext!$B$2:$B$5", opts[:series].first[:val_ref]
+  end
 end

@@ -5,8 +5,44 @@
 module Xlsxrb
   module Adapters
     module Writexlsx
+      # Legend value that preserves string equality while supporting Hash #dig for xlsxrb
+      class LegendValue < String
+        # @param position [String]
+        # @param options [Hash{Symbol => untyped}]
+        #: (?String position, ?Hash[Symbol, untyped] options) -> void
+        def initialize(position = "r", options = {})
+          super(position.to_s)
+          @options = options
+        end
+
+        # @param key [Symbol, String]
+        # @param rest [Array<untyped>]
+        # @return [untyped]
+        #: (Symbol | String key, *untyped rest) -> untyped
+        def dig(key, *rest)
+          case key
+          when :position then to_s
+          else
+            @options.dig(key, *rest)
+          end
+        end
+
+        # @param key [Symbol, String]
+        # @return [untyped]
+        #: (Symbol | String key) -> untyped
+        def [](key)
+          case key
+          when :position then to_s
+          else
+            @options[key]
+          end
+        end
+      end
+
       # Represents a chart object in WriteXLSX
       class Chart
+        include Utility::CellReference
+
         # @return [Object]
         attr_accessor :workbook
 
@@ -98,14 +134,108 @@ module Xlsxrb
         #: (Hash[Symbol, untyped] options) -> Hash[Symbol, untyped]
         def add_series(options = {})
           s = {
-            categories: options[:categories],
-            values: options[:values],
-            name: options[:name]
+            categories: aref_to_formula(options[:categories]),
+            values: aref_to_formula(options[:values]),
+            name: aref_to_formula(options[:name])
           }.compact
           s[:line] = options[:line] if options[:line]
           s[:fill] = options[:fill] if options[:fill]
           @series << s
           s
+        end
+
+        # Combines another chart into this chart
+        #
+        # @param chart [Chart]
+        # @return [Chart]
+        #: (Chart chart) -> Chart
+        def combine(chart)
+          @combined_charts ||= []
+          @combined_charts << chart
+          chart
+        end
+
+        # Sets the secondary X axis options
+        #
+        # @param options [Hash{Symbol => untyped}, String]
+        # @return [Hash{Symbol => untyped}]
+        #: (untyped options) -> Hash[Symbol, untyped]
+        def set_x2_axis(options)
+          opts = options.is_a?(Hash) ? options : { name: options.to_s }
+          @x2_axis = opts
+        end
+
+        # Sets the secondary Y axis options
+        #
+        # @param options [Hash{Symbol => untyped}, String]
+        # @return [Hash{Symbol => untyped}]
+        #: (untyped options) -> Hash[Symbol, untyped]
+        def set_y2_axis(options)
+          opts = options.is_a?(Hash) ? options : { name: options.to_s }
+          @y2_axis = opts
+        end
+
+        # Sets the data table options
+        #
+        # @param options [Hash{Symbol => untyped}]
+        # @return [Hash{Symbol => untyped}]
+        #: (?Hash[Symbol, untyped] options) -> Hash[Symbol, untyped]
+        def set_table(options = {})
+          @table = options
+        end
+
+        # Sets up/down bars
+        #
+        # @param options [Hash{Symbol => untyped}]
+        # @return [Hash{Symbol => untyped}]
+        #: (?Hash[Symbol, untyped] options) -> Hash[Symbol, untyped]
+        def set_up_down_bars(options = {})
+          @up_down_bars = options
+        end
+
+        # Sets rotation
+        #
+        # @param rotation [Integer]
+        # @return [Integer]
+        #: (Integer rotation) -> Integer
+        def set_rotation(rotation)
+          @rotation = rotation
+        end
+
+        # Sets high-low lines
+        #
+        # @param options [Hash{Symbol => untyped}]
+        # @return [Hash{Symbol => untyped}]
+        #: (?Hash[Symbol, untyped] options) -> Hash[Symbol, untyped]
+        def set_high_low_lines(options = {})
+          @high_low_lines = options
+        end
+
+        # Sets drop lines
+        #
+        # @param options [Hash{Symbol => untyped}]
+        # @return [Hash{Symbol => untyped}]
+        #: (?Hash[Symbol, untyped] options) -> Hash[Symbol, untyped]
+        def set_drop_lines(options = {})
+          @drop_lines = options
+        end
+
+        # Sets hole size for doughnut charts
+        #
+        # @param size [Integer]
+        # @return [Integer]
+        #: (Integer size) -> Integer
+        def set_hole_size(size)
+          @hole_size = size
+        end
+
+        # Sets chart area options
+        #
+        # @param options [Hash{Symbol => untyped}]
+        # @return [Hash{Symbol => untyped}]
+        #: (Hash[Symbol, untyped] options) -> Hash[Symbol, untyped]
+        def set_chartarea(options)
+          @chartarea = options
         end
 
         # Sets the chart title options
@@ -196,13 +326,25 @@ module Xlsxrb
             series_hash
           end
 
+          legend_val = if @legend.empty?
+                         nil
+                       else
+                         pos = if @legend.is_a?(Hash)
+                                 @legend[:position] || "r"
+                               else
+                                 @legend.to_s
+                               end
+                         opts = @legend.is_a?(Hash) ? @legend : { position: pos }
+                         LegendValue.new(pos, opts)
+                       end
+
           {
             type: chart_type,
             title: title_str,
             series: mapped_series,
             cat_axis_title: cat_title,
             val_axis_title: val_title,
-            legend: @legend.empty? ? nil : (@legend[:position] || "r"),
+            legend: legend_val,
             style: @style_id
           }.compact
         end
@@ -230,6 +372,23 @@ module Xlsxrb
           chart = klass.allocate
           chart.send(:initialize, nil, type: type, subtype: subtype)
           chart
+        end
+
+        private
+
+        #: (untyped data) -> untyped
+        def aref_to_formula(data)
+          return data unless data.is_a?(Array)
+
+          if data.size == 5
+            xl_range_formula(data[0].to_s, data[1].to_i, data[2].to_i, data[3].to_i, data[4].to_i)
+          elsif data.size == 3
+            sheet = quote_sheetname(data[0].to_s)
+            cell = xl_rowcol_to_cell(data[1].to_i, data[2].to_i, true, true)
+            "=#{sheet}!#{cell}"
+          else
+            data
+          end
         end
 
         # Subclasses for WriteXLSX chart types

@@ -47,6 +47,12 @@ module Xlsxrb
         # @return [Numeric]
         attr_accessor default_row_height: untyped
 
+        # @return [Integer, nil]
+        attr_reader zoom: untyped
+
+        # @return [String, nil]
+        attr_writer comments_author: untyped
+
         # @return [Hash{Array<Integer> => CellRecord}]
         attr_reader table: untyped
 
@@ -142,7 +148,7 @@ module Xlsxrb
         def write_formula: (untyped row, ?untyped col, ?untyped formula, ?untyped format, ?untyped value) -> untyped
 
         # Writes an array formula to a cell or cell range
-        def write_array_formula: (untyped row1, ?untyped col1, ?untyped row2, ?untyped col2, ?untyped formula, ?untyped format, ?untyped value) -> untyped
+        def write_array_formula: (*untyped args) -> untyped
 
         alias write_dynamic_array_formula write_array_formula
 
@@ -168,12 +174,12 @@ module Xlsxrb
         # Sets row properties (height, format, hidden, level, collapsed)
         def set_row: (untyped row, ?untyped height, ?untyped format, ?untyped hidden, ?untyped level, ?untyped collapsed) -> untyped
 
-        def set_row_pixels: (untyped row, untyped pixels, *untyped) -> untyped
+        def set_row_pixels: (*untyped data) -> untyped
 
         # Sets column properties (width, format, hidden, level, collapsed)
         def set_column: (*untyped args) -> untyped
 
-        def set_column_pixels: (untyped firstcol, untyped lastcol, untyped pixels, *untyped) -> untyped
+        def set_column_pixels: (*untyped data) -> untyped
 
         # Merges a range of cells with data in the first cell
         def merge_range: (*untyped args) -> untyped
@@ -238,9 +244,19 @@ module Xlsxrb
 
         def set_margins_TB: (untyped m) -> untyped
 
-        def set_header: (untyped string, ?untyped margin) -> untyped
+        # @param string [String]
+        # @param margin [Numeric, Hash{Symbol => untyped}, nil]
+        # @param options [Hash{Symbol => untyped}]
+        # @return [void]
+        # : (String string, ?Numeric | Hash[Symbol, untyped] | nil margin, ?Hash[Symbol, untyped] options) -> void
+        def set_header: (String string, ?Numeric | Hash[Symbol, untyped] | nil margin, ?Hash[Symbol, untyped] options) -> void
 
-        def set_footer: (untyped string, ?untyped margin) -> untyped
+        # @param string [String]
+        # @param margin [Numeric, Hash{Symbol => untyped}, nil]
+        # @param options [Hash{Symbol => untyped}]
+        # @return [void]
+        # : (String string, ?Numeric | Hash[Symbol, untyped] | nil margin, ?Hash[Symbol, untyped] options) -> void
+        def set_footer: (String string, ?Numeric | Hash[Symbol, untyped] | nil margin, ?Hash[Symbol, untyped] options) -> void
 
         def print_area: (*untyped args) -> untyped
 
@@ -291,8 +307,6 @@ module Xlsxrb
 
         def set_tab_color: (untyped color) -> untyped
 
-        def set_zoom: (untyped zoom) -> untyped
-
         def keep_leading_zeros: (?untyped option) -> untyped
 
         # Converts mutable worksheet to an immutable Xlsxrb::Elements::Worksheet
@@ -300,6 +314,95 @@ module Xlsxrb
         # @param style_map [Hash{Format => Integer}, nil]
         # @return [Xlsxrb::Elements::Worksheet]
         def to_xlsxrb: (?untyped style_map) -> untyped
+
+        # Convert the height of a cell from pixels to character units.
+        #
+        # @param pixels [Numeric]
+        # @return [Numeric]
+        # : (Numeric pixels) -> Numeric
+        def pixels_to_height: (Numeric pixels) -> Numeric
+
+        # @param args [Array<untyped>]
+        # @return [void]
+        # : (*untyped args) -> void
+        def set_selection: (*untyped args) -> void
+
+        # @param scale [Numeric]
+        # @return [Integer]
+        # : (Numeric scale) -> Integer
+        def zoom=: (Numeric scale) -> Integer
+
+        # @param scale [Numeric]
+        # @return [Numeric]
+        # : (Numeric scale) -> Numeric
+        def set_zoom: (Numeric scale) -> Numeric
+
+        # @param height [Numeric, nil]
+        # @param zero_height [Numeric, nil]
+        # @return [void]
+        # : (?Numeric? height, ?Numeric? zero_height) -> void
+        def set_default_row: (?Numeric? height, ?Numeric? zero_height) -> void
+
+        # @param visible [Boolean]
+        # @return [void]
+        # : (?bool visible) -> void
+        def show_comments: (?bool visible) -> void
+
+        # @param ignores [Hash{Symbol => untyped}]
+        # @return [Hash{Symbol => untyped}]
+        # : (Hash[Symbol, untyped] ignores) -> Hash[Symbol, untyped]
+        def ignore_errors: (Hash[Symbol, untyped] ignores) -> Hash[Symbol, untyped]
+
+        # Inserts a button control
+        #
+        # @param row [Integer, String]
+        # @param col [Integer, Hash{Symbol => untyped}, nil]
+        # @param properties [Hash{Symbol => untyped}, nil]
+        # @return [void]
+        # : (Integer | String row, ?untyped col, ?Hash[Symbol, untyped]? properties) -> void
+        def insert_button: (Integer | String row, ?untyped col, ?Hash[Symbol, untyped]? properties) -> void
+
+        # @param vba_codename [String, nil]
+        # @return [String]
+        # : (?String? vba_codename) -> String
+        def set_vba_name: (?String? vba_codename) -> String
+
+        # @param image [String]
+        # @return [void]
+        # : (String image) -> void
+        def set_background: (String image) -> void
+
+        # @param max_width [Numeric]
+        # @return [void]
+        # : (?Numeric max_width) -> void
+        def autofit: (?Numeric max_width) -> void
+
+        # @param password [String, nil]
+        # @param options [Hash{Symbol => untyped}]
+        # @return [void]
+        # : (?String? password, ?Hash[Symbol, untyped] options) -> void
+        def protect: (?String? password, ?Hash[Symbol, untyped] options) -> void
+
+        # @param args [Array<untyped>]
+        # @return [Shape]
+        # : (*untyped args) -> Shape
+        def insert_shape: (*untyped args) -> Shape
+
+        # @param row_first [untyped]
+        # @param col_first [untyped, nil]
+        # @param row_last [untyped, nil]
+        # @param col_last [untyped, nil]
+        # @param params [untyped, nil]
+        # @return [void]
+        # : (untyped row_first, ?untyped col_first, ?untyped row_last, ?untyped col_last, ?untyped params) -> void
+        def update_range_format_with_params: (untyped row_first, ?untyped col_first, ?untyped row_last, ?untyped col_last, ?untyped params) -> void
+
+        # @param row [untyped]
+        # @param col [untyped, nil]
+        # @param params [untyped, nil]
+        # @return [void]
+        # : (untyped row, ?untyped col, ?untyped params) -> void
+        def update_format_with_params: (untyped row, ?untyped col, ?untyped params) -> void
 
         private
 
@@ -324,13 +427,6 @@ module Xlsxrb
         # @return [Numeric]
         # : (Numeric pixels) -> Numeric
         def pixels_to_width: (Numeric pixels) -> Numeric
-
-        # Convert the height of a cell from pixels to character units.
-        #
-        # @param pixels [Numeric]
-        # @return [Numeric]
-        # : (Numeric pixels) -> Numeric
-        def pixels_to_height: (Numeric pixels) -> Numeric
       end
     end
   end

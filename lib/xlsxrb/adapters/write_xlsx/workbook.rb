@@ -15,6 +15,49 @@ require_relative "chart"
 module Xlsxrb
   module Adapters
     module Writexlsx
+      # Represents a shape object in WriteXLSX
+      class Shape
+        attr_accessor :properties, :id, :element, :row_start, :column_start,
+                      :text, :start, :end, :adjustments, :name, :align, :valign
+
+        # @param properties [Hash{Symbol => untyped}]
+        #: (?Hash[Symbol, untyped] properties) -> void
+        def initialize(properties = {})
+          @properties = properties.dup
+          properties.each do |k, v|
+            instance_variable_set(:"@#{k}", v)
+          end
+        end
+
+        # @return [Symbol, String]
+        #: () -> (Symbol | String)
+        def type
+          @type || @properties[:type] || :rect
+        end
+
+        # @param v [Symbol, String]
+        # @return [Symbol, String]
+        #: (Symbol | String v) -> (Symbol | String)
+        def type=(v)
+          @type = v
+          @properties[:type] = v
+        end
+
+        def method_missing(name, *args)
+          if name.to_s.end_with?("=")
+            key = name.to_s.chomp("=").to_sym
+            @properties[key] = args.first
+            instance_variable_set(:"@#{key}", args.first)
+          else
+            @properties[name]
+          end
+        end
+
+        def respond_to_missing?(_name, _include_private = false)
+          true
+        end
+      end
+
       # Represents a workbook in WriteXLSX
       class Workbook
         include Utility::Common
@@ -72,6 +115,9 @@ module Xlsxrb
         # @return [Array<Hash{Symbol => untyped}>]
         attr_reader :defined_names
 
+        # @return [String]
+        attr_accessor :comments_author
+
         # @param file [String, Pathname, IO, StringIO, nil]
         # @param options [Hash{Symbol => untyped}]
         #: (?untyped file, ?Hash[Symbol, untyped] options) -> void
@@ -90,8 +136,18 @@ module Xlsxrb
           @custom_properties = []
           @palette = Colors.new
           @fileclosed = false
+          @comments_author = ""
 
           @default_url_format = add_format(color: "blue", underline: 1)
+        end
+
+        # Sets default comments author
+        #
+        # @param author [String]
+        # @return [String]
+        #: (String author) -> String
+        def set_comments_author(author)
+          @comments_author = author
         end
 
         # Returns whether 1904 date system is active
@@ -162,14 +218,6 @@ module Xlsxrb
           add_worksheet(name)
         end
 
-        # Adds a shape to the workbook
-        #
-        # @param options [Hash{Symbol => untyped}]
-        # @return [Hash{Symbol => untyped}]
-        def add_shape(options = {})
-          options
-        end
-
         # Defines a global defined name / named range
         #
         # @param name [String]
@@ -206,6 +254,18 @@ module Xlsxrb
           @window_height = height
         end
 
+        # Creates a new shape
+        #
+        # @param properties [Hash{Symbol => untyped}]
+        # @return [Shape]
+        #: (?Hash[Symbol, untyped] properties) -> Shape
+        def add_shape(properties = {})
+          shape = Shape.new(properties)
+          @shapes ||= []
+          @shapes << shape
+          shape
+        end
+
         # Sets tab ratio
         def set_tab_ratio(ratio)
           @tab_ratio = ratio
@@ -214,6 +274,32 @@ module Xlsxrb
         # Sets calculation mode
         def set_calc_mode(mode)
           @calc_mode = mode
+        end
+
+        # Adds a VBA project binary
+        #
+        # @param vba_project [String]
+        # @return [String]
+        #: (String vba_project) -> String
+        def add_vba_project(vba_project)
+          @vba_project = vba_project
+        end
+
+        # Sets VBA code name for the workbook
+        #
+        # @param vba_codename [String, nil]
+        # @return [String]
+        #: (?String? vba_codename) -> String
+        def set_vba_name(vba_codename = nil)
+          @vba_codename = vba_codename || "ThisWorkbook"
+        end
+
+        # Sets the Excel read-only recommended save option
+        #
+        # @return [Integer]
+        #: () -> Integer
+        def read_only_recommended
+          @read_only = 2
         end
 
         # Looks up worksheet by name

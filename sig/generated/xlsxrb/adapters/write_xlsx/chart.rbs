@@ -3,8 +3,29 @@
 module Xlsxrb
   module Adapters
     module Writexlsx
+      # Legend value that preserves string equality while supporting Hash #dig for xlsxrb
+      class LegendValue < String
+        # @param position [String]
+        # @param options [Hash{Symbol => untyped}]
+        # : (?String position, ?Hash[Symbol, untyped] options) -> void
+        def initialize: (?String position, ?Hash[Symbol, untyped] options) -> void
+
+        # @param key [Symbol, String]
+        # @param rest [Array<untyped>]
+        # @return [untyped]
+        # : (Symbol | String key, *untyped rest) -> untyped
+        def dig: (Symbol | String key, *untyped rest) -> untyped
+
+        # @param key [Symbol, String]
+        # @return [untyped]
+        # : (Symbol | String key) -> untyped
+        def []: (Symbol | String key) -> untyped
+      end
+
       # Represents a chart object in WriteXLSX
       class Chart
+        include Utility::CellReference
+
         # @return [Object]
         attr_accessor workbook: untyped
 
@@ -70,6 +91,76 @@ module Xlsxrb
         # : (Hash[Symbol, untyped] options) -> Hash[Symbol, untyped]
         def add_series: (Hash[Symbol, untyped] options) -> Hash[Symbol, untyped]
 
+        # Combines another chart into this chart
+        #
+        # @param chart [Chart]
+        # @return [Chart]
+        # : (Chart chart) -> Chart
+        def combine: (Chart chart) -> Chart
+
+        # Sets the secondary X axis options
+        #
+        # @param options [Hash{Symbol => untyped}, String]
+        # @return [Hash{Symbol => untyped}]
+        # : (untyped options) -> Hash[Symbol, untyped]
+        def set_x2_axis: (untyped options) -> Hash[Symbol, untyped]
+
+        # Sets the secondary Y axis options
+        #
+        # @param options [Hash{Symbol => untyped}, String]
+        # @return [Hash{Symbol => untyped}]
+        # : (untyped options) -> Hash[Symbol, untyped]
+        def set_y2_axis: (untyped options) -> Hash[Symbol, untyped]
+
+        # Sets the data table options
+        #
+        # @param options [Hash{Symbol => untyped}]
+        # @return [Hash{Symbol => untyped}]
+        # : (?Hash[Symbol, untyped] options) -> Hash[Symbol, untyped]
+        def set_table: (?Hash[Symbol, untyped] options) -> Hash[Symbol, untyped]
+
+        # Sets up/down bars
+        #
+        # @param options [Hash{Symbol => untyped}]
+        # @return [Hash{Symbol => untyped}]
+        # : (?Hash[Symbol, untyped] options) -> Hash[Symbol, untyped]
+        def set_up_down_bars: (?Hash[Symbol, untyped] options) -> Hash[Symbol, untyped]
+
+        # Sets rotation
+        #
+        # @param rotation [Integer]
+        # @return [Integer]
+        # : (Integer rotation) -> Integer
+        def set_rotation: (Integer rotation) -> Integer
+
+        # Sets high-low lines
+        #
+        # @param options [Hash{Symbol => untyped}]
+        # @return [Hash{Symbol => untyped}]
+        # : (?Hash[Symbol, untyped] options) -> Hash[Symbol, untyped]
+        def set_high_low_lines: (?Hash[Symbol, untyped] options) -> Hash[Symbol, untyped]
+
+        # Sets drop lines
+        #
+        # @param options [Hash{Symbol => untyped}]
+        # @return [Hash{Symbol => untyped}]
+        # : (?Hash[Symbol, untyped] options) -> Hash[Symbol, untyped]
+        def set_drop_lines: (?Hash[Symbol, untyped] options) -> Hash[Symbol, untyped]
+
+        # Sets hole size for doughnut charts
+        #
+        # @param size [Integer]
+        # @return [Integer]
+        # : (Integer size) -> Integer
+        def set_hole_size: (Integer size) -> Integer
+
+        # Sets chart area options
+        #
+        # @param options [Hash{Symbol => untyped}]
+        # @return [Hash{Symbol => untyped}]
+        # : (Hash[Symbol, untyped] options) -> Hash[Symbol, untyped]
+        def set_chartarea: (Hash[Symbol, untyped] options) -> Hash[Symbol, untyped]
+
         # Sets the chart title options
         #
         # @param options [Hash{Symbol => untyped}, String]
@@ -125,6 +216,11 @@ module Xlsxrb
         # @return [Chart]
         # : (untyped type, ?untyped subtype) -> Chart
         def self.factory: (untyped type, ?untyped subtype) -> Chart
+
+        private
+
+        # : (untyped data) -> untyped
+        def aref_to_formula: (untyped data) -> untyped
 
         # Subclasses for WriteXLSX chart types
         class Area < Chart

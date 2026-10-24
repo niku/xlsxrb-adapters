@@ -3,6 +3,50 @@
 module Xlsxrb
   module Adapters
     module Writexlsx
+      # Represents a shape object in WriteXLSX
+      class Shape
+        attr_accessor properties: untyped
+
+        attr_accessor id: untyped
+
+        attr_accessor element: untyped
+
+        attr_accessor row_start: untyped
+
+        attr_accessor column_start: untyped
+
+        attr_accessor text: untyped
+
+        attr_accessor start: untyped
+
+        attr_accessor end: untyped
+
+        attr_accessor adjustments: untyped
+
+        attr_accessor name: untyped
+
+        attr_accessor align: untyped
+
+        attr_accessor valign: untyped
+
+        # @param properties [Hash{Symbol => untyped}]
+        # : (?Hash[Symbol, untyped] properties) -> void
+        def initialize: (?Hash[Symbol, untyped] properties) -> void
+
+        # @return [Symbol, String]
+        # : () -> (Symbol | String)
+        def type: () -> (Symbol | String)
+
+        # @param v [Symbol, String]
+        # @return [Symbol, String]
+        # : (Symbol | String v) -> (Symbol | String)
+        def type=: (Symbol | String v) -> (Symbol | String)
+
+        def method_missing: (untyped name, *untyped args) -> untyped
+
+        def respond_to_missing?: (untyped _name, ?untyped _include_private) -> untyped
+      end
+
       # Represents a workbook in WriteXLSX
       class Workbook
         include Utility::Common
@@ -46,10 +90,20 @@ module Xlsxrb
         # @return [Array<Hash{Symbol => untyped}>]
         attr_reader defined_names: untyped
 
+        # @return [String]
+        attr_accessor comments_author: untyped
+
         # @param file [String, Pathname, IO, StringIO, nil]
         # @param options [Hash{Symbol => untyped}]
         # : (?untyped file, ?Hash[Symbol, untyped] options) -> void
         def initialize: (?untyped file, ?Hash[Symbol, untyped] options) -> void
+
+        # Sets default comments author
+        #
+        # @param author [String]
+        # @return [String]
+        # : (String author) -> String
+        def set_comments_author: (String author) -> String
 
         # Returns whether 1904 date system is active
         #
@@ -92,12 +146,6 @@ module Xlsxrb
         # @return [Worksheet]
         def add_chartsheet: (?untyped name) -> untyped
 
-        # Adds a shape to the workbook
-        #
-        # @param options [Hash{Symbol => untyped}]
-        # @return [Hash{Symbol => untyped}]
-        def add_shape: (?untyped options) -> untyped
-
         # Defines a global defined name / named range
         #
         # @param name [String]
@@ -123,11 +171,38 @@ module Xlsxrb
         # Sets window size
         def set_size: (untyped width, untyped height) -> untyped
 
+        # Creates a new shape
+        #
+        # @param properties [Hash{Symbol => untyped}]
+        # @return [Shape]
+        # : (?Hash[Symbol, untyped] properties) -> Shape
+        def add_shape: (?Hash[Symbol, untyped] properties) -> Shape
+
         # Sets tab ratio
         def set_tab_ratio: (untyped ratio) -> untyped
 
         # Sets calculation mode
         def set_calc_mode: (untyped mode) -> untyped
+
+        # Adds a VBA project binary
+        #
+        # @param vba_project [String]
+        # @return [String]
+        # : (String vba_project) -> String
+        def add_vba_project: (String vba_project) -> String
+
+        # Sets VBA code name for the workbook
+        #
+        # @param vba_codename [String, nil]
+        # @return [String]
+        # : (?String? vba_codename) -> String
+        def set_vba_name: (?String? vba_codename) -> String
+
+        # Sets the Excel read-only recommended save option
+        #
+        # @return [Integer]
+        # : () -> Integer
+        def read_only_recommended: () -> Integer
 
         # Looks up worksheet by name
         #

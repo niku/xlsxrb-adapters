@@ -45,6 +45,12 @@ module Xlsxrb
         # @return [Numeric]
         attr_accessor :default_row_height
 
+        # @return [Integer, nil]
+        attr_reader :zoom
+
+        # @return [String, nil]
+        attr_writer :comments_author
+
         # @return [Hash{Array<Integer> => CellRecord}]
         attr_reader :table
 
@@ -225,7 +231,7 @@ module Xlsxrb
           if (row_col_array = row_col_notation(row))
             r, c = row_col_array
             t = col
-            opts = [tokens] + options
+            opts = tokens.nil? ? options : [tokens] + options
           else
             r = row
             c = col
@@ -233,7 +239,7 @@ module Xlsxrb
             opts = options
           end
 
-          raise WriteXLSXInsufficientArgumentError, "Tokens must be array in write_col" unless t.respond_to?(:to_ary)
+          raise WriteXLSXInsufficientArgumentError, "Tokens must be enumerable in write_col" unless t.respond_to?(:each)
 
           cur_row = r
           t.each do |item|
@@ -335,29 +341,19 @@ module Xlsxrb
         end
 
         # Writes an array formula to a cell or cell range
-        def write_array_formula(row1, col1 = nil, row2 = nil, col2 = nil, formula = nil, format = nil, value = nil)
-          if (row_col_array = row_col_notation(row1))
-            if row_col_array.size == 4
-              r1, c1, r2, c2 = row_col_array
-              fml = col1
-              fmt = row2
-              val = col2
-            else
-              r1, c1 = row_col_array
-              r2 = col1
-              c2 = row2
-              fml = col2
-              fmt = formula
-              val = format
-            end
+        def write_array_formula(*args)
+          first = args.first
+          if (m = /\A([A-Za-z]+[0-9]+)\z/.match(first.to_s))
+            cell_ref = m[1]
+            range = "#{cell_ref}:#{cell_ref}"
+            args = [range] + args[1..]
+          end
+
+          if (row_col_array = row_col_notation(args.first))
+            r1, c1, r2, c2 = row_col_array
+            fml, fmt, val = args[1..]
           else
-            r1 = row1
-            c1 = col1
-            r2 = row2
-            c2 = col2
-            fml = formula
-            fmt = format
-            val = value
+            r1, c1, r2, c2, fml, fmt, val = args
           end
 
           r1, r2 = r2, r1 if r1 > r2
@@ -398,6 +394,8 @@ module Xlsxrb
             s = str
             t = tip
           end
+
+          fmt, s = s, fmt if s.is_a?(Format) || (fmt && !fmt.is_a?(Format))
 
           update_dimensions(r, c)
           display = s || u
@@ -478,10 +476,11 @@ module Xlsxrb
           opts_hash = opts.is_a?(Hash) ? opts : {}
           cell_ref = xl_rowcol_to_cell(r, c)
 
+          author_val = opts_hash[:author] || (@workbook.respond_to?(:comments_author) ? @workbook.comments_author : nil) || "Author"
           cmt = {
             ref: cell_ref,
             text: s.to_s,
-            author: opts_hash[:author] || @workbook.respond_to?(:comments_author) ? @workbook.comments_author : "Author",
+            author: author_val,
             visible: opts_hash[:visible] ? true : false
           }.compact
 
@@ -501,7 +500,7 @@ module Xlsxrb
 
           update_dimensions(row, 0)
           h = height || @default_row_height
-          is_hidden = hidden == 1 || height.zero?
+          is_hidden = hidden == 1 || height&.zero?
           @formats_used << format if format
           @set_rows[row] = {
             height: h,
@@ -512,9 +511,9 @@ module Xlsxrb
           }
         end
 
-        def set_row_pixels(row, pixels, *)
-          height = pixels ? pixels * 0.75 : nil
-          set_row(row, height, *)
+        def set_row_pixels(*data)
+          data[1] = pixels_to_height(data[1]) if data[1]
+          set_row(*data)
         end
 
         # Sets column properties (width, format, hidden, level, collapsed)
@@ -546,9 +545,20 @@ module Xlsxrb
           end
         end
 
-        def set_column_pixels(firstcol, lastcol, pixels, *)
-          width = pixels ? (pixels / 7.0) : nil
-          set_column(firstcol, lastcol, width, *)
+        def set_column_pixels(*data)
+          cell = data[0]
+
+          if cell.respond_to?(:=~) && cell =~ /^\D/
+            data = substitute_cellref(*data)
+            data.shift
+            data.delete_at(1)
+          end
+
+          return if data.size < 3
+
+          first_col, last_col, pixels, *rest = data
+          width = pixels ? pixels_to_width(pixels) : nil
+          set_column(first_col, last_col, width, *rest)
         end
 
         # Merges a range of cells with data in the first cell
@@ -830,14 +840,34 @@ module Xlsxrb
           @page_margins[:bottom] = m
         end
 
-        def set_header(string, margin = nil)
+        # @param string [String]
+        # @param margin [Numeric, Hash{Symbol => untyped}, nil]
+        # @param options [Hash{Symbol => untyped}]
+        # @return [void]
+        #: (String string, ?Numeric | Hash[Symbol, untyped] | nil margin, ?Hash[Symbol, untyped] options) -> void
+        def set_header(string = "", margin = nil, options = {})
+          if margin.is_a?(Hash)
+            options = margin
+            margin = nil
+          end
           @header_footer[:odd_header] = string
           @page_margins[:header] = margin if margin
+          @header_footer[:header_options] = options unless options.empty?
         end
 
-        def set_footer(string, margin = nil)
+        # @param string [String]
+        # @param margin [Numeric, Hash{Symbol => untyped}, nil]
+        # @param options [Hash{Symbol => untyped}]
+        # @return [void]
+        #: (String string, ?Numeric | Hash[Symbol, untyped] | nil margin, ?Hash[Symbol, untyped] options) -> void
+        def set_footer(string = "", margin = nil, options = {})
+          if margin.is_a?(Hash)
+            options = margin
+            margin = nil
+          end
           @header_footer[:odd_footer] = string
           @page_margins[:footer] = margin if margin
+          @header_footer[:footer_options] = options unless options.empty?
         end
 
         def print_area(*args)
@@ -943,10 +973,6 @@ module Xlsxrb
 
         def set_tab_color(color)
           @tab_color = color
-        end
-
-        def set_zoom(zoom)
-          @zoom = zoom
         end
 
         def keep_leading_zeros(option = true)
@@ -1156,6 +1182,204 @@ module Xlsxrb
           )
         end
 
+        # Convert the height of a cell from pixels to character units.
+        #
+        # @param pixels [Numeric]
+        # @return [Numeric]
+        #: (Numeric pixels) -> Numeric
+        def pixels_to_height(pixels)
+          height = 0.75 * pixels
+          height = height.to_i if (height - height.to_i).abs < 0.1
+          height
+        end
+
+        # @param args [Array<untyped>]
+        # @return [void]
+        #: (*untyped args) -> void
+        def set_selection(*args)
+          return if args.empty?
+
+          if (row_col_array = row_col_notation(args.first))
+            row_first, col_first, row_last, col_last = row_col_array
+          else
+            row_first, col_first, row_last, col_last = args
+          end
+
+          active_cell = xl_rowcol_to_cell(row_first, col_first)
+          if row_last
+            row_first, row_last = row_last, row_first if row_first > row_last
+            col_first, col_last = col_last, col_first if col_first > col_last
+            sqref = xl_range(row_first, row_last, col_first, col_last)
+          else
+            sqref = active_cell
+          end
+
+          return if sqref == "A1"
+
+          @selections = [[nil, active_cell, sqref]]
+        end
+
+        # @param scale [Numeric]
+        # @return [Integer]
+        #: (Numeric scale) -> Integer
+        def zoom=(scale)
+          @zoom = if scale < 10 || scale > 400
+                    100
+                  else
+                    scale.to_i
+                  end
+        end
+
+        # @param scale [Numeric]
+        # @return [Numeric]
+        #: (Numeric scale) -> Numeric
+        def set_zoom(scale)
+          self.zoom = scale
+        end
+
+        # @param height [Numeric, nil]
+        # @param zero_height [Numeric, nil]
+        # @return [void]
+        #: (?Numeric? height, ?Numeric? zero_height) -> void
+        def set_default_row(height = nil, zero_height = nil)
+          @default_row_height = height if height
+          @default_row_zeroed = zero_height ? 1 : 0
+        end
+
+        # @param visible [Boolean]
+        # @return [void]
+        #: (?bool visible) -> void
+        def show_comments(visible = true)
+          @comments_visible = visible ? 1 : 0
+        end
+
+        # @param ignores [Hash{Symbol => untyped}]
+        # @return [Hash{Symbol => untyped}]
+        #: (Hash[Symbol, untyped] ignores) -> Hash[Symbol, untyped]
+        def ignore_errors(ignores)
+          @ignore_errors = ignores
+        end
+
+        # Inserts a button control
+        #
+        # @param row [Integer, String]
+        # @param col [Integer, Hash{Symbol => untyped}, nil]
+        # @param properties [Hash{Symbol => untyped}, nil]
+        # @return [void]
+        #: (Integer | String row, ?untyped col, ?Hash[Symbol, untyped]? properties) -> void
+        def insert_button(row, col = nil, properties = nil)
+          if (row_col_array = row_col_notation(row))
+            r, c = row_col_array
+            p = col
+          else
+            r = row
+            c = col
+            p = properties
+          end
+          @buttons ||= []
+          @buttons << { row: r, col: c, properties: p }
+        end
+
+        # @param vba_codename [String, nil]
+        # @return [String]
+        #: (?String? vba_codename) -> String
+        def set_vba_name(vba_codename = nil)
+          @vba_codename = vba_codename || @name
+        end
+
+        # @param image [String]
+        # @return [void]
+        #: (String image) -> void
+        def set_background(image)
+          raise "Couldn't locate #{image}: $!" unless File.exist?(image)
+
+          @background_image = image
+        end
+
+        # @param max_width [Numeric]
+        # @return [void]
+        #: (?Numeric max_width) -> void
+        def autofit(max_width = 255.0)
+          @autofit = true
+          @autofit_max_width = max_width
+        end
+
+        # @param password [String, nil]
+        # @param options [Hash{Symbol => untyped}]
+        # @return [void]
+        #: (?String? password, ?Hash[Symbol, untyped] options) -> void
+        def protect(password = nil, options = {})
+          @protect = { sheet: true }.merge(options)
+          @protect[:password] = encode_password(password) if password && !password.empty?
+        end
+
+        # @param args [Array<untyped>]
+        # @return [Shape]
+        #: (*untyped args) -> Shape
+        def insert_shape(*args)
+          shape = args.find { |a| a.is_a?(Shape) } || Shape.new
+          @shapes ||= []
+          @shapes << shape
+          shape
+        end
+
+        # @param row_first [untyped]
+        # @param col_first [untyped, nil]
+        # @param row_last [untyped, nil]
+        # @param col_last [untyped, nil]
+        # @param params [untyped, nil]
+        # @return [void]
+        #: (untyped row_first, ?untyped col_first, ?untyped row_last, ?untyped col_last, ?untyped params) -> void
+        def update_range_format_with_params(row_first, col_first = nil, row_last = nil, col_last = nil, params = nil)
+          if (row_col_array = row_col_notation(row_first))
+            r1, c1, r2, c2 = row_col_array
+            p = col_first
+          else
+            r1 = row_first
+            c1 = col_first
+            r2 = row_last
+            c2 = col_last
+            p = params
+          end
+
+          return unless r1 && c1 && r2 && c2 && p
+
+          r1, r2 = r2, r1 if r1 > r2
+          c1, c2 = c2, c1 if c1 > c2
+
+          (r1..r2).each do |r|
+            (c1..c2).each do |c|
+              update_format_with_params(r, c, p)
+            end
+          end
+        end
+
+        # @param row [untyped]
+        # @param col [untyped, nil]
+        # @param params [untyped, nil]
+        # @return [void]
+        #: (untyped row, ?untyped col, ?untyped params) -> void
+        def update_format_with_params(row, col = nil, params = nil)
+          if (row_col_array = row_col_notation(row))
+            r, c = row_col_array
+            p = col
+          else
+            r = row
+            c = col
+            p = params
+          end
+
+          return unless r && c && p
+
+          fmt = @workbook.add_format(p)
+          existing = (@rows[r] && @rows[r][c]) || @table[[r, c]]
+          if existing
+            existing.format = fmt
+          else
+            write_blank(r, c, fmt)
+          end
+        end
+
         private
 
         def normalize_cell_args(row, col, value, format)
@@ -1223,17 +1447,6 @@ module Xlsxrb
           else
             (pixels - padding) / max_digit_width
           end
-        end
-
-        # Convert the height of a cell from pixels to character units.
-        #
-        # @param pixels [Numeric]
-        # @return [Numeric]
-        #: (Numeric pixels) -> Numeric
-        def pixels_to_height(pixels)
-          height = 0.75 * pixels
-          height = height.to_i if (height - height.to_i).abs < 0.1
-          height
         end
       end
     end
