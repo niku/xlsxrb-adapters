@@ -35,9 +35,22 @@ module Xlsxrb
 
         attr_accessor merged_cells: MergedCells?
 
-        attr_accessor data_validations: Array[untyped]?
-
         attr_accessor sheet_id: Integer?
+
+        attr_accessor source_element: Xlsxrb::Elements::Worksheet?
+
+        # Sheet visibility as RubyXL exposes it: nil when visible, "hidden" or "veryHidden" otherwise.
+        attr_accessor state: String?
+
+        # Default row height / column width settings (<sheetFormatPr>), as an xlsxrb sheet_format Hash.
+        attr_accessor sheet_format_pr: Hash[Symbol, untyped]?
+
+        # Sheet view settings (<sheetViews>), as an xlsxrb sheet_view Hash. Assign nil to drop them.
+        attr_accessor sheet_views: Hash[Symbol, untyped]?
+
+        XLSXRB_STATES: untyped
+
+        RUBYXL_STATES: untyped
 
         # Proxy to support RubyXL's `worksheet.sheet_data[r][c]` and `sheet_data.rows` idiom.
         class SheetDataProxy
@@ -66,6 +79,21 @@ module Xlsxrb
         # @param unmapped_data [Hash] Additional metadata.
         # : (?workbook: Workbook?, ?sheet_name: String, ?rows: Array[Row?], ?columns: Array[untyped], ?charts: Array[untyped], ?unmapped_data: Hash[untyped, untyped]) -> void
         def initialize: (?workbook: Workbook?, ?sheet_name: String, ?rows: Array[Row?], ?columns: Array[untyped], ?charts: Array[untyped], ?unmapped_data: Hash[untyped, untyped]) -> void
+
+        # Converts an xlsxrb sheet state Symbol (:visible, :hidden, :very_hidden) to the RubyXL String form.
+        #
+        # @param state [Symbol, String, nil]
+        # @return [String, nil]
+        # : (untyped state) -> String?
+        def self.rubyxl_state: (untyped state) -> String?
+
+        attr_reader data_validations: Array[DataValidation]?
+
+        attr_reader conditional_formatting: Array[ConditionalFormatting]?
+
+        def data_validations=: (untyped vals) -> untyped
+
+        def conditional_formatting=: (untyped cfs) -> untyped
 
         alias name sheet_name
 

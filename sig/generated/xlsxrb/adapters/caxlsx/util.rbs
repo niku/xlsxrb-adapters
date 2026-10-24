@@ -100,11 +100,11 @@ module Xlsxrb
       # : (Array[untyped] cells) -> Array[untyped]
       def self.sort_cells: (Array[untyped] cells) -> Array[untyped]
 
-      # Converts various types into a boolean
-      # @param v [Object]
-      # @return [Boolean]
-      # : (untyped v) -> bool
-      def self.booleanize: (untyped v) -> bool
+      # If value is boolean return '1' or '0', else return the value
+      # @param value [Object]
+      # @return [Object]
+      # : (untyped value) -> untyped
+      def self.booleanize: (untyped value) -> untyped
 
       # Recursively merges two hashes
       # @param hash [Hash]
@@ -291,10 +291,19 @@ module Xlsxrb
 
           # : () -> Array[Symbol]
           def serializable_attrs: () -> Array[Symbol]
+
+          # : (*Symbol attrs) -> void
+          def serializable_element_attributes: (*Symbol attrs) -> void
+
+          # : () -> Array[Symbol]
+          def serializable_element_attrs: () -> Array[Symbol]
         end
 
         # : (String str) -> String
         def serialized_attributes: (String str) -> String
+
+        # : (?String str, ?Array[Symbol] additional_attributes) ?{ (untyped) -> untyped } -> String
+        def serialized_element_attributes: (?String str, ?Array[Symbol] additional_attributes) ?{ (untyped) -> untyped } -> String
 
         # : (String tag, String str, ?Hash[Symbol, untyped] extra_attrs) ?{ () -> void } -> String
         def serialized_tag: (String tag, String str, ?Hash[Symbol, untyped] extra_attrs) ?{ () -> void } -> String

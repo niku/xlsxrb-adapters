@@ -208,21 +208,9 @@ module Xlsxrb
       class HeaderFooter
         include OptionsParser
 
-        attr_accessor different_first: bool?
+        include SerializedAttributes
 
-        attr_accessor different_odd_even: bool?
-
-        attr_accessor odd_header: String?
-
-        attr_accessor odd_footer: String?
-
-        attr_accessor even_header: String?
-
-        attr_accessor even_footer: String?
-
-        attr_accessor first_header: String?
-
-        attr_accessor first_footer: String?
+        include Accessors
 
         # @param options [Hash]
         # : (?Hash[Symbol, untyped] options) -> void
@@ -243,17 +231,9 @@ module Xlsxrb
       class Break
         include OptionsParser
 
+        include Accessors
+
         include SerializedAttributes
-
-        attr_accessor id: Integer?
-
-        attr_accessor min: Integer?
-
-        attr_accessor max: Integer?
-
-        attr_accessor man: bool?
-
-        attr_accessor pt: bool?
 
         # @param options [Hash]
         # : (?Hash[Symbol, untyped] options) -> void

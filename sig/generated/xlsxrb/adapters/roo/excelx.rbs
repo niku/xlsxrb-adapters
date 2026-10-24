@@ -78,6 +78,12 @@ module Xlsxrb
         # : (?untyped sheet) -> Excelx::Sheet?
         def sheet_for: (?untyped sheet) -> Excelx::Sheet?
 
+        # Loads sheet on-demand (lazy parsing).
+        #
+        # @param idx [Integer]
+        # @return [Excelx::Sheet, nil]
+        def load_sheet_at: (untyped idx) -> untyped
+
         # Returns whether the specified sheet is hidden.
         #
         # @param sheet [String, Integer, nil]
@@ -292,6 +298,8 @@ module Xlsxrb
 
         # : (untyped io, bool only_visible) -> void
         def parse_archive: (untyped io, bool only_visible) -> void
+
+        def close: () -> untyped
 
         # : (String? xml) -> [Array[String], Hash[Integer, String]]
         def parse_shared_strings: (String? xml) -> [ Array[String], Hash[Integer, String] ]

@@ -152,6 +152,10 @@ module Xlsxrb
         # Writes a date or time to a cell
         def write_date_time: (untyped row, ?untyped col, ?untyped str, ?untyped format) -> untyped
 
+        def date_1904?: () -> untyped
+
+        def convert_date_time: (untyped val) -> untyped
+
         # Writes a boolean to a cell
         def write_boolean: (untyped row, ?untyped col, ?untyped val, ?untyped format) -> untyped
 

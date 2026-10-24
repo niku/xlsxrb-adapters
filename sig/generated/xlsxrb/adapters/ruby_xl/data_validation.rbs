@@ -1,0 +1,47 @@
+# Generated from lib/xlsxrb/adapters/ruby_xl/data_validation.rb with RBS::Inline
+
+module Xlsxrb
+  module Adapters
+    module RubyXL
+      # Lightweight wrapper for data validation providing both RubyXL object-style access
+      # (.type, .sqref) and Hash-style access ([:type], [:sqref]).
+      class DataValidation
+        attr_accessor type: untyped
+
+        attr_accessor sqref: untyped
+
+        attr_accessor formula1: untyped
+
+        attr_accessor formula2: untyped
+
+        attr_accessor operator: untyped
+
+        attr_accessor allow_blank: untyped
+
+        attr_accessor show_input_message: untyped
+
+        attr_accessor show_error_message: untyped
+
+        attr_accessor error_title: untyped
+
+        attr_accessor error: untyped
+
+        attr_accessor prompt_title: untyped
+
+        attr_accessor prompt: untyped
+
+        attr_accessor unmapped_attributes: untyped
+
+        def initialize: (?untyped attributes) -> untyped
+
+        def []: (untyped key) -> untyped
+
+        def []=: (untyped key, untyped val) -> untyped
+
+        def to_h: () -> untyped
+
+        alias to_xlsxrb to_h
+      end
+    end
+  end
+end

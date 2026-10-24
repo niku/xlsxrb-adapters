@@ -11,6 +11,8 @@ module Xlsxrb
 
         attr_accessor local_sheet_id: Integer?
 
+        attr_accessor hidden: bool?
+
         # @param params [Hash]
         # : (?Hash[Symbol, untyped] params) -> void
         def initialize: (?Hash[Symbol, untyped] params) -> void

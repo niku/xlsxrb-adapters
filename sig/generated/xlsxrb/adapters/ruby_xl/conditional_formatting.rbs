@@ -1,0 +1,39 @@
+# Generated from lib/xlsxrb/adapters/ruby_xl/conditional_formatting.rb with RBS::Inline
+
+module Xlsxrb
+  module Adapters
+    module RubyXL
+      # Lightweight wrapper for conditional formatting providing both RubyXL object-style access
+      # (.sqref, .type) and Hash-style access ([:sqref], [:type]).
+      class ConditionalFormatting
+        attr_accessor sqref: untyped
+
+        attr_accessor type: untyped
+
+        attr_accessor operator: untyped
+
+        attr_accessor formula: untyped
+
+        attr_accessor priority: untyped
+
+        attr_accessor stop_if_true: untyped
+
+        attr_accessor style_index: untyped
+
+        attr_accessor rules: untyped
+
+        attr_accessor unmapped_attributes: untyped
+
+        def initialize: (?untyped attributes) -> untyped
+
+        def []: (untyped key) -> untyped
+
+        def []=: (untyped key, untyped val) -> untyped
+
+        def to_h: () -> untyped
+
+        alias to_xlsxrb to_h
+      end
+    end
+  end
+end

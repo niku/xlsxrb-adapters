@@ -64,6 +64,31 @@ module Xlsxrb
 
         attr_accessor defined_names: DefinedNames
 
+        attr_accessor calc_pr: CalculationProperties
+
+        attr_accessor book_views: Array[WorkbookView]
+
+        # Accepted for RubyXL compatibility. xlsxrb does not carry <mc:AlternateContent>, so it is never written.
+        attr_accessor mc_alternate_content: untyped
+
+        attr_accessor source_element: Xlsxrb::Elements::Workbook?
+
+        # Calculation settings (<calcPr>). Only full_calc_on_load is written.
+        class CalculationProperties < Struct[untyped]
+          attr_accessor full_calc_on_load(): untyped
+
+          def self.new: (?untyped full_calc_on_load) -> instance
+                      | (?full_calc_on_load: untyped) -> instance
+        end
+
+        # Workbook window settings (<workbookView>). Only active_tab is written.
+        class WorkbookView < Struct[untyped]
+          attr_accessor active_tab(): untyped
+
+          def self.new: (?untyped active_tab) -> instance
+                      | (?active_tab: untyped) -> instance
+        end
+
         # Returns whether workbook uses 1904 date system.
         # @return [Boolean]
         # : () -> bool
@@ -243,6 +268,13 @@ module Xlsxrb
         # @return [Xlsxrb::Elements::Workbook]
         # : () -> Xlsxrb::Elements::Workbook
         def to_xlsxrb: () -> Xlsxrb::Elements::Workbook
+
+        # Merges the RubyXL-style calc and view settings into xlsxrb workbook properties.
+        #
+        # @param base [Hash, nil] Workbook properties read from the source file.
+        # @return [Hash]
+        # : (Hash[Symbol, untyped]? base) -> Hash[Symbol, untyped]
+        def workbook_properties_for_xlsxrb: (Hash[Symbol, untyped]? base) -> Hash[Symbol, untyped]
 
         # Writes workbook out to an XLSX file.
         # Trims sheet names exceeding 31 characters to 31 characters as per Excel compatibility.

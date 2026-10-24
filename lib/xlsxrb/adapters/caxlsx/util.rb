@@ -194,22 +194,16 @@ module Xlsxrb
           end
         end
 
-        # Converts various types into a boolean
-        # @param v [Object]
-        # @return [Boolean]
-        #: (untyped v) -> bool
-        def booleanize(v)
-          case v
-          when true, 1, "1", "true"
-            true
-          when false, 0, "0", "false", nil
-            false
-          else
-            str = v.to_s
-            return true if str == "true"
-            return false if str == "false"
 
-            !v.nil?
+        # If value is boolean return '1' or '0', else return the value
+        # @param value [Object]
+        # @return [Object]
+        #: (untyped value) -> untyped
+        def booleanize(value)
+          case value
+          when true then "1"
+          when false then "0"
+          else value
           end
         end
 
@@ -243,17 +237,6 @@ module Xlsxrb
           res
         end
 
-        # If value is boolean return '1' or '0', else return the value
-        # @param value [Object]
-        # @return [Object]
-        #: (untyped value) -> untyped
-        def booleanize(value)
-          case value
-          when true then "1"
-          when false then "0"
-          else value
-          end
-        end
 
         # Converts snake_case to CamelCase or camelCase
         # @param s [String, Symbol]

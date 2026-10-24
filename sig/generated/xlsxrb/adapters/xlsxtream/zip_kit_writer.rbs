@@ -11,8 +11,9 @@ module Xlsxrb
         # Wraps an output sink into a ZipKitWriter instance.
         #
         # @param output [String, IO, Object]
+        # @param io_wrapper [Symbol, nil] Explicit wrapper selection (:zip_kit or :xlsxrb). Defaults to :xlsxrb.
         # @return [ZipKitWriter]
-        def self.with_output_to: (untyped output) -> untyped
+        def self.with_output_to: (untyped output, ?io_wrapper: untyped) -> untyped
 
         def initialize: (untyped streamer, ?close: untyped, ?mode: untyped) -> untyped
 

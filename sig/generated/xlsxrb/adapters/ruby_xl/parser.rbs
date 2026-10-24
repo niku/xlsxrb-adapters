@@ -27,6 +27,13 @@ module Xlsxrb
         # : (untyped source, Workbook wb) -> void
         def self.enrich_workbook: (untyped source, Workbook wb) -> void
 
+        # Resolves sheet name to target XML entry path in ZIP using workbook relationships.
+        #
+        # @param wb_xml [String, nil]
+        # @param rels_xml [String, nil]
+        # @return [Hash<String, String>]
+        def self.resolve_sheet_targets: (untyped wb_xml, untyped rels_xml) -> untyped
+
         # @param str [String, nil]
         # @return [String, nil]
         # : (String? str) -> String?
