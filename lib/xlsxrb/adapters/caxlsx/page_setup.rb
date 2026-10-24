@@ -318,15 +318,13 @@ module Xlsxrb
       # Header and footer settings
       class HeaderFooter
         include OptionsParser
+        include SerializedAttributes
+        include Accessors
 
-        attr_accessor :different_first #: bool?
-        attr_accessor :different_odd_even #: bool?
-        attr_accessor :odd_header #: String?
-        attr_accessor :odd_footer #: String?
-        attr_accessor :even_header #: String?
-        attr_accessor :even_footer #: String?
-        attr_accessor :first_header #: String?
-        attr_accessor :first_footer #: String?
+        serializable_attributes :different_odd_even, :different_first
+        serializable_element_attributes :odd_header, :odd_footer, :even_header, :even_footer, :first_header, :first_footer
+        string_attr_accessor :odd_header, :odd_footer, :even_header, :even_footer, :first_header, :first_footer
+        boolean_attr_accessor :different_odd_even, :different_first
 
         # @param options [Hash]
         #: (?Hash[Symbol, untyped] options) -> void
@@ -342,18 +340,11 @@ module Xlsxrb
 
         #: (?String str) -> String
         def to_xml_string(str = +"")
-          attrs = +""
-          attrs << ' differentFirst="1"' if @different_first
-          attrs << ' differentOddEven="1"' if @different_odd_even
-          str << "<headerFooter#{attrs}>"
-          str << "<oddHeader>#{Caxlsx.coder.encode(@odd_header)}</oddHeader>" if @odd_header
-          str << "<oddFooter>#{Caxlsx.coder.encode(@odd_footer)}</oddFooter>" if @odd_footer
-          str << "<evenHeader>#{Caxlsx.coder.encode(@even_header)}</evenHeader>" if @even_header
-          str << "<evenFooter>#{Caxlsx.coder.encode(@even_footer)}</evenFooter>" if @even_footer
-          str << "<firstHeader>#{Caxlsx.coder.encode(@first_header)}</firstHeader>" if @first_header
-          str << "<firstFooter>#{Caxlsx.coder.encode(@first_footer)}</firstFooter>" if @first_footer
-          str << "</headerFooter>"
-          str
+          serialized_tag("headerFooter", str) do
+            serialized_element_attributes(str) do |value|
+              ::CGI.escapeHTML(value.to_s)
+            end
+          end
         end
 
         #: () -> Hash[Symbol, untyped]
@@ -374,24 +365,17 @@ module Xlsxrb
       # Break represents a page break
       class Break
         include OptionsParser
+        include Accessors
         include SerializedAttributes
 
-        attr_accessor :id #: Integer?
-        attr_accessor :min #: Integer?
-        attr_accessor :max #: Integer?
-        attr_accessor :man #: bool?
-        attr_accessor :pt #: bool?
+        unsigned_int_attr_accessor :id, :min, :max
+        boolean_attr_accessor :man, :pt
 
         serializable_attributes :id, :min, :max, :man, :pt
 
         # @param options [Hash]
         #: (?Hash[Symbol, untyped] options) -> void
         def initialize(options = {})
-          @id = 0
-          @min = 0
-          @max = 0
-          @man = true
-          @pt = nil
           parse_options options
           yield self if block_given?
         end
