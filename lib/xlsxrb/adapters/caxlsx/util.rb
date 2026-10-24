@@ -243,6 +243,18 @@ module Xlsxrb
           res
         end
 
+        # If value is boolean return '1' or '0', else return the value
+        # @param value [Object]
+        # @return [Object]
+        #: (untyped value) -> untyped
+        def booleanize(value)
+          case value
+          when true then "1"
+          when false then "0"
+          else value
+          end
+        end
+
         # Converts snake_case to CamelCase or camelCase
         # @param s [String, Symbol]
         # @param all_caps [Boolean]
@@ -250,8 +262,14 @@ module Xlsxrb
         #: (?String | Symbol s, ?bool all_caps) -> String
         def camel(s = "", all_caps = true)
           str = s.to_s
-          str = str.capitalize if all_caps
-          str.gsub(/_(.)/) { Regexp.last_match(1).upcase }
+          return str if str.empty?
+
+          if all_caps
+            str.capitalize.gsub(/_(.)/) { Regexp.last_match(1).upcase }
+          else
+            first, *rest = str.split("_")
+            first + rest.map(&:capitalize).join
+          end
         end
 
         # --- Validation helper methods ---
@@ -571,6 +589,17 @@ module Xlsxrb
           def serializable_attrs
             @serializable_attrs || []
           end
+
+          #: (*Symbol attrs) -> void
+          def serializable_element_attributes(*attrs)
+            @serializable_element_attrs ||= []
+            @serializable_element_attrs.concat(attrs)
+          end
+
+          #: () -> Array[Symbol]
+          def serializable_element_attrs
+            @serializable_element_attrs || []
+          end
         end
 
         #: (String str) -> String
@@ -579,7 +608,23 @@ module Xlsxrb
             val = send(attr)
             next if val.nil?
 
-            str << " #{attr}=\"#{val}\""
+            val_str = Caxlsx.booleanize(val)
+            camel_attr = Caxlsx.camel(attr, false)
+            str << " #{camel_attr}=\"#{val_str}\""
+          end
+          str
+        end
+
+        #: (?String str, ?Array[Symbol] additional_attributes) ?{ (untyped) -> untyped } -> String
+        def serialized_element_attributes(str = +"", additional_attributes = [])
+          attrs = (self.class.serializable_element_attrs || []) + additional_attributes
+          attrs.each do |attribute_name|
+            value = send(attribute_name) if respond_to?(attribute_name)
+            next if value.nil?
+
+            value = yield(value) if block_given?
+            element_name = Caxlsx.camel(attribute_name, false)
+            str << "<#{element_name}>#{value}</#{element_name}>"
           end
           str
         end
@@ -637,7 +682,6 @@ module Xlsxrb
 
               define_method(:"#{symbol}=") do |val|
                 Caxlsx.send(validator, val) unless val.nil?
-                val = Caxlsx.booleanize(val) if validator == :validate_boolean && !val.nil?
                 instance_variable_set(:"@#{symbol}", val)
               end
             end

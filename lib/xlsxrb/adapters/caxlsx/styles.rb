@@ -67,7 +67,7 @@ module Xlsxrb
           return if v.nil?
 
           Caxlsx.validate_boolean(v)
-          @b = Caxlsx.booleanize(v)
+          @b = v
         end
 
         #: (untyped v) -> void
@@ -75,7 +75,7 @@ module Xlsxrb
           return if v.nil?
 
           Caxlsx.validate_boolean(v)
-          @i = Caxlsx.booleanize(v)
+          @i = v
         end
 
         #: (untyped v) -> void
@@ -92,7 +92,7 @@ module Xlsxrb
           return if v.nil?
 
           Caxlsx.validate_boolean(v)
-          @strike = Caxlsx.booleanize(v)
+          @strike = v
         end
 
         #: (untyped v) -> void
@@ -100,7 +100,7 @@ module Xlsxrb
           return if v.nil?
 
           Caxlsx.validate_boolean(v)
-          @outline = Caxlsx.booleanize(v)
+          @outline = v
         end
 
         #: (untyped v) -> void
@@ -108,7 +108,7 @@ module Xlsxrb
           return if v.nil?
 
           Caxlsx.validate_boolean(v)
-          @shadow = Caxlsx.booleanize(v)
+          @shadow = v
         end
 
         #: (untyped v) -> void
@@ -116,7 +116,7 @@ module Xlsxrb
           return if v.nil?
 
           Caxlsx.validate_boolean(v)
-          @condense = Caxlsx.booleanize(v)
+          @condense = v
         end
 
         #: (untyped v) -> void
@@ -124,7 +124,7 @@ module Xlsxrb
           return if v.nil?
 
           Caxlsx.validate_boolean(v)
-          @extend = Caxlsx.booleanize(v)
+          @extend = v
         end
 
         #: (untyped v) -> void
