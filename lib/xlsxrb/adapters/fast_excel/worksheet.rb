@@ -791,13 +791,7 @@ module Xlsxrb
                 val = rec.value
                 val = format_datetime_value(val) if val.is_a?(Datetime)
 
-                cached = if !rec.cached_value.nil?
-                           rec.cached_value
-                         elsif !rec.value.nil?
-                           rec.value
-                         else
-                           0
-                         end
+                cached = rec.cached_value.nil? ? rec.value : rec.cached_value
                 fml = rec.formula ? Xlsxrb.formula(rec.formula, cached_value: cached) : nil
                 fmt = rec.format || @col_formats[c_idx] || @row_formats[r_idx]
                 s_idx = fmt ? style_map[fmt] : nil

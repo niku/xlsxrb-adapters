@@ -983,7 +983,7 @@ module Xlsxrb
                 val = rec.value
                 val = format_datetime_val(val) if val.is_a?(Time) || val.is_a?(Date)
 
-                cached = rec.cached_value.nil? ? 0 : rec.cached_value
+                cached = rec.cached_value
                 fml = if rec.array_formula && rec.formula
                         Xlsxrb.array_formula(rec.formula, rec.array_formula, cached_value: cached)
                       elsif rec.formula
