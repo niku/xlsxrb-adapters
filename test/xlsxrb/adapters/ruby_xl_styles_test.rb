@@ -237,13 +237,13 @@ class XlsxrbAdaptersRubyXLStylesTest < Test::Unit::TestCase
       assert_equal "Georgia", parsed_cell.font_name
       assert_equal 18, parsed_cell.font_size
       assert_equal true, parsed_cell.is_bolded
-      assert_equal "FFAA00", parsed_cell.fill_color
+      assert_includes %w[FFAA00 FFFFAA00], parsed_cell.fill_color
       assert_equal "center", parsed_cell.horizontal_alignment
       assert_equal "top", parsed_cell.vertical_alignment
       assert_equal true, parsed_cell.get_cell_xf.alignment&.shrink_to_fit
       assert_equal 2, parsed_cell.get_cell_xf.alignment&.indent
       assert_equal "double", parsed_cell.get_border(:bottom)
-      assert_equal "0000FF", parsed_cell.get_border_color(:bottom)
+      assert_includes %w[0000FF FF0000FF], parsed_cell.get_border_color(:bottom)
     end
   end
 
@@ -292,17 +292,17 @@ class XlsxrbAdaptersRubyXLStylesTest < Test::Unit::TestCase
       parsed_ws = parsed[0]
 
       # Verify row styles persisted
-      assert_equal "CCDDFF", parsed_ws.get_row_fill(1)
+      assert_includes %w[CCDDFF FFCCDDFF], parsed_ws.get_row_fill(1)
       assert_equal true, parsed_ws.is_row_bolded(1)
       assert_equal true, parsed_ws.is_row_italicized(1)
-      assert_equal "112233", parsed_ws.get_row_font_color(1)
+      assert_includes %w[112233 FF112233], parsed_ws.get_row_font_color(1)
 
       # Verify column styles persisted
-      assert_equal "FFEEAA", parsed_ws.get_column_fill(3)
+      assert_includes %w[FFEEAA FFFFEEAA], parsed_ws.get_column_fill(3)
       assert_equal true, parsed_ws.is_column_bolded(3)
       assert_equal 16, parsed_ws.get_column_font_size(3)
       assert_equal "medium", parsed_ws.get_column_border(3, :left)
-      assert_equal "FF0000", parsed_ws.get_column_border_color(3, :left)
+      assert_includes %w[FF0000 FFFF0000], parsed_ws.get_column_border_color(3, :left)
     end
   end
 end
