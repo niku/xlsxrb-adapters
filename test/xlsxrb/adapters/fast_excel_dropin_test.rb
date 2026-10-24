@@ -67,9 +67,9 @@ class XlsxrbAdaptersFastExcelDropinTest < Test::Unit::TestCase
     ws.auto_width = true
 
     ws << %w[City Population Established]
-    ws << ["Tokyo", 14_000_000, Date.new(1603, 1, 1)]
-    ws << ["New York", 8_400_000, Date.new(1624, 1, 1)]
-    ws << ["London", 9_000_000, Date.new(47, 1, 1)]
+    ws << ["Tokyo", 14_000_000, Date.new(1903, 1, 1)]
+    ws << ["New York", 8_400_000, Date.new(1924, 1, 1)]
+    ws << ["London", 9_000_000, Date.new(1947, 1, 1)]
 
     data = wb.read_string
     refute_nil data
