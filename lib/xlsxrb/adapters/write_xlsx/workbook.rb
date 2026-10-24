@@ -529,6 +529,57 @@ module Xlsxrb
         def delete_tempdir(dir_path)
           FileUtils.rm_rf(dir_path) if dir_path
         end
+
+        #: (Array[Array[untyped]] names) -> Array[Array[untyped]]
+        def sort_defined_names(names)
+          names.sort do |a, b|
+            name_a  = normalise_defined_name(a[0].to_s)
+            name_b  = normalise_defined_name(b[0].to_s)
+            sheet_a = normalise_sheet_name(a[2].to_s)
+            sheet_b = normalise_sheet_name(b[2].to_s)
+            cmp = name_a <=> name_b
+            if cmp&.zero?
+              sheet_a >= sheet_b ? 1 : -1
+            else
+              cmp || 0
+            end
+          end
+        end
+
+        #: (String name) -> String
+        def normalise_defined_name(name)
+          name.sub(/^_xlnm\./, "").downcase
+        end
+
+        #: (String name) -> String
+        def normalise_sheet_name(name)
+          name.sub(/^'/, "").downcase
+        end
+
+        #: (Array[Array[untyped]] defined_names) -> Array[String]
+        def extract_named_ranges(defined_names)
+          named_ranges = []
+
+          defined_names.each do |defined_name|
+            name, index, range = defined_name
+
+            next if name == "_xlnm._FilterDatabase"
+            next unless range.to_s =~ /^([^!]+)!/
+
+            sheet_name = ::Regexp.last_match(1)
+
+            if name.to_s =~ /^_xlnm\.(.*)$/
+              xlnm_type = ::Regexp.last_match(1)
+              name = "#{sheet_name}!#{xlnm_type}"
+            elsif index != -1
+              name = "#{sheet_name}!#{name}"
+            end
+
+            named_ranges << name.to_s
+          end
+
+          named_ranges
+        end
       end
     end
   end

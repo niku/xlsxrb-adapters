@@ -310,6 +310,27 @@ module Xlsxrb
         def format_datetime_val: (untyped val) -> untyped
 
         def store_cell_record: (untyped row, untyped col, untyped record) -> untyped
+
+        # Hash a worksheet password according to ECMA-376
+        #
+        # @param password [String]
+        # @return [String]
+        # : (String password) -> String
+        def encode_password: (String password) -> String
+
+        # Convert the width of a cell from pixels to character units.
+        #
+        # @param pixels [Numeric]
+        # @return [Numeric]
+        # : (Numeric pixels) -> Numeric
+        def pixels_to_width: (Numeric pixels) -> Numeric
+
+        # Convert the height of a cell from pixels to character units.
+        #
+        # @param pixels [Numeric]
+        # @return [Numeric]
+        # : (Numeric pixels) -> Numeric
+        def pixels_to_height: (Numeric pixels) -> Numeric
       end
     end
   end

@@ -180,6 +180,18 @@ module Xlsxrb
 
         # : (String? dir_path) -> void
         def delete_tempdir: (String? dir_path) -> void
+
+        # : (Array[Array[untyped]] names) -> Array[Array[untyped]]
+        def sort_defined_names: (Array[Array[untyped]] names) -> Array[Array[untyped]]
+
+        # : (String name) -> String
+        def normalise_defined_name: (String name) -> String
+
+        # : (String name) -> String
+        def normalise_sheet_name: (String name) -> String
+
+        # : (Array[Array[untyped]] defined_names) -> Array[String]
+        def extract_named_ranges: (Array[Array[untyped]] defined_names) -> Array[String]
       end
     end
   end

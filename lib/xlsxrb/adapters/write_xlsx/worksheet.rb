@@ -1188,6 +1188,53 @@ module Xlsxrb
           (@rows[row] ||= {})[col] = record
           @formats_used << record.format if record.format
         end
+
+        # Hash a worksheet password according to ECMA-376
+        #
+        # @param password [String]
+        # @return [String]
+        #: (String password) -> String
+        def encode_password(password)
+          hash = 0
+
+          password.reverse.each_char do |char|
+            hash = ((hash >> 14) & 0x01) | ((hash << 1) & 0x7fff)
+            hash ^= char.ord
+          end
+
+          hash = ((hash >> 14) & 0x01) | ((hash << 1) & 0x7fff)
+          hash ^= password.length
+          hash ^= 0xCE4B
+
+          format("%X", hash)
+        end
+
+        # Convert the width of a cell from pixels to character units.
+        #
+        # @param pixels [Numeric]
+        # @return [Numeric]
+        #: (Numeric pixels) -> Numeric
+        def pixels_to_width(pixels)
+          max_digit_width = 7.0
+          padding         = 5.0
+
+          if pixels <= 12
+            pixels / (max_digit_width + padding)
+          else
+            (pixels - padding) / max_digit_width
+          end
+        end
+
+        # Convert the height of a cell from pixels to character units.
+        #
+        # @param pixels [Numeric]
+        # @return [Numeric]
+        #: (Numeric pixels) -> Numeric
+        def pixels_to_height(pixels)
+          height = 0.75 * pixels
+          height = height.to_i if (height - height.to_i).abs < 0.1
+          height
+        end
       end
     end
   end
