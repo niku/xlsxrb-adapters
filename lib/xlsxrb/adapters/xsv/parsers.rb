@@ -2,7 +2,7 @@
 
 # rbs_inline: enabled
 
-require "cgi"
+require "cgi/escape"
 require "date"
 require_relative "helpers"
 

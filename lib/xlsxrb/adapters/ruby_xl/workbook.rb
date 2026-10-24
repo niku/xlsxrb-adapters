@@ -149,14 +149,29 @@ module Xlsxrb
                           Formula.new(cell.formula.is_a?(Xlsxrb::Elements::Formula) ? cell.formula.expression : cell.formula.to_s)
                         end
                 datatype = case cell.value
-                           when String then DataType::RAW_STRING
+                           when String
+                             if cell.raw_value && cell.raw_value =~ /\A\d+\z/ && wb.shared_strings&.[](cell.raw_value.to_i) == cell.value
+                               DataType::SHARED_STRING
+                             else
+                               DataType::RAW_STRING
+                             end
                            when Xlsxrb::Elements::RichText then DataType::INLINE_STRING
+                           when TrueClass, FalseClass then DataType::BOOLEAN
                            end
+                raw_val = cell.raw_value
+                if raw_val.nil? && !cell.value.nil?
+                  raw_val = case cell.value
+                            when true then "1"
+                            when false then "0"
+                            else cell.value.to_s
+                            end
+                end
                 adapter_cell = Cell.new(
                   worksheet: ws,
                   row: cell.row_index,
                   column: cell.column_index,
                   value: cell.value,
+                  raw_value: raw_val,
                   formula: f_val,
                   style_index: cell.style_index,
                   datatype: datatype

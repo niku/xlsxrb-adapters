@@ -326,4 +326,28 @@ class XlsxrbAdaptersRubyXLTest < Test::Unit::TestCase
     assert_equal %w[A1 B1], values[0]
     assert_equal ["A2"], values[1]
   end
+
+  def test_text_escaped_unicode_unescaping
+    t = Xlsxrb::Adapters::RubyXL::Text.new(value: "Line1_x000D_\nLine2")
+    assert_equal "Line1\r\nLine2", t.to_s
+  end
+
+  def test_upstream_fixtures_edge_cases
+    bool_path = File.expand_path("../../vendor/upstream/roo/test/files/boolean.xlsx", __dir__)
+    if File.exist?(bool_path)
+      doc = Xlsxrb::Adapters::RubyXL::Parser.parse(bool_path)
+      assert_equal 1, doc[0][0][0].value
+      assert_equal "b", doc[0][0][0].datatype
+      assert_equal 0, doc[0][1][0].value
+      assert_equal "b", doc[0][1][0].datatype
+    end
+
+    x000d_path = File.expand_path("../../vendor/upstream/roo/test/files/x000D.xlsx", __dir__)
+    return unless File.exist?(x000d_path)
+
+    doc = Xlsxrb::Adapters::RubyXL::Parser.parse(x000d_path)
+    assert_equal "s", doc[0][0][0].datatype
+    assert_nil doc[0][2][0].value
+    assert_include doc[0][1][7].value, "\r\n"
+  end
 end

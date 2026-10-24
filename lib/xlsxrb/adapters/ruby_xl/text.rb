@@ -15,10 +15,12 @@ module Xlsxrb
           @value = params[:value]&.to_s
         end
 
+        ESCAPED_UNICODE = /_x([0-9A-Fa-f]{4})_/
+
         # @return [String]
         #: () -> String
         def to_s
-          @value.to_s
+          @value.to_s.gsub(ESCAPED_UNICODE) { Regexp.last_match(1).hex.chr(::Encoding::UTF_8) }
         end
 
         # Writes XML representation of text node.

@@ -11,6 +11,8 @@ module Xlsxrb
         # : (?Hash[Symbol, untyped] params) -> void
         def initialize: (?Hash[Symbol, untyped] params) -> void
 
+        ESCAPED_UNICODE: ::Regexp
+
         # @return [String]
         # : () -> String
         def to_s: () -> String
