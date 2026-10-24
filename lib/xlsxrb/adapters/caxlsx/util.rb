@@ -199,11 +199,7 @@ module Xlsxrb
         # @return [Object]
         #: (untyped value) -> untyped
         def booleanize(value)
-          case value
-          when true then "1"
-          when false then "0"
-          else value
-          end
+          Xlsxrb::Ooxml::Utils.booleanize(value)
         end
 
         # Recursively merges two hashes
@@ -242,15 +238,7 @@ module Xlsxrb
         # @return [String]
         #: (?String | Symbol s, ?bool all_caps) -> String
         def camel(s = "", all_caps = true)
-          str = s.to_s
-          return str if str.empty?
-
-          if all_caps
-            str.capitalize.gsub(/_(.)/) { Regexp.last_match(1).upcase }
-          else
-            first, *rest = str.split("_")
-            first + rest.map(&:capitalize).join
-          end
+          Xlsxrb::Ooxml::Utils.camelize(s, capitalize_first: all_caps)
         end
 
         # --- Validation helper methods ---
