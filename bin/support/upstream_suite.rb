@@ -32,8 +32,8 @@ module UpstreamSuite
     "fast_excel" => { const: %w[FastExcel], adapter: "FastExcel", features: %w[fast_excel],
                       files: ["test/*_test.rb"], shims: %w[simplecov minitest/reporters] },
     "roo" => { const: %w[Roo], adapter: "Roo", features: %w[roo],
-               files: ["test/roo/test_excelx.rb", "test/excelx/**/*.rb"],
-               shims: %w[simplecov shoulda minitest/reporters rackup], rackup_stub: true },
+               files: ["test/roo/test_excelx.rb", "test/excelx/**/*.rb", "test/formatters/*.rb"],
+               shims: %w[simplecov shoulda minitest/reporters rackup], rackup_stub: true, preload: %w[nokogiri] },
     "creek" => { const: %w[Creek], adapter: "Creek", features: %w[creek], files: ["spec/*_spec.rb"],
                  shims: %w[pry], rspec: true, preload: %w[nokogiri] },
     "caxlsx" => { adapter: "Caxlsx", features: %w[axlsx], mode: :overlay, overlay: "Axlsx", require: "axlsx",
@@ -254,6 +254,24 @@ module UpstreamSuite
     files = test_files(cfg, repo, project_root)
     abort "no upstream test files found for #{name}" if files.empty?
     Dir.chdir(repo) # keep for the whole process: minitest runs inside at_exit
+
+    if name == "roo"
+      require "test_helper"
+      Object.send(:remove_const, :ROO_FORMATS) if Object.const_defined?(:ROO_FORMATS)
+      Object.const_set(:ROO_FORMATS, %i[excelx excelxm])
+      Object.class_eval do
+        alias_method :orig_with_each_spreadsheet, :with_each_spreadsheet
+        def with_each_spreadsheet(options, &block)
+          if options[:format]
+            formats = Array(options[:format]).select { |f| %i[excelx excelxm].include?(f) }
+            return if formats.empty?
+
+            options = options.merge(format: formats)
+          end
+          orig_with_each_spreadsheet(options, &block)
+        end
+      end
+    end
 
     if cfg[:rspec]
       require "rspec/core"

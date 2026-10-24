@@ -83,7 +83,7 @@ module Xlsxrb
         # @param options [Hash]
         #: (untyped filename_or_stream, ?Hash[Symbol, untyped] options) -> void
         def initialize(filename_or_stream, options = {})
-          super()
+          super
           @filename = filename_or_stream
           @options = options.dup
 
@@ -403,6 +403,15 @@ module Xlsxrb
         end
 
         alias each_row each_row_streaming
+
+        # Compatibility with upstream Roo::Base which invokes read_cells when querying row/column bounds.
+        #
+        # @param _sheet [String, nil]
+        # @return [void]
+        #: (?String? _sheet) -> void
+        def read_cells(_sheet = default_sheet)
+          nil
+        end
 
         # Resolves defined names or coordinates via method_missing.
         #: (Symbol method_name, *untyped args) -> untyped

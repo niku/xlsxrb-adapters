@@ -25,7 +25,10 @@ module Xlsxrb
         attr_reader :headers
         attr_accessor :header_line
 
-        def initialize
+        #: (?untyped filename, ?Hash[Symbol, untyped] options, ?Symbol file_warning, ?untyped tmpdir) -> void
+        def initialize(filename = nil, options = {}, _file_warning = :error, _tmpdir = nil)
+          @filename = filename
+          @options = options
           @header_line = 1
           @headers = nil
           @default_sheet = nil
