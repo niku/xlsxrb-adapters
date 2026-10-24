@@ -11,6 +11,15 @@ module Xlsxrb
       # @return [Xlsxrb::Elements::Workbook]
       # : (Package | Workbook obj) -> Xlsxrb::Elements::Workbook
       def self.to_xlsxrb: (Package | Workbook obj) -> Xlsxrb::Elements::Workbook
+
+      # @return [bool]
+      # : () -> bool
+      def self.date1904: () -> bool
+
+      # @param value [bool]
+      # @return [bool]
+      # : (bool value) -> bool
+      def self.date1904=: (bool value) -> bool
     end
 
     Axlsx: untyped

@@ -295,6 +295,8 @@ module Xlsxrb
 
       VALID_TABLE_ELEMENT_TYPE_VALUES: untyped
 
+      VALID_RELATIONSHIP_TYPE_VALUES: untyped
+
       # Regular Expressions
       NUMERIC_REGEX: ::Regexp
 

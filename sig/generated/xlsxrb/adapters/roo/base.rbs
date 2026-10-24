@@ -9,7 +9,8 @@ module Xlsxrb
 
         attr_accessor header_line: untyped
 
-        def initialize: () -> untyped
+        # : (?untyped filename, ?Hash[Symbol, untyped] options, ?Symbol file_warning, ?untyped tmpdir) -> void
+        def initialize: (?untyped filename, ?Hash[Symbol, untyped] options, ?Symbol file_warning, ?untyped tmpdir) -> void
 
         # Returns array of sheet names.
         #

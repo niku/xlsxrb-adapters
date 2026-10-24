@@ -31,6 +31,7 @@ test/test_delete_tempdir.rb
 test/test_xml_writer_simple.rb
 test/utility/test_range.rb
 test/workbook/test_define_name.rb
+test/workbook/test_worksheet_by_name.rb
 test/worksheet/test_convert_date_time_01.rb
 test/worksheet/test_convert_date_time_02.rb
 test/worksheet/test_convert_date_time_03.rb

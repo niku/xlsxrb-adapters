@@ -217,6 +217,12 @@ module Xlsxrb
       def self.validate_angle: (untyped v) -> void
 
       # : (untyped v) -> void
+      def self.validate_relationship_type: (untyped v) -> void
+
+      # : (untyped v) -> void
+      def self.validate_table_element_type: (untyped v) -> void
+
+      # : (untyped v) -> void
       def self.validate_number_with_unit: (untyped v) -> void
 
       # SimpleTypedList is a typed collection inheriting from Array
@@ -257,6 +263,9 @@ module Xlsxrb
 
         # : (Integer idx, untyped item) -> untyped
         def []=: (Integer idx, untyped item) -> untyped
+
+        # : (Integer idx, untyped item) -> untyped
+        def insert: (Integer idx, untyped item) -> untyped
 
         # : (Integer idx) -> bool
         def protected?: (Integer idx) -> bool
@@ -299,14 +308,14 @@ module Xlsxrb
           def serializable_element_attrs: () -> Array[Symbol]
         end
 
-        # : (String str) -> String
-        def serialized_attributes: (String str) -> String
+        # : (?String str, ?Hash[untyped, untyped] additional_attributes, ?bool camelize_value) -> String
+        def serialized_attributes: (?String str, ?Hash[untyped, untyped] additional_attributes, ?bool camelize_value) -> String
 
         # : (?String str, ?Array[Symbol] additional_attributes) ?{ (untyped) -> untyped } -> String
         def serialized_element_attributes: (?String str, ?Array[Symbol] additional_attributes) ?{ (untyped) -> untyped } -> String
 
-        # : (String tag, String str, ?Hash[Symbol, untyped] extra_attrs) ?{ () -> void } -> String
-        def serialized_tag: (String tag, String str, ?Hash[Symbol, untyped] extra_attrs) ?{ () -> void } -> String
+        # : (String tag, ?String str, ?Hash[untyped, untyped] extra_attrs) ?{ () -> void } -> String
+        def serialized_tag: (String tag, ?String str, ?Hash[untyped, untyped] extra_attrs) ?{ () -> void } -> String
       end
 
       # Mixin for validating accessor helpers

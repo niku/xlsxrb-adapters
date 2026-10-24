@@ -5,7 +5,13 @@ module Xlsxrb
     module Roo
       ERROR_VALUES: Set[String]
 
-      class HeaderRowNotFoundError < StandardError
+      class Error < StandardError
+      end
+
+      class HeaderRowNotFoundError < Error
+      end
+
+      class FileNotFound < Error
       end
     end
   end

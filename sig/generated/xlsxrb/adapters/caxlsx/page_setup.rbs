@@ -66,11 +66,16 @@ module Xlsxrb
 
         attr_reader fit_to_page: bool?
 
+        attr_reader auto_page_breaks: bool?
+
         # : (?Hash[Symbol, untyped] options) -> void
         def initialize: (?Hash[Symbol, untyped] options) -> void
 
         # : (untyped v) -> void
         def fit_to_page=: (untyped v) -> void
+
+        # : (untyped v) -> void
+        def auto_page_breaks=: (untyped v) -> void
 
         # : (?String str) -> String
         def to_xml_string: (?String str) -> String

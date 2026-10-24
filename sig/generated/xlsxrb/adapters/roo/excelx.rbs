@@ -252,6 +252,13 @@ module Xlsxrb
 
         alias each_row each_row_streaming
 
+        # Compatibility with upstream Roo::Base which invokes read_cells when querying row/column bounds.
+        #
+        # @param _sheet [String, nil]
+        # @return [void]
+        # : (?String? _sheet) -> void
+        def read_cells: (?String? _sheet) -> void
+
         # Resolves defined names or coordinates via method_missing.
         # : (Symbol method_name, *untyped args) -> untyped
         def method_missing: (Symbol method_name, *untyped args) -> untyped

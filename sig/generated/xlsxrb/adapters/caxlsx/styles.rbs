@@ -124,12 +124,23 @@ module Xlsxrb
       class GradientStop
         include OptionsParser
 
-        attr_accessor position: Float
+        attr_reader position: Float
 
-        attr_accessor color: Color?
+        attr_reader color: Color?
 
-        # : (?Hash[Symbol, untyped] options) -> void
-        def initialize: (?Hash[Symbol, untyped] options) -> void
+        # @param color_or_options [Color, Hash[Symbol, untyped], nil]
+        # @param position [Float, nil]
+        # : (?Color | Hash[Symbol, untyped] | nil color_or_options, ?Float? position) -> void
+        def initialize: (?Color | Hash[Symbol, untyped] | nil color_or_options, ?Float? position) -> void
+
+        # : (Color v) -> Color
+        def color=: (Color v) -> Color
+
+        # : (Float v) -> Float
+        def position=: (Float v) -> Float
+
+        # : (?String str) -> String
+        def to_xml_string: (?String str) -> String
       end
 
       # GradientFill definition
@@ -449,6 +460,14 @@ module Xlsxrb
 
       # Theme definition
       class Theme
+        # The part name of this theme
+        # @return [String]
+        # : () -> String
+        def pn: () -> String
+
+        # Serializes the default theme to XML
+        # @param [String] str
+        # @return [String]
         # : (?String str) -> String
         def to_xml_string: (?String str) -> String
       end

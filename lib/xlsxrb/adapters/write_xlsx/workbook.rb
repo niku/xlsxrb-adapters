@@ -218,10 +218,12 @@ module Xlsxrb
 
         # Looks up worksheet by name
         #
-        # @param name [String]
+        # @param name [String, nil]
         # @return [Worksheet, nil]
-        #: (String name) -> Worksheet?
-        def worksheet_by_name(name)
+        #: (?String? name) -> Worksheet?
+        def worksheet_by_name(name = nil)
+          return nil if name.nil?
+
           @worksheets.find { |ws| ws.name == name }
         end
         alias get_worksheet_by_name worksheet_by_name

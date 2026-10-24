@@ -131,10 +131,10 @@ module Xlsxrb
 
         # Looks up worksheet by name
         #
-        # @param name [String]
+        # @param name [String, nil]
         # @return [Worksheet, nil]
-        # : (String name) -> Worksheet?
-        def worksheet_by_name: (String name) -> Worksheet?
+        # : (?String? name) -> Worksheet?
+        def worksheet_by_name: (?String? name) -> Worksheet?
 
         alias get_worksheet_by_name worksheet_by_name
 
