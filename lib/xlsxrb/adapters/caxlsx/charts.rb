@@ -1664,7 +1664,7 @@ module Xlsxrb
         def to_xml_string(str = +"")
           str << '<?xml version="1.0" encoding="UTF-8"?>'
           str << '<c:chartSpace xmlns:c="' << XML_NS_C << '" xmlns:a="' << XML_NS_A << '" xmlns:r="' << XML_NS_R << '">'
-          str << '<c:date1904 val="' << Caxlsx.date1904.to_s << '"/>'
+          str << '<c:date1904 val="' << Workbook.date1904.to_s << '"/>'
           str << '<c:roundedCorners val="' << rounded_corners.to_s << '"/>'
           str << '<c:style val="' << style.to_s << '"/>'
           str << "<c:chart>"

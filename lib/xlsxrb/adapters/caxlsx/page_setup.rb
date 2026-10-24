@@ -104,8 +104,9 @@ module Xlsxrb
         include SerializedAttributes
 
         attr_reader :fit_to_page #: bool?
+        attr_reader :auto_page_breaks #: bool?
 
-        serializable_attributes :fit_to_page
+        serializable_attributes :auto_page_breaks, :fit_to_page
 
         #: (?Hash[Symbol, untyped] options) -> void
         def initialize(options = {})
@@ -116,6 +117,12 @@ module Xlsxrb
         def fit_to_page=(v)
           Caxlsx.validate_boolean(v)
           @fit_to_page = Caxlsx.booleanize(v)
+        end
+
+        #: (untyped v) -> void
+        def auto_page_breaks=(v)
+          Caxlsx.validate_boolean(v)
+          @auto_page_breaks = Caxlsx.booleanize(v)
         end
 
         #: (?String str) -> String

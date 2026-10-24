@@ -46,6 +46,19 @@ module Xlsxrb
       def self.to_xlsxrb(obj)
         obj.to_xlsxrb
       end
+
+      # @return [bool]
+      #: () -> bool
+      def self.date1904
+        Workbook.date1904
+      end
+
+      # @param value [bool]
+      # @return [bool]
+      #: (bool value) -> bool
+      def self.date1904=(value)
+        Workbook.date1904 = value
+      end
     end
 
     Axlsx = Caxlsx

@@ -181,6 +181,11 @@ module Xlsxrb
       VALID_MARKER_SYMBOL_VALUES = %i[default circle dash diamond dot picture plus square star triangle x].freeze
       VALID_DISPLAY_BLANK_AS_VALUES = %i[gap span zero].freeze
       VALID_TABLE_ELEMENT_TYPE_VALUES = %i[wholeTable headerRow totalRow firstColumn lastColumn firstRowStripe secondRowStripe firstColumnStripe secondColumnStripe firstHeaderCell lastHeaderCell firstTotalCell lastTotalCell firstSubtotalColumn secondSubtotalColumn thirdSubtotalColumn firstSubtotalRow secondSubtotalRow thirdSubtotalRow blankRow firstColumnSubheading secondColumnSubheading thirdColumnSubheading firstRowSubheading secondRowSubheading thirdRowSubheading pageFieldLabels pageFieldValues].freeze
+      VALID_RELATIONSHIP_TYPE_VALUES = [
+        XML_NS_R, TABLE_R, WORKBOOK_R, WORKSHEET_R, APP_R, RELS_R, CORE_R, STYLES_R,
+        THEME_R, CHART_R, DRAWING_R, IMAGE_R, HYPERLINK_R, SHARED_STRINGS_R, COMMENT_R,
+        VML_DRAWING_R, COMMENT_R_NULL, PIVOT_TABLE_R, PIVOT_TABLE_CACHE_DEFINITION_R
+      ].freeze
 
       # Regular Expressions
       NUMERIC_REGEX = /\A-?[0-9]+\z/

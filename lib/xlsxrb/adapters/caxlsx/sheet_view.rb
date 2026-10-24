@@ -147,7 +147,7 @@ module Xlsxrb
 
         #: (?String str) -> String
         def to_xml_string(str = +"")
-          str << "<sheetViews><sheetView"
+          str << "<sheetViews><sheetView "
           serialized_attributes(str)
           str << ">"
           @pane&.to_xml_string(str)

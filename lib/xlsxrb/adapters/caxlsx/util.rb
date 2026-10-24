@@ -238,7 +238,9 @@ module Xlsxrb
         # @return [String]
         #: (?String | Symbol s, ?bool all_caps) -> String
         def camel(s = "", all_caps = true)
-          Xlsxrb::Ooxml::Utils.camelize(s, capitalize_first: all_caps)
+          str = s.to_s
+          str = str.capitalize if all_caps
+          str.gsub(/_(.)/) { ::Regexp.last_match(1).upcase }
         end
 
         # --- Validation helper methods ---
@@ -390,7 +392,17 @@ module Xlsxrb
 
         #: (untyped v) -> void
         def validate_angle(v)
-          raise ArgumentError, format(ERR_ANGLE, v) unless v.is_a?(Numeric) && v.between?(-90, 90)
+          raise ArgumentError, format(ERR_ANGLE, v.inspect) unless v.to_i.between?(-5_400_000, 5_400_000)
+        end
+
+        #: (untyped v) -> void
+        def validate_relationship_type(v)
+          RestrictionValidator.validate :relationship_type, VALID_RELATIONSHIP_TYPE_VALUES, v
+        end
+
+        #: (untyped v) -> void
+        def validate_table_element_type(v)
+          RestrictionValidator.validate :table_element_type, VALID_TABLE_ELEMENT_TYPE_VALUES, v
         end
 
         #: (untyped v) -> void
@@ -476,6 +488,15 @@ module Xlsxrb
           raise ArgumentError, "Item is protected and cannot be changed" if protected?(idx)
 
           super
+        end
+
+        #: (Integer idx, untyped item) -> untyped
+        def insert(idx, item)
+          DataTypeValidator.validate :SimpleTypedList_insert, @allowed_types, item unless @allowed_types.size == 1 && item.is_a?(@allowed_types.first)
+          raise ArgumentError, "Item is protected and cannot be changed" if protected?(idx)
+
+          super
+          item
         end
 
         #: (Integer idx) -> bool
@@ -571,16 +592,32 @@ module Xlsxrb
           end
         end
 
-        #: (String str) -> String
-        def serialized_attributes(str = +"")
+        #: (?String str, ?Hash[untyped, untyped] additional_attributes, ?bool camelize_value) -> String
+        def serialized_attributes(str = +"", additional_attributes = {}, camelize_value = true)
           self.class.serializable_attrs.each do |attr|
-            val = send(attr)
+            next if additional_attributes.key?(attr)
+
+            ivar = :"@#{attr}"
+            next unless instance_variable_defined?(ivar) || respond_to?(attr)
+
+            val = instance_variable_defined?(ivar) ? instance_variable_get(ivar) : send(attr)
             next if val.nil?
 
             val_str = Caxlsx.booleanize(val)
+            val_str = Caxlsx.camel(val_str, false) if camelize_value
             camel_attr = Caxlsx.camel(attr, false)
-            str << " #{camel_attr}=\"#{val_str}\""
+            str << camel_attr << "=\"" << val_str.to_s << "\" "
           end
+
+          additional_attributes.each do |attr, val|
+            next if val.nil?
+
+            val_str = Caxlsx.booleanize(val)
+            val_str = Caxlsx.camel(val_str, false) if camelize_value
+            camel_attr = Caxlsx.camel(attr, false)
+            str << camel_attr << "=\"" << val_str.to_s << "\" "
+          end
+
           str
         end
 
@@ -598,13 +635,10 @@ module Xlsxrb
           str
         end
 
-        #: (String tag, String str, ?Hash[Symbol, untyped] extra_attrs) ?{ () -> void } -> String
+        #: (String tag, ?String str, ?Hash[untyped, untyped] extra_attrs) ?{ () -> void } -> String
         def serialized_tag(tag, str = +"", extra_attrs = {})
-          str << "<#{tag}"
-          extra_attrs.each do |k, v|
-            str << " #{k}=\"#{v}\"" unless v.nil?
-          end
-          serialized_attributes(str)
+          str << "<" << tag << " "
+          serialized_attributes(str, extra_attrs)
           if block_given?
             str << ">"
             yield
