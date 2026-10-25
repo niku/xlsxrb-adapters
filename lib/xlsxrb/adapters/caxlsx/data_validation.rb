@@ -38,6 +38,10 @@ module Xlsxrb
         # @return [String, nil]
         attr_reader :promptTitle
 
+        # @return [String, nil]
+        attr_reader :imeMode
+        alias ime_mode imeMode
+
         # @return [Boolean, nil]
         attr_reader :showDropDown
         alias hideDropDown showDropDown
@@ -136,6 +140,15 @@ module Xlsxrb
           @promptTitle = v
         end
 
+        # @param v [String]
+        # @return [String]
+        #: (String v) -> String
+        def imeMode=(v)
+          Caxlsx.validate_string(v)
+          @imeMode = v
+        end
+        alias ime_mode= imeMode=
+
         # @param v [Boolean]
         # @return [Boolean]
         #: (bool v) -> bool
@@ -217,6 +230,8 @@ module Xlsxrb
           elsif @type == :custom
             attributes << :formula1
           end
+
+          attributes << :imeMode if @imeMode
 
           attributes
         end

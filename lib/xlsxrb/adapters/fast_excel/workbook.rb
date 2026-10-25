@@ -191,7 +191,20 @@ module Xlsxrb
         # @return [Symbol]
         #: (String name, String formula) -> Symbol
         def define_name(name, formula)
-          @defined_names << { name: name.to_s, value: formula.to_s }
+          name_str = name.to_s
+          val_str = formula.to_s
+          local_sheet = nil
+          if name_str.include?("!")
+            parts = name_str.split("!", 2)
+            local_sheet = parts[0].delete("'")
+            name_str = parts[1]
+          end
+          entry = { name: name_str, value: val_str }
+          if local_sheet
+            entry[:local_sheet_name] = local_sheet
+            entry[:sheet] = local_sheet
+          end
+          @defined_names << entry
           :no_error
         end
 
@@ -271,7 +284,7 @@ module Xlsxrb
 
           FileUtils.mkdir_p(File.dirname(@filename))
           elements_wb = to_xlsxrb
-          Xlsxrb.write(@filename, elements_wb)
+          Xlsxrb.write(@filename, elements_wb, shared_strings: !@constant_memory)
           :no_error
         end
 

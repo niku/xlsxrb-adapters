@@ -73,10 +73,14 @@ module Xlsxrb
         attr_accessor :mc_alternate_content #: untyped
         attr_accessor :source_element #: Xlsxrb::Elements::Workbook?
 
-        # Calculation settings (<calcPr>). Only full_calc_on_load is written.
+        # Calculation settings (<calcPr>).
         CalculationProperties = Struct.new(:full_calc_on_load)
-        # Workbook window settings (<workbookView>). Only active_tab is written.
-        WorkbookView = Struct.new(:active_tab)
+        # Workbook window settings (<workbookView>).
+        WorkbookView = Struct.new(:active_tab, :first_sheet, :show_sheet_tabs, :tab_ratio)
+        # Workbook properties (<workbookPr>).
+        WorkbookProperties = Struct.new(:code_name, :date1904)
+
+        attr_writer :workbook_properties #: WorkbookProperties?
 
         # Returns whether workbook uses 1904 date system.
         # @return [Boolean]
@@ -114,11 +118,29 @@ module Xlsxrb
             ws.conditional_formatting = sheet.conditional_formatting.dup if sheet.respond_to?(:conditional_formatting) && sheet.conditional_formatting&.any?
             ws.sheet_format_pr = sheet.sheet_format.dup if sheet.respond_to?(:sheet_format) && sheet.sheet_format&.any?
             ws.sheet_views = sheet.sheet_view.dup if sheet.respond_to?(:sheet_view) && sheet.sheet_view&.any?
+            ws.sheet_properties = sheet.sheet_properties.dup if sheet.respond_to?(:sheet_properties) && sheet.sheet_properties&.any?
+            ws.sheet_calc_pr = sheet.sheet_calc_pr.dup if sheet.respond_to?(:sheet_calc_pr) && sheet.sheet_calc_pr
+            ws.ignored_errors = sheet.ignored_errors.dup if sheet.respond_to?(:ignored_errors) && sheet.ignored_errors&.any?
+            ws.phonetic_properties = sheet.phonetic_properties.dup if sheet.respond_to?(:phonetic_properties) && sheet.phonetic_properties
+            ws.background_image = sheet.background_image.dup if sheet.respond_to?(:background_image) && sheet.background_image
+            if ws.sheet_properties&.any?
+              sp = ws.sheet_properties
+              page_setup_pr = Worksheet::PageSetupProperties.new(fit_to_page: sp[:fit_to_page]) unless sp[:fit_to_page].nil?
+              ws.sheet_pr = Worksheet::WorksheetProperties.new(
+                code_name: sp[:code_name],
+                tab_color: sp[:tab_color],
+                page_set_up_pr: page_setup_pr
+              )
+            end
 
             # Load column styles and widths into ColumnRanges (cols)
             if sheet.columns && !sheet.columns.empty?
               sheet.columns.each do |c|
+                min = c.unmapped_data&.[](:min) || (c.index + 1)
+                max = c.unmapped_data&.[](:max) || (c.index + 1)
                 cr = ws.cols.get_range(c.index)
+                cr.min = min
+                cr.max = max
                 cr.width = c.width if c.width
                 cr.custom_width = c.custom_width if c.custom_width
                 cr.hidden = c.hidden if c.hidden
@@ -217,6 +239,19 @@ module Xlsxrb
 
           instance.date1904 = true if wb.sheets.any? { |s| s.respond_to?(:date1904?) && s.date1904? }
 
+          active_tab = wb.respond_to?(:active_tab) ? wb.active_tab : nil
+          first_sheet = wb.respond_to?(:first_sheet) ? wb.first_sheet : nil
+          show_sheet_tabs = wb.respond_to?(:show_sheet_tabs?) ? wb.show_sheet_tabs? : nil
+          tab_ratio = wb.respond_to?(:tab_ratio) ? wb.tab_ratio : nil
+          instance.book_views = [WorkbookView.new(
+            active_tab: active_tab,
+            first_sheet: first_sheet,
+            show_sheet_tabs: show_sheet_tabs,
+            tab_ratio: tab_ratio
+          )]
+          instance.calc_pr = CalculationProperties.new(full_calc_on_load: true) if wb.respond_to?(:full_calc_on_load?) && wb.full_calc_on_load?
+          instance.workbook_properties = WorkbookProperties.new(code_name: wb.code_name, date1904: wb.date1904?) if wb.respond_to?(:code_name) && wb.code_name
+
           instance
         end
 
@@ -260,8 +295,14 @@ module Xlsxrb
           @defined_names = DefinedNames.new
           @calc_pr = CalculationProperties.new
           @book_views = [WorkbookView.new]
+          @workbook_properties = WorkbookProperties.new(date1904: date1904)
           @mc_alternate_content = nil
           @source_element = nil
+        end
+
+        # @return [WorkbookProperties]
+        def workbook_properties
+          @workbook_properties ||= WorkbookProperties.new(date1904: date1904?)
         end
 
         # Iterates through worksheets.
@@ -625,9 +666,14 @@ module Xlsxrb
         #: (Hash[Symbol, untyped]? base) -> Hash[Symbol, untyped]
         def workbook_properties_for_xlsxrb(base)
           props = (base || { update_links: "never" }).dup
-          active_tab = @book_views&.first&.active_tab
-          props[:active_tab] = active_tab if active_tab
+          if (view = @book_views&.first)
+            props[:active_tab] = view.active_tab unless view.active_tab.nil?
+            props[:first_sheet] = view.first_sheet unless view.first_sheet.nil?
+            props[:show_sheet_tabs] = view.show_sheet_tabs unless view.show_sheet_tabs.nil?
+            props[:tab_ratio] = view.tab_ratio unless view.tab_ratio.nil?
+          end
           props[:full_calc_on_load] = true if @calc_pr&.full_calc_on_load
+          props[:code_name] = @workbook_properties.code_name if @workbook_properties&.code_name
           props
         end
 

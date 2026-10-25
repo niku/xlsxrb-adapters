@@ -163,6 +163,7 @@ module Xlsxrb
           res[:show_row_col_headers] = @show_row_col_headers unless @show_row_col_headers.nil?
           res[:zoom_scale] = @zoom_scale if @zoom_scale
           res[:right_to_left] = @right_to_left unless @right_to_left.nil?
+          res[:tab_selected] = @tab_selected unless @tab_selected.nil?
           res
         end
 

@@ -571,4 +571,262 @@ class XlsxrbAdaptersWriteXLSXTest < Test::Unit::TestCase
     chart.set_style
     assert_equal 2, chart.instance_variable_get(:@style_id)
   end
+
+  def test_selection_and_tab_selected_serialization
+    with_tempfile do |path|
+      wb = Xlsxrb::Adapters::WriteXLSX.new(path)
+      ws = wb.add_worksheet("Sheet1")
+      ws.select
+      ws.set_selection("B2:D5")
+      ws.write(0, 0, "Test")
+      wb.close
+
+      reread = Xlsxrb.read(path)
+      sheet = reread.sheets.first
+      assert_equal true, sheet.sheet_view[:tab_selected]
+      assert_equal({ active_cell: "B2", sqref: "B2:D5" }, sheet.selection)
+    end
+  end
+
+  def test_data_validation_show_drop_down_and_ime_mode
+    with_tempfile do |path|
+      wb = Xlsxrb::Adapters::WriteXLSX.new(path)
+      ws = wb.add_worksheet("DV")
+      ws.data_validation("A1:A5", validate: "list", value: %w[High Medium Low], dropdown: 0, ime_mode: "off")
+      ws.write(0, 0, "High")
+      wb.close
+
+      reread = Xlsxrb.read(path)
+      sheet = reread.sheets.first
+      dv = sheet.data_validations.first
+      assert_equal true, dv[:show_drop_down]
+      assert_equal "off", dv[:ime_mode]
+    end
+  end
+
+  def test_empty_cells_style_suppression_on_write
+    with_tempfile do |path|
+      wb = Xlsxrb::Adapters::WriteXLSX.new(path)
+      ws = wb.add_worksheet("EmptyStyle")
+      fmt = wb.add_format(bold: 1)
+      ws.set_row(0, 20, fmt)
+      ws.set_column("A:C", 15, fmt)
+      ws.write(0, 2, "C1") # Only C1 has value
+      wb.close
+
+      xml = Xlsxrb::Ooxml::ZipReader.open(path) { |z| z.read_entry("xl/worksheets/sheet1.xml") }
+      # A1 and B1 are empty and should NOT have s="..." emitted
+      refute_match(/<c r="A1" s="/, xml)
+      refute_match(/<c r="B1" s="/, xml)
+      # C1 has value and should inherit style
+      assert_match(/<c r="C1" s="/, xml)
+    end
+  end
+
+  def test_sheet_properties_code_name_tab_color_and_fit_to_pages
+    with_tempfile do |path|
+      wb = Xlsxrb::Adapters::WriteXLSX.new(path)
+      wb.set_vba_name("WbVBA")
+      ws = wb.add_worksheet("Props")
+      ws.set_vba_name("SheetVBA")
+      ws.set_tab_color("red")
+      ws.fit_to_pages(1, 1)
+      ws.write(0, 0, "Test")
+      wb.close
+
+      reread = Xlsxrb.read(path)
+      assert_equal "WbVBA", reread.code_name
+      sheet = reread.sheets.first
+      assert_equal "SheetVBA", sheet.code_name
+      assert_equal "FF0000", sheet.tab_color
+      assert_equal true, sheet.fit_to_page?
+    end
+  end
+
+  def test_ignore_errors
+    with_tempfile do |path|
+      wb = Xlsxrb::Adapters::WriteXLSX.new(path)
+      ws = wb.add_worksheet("IE")
+      ws.ignore_errors(number_stored_as_text: "A1:C10", eval_error: "D1:D5")
+      ws.write(0, 0, "0123")
+      wb.close
+
+      reread = Xlsxrb.read(path)
+      sheet = reread.sheets.first
+      assert_equal 2, sheet.ignored_errors.size
+      num_rule = sheet.ignored_errors.find { |r| r[:sqref] == "A1:C10" }
+      assert_not_nil num_rule
+      assert_equal true, num_rule[:number_stored_as_text]
+      eval_rule = sheet.ignored_errors.find { |r| r[:sqref] == "D1:D5" }
+      assert_not_nil eval_rule
+      assert_equal true, eval_rule[:eval_error]
+    end
+  end
+
+  def test_activate_and_tab_ratio
+    with_tempfile do |path|
+      wb = Xlsxrb::Adapters::WriteXLSX.new(path)
+      wb.set_tab_ratio(600)
+      ws1 = wb.add_worksheet("First")
+      ws2 = wb.add_worksheet("Second")
+      ws2.activate
+      ws1.write(0, 0, "S1")
+      ws2.write(0, 0, "S2")
+      wb.close
+
+      reread = Xlsxrb.read(path)
+      assert_equal 1, reread.active_tab
+      assert_equal 600, reread.tab_ratio
+      assert_equal true, reread.sheets[1].sheet_view[:tab_selected]
+    end
+  end
+
+  def test_background_image
+    with_tempfile do |path|
+      png_bytes = "\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01\x08\x06\x00\x00\x00\x1f\x15c4\x00\x00\x00\nIDATx\x9cc\x00\x01\x00\x00\x05\x00\x01\r\n-\xb4\x00\x00\x00\x00IEND\xaeB`\x82".b
+      with_tempfile("bg.png") do |img_path|
+        File.binwrite(img_path, png_bytes)
+        wb = Xlsxrb::Adapters::WriteXLSX.new(path)
+        ws = wb.add_worksheet("BG")
+        ws.set_background(img_path)
+        ws.write(0, 0, "With Background")
+        wb.close
+
+        reread = Xlsxrb.read(path)
+        sheet = reread.sheets.first
+        assert_not_nil sheet.background_image
+        assert_equal "png", sheet.background_image[:ext]
+      end
+    end
+  end
+
+  def test_write_rich_string_with_base_font_inheritance
+    with_tempfile do |path|
+      wb = Xlsxrb::Adapters::WriteXLSX.new(path)
+      ws = wb.add_worksheet("RichBase")
+      base_fmt = wb.add_format(font: "Arial", size: 14)
+      red_fmt = wb.add_format(color: "red")
+      ws.write_rich_string(0, 0, "Normal ", red_fmt, "Red", base_fmt)
+
+      # Check in-memory to_xlsxrb representation
+      xlsxrb_ws = ws.to_xlsxrb
+      cell = xlsxrb_ws.cell(0, 0)
+      assert_instance_of Xlsxrb::Elements::RichText, cell.value
+      runs = cell.value.runs
+      assert_equal 2, runs.size
+      assert_equal "Normal ", runs[0].text
+      assert_equal "Arial", runs[0].font[:name]
+      assert_equal 14, (runs[0].font[:sz] || runs[0].font[:size])
+
+      assert_equal "Red", runs[1].text
+      assert_equal 14, (runs[1].font[:sz] || runs[1].font[:size])
+      assert_equal "FF0000", runs[1].font[:color]
+
+      wb.close
+
+      # Verify XML serialization contains sz and rFont in sharedStrings
+      sst_xml = Xlsxrb::Ooxml::ZipReader.open(path).read_entry("xl/sharedStrings.xml")
+      assert_includes sst_xml, 'val="14"'
+      assert_includes sst_xml, 'val="Arial"'
+    end
+  end
+
+  def test_data_validation_source_array_and_multiline_messages
+    with_tempfile do |path|
+      wb = Xlsxrb::Adapters::WriteXLSX.new(path)
+      ws = wb.add_worksheet("DV_Array")
+      ws.data_validation("A1:A5",
+                         validate: "list",
+                         source: %w[Alpha Beta Gamma],
+                         input_title: "Choose Option",
+                         input_message: "Line 1\nLine 2",
+                         error_title: "Error Title",
+                         error_message: "Invalid\nValue")
+      ws.write(0, 0, "Alpha")
+      wb.close
+
+      reread = Xlsxrb.read(path)
+      sheet = reread.sheets.first
+      assert_equal 1, sheet.data_validations.size
+      dv = sheet.data_validations.first
+      assert_equal "list", dv[:type]
+      assert_equal '"Alpha,Beta,Gamma"', dv[:formula1]
+      assert_equal "Line 1_x000a_Line 2", dv[:prompt]
+      assert_equal "Invalid_x000a_Value", dv[:error]
+      assert_equal true, dv[:show_input_message]
+      assert_equal true, dv[:show_error_message]
+    end
+  end
+
+  def test_conditional_formatting_with_format_dxf
+    with_tempfile do |path|
+      wb = Xlsxrb::Adapters::WriteXLSX.new(path)
+      ws = wb.add_worksheet("CondFmt")
+      fmt = wb.add_format(bg_color: "#FFC7CE", font_color: "#9C0006", bold: 1, size: 12)
+      ws.conditional_formatting("B2:B10",
+                                type: "cell",
+                                criteria: ">=",
+                                value: 50,
+                                format: fmt)
+      ws.write(1, 1, 60)
+      wb.close
+
+      reread = Xlsxrb.read(path)
+      sheet = reread.sheets.first
+      assert_equal 1, sheet.conditional_formatting.size
+      cf = sheet.conditional_formatting.first
+      assert_equal "B2:B10", cf[:sqref]
+      assert_equal "cellIs", cf[:type].to_s
+      assert_equal "greaterThanOrEqual", cf[:operator]
+      assert_equal "50", (cf[:formula] || cf[:formulas]&.first)
+
+      styles_xml = Xlsxrb::Ooxml::ZipReader.open(path).read_entry("xl/styles.xml")
+      assert_includes styles_xml, "<dxfs"
+      assert_includes styles_xml, "FFC7CE"
+      assert_includes styles_xml, "9C0006"
+    end
+  end
+
+  def test_local_sheet_defined_name
+    with_tempfile do |path|
+      wb = Xlsxrb::Adapters::WriteXLSX.new(path)
+      ws1 = wb.add_worksheet("Sheet1")
+      ws2 = wb.add_worksheet("Sheet2")
+      wb.define_name("Sheet2!MyScopedRate", "=0.08")
+      wb.define_name("GlobalRate", "=0.05")
+      ws1.write(0, 0, 100)
+      ws2.write(0, 0, 200)
+      wb.close
+
+      reread = Xlsxrb.read(path)
+      dns = reread.defined_names
+      scoped = dns.find { |d| d[:name] == "MyScopedRate" }
+      assert_not_nil scoped
+      assert_equal 1, scoped[:local_sheet_id]
+
+      global = dns.find { |d| d[:name] == "GlobalRate" }
+      assert_not_nil global
+      assert_nil global[:local_sheet_id]
+    end
+  end
+
+  def test_non_finite_float_raises_argument_error
+    with_tempfile do |path|
+      wb = Xlsxrb::Adapters::WriteXLSX.new(path)
+      ws = wb.add_worksheet("NonFinite")
+      ws.write(0, 0, Float::INFINITY)
+      assert_raises(ArgumentError) do
+        wb.close
+      end
+    end
+
+    with_tempfile do |path|
+      wb = Xlsxrb::Adapters::WriteXLSX.new(path)
+      ws = wb.add_worksheet("NaN")
+      ws.write(0, 0, Float::NAN)
+      assert_raises(ArgumentError) do
+        wb.close
+      end
+    end
+  end
 end

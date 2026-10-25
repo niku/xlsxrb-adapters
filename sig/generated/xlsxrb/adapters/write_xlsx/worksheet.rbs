@@ -427,6 +427,16 @@ module Xlsxrb
         # @return [Numeric]
         # : (Numeric pixels) -> Numeric
         def pixels_to_width: (Numeric pixels) -> Numeric
+
+        # @param opts [Hash]
+        # @return [Hash]
+        # : (Hash[Symbol, untyped] opts) -> Hash[Symbol, untyped]
+        def normalize_write_xlsx_data_validation: (Hash[Symbol, untyped] opts) -> Hash[Symbol, untyped]
+
+        # @param opts [Hash]
+        # @return [Hash]
+        # : (Hash[Symbol, untyped] opts) -> Hash[Symbol, untyped]
+        def normalize_write_xlsx_conditional_formatting: (Hash[Symbol, untyped] opts) -> Hash[Symbol, untyped]
       end
     end
   end

@@ -70,6 +70,7 @@ class XlsxrbAdaptersRubyXLRoundTripTest < Test::Unit::TestCase
       write_template(path)
 
       wb = Xlsxrb::Adapters::RubyXL::Parser.parse(path)
+      wb.add_worksheet("Second")
       wb.book_views.first.active_tab = 1
       wb.calc_pr.full_calc_on_load = true
       wb.company = "Example"
@@ -100,7 +101,8 @@ class XlsxrbAdaptersRubyXLRoundTripTest < Test::Unit::TestCase
       wb["A"].sheet_views = nil
       wb.write(path)
 
-      assert_nil Xlsxrb::Adapters::RubyXL::Parser.parse(path)["A"].sheet_views
+      reparsed = Xlsxrb::Adapters::RubyXL::Parser.parse(path)
+      assert_nil reparsed["A"].sheet_views[:zoom_scale]
     end
   end
 
@@ -150,6 +152,172 @@ class XlsxrbAdaptersRubyXLRoundTripTest < Test::Unit::TestCase
       assert_equal "A1:B1", reparsed[0].merged_cells.first.ref.to_s
       assert_equal 1, reparsed.defined_names.size
       assert_equal "MyRange", reparsed.defined_names.first.name
+    end
+  end
+
+  def test_column_ranges_min_max_preservation_roundtrip
+    with_tempfile do |path|
+      Xlsxrb.write(path) do |w|
+        w.sheet("Cols") do |s|
+          s.row([10])
+          s.column(0, width: 18.5)
+        end
+      end
+
+      wb = Xlsxrb::Adapters::RubyXL::Parser.parse(path)
+      ws = wb[0]
+      cr = ws.cols.first
+      cr.min = 1
+      cr.max = 5
+      cr.width = 18.5
+      wb.write(path)
+
+      reparsed = Xlsxrb::Adapters::RubyXL::Parser.parse(path)
+      re_cr = reparsed[0].cols.first
+      assert_equal 1, re_cr.min
+      assert_equal 5, re_cr.max
+      assert_in_delta 18.5, re_cr.width, 0.1
+    end
+  end
+
+  def test_data_validation_show_drop_down_and_ime_mode_roundtrip
+    with_tempfile do |path|
+      wb = Xlsxrb::Adapters::RubyXL::Workbook.new
+      ws = wb[0]
+      ws.sheet_name = "DVTest"
+      ws.add_cell(0, 0, "Test")
+      ws.data_validations = [
+        {
+          type: "list",
+          sqref: "A1:A10",
+          formula1: '"Yes,No"',
+          show_drop_down: true,
+          ime_mode: "hiragana"
+        }
+      ]
+      wb.write(path)
+
+      reparsed = Xlsxrb::Adapters::RubyXL::Parser.parse(path)
+      dv = reparsed[0].data_validations.first
+      assert_equal true, dv.show_drop_down
+      assert_equal "hiragana", dv.ime_mode
+    end
+  end
+
+  def test_dxf_preservation_roundtrip
+    with_tempfile do |path|
+      Xlsxrb.write(path) do |w|
+        w.sheet("CF") do |s|
+          s.row([10, 20])
+          s.conditional_format("A1:B1", type: :cell_is, operator: :greaterThan, formula: "15", priority: 1, fill_color: "FFBFBFBF")
+        end
+      end
+
+      wb = Xlsxrb::Adapters::RubyXL::Parser.parse(path)
+      assert_equal 1, wb.stylesheet.dxfs.size
+      wb.write(path)
+
+      re_styles = Xlsxrb::Ooxml::StylesParser.parse(Xlsxrb::Ooxml::ZipReader.open(path) { |z| z.read_entry("xl/styles.xml") })
+      assert_equal 1, re_styles.dxfs.size
+    end
+  end
+
+  def test_code_name_and_sheet_pr_roundtrip
+    with_tempfile do |path|
+      Xlsxrb.write(path) do |w|
+        w.code_name("WorkbookVBA")
+        w.sheet("Sheet1", code_name: "WorksheetVBA") do |s|
+          s.row(["Hello"])
+          s.tab_color("FF00AA")
+          s.fit_to_page(true)
+        end
+      end
+
+      wb = Xlsxrb::Adapters::RubyXL::Parser.parse(path)
+      assert_equal "WorkbookVBA", wb.workbook_properties.code_name
+      ws = wb["Sheet1"]
+      assert_equal "WorksheetVBA", ws.sheet_pr.code_name
+      assert_equal "FF00AA", ws.sheet_pr.tab_color
+      assert_equal true, ws.sheet_pr.page_set_up_pr.fit_to_page
+
+      # Modify and write back
+      ws.sheet_pr.code_name = "ModifiedSheetVBA"
+      wb.workbook_properties.code_name = "ModifiedWbVBA"
+      wb.write(path)
+
+      reparsed = Xlsxrb::Adapters::RubyXL::Parser.parse(path)
+      assert_equal "ModifiedWbVBA", reparsed.workbook_properties.code_name
+      assert_equal "ModifiedSheetVBA", reparsed["Sheet1"].sheet_pr.code_name
+      assert_equal "FF00AA", reparsed["Sheet1"].sheet_pr.tab_color
+      assert_equal true, reparsed["Sheet1"].sheet_pr.page_set_up_pr.fit_to_page
+    end
+  end
+
+  def test_ignored_errors_roundtrip
+    with_tempfile do |path|
+      Xlsxrb.write(path) do |w|
+        w.sheet("Sheet1") do |s|
+          s.row(["0123"])
+          s.ignore_error("A1:C10", number_stored_as_text: true)
+        end
+      end
+
+      wb = Xlsxrb::Adapters::RubyXL::Parser.parse(path)
+      assert_equal 1, wb["Sheet1"].ignored_errors.size
+      assert_equal "A1:C10", wb["Sheet1"].ignored_errors.first[:sqref]
+      assert_equal true, wb["Sheet1"].ignored_errors.first[:number_stored_as_text]
+
+      wb["Sheet1"].ignored_errors << { sqref: "D1:D5", eval_error: true }
+      wb.write(path)
+
+      reparsed = Xlsxrb::Adapters::RubyXL::Parser.parse(path)
+      assert_equal 2, reparsed["Sheet1"].ignored_errors.size
+    end
+  end
+
+  def test_workbook_views_roundtrip
+    with_tempfile do |path|
+      Xlsxrb.write(path) do |w|
+        w.tab_ratio(600)
+        w.show_sheet_tabs(true)
+        w.sheet("First") { |s| s.row([1]) }
+        w.sheet("Second", active: true) { |s| s.row([2]) }
+        w.first_sheet(0)
+      end
+
+      wb = Xlsxrb::Adapters::RubyXL::Parser.parse(path)
+      view = wb.book_views.first
+      assert_equal 1, view.active_tab
+      assert_equal 600, view.tab_ratio
+      assert_equal 0, view.first_sheet
+      assert_equal true, view.show_sheet_tabs
+
+      view.tab_ratio = 700
+      wb.write(path)
+
+      reparsed = Xlsxrb::Adapters::RubyXL::Parser.parse(path)
+      assert_equal 1, reparsed.book_views.first.active_tab
+      assert_equal 700, reparsed.book_views.first.tab_ratio
+    end
+  end
+
+  def test_non_finite_float_raises_argument_error
+    with_tempfile do |path|
+      wb = Xlsxrb::Adapters::RubyXL::Workbook.new
+      ws = wb[0]
+      ws.add_cell(0, 0, Float::INFINITY)
+      assert_raises(ArgumentError) do
+        wb.write(path)
+      end
+    end
+
+    with_tempfile do |path|
+      wb = Xlsxrb::Adapters::RubyXL::Workbook.new
+      ws = wb[0]
+      ws.add_cell(0, 0, Float::NAN)
+      assert_raises(ArgumentError) do
+        wb.write(path)
+      end
     end
   end
 end

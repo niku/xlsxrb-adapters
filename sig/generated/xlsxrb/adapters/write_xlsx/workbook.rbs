@@ -93,6 +93,15 @@ module Xlsxrb
         # @return [String]
         attr_accessor comments_author: untyped
 
+        # @return [Integer, nil]
+        attr_accessor activesheet: untyped
+
+        # @return [Integer, nil]
+        attr_accessor firstsheet: untyped
+
+        # @return [Integer, nil]
+        attr_accessor tab_ratio: untyped
+
         # @param file [String, Pathname, IO, StringIO, nil]
         # @param options [Hash{Symbol => untyped}]
         # : (?untyped file, ?Hash[Symbol, untyped] options) -> void
@@ -146,7 +155,7 @@ module Xlsxrb
         # @return [Worksheet]
         def add_chartsheet: (?untyped name) -> untyped
 
-        # Defines a global defined name / named range
+        # Defines a global or local defined name / named range
         #
         # @param name [String]
         # @param formula [String]

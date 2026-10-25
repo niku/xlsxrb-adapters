@@ -113,6 +113,8 @@ module Xlsxrb
         def sz=(v)
           set_run_style :validate_unsigned_int, :sz, v
         end
+        alias size sz
+        alias size= sz=
 
         #: (untyped v) -> void
         def vertAlign=(v)
@@ -204,7 +206,8 @@ module Xlsxrb
             opts[:strike] = font[:strike] if font.key?(:strike)
             opts[:u] = font[:underline] if font.key?(:underline)
             opts[:vertAlign] = font[:vert_align] if font.key?(:vert_align)
-            opts[:sz] = font[:sz] if font.key?(:sz)
+            sz_val = font[:sz] || font[:size]
+            opts[:sz] = sz_val unless sz_val.nil?
             opts[:color] = Color.new(rgb: font[:color]) if font.key?(:color)
             opts[:font_name] = font[:name] if font.key?(:name)
             opts[:family] = font[:family] if font.key?(:family)

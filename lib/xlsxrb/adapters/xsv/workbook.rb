@@ -216,10 +216,12 @@ module Xlsxrb
           return [[], Helpers::BUILT_IN_NUMBER_FORMATS.dup, nil] unless styles_xml
 
           parsed = Ooxml::StylesParser.parse(styles_xml)
-          cell_xfs = (parsed[:cell_xfs] || []).map do |xf|
+          cell_xfs_raw = parsed.respond_to?(:cell_xfs) ? parsed.cell_xfs : (parsed[:cell_xfs] || [])
+          cell_xfs = cell_xfs_raw.map do |xf|
             { numFmtId: xf[:num_fmt_id] || 0 }
           end
-          num_fmts = Helpers::BUILT_IN_NUMBER_FORMATS.dup.merge(parsed[:num_fmts] || {})
+          raw_num_fmts = parsed.respond_to?(:num_fmts) ? parsed.num_fmts : (parsed[:num_fmts] || {})
+          num_fmts = Helpers::BUILT_IN_NUMBER_FORMATS.dup.merge(raw_num_fmts)
 
           [cell_xfs, num_fmts, parsed]
         end

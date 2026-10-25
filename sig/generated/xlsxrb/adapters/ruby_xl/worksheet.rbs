@@ -48,6 +48,45 @@ module Xlsxrb
         # Sheet view settings (<sheetViews>), as an xlsxrb sheet_view Hash. Assign nil to drop them.
         attr_accessor sheet_views: Hash[Symbol, untyped]?
 
+        attr_accessor sheet_properties: Hash[Symbol, untyped]?
+
+        attr_accessor sheet_calc_pr: Hash[Symbol, untyped]?
+
+        attr_accessor ignored_errors: untyped
+
+        attr_accessor phonetic_properties: Hash[Symbol, untyped]?
+
+        attr_accessor background_image: Hash[Symbol, untyped]?
+
+        attr_writer sheet_pr: WorksheetProperties?
+
+        # Page setup properties (<pageSetUpPr>).
+        class PageSetupProperties < Struct[untyped]
+          attr_accessor fit_to_page(): untyped
+
+          def self.new: (?untyped fit_to_page) -> instance
+                      | (?fit_to_page: untyped) -> instance
+        end
+
+        # Worksheet properties (<sheetPr>).
+        class WorksheetProperties < Struct[untyped]
+          attr_accessor code_name(): untyped
+
+          attr_accessor tab_color(): untyped
+
+          attr_accessor page_set_up_pr(): untyped
+
+          attr_accessor filter_mode(): untyped
+
+          attr_accessor enable_format_conditions_calculation(): untyped
+
+          def self.new: (?untyped code_name, ?untyped tab_color, ?untyped page_set_up_pr, ?untyped filter_mode, ?untyped enable_format_conditions_calculation) -> instance
+                      | (?code_name: untyped, ?tab_color: untyped, ?page_set_up_pr: untyped, ?filter_mode: untyped, ?enable_format_conditions_calculation: untyped) -> instance
+        end
+
+        # @return [WorksheetProperties]
+        def sheet_pr: () -> untyped
+
         XLSXRB_STATES: untyped
 
         RUBYXL_STATES: untyped

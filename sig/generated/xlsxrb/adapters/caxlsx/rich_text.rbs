@@ -91,6 +91,10 @@ module Xlsxrb
         # : (untyped v) -> void
         def sz=: (untyped v) -> void
 
+        alias size sz
+
+        alias size= sz=
+
         # : (untyped v) -> void
         def vertAlign=: (untyped v) -> void
 

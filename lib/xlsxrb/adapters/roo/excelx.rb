@@ -520,12 +520,24 @@ module Xlsxrb
 
         # Styles proxy object compatible with Roo::Excelx::Styles.
         class Styles
-          #: (?Hash[Symbol, untyped] parsed_styles, ?Array[Font] fonts) -> void
+          #: (?untyped parsed_styles, ?Array[Font] fonts) -> void
           def initialize(parsed_styles = {}, fonts = [])
             @parsed_styles = parsed_styles
             @fonts = fonts
-            @num_fmts = parsed_styles[:num_fmts] || {}
-            @cell_xfs = parsed_styles[:cell_xfs] || []
+            @num_fmts = if parsed_styles.respond_to?(:num_fmts)
+                          parsed_styles.num_fmts
+                        elsif parsed_styles.is_a?(Hash)
+                          parsed_styles[:num_fmts] || {}
+                        else
+                          {}
+                        end
+            @cell_xfs = if parsed_styles.respond_to?(:cell_xfs)
+                          parsed_styles.cell_xfs
+                        elsif parsed_styles.is_a?(Hash)
+                          parsed_styles[:cell_xfs] || []
+                        else
+                          []
+                        end
           end
 
           #: (Integer | String style) -> String
@@ -548,7 +560,7 @@ module Xlsxrb
         # @return [Styles]
         #: () -> Styles
         def styles
-          @styles ||= Styles.new(@parsed_styles.is_a?(Hash) ? @parsed_styles : {}, @fonts || [])
+          @styles ||= Styles.new(@parsed_styles, @fonts || [])
         end
 
         # Closes underlying zip archive resources.
@@ -657,9 +669,27 @@ module Xlsxrb
           # 1. Styles
           styles_xml = read_xml(zip, "xl/styles.xml")
           @parsed_styles = styles_xml ? Xlsxrb::Ooxml::StylesParser.parse(styles_xml) : {}
-          num_fmts = @parsed_styles[:num_fmts] || {}
-          @cell_xfs = @parsed_styles[:cell_xfs] || []
-          raw_fonts = @parsed_styles[:fonts] || []
+          num_fmts = if @parsed_styles.respond_to?(:num_fmts)
+                       @parsed_styles.num_fmts
+                     elsif @parsed_styles.is_a?(Hash)
+                       @parsed_styles[:num_fmts] || {}
+                     else
+                       {}
+                     end
+          @cell_xfs = if @parsed_styles.respond_to?(:cell_xfs)
+                        @parsed_styles.cell_xfs
+                      elsif @parsed_styles.is_a?(Hash)
+                        @parsed_styles[:cell_xfs] || []
+                      else
+                        []
+                      end
+          raw_fonts = if @parsed_styles.respond_to?(:fonts)
+                        @parsed_styles.fonts
+                      elsif @parsed_styles.is_a?(Hash)
+                        @parsed_styles[:fonts] || []
+                      else
+                        []
+                      end
           @fonts = raw_fonts.map do |f_hash|
             Font.new(
               bold: f_hash[:bold] || false,

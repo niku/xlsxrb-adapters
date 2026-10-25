@@ -20,6 +20,10 @@ module Xlsxrb
 
         attr_accessor style_index: untyped
 
+        attr_accessor format_id: untyped
+
+        attr_accessor dxf_id: untyped
+
         attr_accessor rules: untyped
 
         attr_accessor unmapped_attributes: untyped

@@ -588,6 +588,7 @@ module Xlsxrb
         attr_accessor :borders #: Array[Border]
         attr_accessor :cell_xfs #: Array[XF]
         attr_accessor :number_formats #: NumberFormats
+        attr_accessor :dxfs #: Array[Hash[Symbol, untyped]]
 
         #: () -> void
         def initialize
@@ -599,6 +600,7 @@ module Xlsxrb
           @borders = [Border.new]
           @cell_xfs = [XF.new]
           @number_formats = NumberFormats.new
+          @dxfs = []
         end
 
         # Returns number format by ID, checking default and custom formats.
@@ -633,15 +635,15 @@ module Xlsxrb
 
         # Builds a default Stylesheet from raw xlsxrb styles hash if present.
         #
-        # @param raw_styles [Hash]
+        # @param raw_styles [Hash, Elements::Styles]
         # @return [Stylesheet]
-        #: (Hash[untyped, untyped] raw_styles) -> Stylesheet
+        #: (Hash[untyped, untyped] | Elements::Styles raw_styles) -> Stylesheet
         def self.from_xlsxrb(raw_styles)
           sheet = new
-          return sheet if raw_styles.nil? || raw_styles.empty?
+          return sheet if raw_styles.nil? || (raw_styles.respond_to?(:empty?) && raw_styles.empty?)
 
           # Parse fonts
-          raw_fonts = raw_styles[:fonts]
+          raw_fonts = raw_styles.respond_to?(:fonts) ? raw_styles.fonts : raw_styles[:fonts]
           if raw_fonts.is_a?(Array) && !raw_fonts.empty?
             sheet.fonts = raw_fonts.map do |rf|
               Font.new(
@@ -657,7 +659,7 @@ module Xlsxrb
           end
 
           # Parse fills
-          raw_fills = raw_styles[:fills]
+          raw_fills = raw_styles.respond_to?(:fills) ? raw_styles.fills : raw_styles[:fills]
           if raw_fills.is_a?(Array) && !raw_fills.empty?
             sheet.fills = raw_fills.map do |rf|
               Fill.new(
@@ -669,7 +671,7 @@ module Xlsxrb
           end
 
           # Parse borders
-          raw_borders = raw_styles[:borders]
+          raw_borders = raw_styles.respond_to?(:borders) ? raw_styles.borders : raw_styles[:borders]
           if raw_borders.is_a?(Array) && !raw_borders.empty?
             sheet.borders = raw_borders.map do |rb|
               b = Border.new
@@ -687,7 +689,7 @@ module Xlsxrb
           end
 
           # Parse num_fmts
-          raw_num_fmts = raw_styles[:num_fmts]
+          raw_num_fmts = raw_styles.respond_to?(:num_fmts) ? raw_styles.num_fmts : raw_styles[:num_fmts]
           if raw_num_fmts.is_a?(Hash)
             raw_num_fmts.each { |id, code| sheet.number_formats << NumberFormat.new(num_fmt_id: id.to_i, format_code: code.to_s) }
           elsif raw_num_fmts.is_a?(Array)
@@ -697,7 +699,11 @@ module Xlsxrb
           end
 
           # Parse cell_xfs
-          raw_xfs = raw_styles[:cell_xfs] || raw_styles[:xf_entries]
+          raw_xfs = if raw_styles.respond_to?(:cell_xfs)
+                      raw_styles.cell_xfs
+                    else
+                      raw_styles[:cell_xfs] || raw_styles[:xf_entries]
+                    end
           if raw_xfs.is_a?(Array) && !raw_xfs.empty?
             sheet.cell_xfs = raw_xfs.map do |rx|
               align = nil
@@ -722,6 +728,10 @@ module Xlsxrb
             end
           end
 
+          # Parse dxfs
+          raw_dxfs = raw_styles.respond_to?(:dxfs) ? raw_styles.dxfs : raw_styles[:dxfs]
+          sheet.dxfs = raw_dxfs.dup if raw_dxfs.is_a?(Array)
+
           sheet
         end
 
@@ -730,7 +740,7 @@ module Xlsxrb
         #: () -> Hash[Symbol, untyped]
         def to_xlsxrb_hash
           xfs = @cell_xfs.map(&:to_xlsxrb_hash)
-          {
+          res = {
             fonts: @fonts.map(&:to_xlsxrb_hash),
             fills: @fills.map(&:to_xlsxrb_hash),
             borders: @borders.map(&:to_xlsxrb_hash),
@@ -738,6 +748,8 @@ module Xlsxrb
             cell_xfs: xfs,
             xf_entries: xfs
           }
+          res[:dxfs] = @dxfs if @dxfs && !@dxfs.empty?
+          res
         end
       end
     end

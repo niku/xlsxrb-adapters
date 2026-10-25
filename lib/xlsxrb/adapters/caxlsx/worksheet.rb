@@ -1282,6 +1282,17 @@ module Xlsxrb
                 state: @sheet_view.pane.state
               }.compact
             end
+            if @sheet_view.selections && !@sheet_view.selections.empty?
+              facade_meta[:selection] = @sheet_view.selections.map do |sel|
+                pane_str = sel.pane ? Caxlsx.camel(sel.pane.to_s, false) : nil
+                {
+                  pane: pane_str,
+                  active_cell: sel.active_cell,
+                  active_cell_id: sel.active_cell_id,
+                  sqref: sel.sqref
+                }.compact
+              end
+            end
           end
 
           cf_data = if @conditional_formattings && !@conditional_formattings.empty?
@@ -1352,6 +1363,8 @@ module Xlsxrb
                           allow_blank: dv.allowBlank,
                           show_input_message: dv.showInputMessage,
                           show_error_message: dv.showErrorMessage,
+                          show_drop_down: dv.showDropDown,
+                          ime_mode: (dv.respond_to?(:imeMode) ? dv.imeMode : nil),
                           error_style: dv.errorStyle,
                           error_title: dv.errorTitle,
                           error: dv.error,
@@ -1414,6 +1427,8 @@ module Xlsxrb
                           col_style = col.style if col.style&.positive?
                           col_unmapped = {}
                           col_unmapped[:style_index] = col_style if col_style
+                          col_unmapped[:min] = col.min if col.min
+                          col_unmapped[:max] = col.max if col.max
                           Xlsxrb::Elements::Column.new(
                             index: [(col.min || 1) - 1, 0].max,
                             width: col.width,
@@ -1432,6 +1447,14 @@ module Xlsxrb
           charts_data = drw ? drw.charts.map(&:to_chart_options) : []
 
           dim_str = rows.empty? ? nil : dimension.sqref
+          sheet_props = {}
+          if @sheet_pr
+            sheet_props[:code_name] = @sheet_pr.code_name if @sheet_pr.code_name
+            sheet_props[:tab_color] = @sheet_pr.tab_color.rgb if @sheet_pr.tab_color&.rgb
+            sheet_props[:fit_to_page] = @sheet_pr.page_setup_pr.fit_to_page if @sheet_pr.page_setup_pr && !@sheet_pr.page_setup_pr.fit_to_page.nil?
+          end
+          sheet_props[:fit_to_page] = true if fit_to_page?
+
           Xlsxrb::Elements::Worksheet.new(
             name: name,
             rows: sorted_rows,
@@ -1444,7 +1467,11 @@ module Xlsxrb
             comments: sheet_comments,
             hyperlinks: sheet_hyperlinks,
             date1904: date1904?,
-            dimension: dim_str
+            dimension: dim_str,
+            sheet_view: facade_meta[:sheet_view],
+            freeze_pane: facade_meta[:freeze_pane],
+            selection: facade_meta[:selection],
+            sheet_properties: sheet_props.empty? ? nil : sheet_props
           )
         end
 

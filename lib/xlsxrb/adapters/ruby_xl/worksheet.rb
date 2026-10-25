@@ -42,6 +42,23 @@ module Xlsxrb
         attr_accessor :sheet_format_pr #: Hash[Symbol, untyped]?
         # Sheet view settings (<sheetViews>), as an xlsxrb sheet_view Hash. Assign nil to drop them.
         attr_accessor :sheet_views #: Hash[Symbol, untyped]?
+        attr_accessor :sheet_properties #: Hash[Symbol, untyped]?
+        attr_accessor :sheet_calc_pr #: Hash[Symbol, untyped]?
+        attr_accessor :ignored_errors #: untyped
+        attr_accessor :phonetic_properties #: Hash[Symbol, untyped]?
+        attr_accessor :background_image #: Hash[Symbol, untyped]?
+        attr_writer :sheet_pr #: WorksheetProperties?
+
+        # Page setup properties (<pageSetUpPr>).
+        PageSetupProperties = Struct.new(:fit_to_page)
+
+        # Worksheet properties (<sheetPr>).
+        WorksheetProperties = Struct.new(:code_name, :tab_color, :page_set_up_pr, :filter_mode, :enable_format_conditions_calculation)
+
+        # @return [WorksheetProperties]
+        def sheet_pr
+          @sheet_pr ||= WorksheetProperties.new
+        end
 
         XLSXRB_STATES = { "hidden" => :hidden, "veryHidden" => :very_hidden }.freeze
         RUBYXL_STATES = XLSXRB_STATES.invert.freeze
@@ -1469,6 +1486,8 @@ module Xlsxrb
                           cr_style = cr.style_index if cr.style_index&.positive?
                           col_unmapped = {}
                           col_unmapped[:style_index] = cr_style if cr_style
+                          col_unmapped[:min] = cr.min if cr.min
+                          col_unmapped[:max] = cr.max if cr.max
                           Xlsxrb::Elements::Column.new(
                             index: [(cr.min || 1) - 1, 0].max,
                             width: cr.width,
@@ -1511,6 +1530,33 @@ module Xlsxrb
                       base&.conditional_formatting || []
                     end
 
+          sheet_props = (base&.sheet_properties || {}).dup
+          sheet_props.merge!(@sheet_properties) if @sheet_properties
+          if @sheet_pr
+            sheet_props[:code_name] = @sheet_pr.code_name if @sheet_pr.code_name
+            sheet_props[:tab_color] = @sheet_pr.tab_color if @sheet_pr.tab_color
+            sheet_props[:fit_to_page] = @sheet_pr.page_set_up_pr.fit_to_page if @sheet_pr.page_set_up_pr && !@sheet_pr.page_set_up_pr.fit_to_page.nil?
+          end
+
+          ie_data = if @ignored_errors && !@ignored_errors.empty?
+                      @ignored_errors.map do |ie|
+                        if ie.is_a?(Hash)
+                          ie
+                        elsif ie.respond_to?(:to_h)
+                          ie.to_h
+                        elsif ie.respond_to?(:sqref)
+                          h = { sqref: ie.sqref.to_s }
+                          %i[eval_error two_digit_text_year number_stored_as_text formula formula_range unlocked_formula empty_cell_reference list_data_validation calculated_column].each do |field|
+                            val = ie.public_send(field) if ie.respond_to?(field)
+                            h[field] = true if val
+                          end
+                          h
+                        end
+                      end.compact
+                    else
+                      base&.ignored_errors || []
+                    end
+
           Xlsxrb::Elements::Worksheet.new(
             name: @sheet_name,
             rows: sorted_rows,
@@ -1539,9 +1585,13 @@ module Xlsxrb
             print_area: base&.print_area,
             print_titles: base&.print_titles,
             freeze_pane: base&.freeze_pane,
-            sheet_properties: base&.sheet_properties,
+            sheet_properties: sheet_props.empty? ? nil : sheet_props,
             protected_ranges: base&.protected_ranges,
             cell_watches: base&.cell_watches,
+            ignored_errors: ie_data,
+            phonetic_properties: @phonetic_properties || base&.phonetic_properties,
+            sheet_calc_pr: @sheet_calc_pr || base&.sheet_calc_pr,
+            background_image: @background_image || base&.background_image,
             row_breaks: base&.row_breaks,
             col_breaks: base&.col_breaks
           )

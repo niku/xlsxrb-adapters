@@ -79,6 +79,41 @@ class XlsxrbAdaptersCaxlsxFeaturesTest < Test::Unit::TestCase
     assert_equal "bottomLeft", pane.active_pane
   end
 
+  def test_sheet_views_selection_and_tab_selected
+    pkg = Xlsxrb::Adapters::Caxlsx::Package.new
+    ws = pkg.workbook.add_worksheet(name: "SelectedSheet")
+    ws.sheet_view.tab_selected = true
+    ws.sheet_view.add_selection(:bottom_right, active_cell: "B2", sqref: "B2:C3")
+
+    with_tempfile do |path|
+      pkg.serialize(path)
+      wb = Xlsxrb.read(path)
+      sheet = wb.sheets.first
+      assert_equal true, sheet.sheet_view[:tab_selected]
+      assert_equal({ active_cell: "B2", sqref: "B2:C3", pane: "bottomRight" }, sheet.selection)
+    end
+  end
+
+  def test_data_validation_show_drop_down_and_ime_mode
+    pkg = Xlsxrb::Adapters::Caxlsx::Package.new
+    ws = pkg.workbook.add_worksheet(name: "DataValidation")
+    ws.add_data_validation("A1:A10", {
+                             type: :list,
+                             formula1: '"Option1,Option2"',
+                             showDropDown: true,
+                             imeMode: "hiragana"
+                           })
+
+    with_tempfile do |path|
+      pkg.serialize(path)
+      wb = Xlsxrb.read(path)
+      sheet = wb.sheets.first
+      dv = sheet.data_validations.first
+      assert_equal true, dv[:show_drop_down]
+      assert_equal "hiragana", dv[:ime_mode]
+    end
+  end
+
   def test_sheet_protection
     pkg = Xlsxrb::Adapters::Caxlsx::Package.new
     ws = pkg.workbook.add_worksheet(name: "Protected")
@@ -345,6 +380,77 @@ class XlsxrbAdaptersCaxlsxFeaturesTest < Test::Unit::TestCase
       assert_equal "A1:A10", read_wb.sheet(0).conditional_formatting.first[:sqref]
       assert_equal 1, read_wb.sheet(0).data_validations.size
       assert_equal "C1:C10", read_wb.sheet(0).data_validations.first[:sqref]
+    end
+  end
+
+  def test_sheet_properties_code_name_tab_color_and_fit_to_page
+    pkg = Xlsxrb::Adapters::Caxlsx::Package.new
+    ws = pkg.workbook.add_worksheet(name: "PropsSheet")
+    ws.sheet_pr.code_name = "SheetPrVBA"
+    ws.sheet_pr.tab_color = "FF00AA"
+    ws.page_setup.fit_to(width: 1, height: 1)
+    ws.add_row(["Sample"])
+
+    with_tempfile do |path|
+      assert pkg.serialize(path)
+      read_wb = Xlsxrb.read(path).load
+      sheet = read_wb.sheet(0)
+      assert_equal "SheetPrVBA", sheet.code_name
+      assert_equal "FFFF00AA", sheet.tab_color
+      assert_equal true, sheet.fit_to_page?
+    end
+  end
+
+  def test_workbook_views_properties
+    pkg = Xlsxrb::Adapters::Caxlsx::Package.new
+    pkg.workbook.add_view(tab_ratio: 650, first_sheet: 0, show_sheet_tabs: true)
+    ws1 = pkg.workbook.add_worksheet(name: "W1")
+    ws2 = pkg.workbook.add_worksheet(name: "W2")
+    ws1.add_row([1])
+    ws2.add_row([2])
+
+    with_tempfile do |path|
+      assert pkg.serialize(path)
+      read_wb = Xlsxrb.read(path).load
+      assert_equal 650, read_wb.tab_ratio
+      assert_equal 0, read_wb.first_sheet
+      assert_equal true, read_wb.show_sheet_tabs?
+    end
+  end
+
+  def test_rich_text_run_size_property_and_from_xlsxrb
+    run = Xlsxrb::Adapters::Caxlsx::RichTextRun.new("Hello", size: 18)
+    assert_equal 18, run.sz
+    assert_equal 18, run.size
+    run.size = 20
+    assert_equal 20, run.sz
+
+    # from_xlsxrb with size: key
+    imported = Xlsxrb::Adapters::Caxlsx::RichTextRun.from_xlsxrb(text: "Imported", font: { size: 15, bold: true })
+    assert_equal "Imported", imported.value
+    assert_equal 15, imported.sz
+    assert_equal 15, imported.size
+  end
+
+  def test_non_finite_float_raises_argument_error
+    pkg = Xlsxrb::Adapters::Caxlsx::Package.new
+    ws = pkg.workbook.add_worksheet(name: "Inf")
+    ws.add_row([Float::INFINITY], types: [:float])
+
+    with_tempfile do |path|
+      assert_raises(ArgumentError) do
+        pkg.serialize(path)
+      end
+    end
+
+    pkg_nan = Xlsxrb::Adapters::Caxlsx::Package.new
+    ws_nan = pkg_nan.workbook.add_worksheet(name: "NaN")
+    ws_nan.add_row([Float::NAN], types: [:float])
+
+    with_tempfile do |path|
+      assert_raises(ArgumentError) do
+        pkg_nan.serialize(path)
+      end
     end
   end
 end

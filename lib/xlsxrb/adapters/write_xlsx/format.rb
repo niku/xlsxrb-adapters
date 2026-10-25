@@ -644,6 +644,23 @@ module Xlsxrb
           }.compact
         end
 
+        # Returns only explicitly specified font properties (not defaults).
+        # Useful when merging fragment formats with a base cell format.
+        #
+        # @return [Hash{Symbol => untyped}]
+        #: () -> Hash[Symbol, untyped]
+        def explicit_font_hash
+          h = {}
+          h[:name] = @font if @font && @font != "Calibri"
+          h[:sz] = @size if @size && @size != 11
+          h[:bold] = true if bold?
+          h[:italic] = true if italic?
+          h[:underline] = underline? if underline?
+          h[:strike] = strikeout? if strikeout?
+          h[:color] = Colors.to_hex(@font_color) if @font_color
+          h
+        end
+
         alias to_xlsxrb_style to_style_hash
 
         # Returns string representation of format object.

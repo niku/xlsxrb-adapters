@@ -9,8 +9,8 @@ module Xlsxrb
       # (.type, .sqref) and Hash-style access ([:type], [:sqref]).
       class DataValidation
         attr_accessor :type, :sqref, :formula1, :formula2, :operator, :allow_blank,
-                      :show_input_message, :show_error_message, :error_title, :error,
-                      :prompt_title, :prompt, :unmapped_attributes
+                      :show_input_message, :show_error_message, :show_drop_down, :ime_mode,
+                      :error_title, :error, :prompt_title, :prompt, :unmapped_attributes
 
         def initialize(attributes = {})
           attrs = attributes.is_a?(Hash) ? attributes : {}
@@ -22,12 +22,15 @@ module Xlsxrb
           @allow_blank = attrs[:allow_blank] || attrs["allow_blank"]
           @show_input_message = attrs[:show_input_message] || attrs["show_input_message"]
           @show_error_message = attrs[:show_error_message] || attrs["show_error_message"]
+          @show_drop_down = attrs[:show_drop_down] || attrs["show_drop_down"] || attrs[:showDropDown] || attrs["showDropDown"]
+          @ime_mode = attrs[:ime_mode] || attrs["ime_mode"] || attrs[:imeMode] || attrs["imeMode"]
           @error_title = attrs[:error_title] || attrs["error_title"]
           @error = attrs[:error] || attrs["error"]
           @prompt_title = attrs[:prompt_title] || attrs["prompt_title"]
           @prompt = attrs[:prompt] || attrs["prompt"]
           known_keys = %i[type sqref formula1 formula2 operator allow_blank show_input_message
-                          show_error_message error_title error prompt_title prompt]
+                          show_error_message show_drop_down showDropDown ime_mode imeMode
+                          error_title error prompt_title prompt]
           @unmapped_attributes = attrs.reject do |k, _|
             sym = k.to_s.to_sym
             known_keys.include?(sym)
@@ -62,6 +65,8 @@ module Xlsxrb
             allow_blank: @allow_blank,
             show_input_message: @show_input_message,
             show_error_message: @show_error_message,
+            show_drop_down: @show_drop_down,
+            ime_mode: @ime_mode,
             error_title: @error_title,
             error: @error,
             prompt_title: @prompt_title,

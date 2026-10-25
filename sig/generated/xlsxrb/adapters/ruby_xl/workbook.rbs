@@ -75,7 +75,7 @@ module Xlsxrb
 
         attr_accessor source_element: Xlsxrb::Elements::Workbook?
 
-        # Calculation settings (<calcPr>). Only full_calc_on_load is written.
+        # Calculation settings (<calcPr>).
         class CalculationProperties < Struct[untyped]
           attr_accessor full_calc_on_load(): untyped
 
@@ -83,13 +83,31 @@ module Xlsxrb
                       | (?full_calc_on_load: untyped) -> instance
         end
 
-        # Workbook window settings (<workbookView>). Only active_tab is written.
+        # Workbook window settings (<workbookView>).
         class WorkbookView < Struct[untyped]
           attr_accessor active_tab(): untyped
 
-          def self.new: (?untyped active_tab) -> instance
-                      | (?active_tab: untyped) -> instance
+          attr_accessor first_sheet(): untyped
+
+          attr_accessor show_sheet_tabs(): untyped
+
+          attr_accessor tab_ratio(): untyped
+
+          def self.new: (?untyped active_tab, ?untyped first_sheet, ?untyped show_sheet_tabs, ?untyped tab_ratio) -> instance
+                      | (?active_tab: untyped, ?first_sheet: untyped, ?show_sheet_tabs: untyped, ?tab_ratio: untyped) -> instance
         end
+
+        # Workbook properties (<workbookPr>).
+        class WorkbookProperties < Struct[untyped]
+          attr_accessor code_name(): untyped
+
+          attr_accessor date1904(): untyped
+
+          def self.new: (?untyped code_name, ?untyped date1904) -> instance
+                      | (?code_name: untyped, ?date1904: untyped) -> instance
+        end
+
+        attr_writer workbook_properties: WorkbookProperties?
 
         # Returns whether workbook uses 1904 date system.
         # @return [Boolean]
@@ -123,6 +141,9 @@ module Xlsxrb
         # @param date1904 [Boolean]
         # : (?Array[Worksheet] worksheets, ?shared_strings: Array[String], ?styles: Hash[untyped, untyped], ?unmapped_data: Hash[untyped, untyped], ?creator: String?, ?modifier: String?, ?created_at: Time?, ?modified_at: Time?, ?company: String, ?application: String, ?appversion: String, ?date1904: bool) -> void
         def initialize: (?Array[Worksheet] worksheets, ?shared_strings: Array[String], ?styles: Hash[untyped, untyped], ?unmapped_data: Hash[untyped, untyped], ?creator: String?, ?modifier: String?, ?created_at: Time?, ?modified_at: Time?, ?company: String, ?application: String, ?appversion: String, ?date1904: bool) -> void
+
+        # @return [WorkbookProperties]
+        def workbook_properties: () -> untyped
 
         # Iterates through worksheets.
         #

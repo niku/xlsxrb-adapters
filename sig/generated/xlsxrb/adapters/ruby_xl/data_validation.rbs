@@ -22,6 +22,10 @@ module Xlsxrb
 
         attr_accessor show_error_message: untyped
 
+        attr_accessor show_drop_down: untyped
+
+        attr_accessor ime_mode: untyped
+
         attr_accessor error_title: untyped
 
         attr_accessor error: untyped

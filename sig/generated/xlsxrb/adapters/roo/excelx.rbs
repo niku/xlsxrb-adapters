@@ -280,8 +280,8 @@ module Xlsxrb
 
         # Styles proxy object compatible with Roo::Excelx::Styles.
         class Styles
-          # : (?Hash[Symbol, untyped] parsed_styles, ?Array[Font] fonts) -> void
-          def initialize: (?Hash[Symbol, untyped] parsed_styles, ?Array[Font] fonts) -> void
+          # : (?untyped parsed_styles, ?Array[Font] fonts) -> void
+          def initialize: (?untyped parsed_styles, ?Array[Font] fonts) -> void
 
           # : (Integer | String style) -> String
           def style_format: (Integer | String style) -> String

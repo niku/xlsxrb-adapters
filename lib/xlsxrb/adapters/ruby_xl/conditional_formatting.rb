@@ -9,7 +9,7 @@ module Xlsxrb
       # (.sqref, .type) and Hash-style access ([:sqref], [:type]).
       class ConditionalFormatting
         attr_accessor :sqref, :type, :operator, :formula, :priority, :stop_if_true,
-                      :style_index, :rules, :unmapped_attributes
+                      :style_index, :format_id, :dxf_id, :rules, :unmapped_attributes
 
         def initialize(attributes = {})
           attrs = attributes.is_a?(Hash) ? attributes : {}
@@ -20,8 +20,10 @@ module Xlsxrb
           @priority = attrs[:priority] || attrs["priority"]
           @stop_if_true = attrs[:stop_if_true] || attrs["stop_if_true"]
           @style_index = attrs[:style_index] || attrs["style_index"]
+          @format_id = attrs[:format_id] || attrs["format_id"] || attrs[:dxf_id] || attrs["dxf_id"]
+          @dxf_id = @format_id
           @rules = attrs[:rules] || attrs["rules"]
-          known_keys = %i[sqref type operator formula priority stop_if_true style_index rules]
+          known_keys = %i[sqref type operator formula priority stop_if_true style_index format_id dxf_id rules]
           @unmapped_attributes = attrs.reject do |k, _|
             sym = k.to_s.to_sym
             known_keys.include?(sym)
@@ -55,6 +57,8 @@ module Xlsxrb
             priority: @priority,
             stop_if_true: @stop_if_true,
             style_index: @style_index,
+            format_id: @format_id,
+            dxf_id: @dxf_id,
             rules: @rules
           }.compact
           h.merge!(@unmapped_attributes) if @unmapped_attributes && !@unmapped_attributes.empty?

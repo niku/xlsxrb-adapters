@@ -454,7 +454,12 @@ module Xlsxrb
           update_dimensions(r, c)
 
           fmt = frags.last.is_a?(Format) ? frags.pop : nil
-          rich_text_obj = Xlsxrb.rich_text(*frags)
+          normalized_frags = if fmt
+                               frags.map { |f| f.is_a?(Format) ? f.explicit_font_hash : f }
+                             else
+                               frags
+                             end
+          rich_text_obj = Xlsxrb.rich_text(*normalized_frags, base_font: fmt)
           record = CellRecord.new(rich_text_obj, fmt, nil, nil, nil, nil, rich_text_obj, nil, nil)
           store_cell_record(r, c, record)
         end
@@ -713,9 +718,14 @@ module Xlsxrb
 
           opts = options || {}
           sqref = xl_range(r1, r2, c1, c2)
-          dv = opts.dup
-          dv[:sqref] = sqref
-          @data_validations << dv
+          dv = normalize_write_xlsx_data_validation(opts)
+          if defined?(Xlsxrb::DslHelpers) && Xlsxrb::DslHelpers.respond_to?(:normalize_data_validation)
+            normalized_rules = Xlsxrb::DslHelpers.normalize_data_validation(sqref, **dv)
+            @data_validations.concat(normalized_rules)
+          else
+            dv[:sqref] = sqref
+            @data_validations << dv
+          end
         end
 
         # Adds conditional formatting rule
@@ -736,7 +746,7 @@ module Xlsxrb
 
           opts = options || {}
           sqref = xl_range(r1, r2, c1, c2)
-          cf = opts.dup
+          cf = normalize_write_xlsx_conditional_formatting(opts)
           cf[:sqref] = sqref
           @cond_formats << cf
         end
@@ -962,6 +972,7 @@ module Xlsxrb
 
         def activate
           @active = true
+          @workbook.activesheet = @index if @workbook.respond_to?(:activesheet=)
         end
 
         def select
@@ -1047,9 +1058,7 @@ module Xlsxrb
                   cell_val&.to_s
                 )
               else
-                col_fmt = @col_info.dig(c_idx, :format) || @set_rows.dig(r_idx, :format)
-                s_idx = col_fmt ? style_map[col_fmt] : nil
-                row_cells << Xlsxrb::Elements::Cell.fast_create(r_idx, c_idx, nil, s_idx)
+                row_cells << Xlsxrb::Elements::Cell.fast_create(r_idx, c_idx, nil, nil)
               end
             end
 
@@ -1071,7 +1080,7 @@ module Xlsxrb
             col_unmapped[:style_index] = s_idx if s_idx
             cols_data << Xlsxrb::Elements::Column.new(
               index: c_idx,
-              width: info[:width] || 8.43,
+              width: info[:width],
               hidden: info[:hidden] || false,
               outline_level: info[:level],
               style_index: s_idx,
@@ -1148,6 +1157,7 @@ module Xlsxrb
           view_props[:show_zeros] = false if @hide_zero
           view_props[:right_to_left] = true if @right_to_left
           view_props[:zoom_scale] = @zoom if @zoom
+          view_props[:tab_selected] = true if @selected
 
           if @panes
             r, c, _tr, _lc, type = @panes
@@ -1159,12 +1169,51 @@ module Xlsxrb
             }.compact
           end
 
+          selection_data = if @selections && !@selections.empty?
+                             @selections.map do |pane, active_cell, sqref|
+                               {
+                                 pane: pane,
+                                 active_cell: active_cell,
+                                 sqref: sqref
+                               }.compact
+                             end
+                           end
+          view_props[:selection] = selection_data if selection_data
+          facade_meta[:selection] = selection_data if selection_data
+
           facade_meta[:views] = [view_props] unless view_props.empty?
+
+          sheet_props = {}
+          sheet_props[:code_name] = @vba_codename if @vba_codename
+          sheet_props[:fit_to_page] = true if @page_setup[:fit_to_page]
 
           if @tab_color
             hex_color = Colors.to_hex(@tab_color)
-            facade_meta[:tab_color] = hex_color if hex_color
+            if hex_color
+              facade_meta[:tab_color] = hex_color
+              sheet_props[:tab_color] = hex_color
+            end
           end
+
+          ignored_errors_data = if @ignore_errors && !@ignore_errors.empty?
+                                  key_mapping = {
+                                    number_stored_as_text: :number_stored_as_text,
+                                    eval_error: :eval_error,
+                                    formula_differs: :formula,
+                                    formula: :formula,
+                                    formula_range: :formula_range,
+                                    formula_unlocked: :unlocked_formula,
+                                    unlocked_formula: :unlocked_formula,
+                                    empty_cell_reference: :empty_cell_reference,
+                                    list_data_validation: :list_data_validation,
+                                    calculated_column: :calculated_column,
+                                    two_digit_text_year: :two_digit_text_year
+                                  }
+                                  @ignore_errors.map do |k, sqref|
+                                    rule_key = key_mapping[k.to_sym]
+                                    { sqref: sqref.to_s, rule_key => true } if rule_key && sqref
+                                  end.compact
+                                end
 
           charts_data = @charts.map do |ch_entry|
             chart_obj = ch_entry[:chart]
@@ -1195,7 +1244,12 @@ module Xlsxrb
             hyperlinks: hl_hash,
             print_area: @clean_print_area,
             print_titles: pt,
-            sparkline_groups: sparkline_groups_data
+            sparkline_groups: sparkline_groups_data,
+            sheet_view: view_props.empty? ? nil : view_props,
+            selection: selection_data,
+            sheet_properties: sheet_props.empty? ? nil : sheet_props,
+            ignored_errors: ignored_errors_data || [],
+            background_image: @background_image
           )
         end
 
@@ -1464,6 +1518,130 @@ module Xlsxrb
           else
             (pixels - padding) / max_digit_width
           end
+        end
+
+        # @param opts [Hash]
+        # @return [Hash]
+        #: (Hash[Symbol, untyped] opts) -> Hash[Symbol, untyped]
+        def normalize_write_xlsx_data_validation(opts)
+          dv = opts.dup
+
+          type_map = {
+            "integer" => "whole",
+            "length" => "textLength",
+            "list" => "list",
+            "decimal" => "decimal",
+            "date" => "date",
+            "time" => "time",
+            "custom" => "custom",
+            "any" => "none"
+          }
+          if opts[:validate]
+            val_type = opts[:validate].to_s.downcase
+            dv[:type] = type_map[val_type] || opts[:validate].to_s
+          end
+
+          op_map = {
+            "between" => "between",
+            "not between" => "notBetween",
+            "equal to" => "equal",
+            "==" => "equal",
+            "=" => "equal",
+            "not equal to" => "notEqual",
+            "!=" => "notEqual",
+            "greater than" => "greaterThan",
+            ">" => "greaterThan",
+            "less than" => "lessThan",
+            "<" => "lessThan",
+            "greater than or equal to" => "greaterThanOrEqual",
+            ">=" => "greaterThanOrEqual",
+            "less than or equal to" => "lessThanOrEqual",
+            "<=" => "lessThanOrEqual"
+          }
+          if opts[:criteria]
+            op_key = opts[:criteria].to_s.downcase
+            dv[:operator] = op_map[op_key] || opts[:criteria].to_s
+          end
+
+          vals = opts[:value] || opts[:source]
+          if vals.is_a?(Array)
+            dv[:in] = vals
+          elsif !vals.nil? && !dv[:formula1]
+            dv[:formula1] = vals.to_s
+          end
+
+          dv[:formula1] = opts[:minimum].to_s if opts[:minimum] && !dv[:formula1]
+          dv[:formula2] = opts[:maximum].to_s if opts[:maximum] && !dv[:formula2]
+          dv[:allow_blank] = [1, true].include?(opts[:ignore_blank]) unless opts[:ignore_blank].nil?
+          dv[:show_drop_down] = true if [0, false].include?(opts[:dropdown]) || opts[:show_drop_down] || opts[:show_dropdown]
+          dv[:ime_mode] = (opts[:ime_mode] || opts[:imeMode]).to_s if opts[:ime_mode] || opts[:imeMode]
+          dv[:prompt_title] = opts[:input_title].to_s if opts[:input_title] && !dv[:prompt_title]
+          dv[:prompt] = opts[:input_message].to_s if opts[:input_message] && !dv[:prompt]
+          dv[:error_title] = opts[:error_title].to_s if opts[:error_title] && !dv[:error_title]
+          dv[:error] = opts[:error_message].to_s if opts[:error_message] && !dv[:error]
+          dv[:error_style] = opts[:error_type].to_s if opts[:error_type] && !dv[:error_style]
+
+          dv
+        end
+
+        # @param opts [Hash]
+        # @return [Hash]
+        #: (Hash[Symbol, untyped] opts) -> Hash[Symbol, untyped]
+        def normalize_write_xlsx_conditional_formatting(opts)
+          cf = opts.dup
+
+          if opts[:type]
+            type_str = opts[:type].to_s
+            cf[:type] = case type_str
+                        when "cell" then :cellIs
+                        when "time_period" then :timePeriod
+                        when "duplicate" then :duplicateValues
+                        when "unique" then :uniqueValues
+                        when "top", "bottom" then :top10
+                        when "average" then :aboveAverage
+                        else opts[:type]
+                        end
+          end
+
+          op_map = {
+            "between" => "between",
+            "not between" => "notBetween",
+            "equal to" => "equal",
+            "==" => "equal",
+            "=" => "equal",
+            "not equal to" => "notEqual",
+            "!=" => "notEqual",
+            "greater than" => "greaterThan",
+            ">" => "greaterThan",
+            "less than" => "lessThan",
+            "<" => "lessThan",
+            "greater than or equal to" => "greaterThanOrEqual",
+            ">=" => "greaterThanOrEqual",
+            "less than or equal to" => "lessThanOrEqual",
+            "<=" => "lessThanOrEqual"
+          }
+          if opts[:criteria]
+            op_key = opts[:criteria].to_s.downcase
+            cf[:operator] = op_map[op_key] || opts[:criteria]
+          end
+
+          cf[:formula] ||= opts[:value].to_s if opts[:value]
+          cf[:formula] ||= opts[:minimum].to_s if opts[:minimum]
+          cf[:formula2] ||= opts[:maximum].to_s if opts[:maximum]
+
+          fmt = opts[:format]
+          if fmt
+            font_color = fmt.font_color ? Colors.to_hex(fmt.font_color) : nil
+            cf[:font_color] = font_color if font_color
+            fill_color = Colors.to_hex(fmt.bg_color || fmt.fg_color)
+            cf[:fill_color] = fill_color if fill_color
+            cf[:bold] = true if fmt.bold?
+            cf[:italic] = true if fmt.italic?
+            cf[:underline] = true if fmt.underline?
+            cf[:size] = fmt.size if fmt.size
+          end
+
+          cf
         end
       end
     end

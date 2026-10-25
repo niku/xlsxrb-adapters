@@ -528,4 +528,67 @@ class XlsxrbAdaptersFastExcelTest < Test::Unit::TestCase
     assert_equal before_width, ws.calculated_column_widths[1]
     wb.close
   end
+
+  def test_constant_memory_writes_inline_strings
+    with_tempfile do |path|
+      wb = Xlsxrb::Adapters::FastExcel.open(path, constant_memory: true)
+      ws = wb.add_worksheet("Stream")
+      ws << %w[Inline String Data]
+      wb.close
+
+      # Verify no sharedStrings.xml exists in the package when constant_memory is active
+      Xlsxrb::Ooxml::ZipReader.open(path) do |zip|
+        refute zip.entry_names.include?("xl/sharedStrings.xml")
+        xml = zip.read_entry("xl/worksheets/sheet1.xml")
+        assert_match(/t="inlineStr"/, xml)
+      end
+
+      # Verify readable by xlsxrb
+      read_wb = Xlsxrb.read(path).load
+      assert_equal %w[Inline String Data], read_wb.sheets.first.rows.first.cells.map(&:value)
+    end
+  end
+
+  def test_local_sheet_defined_name
+    with_tempfile do |path|
+      wb = Xlsxrb::Adapters::FastExcel.open(path)
+      ws1 = wb.add_worksheet("Sheet1")
+      ws2 = wb.add_worksheet("Sheet2")
+      wb.define_name("Sheet2!ScopedDiscount", "=0.15")
+      wb.define_name("GlobalRate", "=0.05")
+      ws1 << [100]
+      ws2 << [200]
+      wb.close
+
+      reread = Xlsxrb.read(path)
+      dns = reread.defined_names
+      scoped = dns.find { |d| d[:name] == "ScopedDiscount" }
+      assert_not_nil scoped
+      assert_equal 1, scoped[:local_sheet_id]
+
+      global = dns.find { |d| d[:name] == "GlobalRate" }
+      assert_not_nil global
+      assert_nil global[:local_sheet_id]
+    end
+  end
+
+  def test_non_finite_float_raises_argument_error
+    with_tempfile do |path|
+      wb = Xlsxrb::Adapters::FastExcel.open(path)
+      ws = wb.add_worksheet("Inf")
+      ws << [Float::INFINITY]
+      assert_raises(ArgumentError) do
+        wb.close
+      end
+    end
+
+    with_tempfile do |path|
+      wb = Xlsxrb::Adapters::FastExcel.open(path)
+      ws = wb.add_worksheet("NaN")
+      ws << [Float::NAN]
+      assert_raises(ArgumentError) do
+        wb.close
+      end
+    end
+  end
 end

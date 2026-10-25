@@ -335,6 +335,8 @@ module Xlsxrb
 
         attr_accessor number_formats: NumberFormats
 
+        attr_accessor dxfs: Array[Hash[Symbol, untyped]]
+
         # : () -> void
         def initialize: () -> void
 
@@ -354,10 +356,10 @@ module Xlsxrb
 
         # Builds a default Stylesheet from raw xlsxrb styles hash if present.
         #
-        # @param raw_styles [Hash]
+        # @param raw_styles [Hash, Elements::Styles]
         # @return [Stylesheet]
-        # : (Hash[untyped, untyped] raw_styles) -> Stylesheet
-        def self.from_xlsxrb: (Hash[untyped, untyped] raw_styles) -> Stylesheet
+        # : (Hash[untyped, untyped] | Elements::Styles raw_styles) -> Stylesheet
+        def self.from_xlsxrb: (Hash[untyped, untyped] | Elements::Styles raw_styles) -> Stylesheet
 
         # Serializes into xlsxrb styles hash.
         # @return [Hash]

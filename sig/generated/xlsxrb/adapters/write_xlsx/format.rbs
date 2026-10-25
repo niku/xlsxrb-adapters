@@ -345,6 +345,13 @@ module Xlsxrb
         # : () -> Hash[Symbol, untyped]
         def to_font_hash: () -> Hash[Symbol, untyped]
 
+        # Returns only explicitly specified font properties (not defaults).
+        # Useful when merging fragment formats with a base cell format.
+        #
+        # @return [Hash{Symbol => untyped}]
+        # : () -> Hash[Symbol, untyped]
+        def explicit_font_hash: () -> Hash[Symbol, untyped]
+
         alias to_xlsxrb_style to_style_hash
 
         # Returns string representation of format object.

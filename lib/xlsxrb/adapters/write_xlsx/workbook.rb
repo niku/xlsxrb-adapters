@@ -118,6 +118,15 @@ module Xlsxrb
         # @return [String]
         attr_accessor :comments_author
 
+        # @return [Integer, nil]
+        attr_accessor :activesheet
+
+        # @return [Integer, nil]
+        attr_accessor :firstsheet
+
+        # @return [Integer, nil]
+        attr_accessor :tab_ratio
+
         # @param file [String, Pathname, IO, StringIO, nil]
         # @param options [Hash{Symbol => untyped}]
         #: (?untyped file, ?Hash[Symbol, untyped] options) -> void
@@ -218,14 +227,27 @@ module Xlsxrb
           add_worksheet(name)
         end
 
-        # Defines a global defined name / named range
+        # Defines a global or local defined name / named range
         #
         # @param name [String]
         # @param formula [String]
         # @return [void]
         #: (String name, String formula) -> void
         def define_name(name, formula)
-          @defined_names << { name: name.to_s, value: formula.to_s }
+          name_str = name.to_s
+          val_str = formula.to_s
+          local_sheet = nil
+          if name_str.include?("!")
+            parts = name_str.split("!", 2)
+            local_sheet = parts[0].delete("'")
+            name_str = parts[1]
+          end
+          entry = { name: name_str, value: val_str }
+          if local_sheet
+            entry[:local_sheet_name] = local_sheet
+            entry[:sheet] = local_sheet
+          end
+          @defined_names << entry
         end
 
         # Sets document properties
@@ -390,8 +412,16 @@ module Xlsxrb
 
           facade_meta[:custom_properties] = @custom_properties unless @custom_properties.empty?
 
+          active_idx = @worksheets.index { |ws| ws.instance_variable_get(:@active) } || @activesheet
+          wb_props = {}
+          wb_props[:date1904] = true if @date_1904
+          wb_props[:code_name] = @vba_codename if @vba_codename
+          wb_props[:active_tab] = active_idx if active_idx
+          wb_props[:tab_ratio] = @tab_ratio if @tab_ratio
+          wb_props[:first_sheet] = @firstsheet if @firstsheet
+
           unmapped = facade_meta.empty? ? {} : { facade: facade_meta }
-          unmapped[:workbook_properties] = { date1904: true } if @date_1904
+          unmapped[:workbook_properties] = wb_props unless wb_props.empty?
 
           Xlsxrb::Elements::Workbook.new(
             sheets: elements_sheets,

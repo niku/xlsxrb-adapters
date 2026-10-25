@@ -36,6 +36,11 @@ module Xlsxrb
         # @return [String, nil]
         attr_reader promptTitle: untyped
 
+        # @return [String, nil]
+        attr_reader imeMode: untyped
+
+        alias ime_mode imeMode
+
         # @return [Boolean, nil]
         attr_reader showDropDown: untyped
 
@@ -101,6 +106,13 @@ module Xlsxrb
         # @return [String]
         # : (String v) -> String
         def promptTitle=: (String v) -> String
+
+        # @param v [String]
+        # @return [String]
+        # : (String v) -> String
+        def imeMode=: (String v) -> String
+
+        alias ime_mode= imeMode=
 
         # @param v [Boolean]
         # @return [Boolean]
