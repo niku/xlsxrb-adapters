@@ -80,7 +80,7 @@ module Xlsxrb
         # @return [Array<Integer>]
         #: (String cell_name) -> [Integer, Integer]
         def calc_coordinate(cell_name)
-          coords = Xlsxrb::Utils.ref_to_row_col(cell_name)
+          coords = Xlsxrb.parse_ref(cell_name)
           coords || [0, 0]
         end
 

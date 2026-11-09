@@ -12,6 +12,14 @@ module Xlsxrb
       # : (Package | Workbook obj) -> Xlsxrb::Elements::Workbook
       def self.to_xlsxrb: (Package | Workbook obj) -> Xlsxrb::Elements::Workbook
 
+      # Sanitizes worksheet name using Xlsxrb constraint rules.
+      #
+      # @param name [Object] Desired worksheet name.
+      # @param replace_char [String] Replacement character.
+      # @return [String] Excel-compliant worksheet name.
+      # : (untyped name, ?replace_char: String) -> String
+      def self.sanitize_sheet_name: (untyped name, ?replace_char: String) -> String
+
       # @return [bool]
       # : () -> bool
       def self.date1904: () -> bool

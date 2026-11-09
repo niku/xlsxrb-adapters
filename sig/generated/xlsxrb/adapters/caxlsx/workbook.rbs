@@ -234,6 +234,12 @@ module Xlsxrb
         # : () -> Array[Comments]
         def comments: () -> Array[Comments]
 
+        # Returns the names of all worksheets in the workbook.
+        #
+        # @return [Array<String>]
+        # : () -> Array[String]
+        def sheet_names: () -> Array[String]
+
         # @return [Styles]
         # : () ?{ (Styles) -> void } -> Styles
         def styles: () ?{ (Styles) -> void } -> Styles

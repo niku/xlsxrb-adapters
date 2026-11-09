@@ -195,6 +195,14 @@ module Xlsxrb
           ws
         end
 
+        # Returns the names of all worksheets in the workbook.
+        #
+        # @return [Array<String>]
+        #: () -> Array[String]
+        def sheet_names
+          @worksheets.map(&:name)
+        end
+
         # Adds a new format to the workbook
         #
         # @param properties [Hash{Symbol => untyped}]
@@ -416,7 +424,7 @@ module Xlsxrb
           wb_props = {}
           wb_props[:date1904] = true if @date_1904
           wb_props[:code_name] = @vba_codename if @vba_codename
-          wb_props[:active_tab] = active_idx if active_idx
+          wb_props[:active_sheet] = active_idx if active_idx
           wb_props[:tab_ratio] = @tab_ratio if @tab_ratio
           wb_props[:first_sheet] = @firstsheet if @firstsheet
 
@@ -438,7 +446,7 @@ module Xlsxrb
         # @param options [Hash{Symbol => untyped}]
         # @return [Workbook]
         def self.from_xlsxrb(xlsxrb_workbook, file = nil, options = {})
-          wb = xlsxrb_workbook.respond_to?(:load) ? xlsxrb_workbook.load : xlsxrb_workbook
+          wb = xlsxrb_workbook
           target_file = file || StringIO.new
           adapter = new(target_file, options)
 

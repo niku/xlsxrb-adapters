@@ -77,6 +77,12 @@ module Xlsxrb
         # : (String name) -> Worksheet?
         def get_worksheet_by_name: (String name) -> Worksheet?
 
+        # Returns the names of all worksheets in the workbook.
+        #
+        # @return [Array<String>]
+        # : () -> Array[String]
+        def sheet_names: () -> Array[String]
+
         # Validates a candidate worksheet name against Excel specification limits.
         #
         # @param sheetname [String]

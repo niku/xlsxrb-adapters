@@ -177,7 +177,7 @@ class XlsxrbAdaptersCaxlsxTest < Test::Unit::TestCase
     # Verify native xlsxrb reads the serialized file cleanly
     with_tempfile do |path|
       assert pkg.serialize(path)
-      read_wb = ::Xlsxrb.read(path).load
+      read_wb = ::Xlsxrb.load(path)
       assert_equal "BridgeSheet", read_wb.sheets.first.name
       assert_equal 4, read_wb.sheets.first.rows.size
       assert_equal "Apple", read_wb.sheets.first.rows[1].cells[0].value

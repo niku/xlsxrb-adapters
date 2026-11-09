@@ -103,7 +103,7 @@ module Xlsxrb
         # @return [Workbook]
         #: (Xlsxrb::Elements::Workbook xlsxrb_workbook) -> Workbook
         def self.from_xlsxrb(xlsxrb_workbook)
-          wb = xlsxrb_workbook.respond_to?(:load) ? xlsxrb_workbook.load : xlsxrb_workbook
+          wb = xlsxrb_workbook
 
           adapter_sheets = wb.sheets.map do |sheet|
             ws = Worksheet.new(
@@ -115,11 +115,11 @@ module Xlsxrb
             ws.source_element = sheet
             ws.data_validations = (sheet.data_validations || sheet.unmapped_data&.dig(:facade, :data_validations) || []).dup
             ws.state = Worksheet.rubyxl_state(sheet.state) if sheet.respond_to?(:state)
-            ws.conditional_formatting = sheet.conditional_formatting.dup if sheet.respond_to?(:conditional_formatting) && sheet.conditional_formatting&.any?
-            ws.sheet_format_pr = sheet.sheet_format.dup if sheet.respond_to?(:sheet_format) && sheet.sheet_format&.any?
-            ws.sheet_views = sheet.sheet_view.dup if sheet.respond_to?(:sheet_view) && sheet.sheet_view&.any?
-            ws.sheet_properties = sheet.sheet_properties.dup if sheet.respond_to?(:sheet_properties) && sheet.sheet_properties&.any?
-            ws.sheet_calc_pr = sheet.sheet_calc_pr.dup if sheet.respond_to?(:sheet_calc_pr) && sheet.sheet_calc_pr
+            ws.conditional_formatting = sheet.conditional_formats.dup if sheet.respond_to?(:conditional_formats) && sheet.conditional_formats&.any?
+            ws.sheet_format_pr = sheet.sheet_format.to_h if sheet.respond_to?(:sheet_format) && sheet.sheet_format && !sheet.sheet_format.empty?
+            ws.sheet_views = sheet.sheet_view.to_h if sheet.respond_to?(:sheet_view) && sheet.sheet_view && !sheet.sheet_view.empty?
+            ws.sheet_properties = sheet.sheet_properties.to_h if sheet.respond_to?(:sheet_properties) && sheet.sheet_properties && !sheet.sheet_properties.empty?
+            ws.sheet_calc_pr = sheet.sheet_calc_properties.to_h if sheet.respond_to?(:sheet_calc_properties) && sheet.sheet_calc_properties
             ws.ignored_errors = sheet.ignored_errors.dup if sheet.respond_to?(:ignored_errors) && sheet.ignored_errors&.any?
             ws.phonetic_properties = sheet.phonetic_properties.dup if sheet.respond_to?(:phonetic_properties) && sheet.phonetic_properties
             ws.background_image = sheet.background_image.dup if sheet.respond_to?(:background_image) && sheet.background_image
@@ -161,8 +161,8 @@ module Xlsxrb
               adapter_row = ws.add_row(
                 row.index,
                 height: row.height,
-                hidden: row.hidden,
-                custom_height: row.custom_height,
+                hidden: row.hidden?,
+                custom_height: row.custom_height?,
                 outline_level: row.outline_level,
                 style_index: row.style_index || 0
               )
@@ -227,7 +227,8 @@ module Xlsxrb
             raw_dns = wb.defined_names || wb.unmapped_data&.[](:defined_names)
             if raw_dns.is_a?(Array) && !raw_dns.empty?
               instance.defined_names = DefinedNames.new
-              raw_dns.each do |dn|
+              raw_dns.each do |raw_dn|
+                dn = raw_dn.is_a?(Hash) ? raw_dn : raw_dn.to_h
                 name = dn[:name] || dn["name"]
                 ref = dn[:value] || dn["value"] || dn[:reference] || dn["reference"]
                 local_id = dn[:local_sheet_id] || dn["local_sheet_id"]
@@ -239,7 +240,7 @@ module Xlsxrb
 
           instance.date1904 = true if wb.sheets.any? { |s| s.respond_to?(:date1904?) && s.date1904? }
 
-          active_tab = wb.respond_to?(:active_tab) ? wb.active_tab : nil
+          active_tab = wb.respond_to?(:active_sheet_index) ? wb.active_sheet_index : nil
           first_sheet = wb.respond_to?(:first_sheet) ? wb.first_sheet : nil
           show_sheet_tabs = wb.respond_to?(:show_sheet_tabs?) ? wb.show_sheet_tabs? : nil
           tab_ratio = wb.respond_to?(:tab_ratio) ? wb.tab_ratio : nil
@@ -315,6 +316,14 @@ module Xlsxrb
 
           @worksheets.each(&)
           self
+        end
+
+        # Returns the names of all worksheets in the workbook.
+        #
+        # @return [Array<String>]
+        #: () -> Array[String]
+        def sheet_names
+          @worksheets.map(&:sheet_name)
         end
 
         # Accesses a worksheet by index (Integer) or sheet name (String/Symbol).
@@ -643,6 +652,11 @@ module Xlsxrb
                   @source_element.defined_names
                 end
           facade_meta[:app_properties] = { company: @company } if @company && !@company.empty?
+          # Heading pairs read from the source file ([["Worksheets", 2]]) break
+          # Xlsxrb::Elements::AppProperties#to_h on write, and they describe the
+          # source sheet list rather than the current one, so they are dropped.
+          app_props = merged_unmapped[:app_properties]
+          merged_unmapped[:app_properties] = app_props.except(:heading_pairs, :titles_of_parts) if app_props.is_a?(Hash) && app_props.key?(:heading_pairs)
           merged_unmapped[:facade] = facade_meta unless facade_meta.empty?
           merged_unmapped[:workbook_properties] = workbook_properties_for_xlsxrb(merged_unmapped[:workbook_properties])
 
@@ -667,7 +681,7 @@ module Xlsxrb
         def workbook_properties_for_xlsxrb(base)
           props = (base || { update_links: "never" }).dup
           if (view = @book_views&.first)
-            props[:active_tab] = view.active_tab unless view.active_tab.nil?
+            props[:active_sheet] = view.active_tab unless view.active_tab.nil?
             props[:first_sheet] = view.first_sheet unless view.first_sheet.nil?
             props[:show_sheet_tabs] = view.show_sheet_tabs unless view.show_sheet_tabs.nil?
             props[:tab_ratio] = view.tab_ratio unless view.tab_ratio.nil?

@@ -281,4 +281,38 @@ class XlsxrbAdaptersXlsxtreamTest < Test::Unit::TestCase
     wb2.close
     assert sio2.string.bytesize.positive?
   end
+
+  def test_skip_row_and_skip_rows
+    with_tempfile do |path|
+      wb = Xlsxrb::Adapters::Xlsxtream::Workbook.new(path)
+      ws = wb.add_worksheet("SkipSheet")
+      ws << ["Row 1"]
+      ws.skip_row
+      ws << ["Row 3"]
+      ws.skip_rows(2)
+      ws << ["Row 6"]
+      ws.close
+      wb.close
+
+      r = Xlsxrb.load(path)
+      sheet = r.sheet(0)
+      assert_equal 3, sheet.rows.size
+      assert_equal 0, sheet.rows[0].index
+      assert_equal "Row 1", sheet.rows[0].cells[0].value
+      assert_equal 2, sheet.rows[1].index
+      assert_equal "Row 3", sheet.rows[1].cells[0].value
+      assert_equal 5, sheet.rows[2].index
+      assert_equal "Row 6", sheet.rows[2].cells[0].value
+    end
+  end
+
+  def test_sheet_names
+    sio = StringIO.new
+    wb = Xlsxrb::Adapters::Xlsxtream::Workbook.new(sio)
+    ws1 = wb.add_worksheet("Alpha")
+    ws1.close
+    ws2 = wb.add_worksheet("Beta")
+    ws2.close
+    assert_equal %w[Alpha Beta], wb.sheet_names
+  end
 end

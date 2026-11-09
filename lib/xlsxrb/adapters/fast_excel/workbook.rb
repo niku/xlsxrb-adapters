@@ -169,6 +169,14 @@ module Xlsxrb
           @sheets.find { |s| s.name == name }
         end
 
+        # Returns the names of all worksheets in the workbook.
+        #
+        # @return [Array<String>]
+        #: () -> Array[String]
+        def sheet_names
+          @sheets.map(&:name)
+        end
+
         # Validates a candidate worksheet name against Excel specification limits.
         #
         # @param sheetname [String]
@@ -342,7 +350,7 @@ module Xlsxrb
         # @return [Workbook]
         #: (Xlsxrb::Elements::Workbook xlsxrb_workbook, ?String? filename, ?constant_memory: bool) -> Workbook
         def self.from_xlsxrb(xlsxrb_workbook, filename = nil, constant_memory: false)
-          wb = xlsxrb_workbook.respond_to?(:load) ? xlsxrb_workbook.load : xlsxrb_workbook
+          wb = xlsxrb_workbook
           adapter = new(filename, constant_memory: constant_memory)
 
           wb.sheets.each do |sheet|
@@ -437,10 +445,14 @@ module Xlsxrb
         def compile_font_key(fmt, default_sz)
           sz = fmt.font_size.positive? ? fmt.font_size : default_sz
           u_val = case fmt.underline
-                  when 1, true, :single, :underline_single then true
-                  when 2, :double, :underline_double then "double"
-                  when :underline_single_accounting then "singleAccounting"
-                  when :underline_double_accounting then "doubleAccounting"
+                  when 1, true, :single, :underline_single then :single
+                  when 2, :double, :underline_double then :double
+                  when 33, :single_accounting, :underline_single_accounting then :single_accounting
+                  when 34, :double_accounting, :underline_double_accounting then :double_accounting
+                  end
+          s_val = case fmt.font_script
+                  when 1, :superscript, "superscript" then :superscript
+                  when 2, :subscript, "subscript" then :subscript
                   end
 
           color_hex = fmt.font_color ? format("%06X", fmt.font_color) : nil
@@ -451,6 +463,7 @@ module Xlsxrb
             bold: [1, true].include?(fmt.bold) || nil,
             italic: [1, true].include?(fmt.italic) || nil,
             underline: u_val,
+            vert_align: s_val,
             strike: [1, true].include?(fmt.font_strikeout) || nil,
             outline: [1, true].include?(fmt.font_outline) || nil,
             shadow: [1, true].include?(fmt.font_shadow) || nil,

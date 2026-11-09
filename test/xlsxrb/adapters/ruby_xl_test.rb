@@ -272,8 +272,8 @@ class XlsxrbAdaptersRubyXLTest < Test::Unit::TestCase
     xlsxrb_wb = wb.to_xlsxrb
     xlsxrb_ws = xlsxrb_wb.sheet(0)
     assert_equal 1, xlsxrb_ws.data_validations.size
-    assert_equal "A1:A10", xlsxrb_ws.data_validations.first[:sqref]
-    assert_equal "list", xlsxrb_ws.data_validations.first[:type]
+    assert_equal "A1:A10", xlsxrb_ws.data_validations.first.to_h[:sqref]
+    assert_equal "list", xlsxrb_ws.data_validations.first.to_h[:type]
 
     reloaded_wb = Xlsxrb::Adapters::RubyXL::Workbook.from_xlsxrb(xlsxrb_wb)
     assert_equal 1, reloaded_wb[0].data_validations.size
@@ -367,6 +367,85 @@ class XlsxrbAdaptersRubyXLTest < Test::Unit::TestCase
       wb.save
       assert File.exist?(tmp.path)
       assert File.size(tmp.path).positive?
+    end
+  end
+
+  def test_formula_attributes_and_conversion
+    wb = Xlsxrb::Adapters::RubyXL::Workbook.new
+    ws = wb[0]
+    formula = Xlsxrb::Adapters::RubyXL::Formula.new("SUM(A1:A10)", t: :shared, ref: "B1:B10", si: 0)
+    assert_equal :shared, formula.t
+    assert_equal :shared, formula.type
+    assert_equal "B1:B10", formula.ref
+    assert_equal 0, formula.si
+    assert_equal 0, formula.shared_index
+
+    ws.add_cell(0, 0, 10, formula)
+    ewb = wb.to_xlsxrb
+    cell = ewb.sheets.first.rows.first.cells.first
+    assert_equal "SUM(A1:A10)", cell.formula.expression
+    assert_equal :shared, cell.formula.type
+    assert_equal "B1:B10", cell.formula.ref
+    assert_equal 0, cell.formula.shared_index
+  end
+
+  def test_conditional_formatting_extended_properties
+    cf = Xlsxrb::Adapters::RubyXL::ConditionalFormatting.new(
+      above_average: true,
+      equal_average: true,
+      std_dev: 1,
+      rank: 5,
+      bottom: true,
+      percent: true,
+      text: "error",
+      time_period: "today"
+    )
+    assert_equal true, cf.above_average
+    assert_equal true, cf.equal_average
+    assert_equal 1, cf.std_dev
+    assert_equal 5, cf.rank
+    assert_equal true, cf.bottom
+    assert_equal true, cf.percent
+    assert_equal "error", cf.text
+    assert_equal "today", cf.time_period
+
+    h = cf.to_h
+    assert_equal true, h[:above_average]
+    assert_equal true, h[:equal_average]
+    assert_equal 1, h[:std_dev]
+    assert_equal 5, h[:rank]
+    assert_equal true, h[:bottom]
+    assert_equal true, h[:percent]
+    assert_equal "error", h[:text]
+    assert_equal "today", h[:time_period]
+  end
+
+  def test_sheet_names
+    wb = Xlsxrb::Adapters::RubyXL::Workbook.new
+    wb.add_worksheet("SecondSheet")
+    assert_equal %w[Sheet1 SecondSheet], wb.sheet_names
+  end
+
+  def test_threaded_comments_round_trip
+    Tempfile.create(["rubyxl_tc1", ".xlsx"]) do |tmp1|
+      Xlsxrb.write(tmp1.path) do |b|
+        b.sheet("Notes") do |s|
+          s.row(["Task 1"])
+          s.threaded_comment("A1", "Round-trip comment test", author: "QA")
+        end
+      end
+
+      r_wb = Xlsxrb::Adapters::RubyXL::Parser.parse(tmp1.path)
+      Tempfile.create(["rubyxl_tc2", ".xlsx"]) do |tmp2|
+        r_wb.write(tmp2.path)
+        r2 = Xlsxrb.load(tmp2.path)
+        sheet = r2.sheets.first
+        assert_equal 1, sheet.threaded_comments.size
+        tc = sheet.threaded_comments.first
+        assert_equal "A1", tc.to_h[:ref]
+        assert_equal "Round-trip comment test", tc.to_h[:text]
+        assert_equal "QA", tc.to_h[:author]
+      end
     end
   end
 end

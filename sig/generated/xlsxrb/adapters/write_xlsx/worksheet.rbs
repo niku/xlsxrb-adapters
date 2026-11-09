@@ -176,6 +176,16 @@ module Xlsxrb
 
         def set_row_pixels: (*untyped data) -> untyped
 
+        # Controls the appearance of outlines in Excel.
+        #
+        # @param visible [Integer, Boolean] Whether outline symbols are visible.
+        # @param symbols_below [Integer, Boolean] Whether summary rows are below the detail.
+        # @param symbols_right [Integer, Boolean] Whether summary columns are to the right of detail.
+        # @param auto_style [Integer, Boolean] Whether to apply styles automatically.
+        # @return [void]
+        # : (?untyped visible, ?untyped symbols_below, ?untyped symbols_right, ?untyped auto_style) -> void
+        def outline_settings: (?untyped visible, ?untyped symbols_below, ?untyped symbols_right, ?untyped auto_style) -> void
+
         # Sets column properties (width, format, hidden, level, collapsed)
         def set_column: (*untyped args) -> untyped
 
@@ -405,6 +415,12 @@ module Xlsxrb
         def update_format_with_params: (untyped row, ?untyped col, ?untyped params) -> void
 
         private
+
+        # Builds the xlsxrb background image attributes from the image path set by #set_background.
+        #
+        # @return [Hash, nil]
+        # : () -> Hash[Symbol, untyped]?
+        def background_image_for_xlsxrb: () -> Hash[Symbol, untyped]?
 
         def normalize_cell_args: (untyped row, untyped col, untyped value, untyped format) -> untyped
 

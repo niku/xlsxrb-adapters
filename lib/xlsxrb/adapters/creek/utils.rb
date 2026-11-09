@@ -46,7 +46,7 @@ module Xlsxrb
         # @return [Integer]
         #: (String col) -> Integer
         def self.column_to_index(col)
-          Xlsxrb::Utils.col_name_to_index(col)
+          Xlsxrb.column_index(col)
         end
 
         # Converts a 0-based column index into an Excel column letter string (e.g. 0 => "A", 26 => "AA").
@@ -55,7 +55,7 @@ module Xlsxrb
         # @return [String]
         #: (Integer idx) -> String
         def self.index_to_column(idx)
-          Xlsxrb::Utils.col_index_to_name(idx)
+          Xlsxrb.column_letter(idx)
         end
       end
     end

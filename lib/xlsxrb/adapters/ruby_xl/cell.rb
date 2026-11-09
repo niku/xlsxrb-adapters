@@ -734,9 +734,15 @@ module Xlsxrb
         #: () -> Xlsxrb::Elements::Cell
         def to_xlsxrb
           formula_obj = if formula
+                          f_type = formula.respond_to?(:t) && formula.t ? formula.t.to_sym : nil
+                          f_ref = formula.respond_to?(:ref) ? formula.ref : nil
+                          f_si = formula.respond_to?(:si) ? formula.si : nil
                           Xlsxrb::Elements::Formula.new(
                             expression: formula.to_s,
-                            cached_value: value
+                            cached_value: value,
+                            type: f_type,
+                            ref: f_ref,
+                            shared_index: f_si
                           )
                         end
 
@@ -775,9 +781,19 @@ module Xlsxrb
           when Formula
             formula_expr
           when Xlsxrb::Elements::Formula
-            Formula.new(formula_expr.expression)
+            Formula.new(
+              formula_expr.expression,
+              t: formula_expr.type,
+              ref: formula_expr.ref,
+              si: formula_expr.shared_index
+            )
           when Hash
-            Formula.new(formula_expr[:expression] || formula_expr["expression"])
+            Formula.new(
+              formula_expr[:expression] || formula_expr["expression"],
+              t: formula_expr[:t] || formula_expr["t"] || formula_expr[:type] || formula_expr["type"],
+              ref: formula_expr[:ref] || formula_expr["ref"],
+              si: formula_expr[:si] || formula_expr["si"] || formula_expr[:shared_index] || formula_expr["shared_index"]
+            )
           else
             Formula.new(formula_expr.to_s)
           end

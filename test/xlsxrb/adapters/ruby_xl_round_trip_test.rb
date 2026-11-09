@@ -258,14 +258,14 @@ class XlsxrbAdaptersRubyXLRoundTripTest < Test::Unit::TestCase
       Xlsxrb.write(path) do |w|
         w.sheet("Sheet1") do |s|
           s.row(["0123"])
-          s.ignore_error("A1:C10", number_stored_as_text: true)
+          s.ignored_error("A1:C10", number_stored_as_text: true)
         end
       end
 
       wb = Xlsxrb::Adapters::RubyXL::Parser.parse(path)
       assert_equal 1, wb["Sheet1"].ignored_errors.size
-      assert_equal "A1:C10", wb["Sheet1"].ignored_errors.first[:sqref]
-      assert_equal true, wb["Sheet1"].ignored_errors.first[:number_stored_as_text]
+      assert_equal "A1:C10", wb["Sheet1"].ignored_errors.first.to_h[:sqref]
+      assert_equal true, wb["Sheet1"].ignored_errors.first.to_h[:number_stored_as_text]
 
       wb["Sheet1"].ignored_errors << { sqref: "D1:D5", eval_error: true }
       wb.write(path)

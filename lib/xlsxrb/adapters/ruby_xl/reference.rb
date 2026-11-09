@@ -188,7 +188,7 @@ module Xlsxrb
         # @return [String]
         #: (?Integer row, ?Integer col, ?bool row_abs, ?bool col_abs) -> String
         def self.ind2ref(row = 0, col = 0, row_abs = false, col_abs = false)
-          col_ref = Xlsxrb::Utils.col_index_to_name(col)
+          col_ref = Xlsxrb.column_letter(col)
           "#{"$" if col_abs}#{col_ref}#{"$" if row_abs}#{row + 1}"
         end
 
@@ -203,7 +203,7 @@ module Xlsxrb
 
           row_num = matchdata[:row].to_i - 1
           col_str = matchdata[:col].upcase
-          col_num = Xlsxrb::Utils.col_name_to_index(col_str)
+          col_num = Xlsxrb.column_index(col_str)
           rabs = !matchdata[:rabs].to_s.empty?
           cabs = !matchdata[:cabs].to_s.empty?
 

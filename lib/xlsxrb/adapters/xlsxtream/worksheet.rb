@@ -62,6 +62,16 @@ module Xlsxrb
         end
         alias add_row <<
 
+        # Advances row cursor without emitting empty rows.
+        #
+        # @param count [Integer]
+        # @return [Integer]
+        #: (?Integer count) -> Integer
+        def skip_rows(count = 1)
+          @rownum += count
+        end
+        alias skip_row skip_rows
+
         # Finalizes the worksheet and writes the XML closing tags.
         #
         # @return [void]

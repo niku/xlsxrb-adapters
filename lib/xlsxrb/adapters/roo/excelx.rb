@@ -457,7 +457,7 @@ module Xlsxrb
               col_idx = c - 1
               rows_hash[row_idx] ||= []
               formula_obj = cell_obj.formula ? Xlsxrb::Elements::Formula.new(expression: cell_obj.formula) : nil
-              ref = "#{Xlsxrb::Elements::Cell.column_letter(col_idx)}#{r}"
+              ref = "#{Xlsxrb.column_letter(col_idx)}#{r}"
 
               link_url = cell_obj.value.is_a?(Link) ? cell_obj.value.url : s.hyperlinks[[r, c]]
               hl = if link_url
@@ -508,7 +508,7 @@ module Xlsxrb
           end
 
           dns = @workbook.defined_names.map do |name, lbl|
-            { name: name, value: "'#{lbl.sheet}'!$#{Xlsxrb::Elements::Cell.column_letter(lbl.col - 1)}$#{lbl.row}" }
+            { name: name, value: "'#{lbl.sheet}'!$#{Xlsxrb.column_letter(lbl.col - 1)}$#{lbl.row}" }
           end
 
           Xlsxrb::Elements::Workbook.new(
@@ -524,20 +524,21 @@ module Xlsxrb
           def initialize(parsed_styles = {}, fonts = [])
             @parsed_styles = parsed_styles
             @fonts = fonts
-            @num_fmts = if parsed_styles.respond_to?(:num_fmts)
-                          parsed_styles.num_fmts
+            @num_fmts = if parsed_styles.respond_to?(:number_formats)
+                          parsed_styles.number_formats
                         elsif parsed_styles.is_a?(Hash)
                           parsed_styles[:num_fmts] || {}
                         else
                           {}
                         end
-            @cell_xfs = if parsed_styles.respond_to?(:cell_xfs)
-                          parsed_styles.cell_xfs
-                        elsif parsed_styles.is_a?(Hash)
-                          parsed_styles[:cell_xfs] || []
-                        else
-                          []
-                        end
+            raw_xfs = if parsed_styles.respond_to?(:cell_xfs)
+                        parsed_styles.cell_xfs
+                      elsif parsed_styles.is_a?(Hash)
+                        parsed_styles[:cell_xfs] || []
+                      else
+                        []
+                      end
+            @cell_xfs = raw_xfs.map { |xf| xf.is_a?(Hash) ? xf : xf.to_h }
           end
 
           #: (Integer | String style) -> String
@@ -669,20 +670,21 @@ module Xlsxrb
           # 1. Styles
           styles_xml = read_xml(zip, "xl/styles.xml")
           @parsed_styles = styles_xml ? Xlsxrb::Ooxml::StylesParser.parse(styles_xml) : {}
-          num_fmts = if @parsed_styles.respond_to?(:num_fmts)
-                       @parsed_styles.num_fmts
+          num_fmts = if @parsed_styles.respond_to?(:number_formats)
+                       @parsed_styles.number_formats
                      elsif @parsed_styles.is_a?(Hash)
                        @parsed_styles[:num_fmts] || {}
                      else
                        {}
                      end
-          @cell_xfs = if @parsed_styles.respond_to?(:cell_xfs)
-                        @parsed_styles.cell_xfs
-                      elsif @parsed_styles.is_a?(Hash)
-                        @parsed_styles[:cell_xfs] || []
-                      else
-                        []
-                      end
+          raw_xfs = if @parsed_styles.respond_to?(:cell_xfs)
+                      @parsed_styles.cell_xfs
+                    elsif @parsed_styles.is_a?(Hash)
+                      @parsed_styles[:cell_xfs] || []
+                    else
+                      []
+                    end
+          @cell_xfs = raw_xfs.map { |xf| xf.is_a?(Hash) ? xf : xf.to_h }
           raw_fonts = if @parsed_styles.respond_to?(:fonts)
                         @parsed_styles.fonts
                       elsif @parsed_styles.is_a?(Hash)
@@ -690,7 +692,8 @@ module Xlsxrb
                       else
                         []
                       end
-          @fonts = raw_fonts.map do |f_hash|
+          @fonts = raw_fonts.map do |raw_font|
+            f_hash = raw_font.is_a?(Hash) ? raw_font : raw_font.to_h
             Font.new(
               bold: f_hash[:bold] || false,
               italic: f_hash[:italic] || false,
@@ -879,6 +882,7 @@ module Xlsxrb
           if sheet_rels_xml && !sheet_rels_xml.empty?
             rels_by_id = {}
             comments_target = nil
+            threaded_comments_target = nil
             drawing_target = nil
 
             sheet_rels_xml.scan(%r{<Relationship\s+([^>]+)/?>}) do |m|
@@ -889,6 +893,8 @@ module Xlsxrb
 
               if r_type&.include?("/hyperlink")
                 rels_by_id[r_id] = target
+              elsif r_type&.include?("/threadedComment")
+                threaded_comments_target = target
               elsif r_type&.include?("/comments")
                 comments_target = target
               elsif r_type&.include?("/drawing")
@@ -918,6 +924,18 @@ module Xlsxrb
               if zip.entry?(c_path)
                 c_xml = read_xml(zip, c_path)
                 comments_map = parse_comments_xml(c_xml)
+              end
+            end
+
+            # Fallback to threaded comments if standard comments are absent
+            if threaded_comments_target && comments_map.empty?
+              tc_path = resolve_zip_path("xl/worksheets", threaded_comments_target)
+              if zip.entry?(tc_path)
+                tc_xml = read_xml(zip, tc_path)
+                tc_xml&.scan(%r{<threadedComment\s+[^>]*ref="([^"]+)"[^>]*>.*?<text>(.*?)</text>}m) do |ref, inner_text|
+                  coord = Utils.extract_coordinate(ref)
+                  comments_map[coord] = unescape_xml(inner_text) if coord && !comments_map.key?(coord)
+                end
               end
             end
 

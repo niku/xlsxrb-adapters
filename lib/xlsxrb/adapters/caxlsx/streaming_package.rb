@@ -105,7 +105,7 @@ module Xlsxrb
 
           @stream_writer.row(
             values,
-            styles: style,
+            cell_styles: style,
             height: options[:height],
             hidden: options[:hidden] || false,
             custom_height: options[:custom_height] || !options[:height].nil?,
@@ -195,7 +195,7 @@ module Xlsxrb
           opts[:error_style] = opts.delete(:errorStyle) if opts.key?(:errorStyle)
           opts[:error_title] = opts.delete(:errorTitle) if opts.key?(:errorTitle)
           opts[:prompt_title] = opts.delete(:promptTitle) if opts.key?(:promptTitle)
-          @stream_writer.validate_data(cells, **opts)
+          @stream_writer.data_validation(cells, **opts)
         end
 
         # Configures sheet view and freeze panes.

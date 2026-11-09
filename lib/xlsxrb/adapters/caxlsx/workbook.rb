@@ -379,6 +379,14 @@ module Xlsxrb
           worksheets.map(&:comments).compact
         end
 
+        # Returns the names of all worksheets in the workbook.
+        #
+        # @return [Array<String>]
+        #: () -> Array[String]
+        def sheet_names
+          worksheets.map(&:name)
+        end
+
         # @return [Styles]
         #: () ?{ (Styles) -> void } -> Styles
         def styles
@@ -559,7 +567,7 @@ module Xlsxrb
           wb_props = {}
           wb_props[:date1904] = true if date1904
           if (view = @views&.first)
-            wb_props[:active_tab] = view.active_tab unless view.active_tab.nil?
+            wb_props[:active_sheet] = view.active_tab unless view.active_tab.nil?
             wb_props[:first_sheet] = view.first_sheet unless view.first_sheet.nil?
             wb_props[:show_sheet_tabs] = view.show_sheet_tabs unless view.show_sheet_tabs.nil?
             wb_props[:tab_ratio] = view.tab_ratio unless view.tab_ratio.nil?

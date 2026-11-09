@@ -155,7 +155,7 @@ module Xlsxrb
           l_c = last_column
           return nil unless f_r && l_r && f_c && l_c
 
-          "#{Elements::Cell.column_letter(f_c - 1)}#{f_r}:#{Elements::Cell.column_letter(l_c - 1)}#{l_r}"
+          "#{Xlsxrb.column_letter(f_c - 1)}#{f_r}:#{Xlsxrb.column_letter(l_c - 1)}#{l_r}"
         end
 
         # Returns 1-based index of the first row containing cells, or nil.
@@ -1476,6 +1476,10 @@ module Xlsxrb
           else
             facade_meta.delete(:sheet_view)
           end
+
+          tc_data = base&.threaded_comments || []
+          facade_meta[:threaded_comments] = tc_data unless tc_data.empty?
+
           merged_unmapped[:facade] = facade_meta unless facade_meta.empty?
 
           # Convert cols to xlsxrb columns if present
@@ -1527,10 +1531,10 @@ module Xlsxrb
                         end
                       end
                     else
-                      base&.conditional_formatting || []
+                      base&.conditional_formats || []
                     end
 
-          sheet_props = (base&.sheet_properties || {}).dup
+          sheet_props = base ? base.sheet_properties.to_h : {}
           sheet_props.merge!(@sheet_properties) if @sheet_properties
           if @sheet_pr
             sheet_props[:code_name] = @sheet_pr.code_name if @sheet_pr.code_name
@@ -1563,7 +1567,7 @@ module Xlsxrb
             columns: cols_data,
             charts: @charts.empty? && base ? (base.charts || []) : @charts,
             data_validations: dv_data,
-            conditional_formatting: cf_data,
+            conditional_formats: cf_data,
             state: state_val,
             sheet_format: sheet_format_val,
             unmapped_data: merged_unmapped,
@@ -1571,6 +1575,7 @@ module Xlsxrb
             dimension: dimension,
             merged_cells: merged_cells_data,
             comments: base&.comments,
+            threaded_comments: base&.threaded_comments || [],
             hyperlinks: base&.hyperlinks,
             images: base&.images,
             tables: base&.tables,
@@ -1590,10 +1595,10 @@ module Xlsxrb
             cell_watches: base&.cell_watches,
             ignored_errors: ie_data,
             phonetic_properties: @phonetic_properties || base&.phonetic_properties,
-            sheet_calc_pr: @sheet_calc_pr || base&.sheet_calc_pr,
+            sheet_calc_properties: @sheet_calc_pr || base&.sheet_calc_properties,
             background_image: @background_image || base&.background_image,
             row_breaks: base&.row_breaks,
-            col_breaks: base&.col_breaks
+            column_breaks: base&.column_breaks
           )
         end
 

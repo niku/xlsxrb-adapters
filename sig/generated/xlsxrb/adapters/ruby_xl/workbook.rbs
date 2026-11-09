@@ -152,6 +152,12 @@ module Xlsxrb
         # : () ?{ (Worksheet) -> void } -> (self | Enumerator[Worksheet, void])
         def each: () ?{ (Worksheet) -> void } -> (self | Enumerator[Worksheet, void])
 
+        # Returns the names of all worksheets in the workbook.
+        #
+        # @return [Array<String>]
+        # : () -> Array[String]
+        def sheet_names: () -> Array[String]
+
         # Accesses a worksheet by index (Integer) or sheet name (String/Symbol).
         #
         # @param idx_or_name [Integer, String, Symbol]

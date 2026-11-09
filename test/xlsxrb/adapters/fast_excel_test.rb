@@ -173,7 +173,7 @@ class XlsxrbAdaptersFastExcelTest < Test::Unit::TestCase
         ws.write_value(2, 0, "C")
       end
 
-      doc = Xlsxrb.read(path)
+      doc = Xlsxrb.load(path)
       rows = doc.sheet(0).to_a
       assert_equal [0, 2], rows.map(&:index)
       assert_equal ["A"], rows[0].values
@@ -491,7 +491,8 @@ class XlsxrbAdaptersFastExcelTest < Test::Unit::TestCase
 
     xlsxrb_ws = ws.to_xlsxrb
     assert_equal "A1:F20", xlsxrb_ws.print_area
-    assert_equal({ rows: "1:2", cols: "A:C" }, xlsxrb_ws.print_titles)
+    assert_equal "1:2", xlsxrb_ws.print_titles.rows
+    assert_equal "A:C", xlsxrb_ws.print_titles.columns
     wb.close
   end
 
@@ -544,7 +545,7 @@ class XlsxrbAdaptersFastExcelTest < Test::Unit::TestCase
       end
 
       # Verify readable by xlsxrb
-      read_wb = Xlsxrb.read(path).load
+      read_wb = Xlsxrb.load(path)
       assert_equal %w[Inline String Data], read_wb.sheets.first.rows.first.cells.map(&:value)
     end
   end
@@ -560,15 +561,15 @@ class XlsxrbAdaptersFastExcelTest < Test::Unit::TestCase
       ws2 << [200]
       wb.close
 
-      reread = Xlsxrb.read(path)
+      reread = Xlsxrb.load(path)
       dns = reread.defined_names
-      scoped = dns.find { |d| d[:name] == "ScopedDiscount" }
+      scoped = dns.find { |d| d.to_h[:name] == "ScopedDiscount" }
       assert_not_nil scoped
-      assert_equal 1, scoped[:local_sheet_id]
+      assert_equal 1, scoped.to_h[:local_sheet_id]
 
-      global = dns.find { |d| d[:name] == "GlobalRate" }
+      global = dns.find { |d| d.to_h[:name] == "GlobalRate" }
       assert_not_nil global
-      assert_nil global[:local_sheet_id]
+      assert_nil global.to_h[:local_sheet_id]
     end
   end
 
@@ -590,5 +591,52 @@ class XlsxrbAdaptersFastExcelTest < Test::Unit::TestCase
         wb.close
       end
     end
+  end
+
+  def test_skip_row_and_skip_rows
+    with_tempfile do |path|
+      wb = Xlsxrb::Adapters::FastExcel.open(path)
+      ws = wb.add_worksheet("SkipTest")
+      ws.append_row(["Row 0"])
+      ws.skip_row
+      ws.append_row(["Row 2"])
+      ws.skip_rows(2)
+      ws.append_row(["Row 5"])
+      wb.close
+
+      r = Xlsxrb.load(path)
+      sheet = r.sheet(0)
+      assert_equal 3, sheet.rows.size
+      assert_equal 0, sheet.rows[0].index
+      assert_equal "Row 0", sheet.rows[0].cells[0].value
+      assert_equal 2, sheet.rows[1].index
+      assert_equal "Row 2", sheet.rows[1].cells[0].value
+      assert_equal 5, sheet.rows[2].index
+      assert_equal "Row 5", sheet.rows[2].cells[0].value
+    end
+  end
+
+  def test_sheet_names
+    wb = Xlsxrb::Adapters::FastExcel.open
+    wb.add_worksheet("Orders")
+    wb.add_worksheet("Customers")
+    assert_equal %w[Orders Customers], wb.sheet_names
+  end
+
+  def test_format_underline_and_font_script
+    wb = Xlsxrb::Adapters::FastExcel.open
+    fmt = wb.add_format(underline: :single, font_script: :superscript)
+    assert_equal :single, fmt.to_font_hash[:underline]
+    assert_equal :superscript, fmt.to_font_hash[:vert_align]
+
+    fmt.set_underline(2)
+    fmt.set_font_script(2)
+    assert_equal :double, fmt.to_font_hash[:underline]
+    assert_equal :subscript, fmt.to_font_hash[:vert_align]
+
+    fmt.set_underline(33)
+    assert_equal :single_accounting, fmt.to_font_hash[:underline]
+    fmt.set_underline(34)
+    assert_equal :double_accounting, fmt.to_font_hash[:underline]
   end
 end

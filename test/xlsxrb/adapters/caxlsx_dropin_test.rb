@@ -85,7 +85,7 @@ class XlsxrbAdaptersCaxlsxDropinTest < Test::Unit::TestCase
       assert File.size(filepath).positive?
 
       # Verify contents with Xlsxrb reader
-      reader = Xlsxrb.read(filepath).load
+      reader = Xlsxrb.load(filepath)
       sheet = reader.sheets.first
       assert_equal "StreamData", sheet.name
       assert_equal 100, sheet.rows.size

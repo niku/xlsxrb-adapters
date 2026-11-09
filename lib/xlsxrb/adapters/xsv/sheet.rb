@@ -55,14 +55,14 @@ module Xlsxrb
         # @return [Integer]
         #: () -> Integer
         def first_row
-          @stream_sheet&.first_row || 1
+          (@stream_sheet&.row_range&.first || 0) + 1
         end
 
         # Returns the 1-based index of the first column.
         # @return [Integer]
         #: () -> Integer
         def first_column
-          @stream_sheet&.first_column || 1
+          (@stream_sheet&.column_range&.first || 0) + 1
         end
         alias first_col first_column
 
@@ -360,9 +360,8 @@ module Xlsxrb
         #: () -> [Integer, Integer]
         def compute_bounds
           if @stream_sheet && !@workbook&.trim_empty_rows && @stream_sheet.dimension&.include?(":")
-            dim_last_row = @stream_sheet.last_row
-            dim_last_col = @stream_sheet.last_column
-            return [dim_last_row, dim_last_col] if dim_last_row && dim_last_col
+            bounds = @stream_sheet.dimension_bounds
+            return [bounds[:max_row] + 1, bounds[:max_column] + 1] if bounds
           end
 
           xml = raw_sheet_xml

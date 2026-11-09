@@ -106,7 +106,7 @@ module Xlsxrb
         # @return [String]
         #: (Integer index) -> String
         def col_ref(index)
-          Xlsxrb::Utils.col_index_to_name(index)
+          Xlsxrb.column_letter(index)
         end
 
         # Converts a row index (0-based) into an Excel 1-based row number
@@ -123,7 +123,7 @@ module Xlsxrb
         # @return [String]
         #: (Integer col_index, Integer row_index) -> String
         def cell_r(col_index, row_index)
-          Xlsxrb::Utils.row_col_to_ref(row_index, col_index)
+          Xlsxrb.cell_to_ref(row_index, col_index)
         end
 
         # Converts an Excel cell reference (e.g. 'A1' or 'AB12') into 0-based [col_index, row_index]
@@ -133,7 +133,7 @@ module Xlsxrb
         def name_to_indices(name)
           raise ArgumentError, "invalid cell name" if name.nil? || name.to_s.length < 2
 
-          coords = Xlsxrb::Utils.ref_to_row_col(name.to_s)
+          coords = Xlsxrb.parse_ref(name.to_s)
           raise ArgumentError, "invalid cell name" unless coords
 
           [coords[1], coords[0]]

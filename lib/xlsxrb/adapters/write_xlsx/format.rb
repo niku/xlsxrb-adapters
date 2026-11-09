@@ -581,6 +581,33 @@ module Xlsxrb
           send(setter, val) if respond_to?(setter)
         end
 
+        # Resolves underline setting to OpenXML underline symbol.
+        #
+        # @return [Symbol, nil]
+        #: () -> Symbol?
+        def resolve_underline
+          case @underline
+          when 1, true, :single, "single" then :single
+          when 2, :double, "double" then :double
+          when 33, :single_accounting, "singleAccounting" then :single_accounting
+          when 34, :double_accounting, "doubleAccounting" then :double_accounting
+          when 0, false, nil, :none then nil
+          else
+            @underline.is_a?(Symbol) ? @underline : :single
+          end
+        end
+
+        # Resolves font script setting to OpenXML vertical alignment symbol.
+        #
+        # @return [Symbol, nil]
+        #: () -> Symbol?
+        def resolve_script
+          case @font_script
+          when 1, :superscript, "superscript" then :superscript
+          when 2, :subscript, "subscript" then :subscript
+          end
+        end
+
         # Converts format properties to a style hash for xlsxrb
         #
         # @return [Hash{Symbol => untyped}]
@@ -590,7 +617,8 @@ module Xlsxrb
             sz: @size || 11,
             bold: bold? || nil,
             italic: italic? || nil,
-            underline: underline? || nil,
+            underline: resolve_underline,
+            vert_align: resolve_script,
             strike: strikeout? || nil,
             color: Colors.to_hex(@font_color)
           }.compact
@@ -638,7 +666,8 @@ module Xlsxrb
             sz: @size,
             bold: bold? || nil,
             italic: italic? || nil,
-            underline: underline? || nil,
+            underline: resolve_underline,
+            vert_align: resolve_script,
             strike: strikeout? || nil,
             color: Colors.to_hex(@font_color)
           }.compact
@@ -655,7 +684,8 @@ module Xlsxrb
           h[:sz] = @size if @size && @size != 11
           h[:bold] = true if bold?
           h[:italic] = true if italic?
-          h[:underline] = underline? if underline?
+          h[:underline] = resolve_underline if underline?
+          h[:vert_align] = resolve_script if resolve_script
           h[:strike] = strikeout? if strikeout?
           h[:color] = Colors.to_hex(@font_color) if @font_color
           h

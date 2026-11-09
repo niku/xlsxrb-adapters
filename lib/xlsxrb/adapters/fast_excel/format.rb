@@ -418,12 +418,23 @@ module Xlsxrb
                         val = self[:font_color]
                         val.is_a?(Integer) ? format("%06X", val & 0xFFFFFF) : Xlsxrb.to_hex_color(val)
                       end
+          u_val = case self[:underline]
+                  when 1, true, :single, :underline_single then :single
+                  when 2, :double, :underline_double then :double
+                  when 33, :single_accounting, :underline_single_accounting then :single_accounting
+                  when 34, :double_accounting, :underline_double_accounting then :double_accounting
+                  end
+          s_val = case self[:font_script]
+                  when 1, :superscript, "superscript" then :superscript
+                  when 2, :subscript, "subscript" then :subscript
+                  end
           {
             name: self[:font_name] || "Calibri",
             sz: self[:font_size]&.positive? ? self[:font_size] : nil,
             bold: [true, 1].include?(self[:bold]) || nil,
             italic: [true, 1].include?(self[:italic]) || nil,
-            underline: [true, 1].include?(self[:underline]) || nil,
+            underline: u_val,
+            vert_align: s_val,
             strike: [true, 1].include?(self[:font_strikeout]) || nil,
             color: color_hex
           }.compact

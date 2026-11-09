@@ -26,6 +26,30 @@ module Xlsxrb
 
         attr_accessor rules: untyped
 
+        attr_accessor above_average: untyped
+
+        attr_accessor bottom: untyped
+
+        attr_accessor equal_average: untyped
+
+        attr_accessor percent: untyped
+
+        attr_accessor rank: untyped
+
+        attr_accessor std_dev: untyped
+
+        attr_accessor text: untyped
+
+        attr_accessor time_period: untyped
+
+        attr_accessor color_scale: untyped
+
+        attr_accessor data_bar: untyped
+
+        attr_accessor icon_set: untyped
+
+        attr_accessor dxf: untyped
+
         attr_accessor unmapped_attributes: untyped
 
         def initialize: (?untyped attributes) -> untyped

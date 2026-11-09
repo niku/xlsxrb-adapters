@@ -271,7 +271,7 @@ class XlsxrbAdaptersWriteXLSXTest < Test::Unit::TestCase
       assert File.exist?(filepath)
       assert File.size(filepath).positive?
 
-      doc = Xlsxrb.read(filepath)
+      doc = Xlsxrb.load(filepath)
       assert_equal ["Test"], doc.sheets.map(&:name)
       assert_equal "Test Value", doc.sheets.first.cell(0, 0)&.value
     end
@@ -361,11 +361,11 @@ class XlsxrbAdaptersWriteXLSXTest < Test::Unit::TestCase
 
     xlsxrb_ws = ws.to_xlsxrb
     assert_equal 1, xlsxrb_ws.sparkline_groups.size
-    sg = xlsxrb_ws.sparkline_groups.first
+    sg = xlsxrb_ws.sparkline_groups.first.to_h
     assert_equal "stacked", sg[:type]
     assert_equal true, sg[:markers]
     assert_equal true, sg[:high]
-    assert_equal [{ location_ref: "E1", data_ref: "'Sparklines'!A1:D1" }], sg[:sparklines]
+    assert_equal [{ sqref: "E1", formula: "'Sparklines'!A1:D1" }], sg[:sparklines]
 
     with_tempfile do |filepath|
       wb_file = Xlsxrb::Adapters::WriteXLSX.new(filepath)
@@ -392,7 +392,8 @@ class XlsxrbAdaptersWriteXLSXTest < Test::Unit::TestCase
 
     xlsxrb_ws = ws.to_xlsxrb
     assert_equal "A1:H50", xlsxrb_ws.print_area
-    assert_equal({ rows: "1:2", cols: "A:B" }, xlsxrb_ws.print_titles)
+    assert_equal "1:2", xlsxrb_ws.print_titles.rows
+    assert_equal "A:B", xlsxrb_ws.print_titles.columns
 
     with_tempfile do |filepath|
       wb_file = Xlsxrb::Adapters::WriteXLSX.new(filepath)
@@ -439,9 +440,9 @@ class XlsxrbAdaptersWriteXLSXTest < Test::Unit::TestCase
 
     xlsxrb_ws = ws.to_xlsxrb
     hl = xlsxrb_ws.hyperlinks["A1"]
-    assert_equal "https://github.com", hl[:url]
-    assert_equal "GitHub", hl[:display]
-    assert_equal "Visit repository", hl[:tooltip]
+    assert_equal "https://github.com", hl.to_h[:url]
+    assert_equal "GitHub", hl.to_h[:display]
+    assert_equal "Visit repository", hl.to_h[:tooltip]
 
     with_tempfile do |filepath|
       wb_file = Xlsxrb::Adapters::WriteXLSX.new(filepath)
@@ -581,10 +582,10 @@ class XlsxrbAdaptersWriteXLSXTest < Test::Unit::TestCase
       ws.write(0, 0, "Test")
       wb.close
 
-      reread = Xlsxrb.read(path)
+      reread = Xlsxrb.load(path)
       sheet = reread.sheets.first
-      assert_equal true, sheet.sheet_view[:tab_selected]
-      assert_equal({ active_cell: "B2", sqref: "B2:D5" }, sheet.selection)
+      assert_equal true, sheet.sheet_view.to_h[:tab_selected]
+      assert_equal({ active_cell: "B2", sqref: "B2:D5" }, sheet.selection.to_h)
     end
   end
 
@@ -596,11 +597,11 @@ class XlsxrbAdaptersWriteXLSXTest < Test::Unit::TestCase
       ws.write(0, 0, "High")
       wb.close
 
-      reread = Xlsxrb.read(path)
+      reread = Xlsxrb.load(path)
       sheet = reread.sheets.first
       dv = sheet.data_validations.first
-      assert_equal true, dv[:show_drop_down]
-      assert_equal "off", dv[:ime_mode]
+      assert_equal true, dv.to_h[:show_drop_down]
+      assert_equal "off", dv.to_h[:ime_mode]
     end
   end
 
@@ -634,7 +635,7 @@ class XlsxrbAdaptersWriteXLSXTest < Test::Unit::TestCase
       ws.write(0, 0, "Test")
       wb.close
 
-      reread = Xlsxrb.read(path)
+      reread = Xlsxrb.load(path)
       assert_equal "WbVBA", reread.code_name
       sheet = reread.sheets.first
       assert_equal "SheetVBA", sheet.code_name
@@ -651,15 +652,15 @@ class XlsxrbAdaptersWriteXLSXTest < Test::Unit::TestCase
       ws.write(0, 0, "0123")
       wb.close
 
-      reread = Xlsxrb.read(path)
+      reread = Xlsxrb.load(path)
       sheet = reread.sheets.first
       assert_equal 2, sheet.ignored_errors.size
-      num_rule = sheet.ignored_errors.find { |r| r[:sqref] == "A1:C10" }
+      num_rule = sheet.ignored_errors.find { |r| r.to_h[:sqref] == "A1:C10" }
       assert_not_nil num_rule
-      assert_equal true, num_rule[:number_stored_as_text]
-      eval_rule = sheet.ignored_errors.find { |r| r[:sqref] == "D1:D5" }
+      assert_equal true, num_rule.to_h[:number_stored_as_text]
+      eval_rule = sheet.ignored_errors.find { |r| r.to_h[:sqref] == "D1:D5" }
       assert_not_nil eval_rule
-      assert_equal true, eval_rule[:eval_error]
+      assert_equal true, eval_rule.to_h[:eval_error]
     end
   end
 
@@ -674,10 +675,10 @@ class XlsxrbAdaptersWriteXLSXTest < Test::Unit::TestCase
       ws2.write(0, 0, "S2")
       wb.close
 
-      reread = Xlsxrb.read(path)
-      assert_equal 1, reread.active_tab
+      reread = Xlsxrb.load(path)
+      assert_equal 1, reread.active_sheet_index
       assert_equal 600, reread.tab_ratio
-      assert_equal true, reread.sheets[1].sheet_view[:tab_selected]
+      assert_equal true, reread.sheets[1].sheet_view.to_h[:tab_selected]
     end
   end
 
@@ -692,10 +693,10 @@ class XlsxrbAdaptersWriteXLSXTest < Test::Unit::TestCase
         ws.write(0, 0, "With Background")
         wb.close
 
-        reread = Xlsxrb.read(path)
+        reread = Xlsxrb.load(path)
         sheet = reread.sheets.first
         assert_not_nil sheet.background_image
-        assert_equal "png", sheet.background_image[:ext]
+        assert_equal "png", sheet.background_image.extension
       end
     end
   end
@@ -745,16 +746,16 @@ class XlsxrbAdaptersWriteXLSXTest < Test::Unit::TestCase
       ws.write(0, 0, "Alpha")
       wb.close
 
-      reread = Xlsxrb.read(path)
+      reread = Xlsxrb.load(path)
       sheet = reread.sheets.first
       assert_equal 1, sheet.data_validations.size
       dv = sheet.data_validations.first
-      assert_equal "list", dv[:type]
-      assert_equal '"Alpha,Beta,Gamma"', dv[:formula1]
-      assert_equal "Line 1_x000a_Line 2", dv[:prompt]
-      assert_equal "Invalid_x000a_Value", dv[:error]
-      assert_equal true, dv[:show_input_message]
-      assert_equal true, dv[:show_error_message]
+      assert_equal "list", dv.to_h[:type]
+      assert_equal '"Alpha,Beta,Gamma"', dv.to_h[:formula1]
+      assert_equal "Line 1_x000a_Line 2", dv.to_h[:prompt]
+      assert_equal "Invalid_x000a_Value", dv.to_h[:error]
+      assert_equal true, dv.to_h[:show_input_message]
+      assert_equal true, dv.to_h[:show_error_message]
     end
   end
 
@@ -771,14 +772,13 @@ class XlsxrbAdaptersWriteXLSXTest < Test::Unit::TestCase
       ws.write(1, 1, 60)
       wb.close
 
-      reread = Xlsxrb.read(path)
-      sheet = reread.sheets.first
-      assert_equal 1, sheet.conditional_formatting.size
-      cf = sheet.conditional_formatting.first
+      sheet = Xlsxrb.load(path).sheets.first
+      assert_equal 1, sheet.conditional_formats.size
+      cf = sheet.conditional_formats.first.to_h
       assert_equal "B2:B10", cf[:sqref]
       assert_equal "cellIs", cf[:type].to_s
       assert_equal "greaterThanOrEqual", cf[:operator]
-      assert_equal "50", (cf[:formula] || cf[:formulas]&.first)
+      assert_equal ["50"], Array(cf[:formula])
 
       styles_xml = Xlsxrb::Ooxml::ZipReader.open(path).read_entry("xl/styles.xml")
       assert_includes styles_xml, "<dxfs"
@@ -798,15 +798,15 @@ class XlsxrbAdaptersWriteXLSXTest < Test::Unit::TestCase
       ws2.write(0, 0, 200)
       wb.close
 
-      reread = Xlsxrb.read(path)
+      reread = Xlsxrb.load(path)
       dns = reread.defined_names
-      scoped = dns.find { |d| d[:name] == "MyScopedRate" }
+      scoped = dns.find { |d| d.to_h[:name] == "MyScopedRate" }
       assert_not_nil scoped
-      assert_equal 1, scoped[:local_sheet_id]
+      assert_equal 1, scoped.to_h[:local_sheet_id]
 
-      global = dns.find { |d| d[:name] == "GlobalRate" }
+      global = dns.find { |d| d.to_h[:name] == "GlobalRate" }
       assert_not_nil global
-      assert_nil global[:local_sheet_id]
+      assert_nil global.to_h[:local_sheet_id]
     end
   end
 
@@ -827,6 +827,122 @@ class XlsxrbAdaptersWriteXLSXTest < Test::Unit::TestCase
       assert_raises(ArgumentError) do
         wb.close
       end
+    end
+  end
+
+  def test_sheet_names
+    wb = Xlsxrb::Adapters::WriteXLSX.new
+    wb.add_worksheet("Sales")
+    wb.add_worksheet("Inventory")
+    assert_equal %w[Sales Inventory], wb.sheet_names
+  end
+
+  def test_format_underline_and_font_script
+    wb = Xlsxrb::Adapters::WriteXLSX.new
+    fmt1 = wb.add_format
+    fmt1.set_underline(1)
+    fmt1.set_font_script(1)
+    assert_equal :single, fmt1.to_style_hash.dig(:font, :underline)
+    assert_equal :superscript, fmt1.to_style_hash.dig(:font, :vert_align)
+    assert_equal :single, fmt1.to_font_hash[:underline]
+    assert_equal :superscript, fmt1.to_font_hash[:vert_align]
+
+    fmt2 = wb.add_format
+    fmt2.set_underline(2)
+    fmt2.set_font_script(2)
+    assert_equal :double, fmt2.to_style_hash.dig(:font, :underline)
+    assert_equal :subscript, fmt2.to_style_hash.dig(:font, :vert_align)
+
+    fmt3 = wb.add_format
+    fmt3.set_underline(33)
+    assert_equal :single_accounting, fmt3.to_style_hash.dig(:font, :underline)
+
+    fmt4 = wb.add_format
+    fmt4.set_underline(34)
+    assert_equal :double_accounting, fmt4.to_style_hash.dig(:font, :underline)
+  end
+
+  def test_combo_chart_and_secondary_axis
+    wb = Xlsxrb::Adapters::WriteXLSX.new
+    ws = wb.add_worksheet("ChartSheet")
+    ws.write(0, 0, 10)
+    ws.write(1, 0, 20)
+
+    chart1 = wb.add_chart(type: "column")
+    chart1.add_series(values: "=ChartSheet!$A$1:$A$2", name: "Primary Series")
+
+    chart2 = wb.add_chart(type: "line")
+    chart2.add_series(values: "=ChartSheet!$A$1:$A$2", name: "Secondary Series", y2_axis: 1)
+
+    chart2.set_y2_axis(name: "Secondary Y Axis")
+    chart1.combine(chart2)
+
+    opts = chart1.to_chart_options
+    assert_equal 2, opts[:series].size
+    assert_equal true, opts[:series][1][:secondary_axis]
+    assert_equal "Secondary Y Axis", opts.dig(:secondary_value_axis, :name)
+  end
+
+  def test_outline_settings_and_row_column_grouping
+    with_tempfile do |path|
+      wb = Xlsxrb::Adapters::WriteXLSX.new(path)
+      ws = wb.add_worksheet("Outline")
+      ws.outline_settings(1, 0, 0, 0)
+      ws.set_row(0, 20, nil, 0, 1, 0)
+      ws.set_row(1, 20, nil, 0, 1, 1)
+      ws.set_column(0, 0, 15, nil, 0, 1, 1)
+      ws.write(0, 0, "A1")
+      ws.write(1, 0, "A2")
+
+      ewb = wb.to_xlsxrb
+      assert_equal 1, ewb.sheets.first.rows[0].outline_level
+      assert_equal false, ewb.sheets.first.rows[0].collapsed?
+      assert_equal 1, ewb.sheets.first.rows[1].outline_level
+      assert_equal true, ewb.sheets.first.rows[1].collapsed?
+      ewb_col = ewb.sheets.first.columns.first
+      assert_equal 1, ewb_col.outline_level
+      assert_equal true, ewb_col.unmapped_data[:collapsed]
+
+      wb.close
+
+      reread = Xlsxrb.load(path)
+      sheet = reread.sheet(0)
+
+      assert_equal false, sheet.sheet_properties.to_h.dig(:outline_properties, :summary_below)
+      assert_equal false, sheet.sheet_properties.to_h.dig(:outline_properties, :summary_right)
+      assert_equal 1, sheet.rows[0].outline_level
+      assert_equal 1, sheet.rows[1].outline_level
+      col = sheet.columns.first
+      assert_equal 1, col.outline_level
+    end
+  end
+
+  def test_extended_conditional_formatting_types
+    with_tempfile do |path|
+      wb = Xlsxrb::Adapters::WriteXLSX.new(path)
+      ws = wb.add_worksheet("ExtendedCF")
+      fmt = wb.add_format(bg_color: "yellow")
+      ws.conditional_formatting("A1:A10", type: "above_average", equal_average: true, format: fmt)
+      ws.conditional_formatting("B1:B10", type: "top", value: 5, percent: true, format: fmt)
+      ws.conditional_formatting("C1:C10", type: "duplicate", format: fmt)
+      ws.conditional_formatting("D1:D10", type: "time_period", criteria: "today", format: fmt)
+      ws.conditional_formatting("E1:E10", type: "2_color_scale", min_color: "FF0000", max_color: "00FF00")
+      ws.conditional_formatting("F1:F10", type: "icon_set", icon_style: "3_traffic_lights")
+      ws.write(0, 0, 10)
+      wb.close
+
+      reread = Xlsxrb.load(path)
+      sheet = reread.sheet(0)
+      cfs = sheet.conditional_formats
+      assert_equal 6, cfs.size
+
+      types = cfs.map { |cf| cf.to_h[:type].to_s }
+      assert_includes types, "aboveAverage"
+      assert_includes types, "top10"
+      assert_includes types, "duplicateValues"
+      assert_includes types, "timePeriod"
+      assert_includes types, "colorScale"
+      assert_includes types, "iconSet"
     end
   end
 end

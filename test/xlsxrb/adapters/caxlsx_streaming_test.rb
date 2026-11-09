@@ -26,7 +26,7 @@ class XlsxrbAdaptersCaxlsxStreamingTest < Test::Unit::TestCase
       assert File.size(path).positive?
 
       # Verify with Xlsxrb reader
-      read_wb = Xlsxrb.read(path).load
+      read_wb = Xlsxrb.load(path)
       sheet = read_wb.sheet("StreamingSheet")
       assert_not_nil sheet
       assert_equal 3, sheet.rows.size
@@ -40,10 +40,10 @@ class XlsxrbAdaptersCaxlsxStreamingTest < Test::Unit::TestCase
       assert_equal "Bob", sheet["B3"].value
       assert_equal 88.0, sheet["C3"].value
 
-      assert_equal 1, sheet.conditional_formatting.size
-      assert_equal "C2:C3", sheet.conditional_formatting.first[:sqref]
+      assert_equal 1, sheet.conditional_formats.size
+      assert_equal "C2:C3", sheet.conditional_formats.first.to_h[:sqref]
       assert_equal 1, sheet.data_validations.size
-      assert_equal "B2:B3", sheet.data_validations.first[:sqref]
+      assert_equal "B2:B3", sheet.data_validations.first.to_h[:sqref]
     end
   end
 
@@ -61,7 +61,7 @@ class XlsxrbAdaptersCaxlsxStreamingTest < Test::Unit::TestCase
 
     with_tempfile do |path|
       assert pkg.serialize(path)
-      read_wb = Xlsxrb.read(path).load
+      read_wb = Xlsxrb.load(path)
       sheet = read_wb.sheet(0)
       assert_equal "Widget", sheet["A2"].value
       assert_equal 19.99, sheet["B2"].value
@@ -87,7 +87,7 @@ class XlsxrbAdaptersCaxlsxStreamingTest < Test::Unit::TestCase
         end
       end
 
-      read_wb = Xlsxrb.read(path).load
+      read_wb = Xlsxrb.load(path)
       assert_equal 2, read_wb.sheet_names.size
       assert_equal "Sheet1", read_wb.sheet(0).name
       assert_equal "Sheet2", read_wb.sheet(1).name
@@ -107,7 +107,7 @@ class XlsxrbAdaptersCaxlsxStreamingTest < Test::Unit::TestCase
         end
       end
 
-      read_wb = Xlsxrb.read(path)
+      read_wb = Xlsxrb.load(path)
       assert read_wb.date1904?
     end
   end

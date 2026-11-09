@@ -334,6 +334,18 @@ module Xlsxrb
 
         def []=: (untyped key, untyped val) -> untyped
 
+        # Resolves underline setting to OpenXML underline symbol.
+        #
+        # @return [Symbol, nil]
+        # : () -> Symbol?
+        def resolve_underline: () -> Symbol?
+
+        # Resolves font script setting to OpenXML vertical alignment symbol.
+        #
+        # @return [Symbol, nil]
+        # : () -> Symbol?
+        def resolve_script: () -> Symbol?
+
         # Converts format properties to a style hash for xlsxrb
         #
         # @return [Hash{Symbol => untyped}]

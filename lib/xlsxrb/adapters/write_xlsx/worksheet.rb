@@ -527,6 +527,23 @@ module Xlsxrb
           set_row(*data)
         end
 
+        # Controls the appearance of outlines in Excel.
+        #
+        # @param visible [Integer, Boolean] Whether outline symbols are visible.
+        # @param symbols_below [Integer, Boolean] Whether summary rows are below the detail.
+        # @param symbols_right [Integer, Boolean] Whether summary columns are to the right of detail.
+        # @param auto_style [Integer, Boolean] Whether to apply styles automatically.
+        # @return [void]
+        #: (?untyped visible, ?untyped symbols_below, ?untyped symbols_right, ?untyped auto_style) -> void
+        def outline_settings(visible = 1, symbols_below = 1, symbols_right = 1, auto_style = false)
+          @outline_settings = {
+            show_outline_symbols: [1, true].include?(visible),
+            summary_below: [1, true].include?(symbols_below),
+            summary_right: [1, true].include?(symbols_right),
+            apply_styles: [1, true].include?(auto_style)
+          }
+        end
+
         # Sets column properties (width, format, hidden, level, collapsed)
         def set_column(*args)
           if args[0].respond_to?(:=~) && args[0].to_s =~ /^\D/
@@ -747,8 +764,13 @@ module Xlsxrb
           opts = options || {}
           sqref = xl_range(r1, r2, c1, c2)
           cf = normalize_write_xlsx_conditional_formatting(opts)
-          cf[:sqref] = sqref
-          @cond_formats << cf
+          if defined?(Xlsxrb::DslHelpers) && Xlsxrb::DslHelpers.respond_to?(:normalize_conditional_format)
+            normalized_rules = Xlsxrb::DslHelpers.normalize_conditional_format(sqref, **cf)
+            @cond_formats.concat(normalized_rules)
+          else
+            cf[:sqref] = sqref
+            @cond_formats << cf
+          end
         end
 
         # Inserts image into worksheet
@@ -1039,7 +1061,7 @@ module Xlsxrb
 
                 cached = rec.cached_value
                 fml = if rec.array_formula && rec.formula
-                        Xlsxrb.array_formula(rec.formula, rec.array_formula, cached_value: cached)
+                        Xlsxrb.array_formula(rec.formula, ref: rec.array_formula, cached_value: cached)
                       elsif rec.formula
                         Xlsxrb.formula(rec.formula, cached_value: cached)
                       end
@@ -1066,7 +1088,10 @@ module Xlsxrb
             elements_rows << Xlsxrb::Elements::Row.new(
               index: r_idx,
               cells: row_cells,
-              height: row_setting[:height]
+              height: row_setting[:height],
+              hidden: row_setting[:hidden] || false,
+              collapsed: row_setting[:collapsed] || false,
+              outline_level: row_setting[:level]
             )
           end
 
@@ -1078,6 +1103,7 @@ module Xlsxrb
             s_idx = fmt ? style_map[fmt] : nil
             col_unmapped = {}
             col_unmapped[:style_index] = s_idx if s_idx
+            col_unmapped[:collapsed] = true if info[:collapsed]
             cols_data << Xlsxrb::Elements::Column.new(
               index: c_idx,
               width: info[:width],
@@ -1111,7 +1137,7 @@ module Xlsxrb
             if @repeat_cols
               c1_name = @repeat_cols[0].is_a?(Integer) ? xl_col_to_name(@repeat_cols[0]) : @repeat_cols[0].to_s
               c2_name = @repeat_cols[1].is_a?(Integer) ? xl_col_to_name(@repeat_cols[1]) : @repeat_cols[1].to_s
-              pt[:cols] = "#{c1_name}:#{c2_name}"
+              pt[:columns] = "#{c1_name}:#{c2_name}"
             end
           end
 
@@ -1126,7 +1152,7 @@ module Xlsxrb
             end
 
             sparklines = locations.zip(ranges).map do |loc, rng|
-              { location_ref: loc, data_ref: rng }
+              { sqref: loc, formula: rng }
             end
 
             {
@@ -1138,8 +1164,8 @@ module Xlsxrb
               first: [true, 1].include?(param[:first_point] || param[:first]) || nil,
               last: [true, 1].include?(param[:last_point] || param[:last]) || nil,
               markers: [true, 1].include?(param[:markers]) || nil,
-              min: param[:min],
-              max: param[:max],
+              manual_min: param[:min],
+              manual_max: param[:max],
               line_weight: param[:weight] || param[:line_weight],
               color_series: Colors.to_hex(param[:series_color]),
               color_negative: Colors.to_hex(param[:negative_color]),
@@ -1186,6 +1212,10 @@ module Xlsxrb
           sheet_props = {}
           sheet_props[:code_name] = @vba_codename if @vba_codename
           sheet_props[:fit_to_page] = true if @page_setup[:fit_to_page]
+          if @outline_settings
+            sheet_props[:outline_properties] = @outline_settings
+            sheet_props.merge!(@outline_settings)
+          end
 
           if @tab_color
             hex_color = Colors.to_hex(@tab_color)
@@ -1237,7 +1267,7 @@ module Xlsxrb
             rows: elements_rows,
             columns: cols_data,
             charts: charts_data,
-            conditional_formatting: @cond_formats.empty? ? nil : @cond_formats,
+            conditional_formats: @cond_formats.empty? ? nil : @cond_formats,
             data_validations: @data_validations,
             unmapped_data: facade_meta,
             state: @hidden ? :hidden : :visible,
@@ -1246,10 +1276,11 @@ module Xlsxrb
             print_titles: pt,
             sparkline_groups: sparkline_groups_data,
             sheet_view: view_props.empty? ? nil : view_props,
-            selection: selection_data,
+            # Xlsxrb.write accepts one selection per sheet view; keep the last (active pane) one.
+            selection: selection_data&.last,
             sheet_properties: sheet_props.empty? ? nil : sheet_props,
             ignored_errors: ignored_errors_data || [],
-            background_image: @background_image
+            background_image: background_image_for_xlsxrb
           )
         end
 
@@ -1453,6 +1484,20 @@ module Xlsxrb
 
         private
 
+        # Builds the xlsxrb background image attributes from the image path set by #set_background.
+        #
+        # @return [Hash, nil]
+        #: () -> Hash[Symbol, untyped]?
+        def background_image_for_xlsxrb
+          return nil unless @background_image
+
+          {
+            path: @background_image,
+            data: File.binread(@background_image),
+            extension: File.extname(@background_image).delete_prefix(".").downcase
+          }
+        end
+
         def normalize_cell_args(row, col, value, format)
           if (row_col_array = row_col_notation(row))
             r, c = row_col_array
@@ -1592,15 +1637,44 @@ module Xlsxrb
 
           if opts[:type]
             type_str = opts[:type].to_s
-            cf[:type] = case type_str
-                        when "cell" then :cellIs
-                        when "time_period" then :timePeriod
-                        when "duplicate" then :duplicateValues
-                        when "unique" then :uniqueValues
-                        when "top", "bottom" then :top10
-                        when "average" then :aboveAverage
-                        else opts[:type]
-                        end
+            case type_str
+            when "cell" then cf[:type] = :cellIs
+            when "time_period"
+              cf[:type] = :time_period
+              cf[:time_period] = opts[:criteria] if opts[:criteria]
+            when "duplicate" then cf[:type] = :duplicate_values
+            when "unique" then cf[:type] = :unique_values
+            when "top", "bottom"
+              cf[:type] = :top10
+              cf[:bottom] = true if type_str == "bottom"
+              cf[:rank] = opts[:value].to_i if opts[:value]
+              cf[:percent] = true if opts[:criteria].to_s.include?("%")
+            when "average"
+              cf[:type] = :above_average
+              crit = opts[:criteria].to_s.downcase
+              if crit.include?("below")
+                cf[:above_average] = false
+              elsif crit.include?("above")
+                cf[:above_average] = true
+              end
+              cf[:equal_average] = true if crit.include?("equal")
+              cf[:std_dev] = ::Regexp.last_match(1).to_i if crit =~ /(\d+)\s*std\s*dev/
+            when "blanks" then cf[:type] = :contains_blanks
+            when "no_blanks" then cf[:type] = :not_contains_blanks
+            when "errors" then cf[:type] = :contains_errors
+            when "no_errors" then cf[:type] = :not_contains_errors
+            when "2_color_scale"
+              cf[:type] = :color_scale
+              cf[:colors] = [opts[:min_color], opts[:max_color]].compact
+            when "3_color_scale"
+              cf[:type] = :color_scale
+              cf[:colors] = [opts[:min_color], opts[:mid_color], opts[:max_color]].compact
+            when "icon_set"
+              cf[:type] = :icon_set
+              cf[:icon_style] = opts[:icon_style]
+            else
+              cf[:type] = opts[:type]
+            end
           end
 
           op_map = {

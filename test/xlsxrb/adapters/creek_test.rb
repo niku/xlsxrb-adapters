@@ -337,7 +337,7 @@ class XlsxrbAdaptersCreekTest < Test::Unit::TestCase
     assert_operator ws.images.size, :>, 0
     img = ws.images.first
     assert_instance_of Xlsxrb::Elements::Image, img
-    assert_equal "A2", img.cell_ref
+    assert_equal "A2", img.ref
     book.close
   end
 

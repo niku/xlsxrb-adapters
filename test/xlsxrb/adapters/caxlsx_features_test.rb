@@ -87,10 +87,10 @@ class XlsxrbAdaptersCaxlsxFeaturesTest < Test::Unit::TestCase
 
     with_tempfile do |path|
       pkg.serialize(path)
-      wb = Xlsxrb.read(path)
+      wb = Xlsxrb.load(path)
       sheet = wb.sheets.first
-      assert_equal true, sheet.sheet_view[:tab_selected]
-      assert_equal({ active_cell: "B2", sqref: "B2:C3", pane: "bottomRight" }, sheet.selection)
+      assert_equal true, sheet.sheet_view.to_h[:tab_selected]
+      assert_equal({ active_cell: "B2", sqref: "B2:C3", pane: "bottomRight" }, sheet.selection.to_h)
     end
   end
 
@@ -106,11 +106,11 @@ class XlsxrbAdaptersCaxlsxFeaturesTest < Test::Unit::TestCase
 
     with_tempfile do |path|
       pkg.serialize(path)
-      wb = Xlsxrb.read(path)
+      wb = Xlsxrb.load(path)
       sheet = wb.sheets.first
       dv = sheet.data_validations.first
-      assert_equal true, dv[:show_drop_down]
-      assert_equal "hiragana", dv[:ime_mode]
+      assert_equal true, dv.to_h[:show_drop_down]
+      assert_equal "hiragana", dv.to_h[:ime_mode]
     end
   end
 
@@ -328,7 +328,7 @@ class XlsxrbAdaptersCaxlsxFeaturesTest < Test::Unit::TestCase
     # Verify serialization and reading via xlsxrb
     with_tempfile do |path|
       assert pkg.serialize(path)
-      read_wb = Xlsxrb.read(path).load
+      read_wb = Xlsxrb.load(path)
       read_cell = read_wb.sheet(0).rows[0].cells[0]
       assert_equal "Normal Bold Italic", read_cell.value
     end
@@ -347,7 +347,7 @@ class XlsxrbAdaptersCaxlsxFeaturesTest < Test::Unit::TestCase
 
     with_tempfile do |path|
       assert pkg.serialize(path)
-      read_wb = Xlsxrb.read(path)
+      read_wb = Xlsxrb.load(path)
       assert read_wb.date1904?
     end
   end
@@ -364,22 +364,22 @@ class XlsxrbAdaptersCaxlsxFeaturesTest < Test::Unit::TestCase
     xlsxrb_sheet = xlsxrb_wb.sheet(0)
 
     # First-class DOM assertions on Worksheet
-    assert_equal 1, xlsxrb_sheet.conditional_formatting.size
-    assert_equal "A1:A10", xlsxrb_sheet.conditional_formatting.first[:sqref]
-    assert_equal :cellIs, xlsxrb_sheet.conditional_formatting.first[:type]
+    assert_equal 1, xlsxrb_sheet.conditional_formats.size
+    assert_equal "A1:A10", xlsxrb_sheet.conditional_formats.first.to_h[:sqref]
+    assert_equal :cellIs, xlsxrb_sheet.conditional_formats.first.to_h[:type]
 
     assert_equal 1, xlsxrb_sheet.data_validations.size
-    assert_equal "C1:C10", xlsxrb_sheet.data_validations.first[:sqref]
-    assert_equal :list, xlsxrb_sheet.data_validations.first[:type]
+    assert_equal "C1:C10", xlsxrb_sheet.data_validations.first.to_h[:sqref]
+    assert_equal :list, xlsxrb_sheet.data_validations.first.to_h[:type]
 
     # Verify serialization and reading via xlsxrb
     with_tempfile do |path|
       assert pkg.serialize(path)
-      read_wb = Xlsxrb.read(path).load
-      assert_equal 1, read_wb.sheet(0).conditional_formatting.size
-      assert_equal "A1:A10", read_wb.sheet(0).conditional_formatting.first[:sqref]
+      read_wb = Xlsxrb.load(path)
+      assert_equal 1, read_wb.sheet(0).conditional_formats.size
+      assert_equal "A1:A10", read_wb.sheet(0).conditional_formats.first.to_h[:sqref]
       assert_equal 1, read_wb.sheet(0).data_validations.size
-      assert_equal "C1:C10", read_wb.sheet(0).data_validations.first[:sqref]
+      assert_equal "C1:C10", read_wb.sheet(0).data_validations.first.to_h[:sqref]
     end
   end
 
@@ -393,7 +393,7 @@ class XlsxrbAdaptersCaxlsxFeaturesTest < Test::Unit::TestCase
 
     with_tempfile do |path|
       assert pkg.serialize(path)
-      read_wb = Xlsxrb.read(path).load
+      read_wb = Xlsxrb.load(path)
       sheet = read_wb.sheet(0)
       assert_equal "SheetPrVBA", sheet.code_name
       assert_equal "FFFF00AA", sheet.tab_color
@@ -411,7 +411,7 @@ class XlsxrbAdaptersCaxlsxFeaturesTest < Test::Unit::TestCase
 
     with_tempfile do |path|
       assert pkg.serialize(path)
-      read_wb = Xlsxrb.read(path).load
+      read_wb = Xlsxrb.load(path)
       assert_equal 650, read_wb.tab_ratio
       assert_equal 0, read_wb.first_sheet
       assert_equal true, read_wb.show_sheet_tabs?
@@ -452,5 +452,68 @@ class XlsxrbAdaptersCaxlsxFeaturesTest < Test::Unit::TestCase
         pkg_nan.serialize(path)
       end
     end
+  end
+
+  def test_sanitize_sheet_name
+    assert_equal "My_Sheet_Name", Xlsxrb::Adapters::Caxlsx.sanitize_sheet_name("My[Sheet]Name")
+    assert_equal "Sheet-Name", Xlsxrb::Adapters::Caxlsx.sanitize_sheet_name("Sheet/Name", replace_char: "-")
+    long_name = "A" * 50
+    assert_equal 31, Xlsxrb::Adapters::Caxlsx.sanitize_sheet_name(long_name).length
+  end
+
+  def test_workbook_sheet_names
+    pkg = Xlsxrb::Adapters::Caxlsx::Package.new
+    pkg.workbook.add_worksheet(name: "First")
+    pkg.workbook.add_worksheet(name: "Second")
+    assert_equal %w[First Second], pkg.workbook.sheet_names
+  end
+
+  def test_font_vert_align
+    font = Xlsxrb::Adapters::Caxlsx::Font.new(vert_align: :superscript)
+    assert_equal :superscript, font.vertAlign
+    assert_equal :superscript, font.vert_align
+    assert_includes font.to_xml_string, '<vertAlign val="superscript"/>'
+    assert_equal :superscript, font.to_xlsxrb_hash[:vert_align]
+
+    font.vert_align = :subscript
+    assert_equal :subscript, font.vertAlign
+    assert_includes font.to_xml_string, '<vertAlign val="subscript"/>'
+    assert_equal :subscript, font.to_xlsxrb_hash[:vert_align]
+
+    assert_raises(ArgumentError) do
+      font.vert_align = :invalid_align
+    end
+  end
+
+  def test_outline_properties_and_column_grouping
+    pkg = Xlsxrb::Adapters::Caxlsx::Package.new
+    ws = pkg.workbook.add_worksheet(name: "OutlineCols")
+    ws.sheet_pr.outline_pr.summary_below = false
+    ws.sheet_pr.outline_pr.summary_right = false
+    ws.sheet_view.show_outline_symbols = true
+    ws.add_row(%w[Header1 Header2])
+    ws.column_info.first.outline_level = 2
+    ws.column_info.first.collapsed = true
+
+    ewb = pkg.workbook.to_xlsxrb
+    sheet = ewb.sheets.first
+    assert_equal({ summary_below: false, summary_right: false }, sheet.sheet_properties.to_h[:outline_properties])
+    assert_equal true, sheet.sheet_view.to_h[:show_outline_symbols]
+    assert_equal 2, sheet.columns.first.outline_level
+    assert_equal true, sheet.columns.first.unmapped_data[:collapsed]
+  end
+
+  def test_tables_preservation
+    pkg = Xlsxrb::Adapters::Caxlsx::Package.new
+    ws = pkg.workbook.add_worksheet(name: "Tables")
+    ws.add_row(%w[Col1 Col2])
+    ws.add_row([10, 20])
+    ws.add_table "A1:B2", name: "SummaryTable"
+
+    ewb = pkg.workbook.to_xlsxrb
+    assert_equal 1, ewb.sheets.first.tables.size
+    tbl = ewb.sheets.first.tables.first
+    assert_equal "SummaryTable", tbl.to_h[:name]
+    assert_equal "A1:B2", tbl.to_h[:ref]
   end
 end

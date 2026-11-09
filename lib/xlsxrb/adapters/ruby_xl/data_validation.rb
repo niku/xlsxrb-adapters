@@ -13,7 +13,7 @@ module Xlsxrb
                       :error_title, :error, :prompt_title, :prompt, :unmapped_attributes
 
         def initialize(attributes = {})
-          attrs = attributes.is_a?(Hash) ? attributes : {}
+          attrs = attributes.is_a?(Hash) ? attributes : attributes.to_h
           @type = attrs[:type] || attrs["type"]
           @sqref = attrs[:sqref] || attrs["sqref"]
           @formula1 = attrs[:formula1] || attrs["formula1"]

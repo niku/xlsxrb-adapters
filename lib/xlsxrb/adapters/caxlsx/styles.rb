@@ -28,6 +28,8 @@ module Xlsxrb
         attr_reader :color #: Color?
         attr_reader :charset #: Integer?
         attr_reader :scheme #: Symbol?
+        attr_reader :vertAlign #: Symbol?
+        alias vert_align vertAlign
 
         # @param options [Hash]
         #: (?Hash[Symbol, untyped] options) -> void
@@ -148,6 +150,15 @@ module Xlsxrb
           @scheme = v.to_sym
         end
 
+        #: (untyped v) -> void
+        def vertAlign=(v)
+          return if v.nil?
+
+          RestrictionValidator.validate :vertAlign, %i[superscript subscript baseline], v
+          @vertAlign = v.to_sym
+        end
+        alias vert_align= vertAlign=
+
         #: (?String str) -> String
         def to_xml_string(str = +"")
           str << "<font>"
@@ -158,6 +169,7 @@ module Xlsxrb
           str << "<i/>" if @i
           str << "<strike/>" if @strike
           str << %(<u val="#{@u}"/>) if @u
+          str << %(<vertAlign val="#{@vertAlign}"/>) if @vertAlign
           str << @color.to_xml_string if @color
           str << %(<charset val="#{@charset}"/>) if @charset
           str << %(<scheme val="#{@scheme}"/>) if @scheme
@@ -173,6 +185,7 @@ module Xlsxrb
             bold: @b,
             italic: @i,
             underline: @u,
+            vert_align: @vertAlign,
             strike: @strike,
             color: @color&.rgb,
             family: @family,

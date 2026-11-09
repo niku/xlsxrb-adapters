@@ -132,7 +132,7 @@ module Xlsxrb
             row_hash.each do |coord, val|
               next if val.nil?
 
-              row_col = Xlsxrb::Utils.ref_to_row_col(coord)
+              row_col = Xlsxrb.parse_ref(coord)
               actual_r_idx = row_col ? row_col[0] : r_idx
               c_idx = row_col ? row_col[1] : 0
               target_row_idx ||= actual_r_idx
@@ -154,7 +154,7 @@ module Xlsxrb
                 extracted_images << Elements::Image.new(
                   filename: filename,
                   from_row: coord[0],
-                  from_col: coord[1],
+                  from_column: coord[1],
                   data: data
                 )
               end
@@ -197,7 +197,7 @@ module Xlsxrb
                   c_attrs = parse_attributes(c_attrs_str)
                   cell_ref = c_attrs["r"] || "#{Utils.index_to_column(col_idx)}#{row["r"]}"
                   col_idx = if c_attrs["r"]
-                              row_col = Xlsxrb::Utils.ref_to_row_col(c_attrs["r"])
+                              row_col = Xlsxrb.parse_ref(c_attrs["r"])
                               row_col ? row_col[1] + 1 : col_idx + 1
                             else
                               col_idx + 1

@@ -24,7 +24,7 @@ module Xlsxrb
             raise err_class, "File #{file_path} not found"
           end
 
-          xlsxrb_wb = Xlsxrb.read(file_path).load
+          xlsxrb_wb = Xlsxrb.load(file_path)
           wb = Workbook.from_xlsxrb(xlsxrb_wb)
           wb.filepath = file_path.to_s
           enrich_workbook(file_path, wb)
@@ -42,7 +42,7 @@ module Xlsxrb
         #: (StringIO | IO | String buffer) -> Workbook
         def self.parse_buffer(buffer)
           buf = buffer.is_a?(String) ? StringIO.new(buffer.b) : buffer
-          xlsxrb_wb = Xlsxrb.read(buf).load
+          xlsxrb_wb = Xlsxrb.load(buf)
           wb = Workbook.from_xlsxrb(xlsxrb_wb)
           enrich_workbook(buf, wb)
           wb

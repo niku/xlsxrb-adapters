@@ -645,7 +645,8 @@ module Xlsxrb
           # Parse fonts
           raw_fonts = raw_styles.respond_to?(:fonts) ? raw_styles.fonts : raw_styles[:fonts]
           if raw_fonts.is_a?(Array) && !raw_fonts.empty?
-            sheet.fonts = raw_fonts.map do |rf|
+            sheet.fonts = raw_fonts.map do |raw_font|
+              rf = style_record_to_h(raw_font)
               Font.new(
                 name: rf[:name] || "Calibri",
                 size: rf[:size] || rf[:sz] || 11,
@@ -661,9 +662,10 @@ module Xlsxrb
           # Parse fills
           raw_fills = raw_styles.respond_to?(:fills) ? raw_styles.fills : raw_styles[:fills]
           if raw_fills.is_a?(Array) && !raw_fills.empty?
-            sheet.fills = raw_fills.map do |rf|
+            sheet.fills = raw_fills.map do |raw_fill|
+              rf = style_record_to_h(raw_fill)
               Fill.new(
-                pattern_type: rf[:pattern] || "none",
+                pattern_type: rf[:pattern_type] || rf[:pattern] || "none",
                 fg_color: rf[:fg_color],
                 bg_color: rf[:bg_color]
               )
@@ -673,7 +675,8 @@ module Xlsxrb
           # Parse borders
           raw_borders = raw_styles.respond_to?(:borders) ? raw_styles.borders : raw_styles[:borders]
           if raw_borders.is_a?(Array) && !raw_borders.empty?
-            sheet.borders = raw_borders.map do |rb|
+            sheet.borders = raw_borders.map do |raw_border|
+              rb = style_record_to_h(raw_border)
               b = Border.new
               %i[left right top bottom diagonal].each do |side|
                 edge_data = rb[side]
@@ -688,8 +691,8 @@ module Xlsxrb
             end
           end
 
-          # Parse num_fmts
-          raw_num_fmts = raw_styles.respond_to?(:num_fmts) ? raw_styles.num_fmts : raw_styles[:num_fmts]
+          # Parse number formats
+          raw_num_fmts = raw_styles.respond_to?(:number_formats) ? raw_styles.number_formats : raw_styles[:num_fmts]
           if raw_num_fmts.is_a?(Hash)
             raw_num_fmts.each { |id, code| sheet.number_formats << NumberFormat.new(num_fmt_id: id.to_i, format_code: code.to_s) }
           elsif raw_num_fmts.is_a?(Array)
@@ -705,16 +708,18 @@ module Xlsxrb
                       raw_styles[:cell_xfs] || raw_styles[:xf_entries]
                     end
           if raw_xfs.is_a?(Array) && !raw_xfs.empty?
-            sheet.cell_xfs = raw_xfs.map do |rx|
+            sheet.cell_xfs = raw_xfs.map do |raw_xf|
+              rx = style_record_to_h(raw_xf)
               align = nil
-              if rx[:alignment].is_a?(Hash)
+              raw_align = rx[:alignment]
+              if raw_align.is_a?(Hash)
                 align = Alignment.new(
-                  horizontal: rx[:alignment][:horizontal],
-                  vertical: rx[:alignment][:vertical],
-                  wrap_text: rx[:alignment][:wrap_text],
-                  shrink_to_fit: rx[:alignment][:shrink_to_fit],
-                  indent: rx[:alignment][:indent],
-                  text_rotation: rx[:alignment][:text_rotation]
+                  horizontal: raw_align[:horizontal],
+                  vertical: raw_align[:vertical],
+                  wrap_text: raw_align[:wrap_text],
+                  shrink_to_fit: raw_align[:shrink_to_fit],
+                  indent: raw_align[:indent],
+                  text_rotation: raw_align[:text_rotation]
                 )
               end
               XF.new(
@@ -733,6 +738,17 @@ module Xlsxrb
           sheet.dxfs = raw_dxfs.dup if raw_dxfs.is_a?(Array)
 
           sheet
+        end
+
+        # Converts an xlsxrb style record (a Hash or an Elements value object) into a Hash.
+        #
+        # @param record [Hash, #to_h, nil]
+        # @return [Hash]
+        #: (untyped record) -> Hash[Symbol, untyped]
+        def self.style_record_to_h(record)
+          return record if record.is_a?(Hash)
+
+          record.respond_to?(:to_h) ? record.to_h : {}
         end
 
         # Serializes into xlsxrb styles hash.

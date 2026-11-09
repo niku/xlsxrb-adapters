@@ -107,6 +107,15 @@ module Xlsxrb
         # : (Array[untyped] values) -> self
         def <<: (Array[untyped] values) -> self
 
+        # Advances the row cursor without writing empty row cells.
+        #
+        # @param count [Integer] Number of rows to advance.
+        # @return [Integer] The new last row number.
+        # : (?Integer count) -> Integer
+        def skip_rows: (?Integer count) -> Integer
+
+        alias skip_row skip_rows
+
         # Writes a numeric cell value.
         #
         # @param row [Integer]

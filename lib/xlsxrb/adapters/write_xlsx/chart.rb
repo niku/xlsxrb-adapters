@@ -140,6 +140,8 @@ module Xlsxrb
           }.compact
           s[:line] = options[:line] if options[:line]
           s[:fill] = options[:fill] if options[:fill]
+          s[:y2_axis] = options[:y2_axis] if options[:y2_axis]
+          s[:axis] = options[:axis] if options[:axis]
           @series << s
           s
         end
@@ -323,7 +325,22 @@ module Xlsxrb
             series_hash = s.dup
             series_hash[:cat_ref] ||= series_hash[:categories]
             series_hash[:val_ref] ||= series_hash[:values]
+            series_hash[:secondary_axis] = true if s[:y2_axis] == 1 || s[:y2_axis] == true || s[:axis] == 2 || s[:axis] == :secondary || s[:secondary_axis]
             series_hash
+          end
+
+          if @combined_charts && !@combined_charts.empty?
+            @combined_charts.each do |comb|
+              comb_type = comb.default_chart_type
+              comb.series.each do |s|
+                series_hash = s.dup
+                series_hash[:cat_ref] ||= series_hash[:categories]
+                series_hash[:val_ref] ||= series_hash[:values]
+                series_hash[:type] ||= comb_type
+                series_hash[:secondary_axis] = true if s[:y2_axis] == 1 || s[:y2_axis] == true || s[:axis] == 2 || s[:axis] == :secondary || s[:secondary_axis]
+                mapped_series << series_hash
+              end
+            end
           end
 
           legend_val = if @legend.empty?
@@ -338,7 +355,7 @@ module Xlsxrb
                          LegendValue.new(pos, opts)
                        end
 
-          {
+          res = {
             type: chart_type,
             title: title_str,
             series: mapped_series,
@@ -346,7 +363,15 @@ module Xlsxrb
             val_axis_title: val_title,
             legend: legend_val,
             style: @style_id
-          }.compact
+          }
+
+          sec_axis = @y2_axis || @combined_charts&.map { |c| c.instance_variable_get(:@y2_axis) }&.compact&.first
+          if sec_axis && !sec_axis.empty?
+            val2_title = sec_axis[:name] || sec_axis[:title]
+            res[:secondary_value_axis] = { title: val2_title, name: val2_title }.compact.merge(sec_axis)
+          end
+
+          res.compact
         end
 
         # Factory method to create appropriate Chart subclass instance

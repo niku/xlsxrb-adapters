@@ -28,6 +28,14 @@ module Xlsxrb
         attr_reader :worksheets
         alias sheets worksheets
 
+        # Returns the names of all worksheets in the workbook.
+        #
+        # @return [Array<String>]
+        #: () -> Array[String]
+        def sheet_names
+          @worksheets.map(&:name)
+        end
+
         # @return [Hash{Symbol => untyped}]
         attr_reader :options
 
@@ -163,7 +171,7 @@ module Xlsxrb
         # @param options [Hash{Symbol => untyped}]
         # @return [Workbook]
         def self.from_xlsxrb(xlsxrb_workbook, output = nil, options = {})
-          wb_source = xlsxrb_workbook.respond_to?(:load) ? xlsxrb_workbook.load : xlsxrb_workbook
+          wb_source = xlsxrb_workbook
           sio = output || StringIO.new
           adapter = new(sio, options)
 

@@ -197,6 +197,16 @@ module Xlsxrb
           self
         end
 
+        # Advances the row cursor without writing empty row cells.
+        #
+        # @param count [Integer] Number of rows to advance.
+        # @return [Integer] The new last row number.
+        #: (?Integer count) -> Integer
+        def skip_rows(count = 1)
+          @last_row_number += count
+        end
+        alias skip_row skip_rows
+
         # Writes a numeric cell value.
         #
         # @param row [Integer]
@@ -343,7 +353,7 @@ module Xlsxrb
         #: (Integer row, Integer col, String url, ?Format? format, ?String? string, ?String? tooltip) -> Symbol
         def write_url_opt(row, col, url, format = nil, string = nil, tooltip = nil)
           val = string || url
-          ref = Xlsxrb::Utils.row_col_to_ref(row, col)
+          ref = Xlsxrb.cell_to_ref(row, col)
           @hyperlinks[ref] = { cell: ref, ref: ref, url: url, display: string, tooltip: tooltip }
           record_cell(row, col, value: val, url: url, url_display: string, url_tooltip: tooltip, format: format)
           @last_row_number = row if row > @last_row_number
@@ -358,7 +368,7 @@ module Xlsxrb
         # @return [Symbol]
         #: (Integer row, Integer col, String string) -> Symbol
         def write_comment(row, col, string)
-          ref = Xlsxrb::Utils.row_col_to_ref(row, col)
+          ref = Xlsxrb.cell_to_ref(row, col)
           @comments << { ref: ref, text: string.to_s }
           :no_error
         end
@@ -466,8 +476,8 @@ module Xlsxrb
         # @return [Symbol]
         #: (Integer first_row, Integer first_col, Integer last_row, Integer last_col, String string, ?Format? format) -> Symbol
         def merge_range(first_row, first_col, last_row, last_col, string, format = nil)
-          ref1 = Xlsxrb::Utils.row_col_to_ref(first_row, first_col)
-          ref2 = Xlsxrb::Utils.row_col_to_ref(last_row, last_col)
+          ref1 = Xlsxrb.cell_to_ref(first_row, first_col)
+          ref2 = Xlsxrb.cell_to_ref(last_row, last_col)
           @merged_ranges << "#{ref1}:#{ref2}"
 
           write_string(first_row, first_col, string, format)
@@ -492,8 +502,8 @@ module Xlsxrb
         # @return [Symbol]
         #: (Integer first_row, Integer first_col, Integer last_row, Integer last_col) -> Symbol
         def autofilter(first_row, first_col, last_row, last_col)
-          ref1 = Xlsxrb::Utils.row_col_to_ref(first_row, first_col)
-          ref2 = Xlsxrb::Utils.row_col_to_ref(last_row, last_col)
+          ref1 = Xlsxrb.cell_to_ref(first_row, first_col)
+          ref2 = Xlsxrb.cell_to_ref(last_row, last_col)
           @autofilter_range = "#{ref1}:#{ref2}"
           @struct_fields[:filter_on] = 1
           :no_error
@@ -601,8 +611,8 @@ module Xlsxrb
           if r1.is_a?(String) && c1.nil?
             @print_area = r1
           elsif r1.is_a?(Integer) && c1 && r2 && c2
-            ref1 = Xlsxrb::Utils.row_col_to_ref(r1, c1)
-            ref2 = Xlsxrb::Utils.row_col_to_ref(r2, c2)
+            ref1 = Xlsxrb.cell_to_ref(r1, c1)
+            ref2 = Xlsxrb.cell_to_ref(r2, c2)
             @print_area = "#{ref1}:#{ref2}"
           end
           :no_error
@@ -628,10 +638,10 @@ module Xlsxrb
         # @return [Symbol]
         #: (Integer | String c1, Integer | String c2) -> Symbol
         def repeat_columns(c1, c2)
-          c1_name = c1.is_a?(Integer) ? Xlsxrb::Utils.col_index_to_name(c1) : c1.to_s
-          c2_name = c2.is_a?(Integer) ? Xlsxrb::Utils.col_index_to_name(c2) : c2.to_s
+          c1_name = c1.is_a?(Integer) ? Xlsxrb.column_letter(c1) : c1.to_s
+          c2_name = c2.is_a?(Integer) ? Xlsxrb.column_letter(c2) : c2.to_s
           @print_titles ||= {}
-          @print_titles[:cols] = "#{c1_name}:#{c2_name}"
+          @print_titles[:columns] = "#{c1_name}:#{c2_name}"
           :no_error
         end
 

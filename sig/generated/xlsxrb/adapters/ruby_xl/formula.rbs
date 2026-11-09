@@ -7,9 +7,27 @@ module Xlsxrb
       class Formula
         attr_accessor expression: String?
 
+        attr_accessor t: (String | Symbol)?
+
+        attr_accessor ref: String?
+
+        attr_accessor si: Integer?
+
+        alias type t
+
+        alias type= t=
+
+        alias shared_index si
+
+        alias shared_index= si=
+
         # @param expression [String, Hash, nil] The formula expression (e.g. "SUM(A1:B1)").
-        # : (?String | Hash[Symbol | String, untyped] | nil expression) -> void
-        def initialize: (?String | Hash[Symbol | String, untyped] | nil expression) -> void
+        # @param t [String, Symbol, nil] Formula type (:shared, :array, etc.).
+        # @param ref [String, nil] Formula range reference.
+        # @param si [Integer, nil] Shared formula index.
+        # : (?String | Hash[Symbol | String, untyped] | nil expression, ?t: (String | Symbol)?, ?ref: String?, ?si: Integer?) -> void
+        # rubocop:disable-next Naming/MethodParameterName
+        def initialize: (?String | Hash[Symbol | String, untyped] | nil expression, ?t: (String | Symbol)?, ?ref: String?, ?si: Integer?) -> void
 
         # Compares formula with another Formula or String.
         #

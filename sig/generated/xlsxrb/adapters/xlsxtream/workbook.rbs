@@ -12,6 +12,12 @@ module Xlsxrb
 
         alias sheets worksheets
 
+        # Returns the names of all worksheets in the workbook.
+        #
+        # @return [Array<String>]
+        # : () -> Array[String]
+        def sheet_names: () -> Array[String]
+
         # @return [Hash{Symbol => untyped}]
         attr_reader options: untyped
 

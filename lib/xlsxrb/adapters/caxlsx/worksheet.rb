@@ -1270,6 +1270,7 @@ module Xlsxrb
               show_grid_lines: @sheet_view.show_grid_lines,
               show_row_col_headers: @sheet_view.show_row_col_headers,
               show_ruler: @sheet_view.show_ruler,
+              show_outline_symbols: @sheet_view.show_outline_symbols,
               view: @sheet_view.view,
               tab_selected: @sheet_view.tab_selected,
               zoom_scale: @sheet_view.zoom_scale
@@ -1429,16 +1430,32 @@ module Xlsxrb
                           col_unmapped[:style_index] = col_style if col_style
                           col_unmapped[:min] = col.min if col.min
                           col_unmapped[:max] = col.max if col.max
+                          col_unmapped[:collapsed] = true if col.collapsed
                           Xlsxrb::Elements::Column.new(
                             index: [(col.min || 1) - 1, 0].max,
                             width: col.width,
                             hidden: col.hidden || false,
+                            outline_level: col.outline_level,
                             custom_width: col.custom_width || false,
                             style_index: col_style,
                             unmapped_data: col_unmapped
                           )
                         end
                       end
+
+          tables_data = if @tables && !@tables.empty?
+                          @tables.map do |tbl|
+                            {
+                              ref: tbl.ref,
+                              name: tbl.name,
+                              display_name: tbl.name.to_s.gsub(/\s/, "_"),
+                              style: tbl.table_style_info&.name
+                            }.compact
+                          end
+                        else
+                          []
+                        end
+          facade_meta[:tables] = tables_data unless tables_data.empty?
 
           merged_unmapped = {}
           merged_unmapped[:facade] = facade_meta unless facade_meta.empty?
@@ -1454,13 +1471,24 @@ module Xlsxrb
             sheet_props[:fit_to_page] = @sheet_pr.page_setup_pr.fit_to_page if @sheet_pr.page_setup_pr && !@sheet_pr.page_setup_pr.fit_to_page.nil?
           end
           sheet_props[:fit_to_page] = true if fit_to_page?
+          outline_source = @sheet_pr&.instance_variable_get(:@outline_pr) || @outline_pr
+          if outline_source
+            outline_opts = {
+              summary_below: outline_source.summary_below,
+              summary_right: outline_source.summary_right,
+              apply_styles: outline_source.apply_styles
+            }.compact
+            sheet_props[:outline_properties] = outline_opts unless outline_opts.empty?
+          end
+          sheet_props[:show_outline_symbols] = @sheet_view.show_outline_symbols if @sheet_view&.show_outline_symbols
 
           Xlsxrb::Elements::Worksheet.new(
             name: name,
             rows: sorted_rows,
             columns: cols_data,
             charts: charts_data,
-            conditional_formatting: cf_data,
+            tables: tables_data,
+            conditional_formats: cf_data,
             data_validations: dv_data,
             unmapped_data: merged_unmapped,
             state: state,
@@ -1470,7 +1498,8 @@ module Xlsxrb
             dimension: dim_str,
             sheet_view: facade_meta[:sheet_view],
             freeze_pane: facade_meta[:freeze_pane],
-            selection: facade_meta[:selection],
+            # Xlsxrb.write accepts one selection per sheet view; keep the last (active pane) one.
+            selection: facade_meta[:selection]&.last,
             sheet_properties: sheet_props.empty? ? nil : sheet_props
           )
         end

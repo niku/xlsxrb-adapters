@@ -200,7 +200,7 @@ class XlsxrbAdaptersCaxlsxStylesTest < Test::Unit::TestCase
     # Verify serialization
     with_tempfile do |path|
       assert pkg.serialize(path)
-      read_wb = ::Xlsxrb.read(path).load
+      read_wb = ::Xlsxrb.load(path)
       read_cell = read_wb.sheets.first.rows.first.cells.first
       assert_equal "Important", read_cell.value
       assert_equal bold_red, read_cell.style_index

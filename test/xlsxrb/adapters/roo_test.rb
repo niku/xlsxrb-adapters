@@ -285,7 +285,7 @@ class XlsxrbAdaptersRooTest < Test::Unit::TestCase
     wb_link = doc_link.to_xlsxrb
     assert_equal 1, wb_link.sheets[0].hyperlinks.size
     cell_a1 = wb_link.sheets[0]["A1"]
-    assert cell_a1.link?
+    assert cell_a1.hyperlink?
     assert_equal "http://www.google.com", cell_a1.url
 
     doc_comm = Xlsxrb::Adapters::Roo::Excelx.new(fixture("comments.xlsx"))
@@ -295,7 +295,7 @@ class XlsxrbAdaptersRooTest < Test::Unit::TestCase
     assert cell_b4.comment?
     assert_equal "Kommentar fuer B4", cell_b4.comment_text
     assert_equal 1, wb_comm.defined_names.size
-    assert_equal "befuenf", wb_comm.defined_names[0][:name]
+    assert_equal "befuenf", wb_comm.defined_names[0].to_h[:name]
 
     doc_form = Xlsxrb::Adapters::Roo::Excelx.new(fixture("formula.xlsx"))
     wb_form = doc_form.to_xlsxrb
@@ -457,5 +457,22 @@ class XlsxrbAdaptersRooTest < Test::Unit::TestCase
     assert_equal 5, doc.sheets.size
 
     doc.close
+  end
+
+  def test_threaded_comments_fallback
+    with_tempfile do |path|
+      Xlsxrb.write(path) do |b|
+        b.sheet("Sheet1") do |s|
+          s.row(["Hello"])
+          s.threaded_comment("A1", "Threaded note for Roo", author: "Antigravity")
+        end
+      end
+
+      doc = Xlsxrb::Adapters::Roo::Excelx.new(path)
+      assert_equal "Threaded note for Roo", doc.comment(1, 1)
+      assert_equal "Threaded note for Roo", doc.comment(1, "A")
+      assert_equal [[1, 1, "Threaded note for Roo"]], doc.comments
+      doc.close
+    end
   end
 end

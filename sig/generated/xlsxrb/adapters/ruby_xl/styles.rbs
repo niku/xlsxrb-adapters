@@ -361,6 +361,13 @@ module Xlsxrb
         # : (Hash[untyped, untyped] | Elements::Styles raw_styles) -> Stylesheet
         def self.from_xlsxrb: (Hash[untyped, untyped] | Elements::Styles raw_styles) -> Stylesheet
 
+        # Converts an xlsxrb style record (a Hash or an Elements value object) into a Hash.
+        #
+        # @param record [Hash, #to_h, nil]
+        # @return [Hash]
+        # : (untyped record) -> Hash[Symbol, untyped]
+        def self.style_record_to_h: (untyped record) -> Hash[Symbol, untyped]
+
         # Serializes into xlsxrb styles hash.
         # @return [Hash]
         # : () -> Hash[Symbol, untyped]
