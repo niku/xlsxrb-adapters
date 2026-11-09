@@ -142,8 +142,8 @@ module Xlsxrb
                 cr.min = min
                 cr.max = max
                 cr.width = c.width if c.width
-                cr.custom_width = c.custom_width if c.custom_width
-                cr.hidden = c.hidden if c.hidden
+                cr.custom_width = true if c.custom_width?
+                cr.hidden = true if c.hidden?
                 cr.style_index = c.style_index if c.style_index
               end
             end
@@ -652,11 +652,6 @@ module Xlsxrb
                   @source_element.defined_names
                 end
           facade_meta[:app_properties] = { company: @company } if @company && !@company.empty?
-          # Heading pairs read from the source file ([["Worksheets", 2]]) break
-          # Xlsxrb::Elements::AppProperties#to_h on write, and they describe the
-          # source sheet list rather than the current one, so they are dropped.
-          app_props = merged_unmapped[:app_properties]
-          merged_unmapped[:app_properties] = app_props.except(:heading_pairs, :titles_of_parts) if app_props.is_a?(Hash) && app_props.key?(:heading_pairs)
           merged_unmapped[:facade] = facade_meta unless facade_meta.empty?
           merged_unmapped[:workbook_properties] = workbook_properties_for_xlsxrb(merged_unmapped[:workbook_properties])
 

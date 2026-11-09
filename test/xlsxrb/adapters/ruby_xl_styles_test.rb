@@ -271,7 +271,7 @@ class XlsxrbAdaptersRubyXLStylesTest < Test::Unit::TestCase
     refute_nil @worksheet.data_validations
     assert_equal 1, @worksheet.data_validations.size
     assert_equal "A1:A10", @worksheet.data_validations.first[:sqref]
-    assert_equal '"Apple,Banana,Orange"', @worksheet.data_validations.first[:formula]
+    assert_equal '"Apple,Banana,Orange"', @worksheet.data_validations.first[:formula1]
   end
 
   def test_row_and_column_styles_roundtrip_persistence

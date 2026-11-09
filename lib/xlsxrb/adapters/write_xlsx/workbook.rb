@@ -251,10 +251,7 @@ module Xlsxrb
             name_str = parts[1]
           end
           entry = { name: name_str, value: val_str }
-          if local_sheet
-            entry[:local_sheet_name] = local_sheet
-            entry[:sheet] = local_sheet
-          end
+          entry[:local_sheet_name] = local_sheet if local_sheet
           @defined_names << entry
         end
 
@@ -354,6 +351,7 @@ module Xlsxrb
           raise "'' must be valid filename String of IO object." if @file.nil?
 
           @fileclosed = true
+          add_default_worksheet
           elements_wb = to_xlsxrb
 
           if @file.is_a?(String) || (defined?(Pathname) && @file.is_a?(Pathname))
@@ -371,6 +369,7 @@ module Xlsxrb
         #: () -> String
         def read_string
           if @file.nil?
+            add_default_worksheet
             elements_wb = to_xlsxrb
             sio = StringIO.new
             Xlsxrb.write(sio, elements_wb)
@@ -469,6 +468,12 @@ module Xlsxrb
         end
 
         private
+
+        # write_xlsx adds a default worksheet when none were added.
+        #: () -> void
+        def add_default_worksheet
+          add_worksheet if @worksheets.empty?
+        end
 
         def compile_styles
           default_font = { name: "Calibri", sz: 11, family: 2 }

@@ -212,11 +212,7 @@ module Xlsxrb
             return nil if value.nil?
 
             begin
-              if value.is_a?(Time) || (defined?(DateTime) && value.is_a?(DateTime))
-                return Xlsxrb::Ooxml::Utils.datetime_to_serial(value, date1904: date1904)
-              elsif value.is_a?(Date)
-                return Xlsxrb::Ooxml::Utils.date_to_serial(value, date1904: date1904).to_f
-              end
+              return Xlsxrb.time_to_serial(value, date1904: date1904) if value.is_a?(Time) || value.is_a?(Date)
             rescue ArgumentError
               return nil
             end
@@ -258,7 +254,7 @@ module Xlsxrb
 
             begin
               d = ::Date.new(year, month, day)
-              days = Xlsxrb::Ooxml::Utils.date_to_serial(d, date1904: date1904)
+              days = Xlsxrb.date_to_serial(d, date1904: date1904)
               days.to_f + seconds_fraction
             rescue ArgumentError
               nil

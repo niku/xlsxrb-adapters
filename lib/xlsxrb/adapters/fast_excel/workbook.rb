@@ -208,10 +208,7 @@ module Xlsxrb
             name_str = parts[1]
           end
           entry = { name: name_str, value: val_str }
-          if local_sheet
-            entry[:local_sheet_name] = local_sheet
-            entry[:sheet] = local_sheet
-          end
+          entry[:local_sheet_name] = local_sheet if local_sheet
           @defined_names << entry
           :no_error
         end
@@ -288,6 +285,8 @@ module Xlsxrb
           return :no_error unless @is_open
 
           @is_open = false
+          # libxlsxwriter adds a default worksheet when none were added.
+          add_worksheet if @sheets.empty?
           @sheets.each(&:close)
 
           FileUtils.mkdir_p(File.dirname(@filename))

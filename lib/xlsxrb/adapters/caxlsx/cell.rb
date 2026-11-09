@@ -390,10 +390,10 @@ module Xlsxrb
             when :integer, :float
               str << "<c#{ref_attr}#{s_attr}><v>#{@value}</v></c>"
             when :date
-              serial = Xlsxrb::Ooxml::Utils.date_to_serial(@value, date1904: @row.worksheet.workbook.date1904)
+              serial = Xlsxrb.date_to_serial(@value, date1904: @row.worksheet.workbook.date1904)
               str << "<c#{ref_attr}#{s_attr}><v>#{serial}</v></c>"
             when :time
-              serial = Xlsxrb::Ooxml::Utils.datetime_to_serial(@value, date1904: @row.worksheet.workbook.date1904)
+              serial = Xlsxrb.time_to_serial(@value, date1904: @row.worksheet.workbook.date1904)
               str << "<c#{ref_attr}#{s_attr}><v>#{serial}</v></c>"
             else
               str << if plain_string? && @row.worksheet.workbook.use_shared_strings
@@ -427,7 +427,7 @@ module Xlsxrb
                        font[:strike] = @strike unless @strike.nil?
                        font[:underline] = @u unless @u.nil?
                        font[:vert_align] = @vertAlign unless @vertAlign.nil?
-                       font[:sz] = @sz unless @sz.nil?
+                       font[:size] = @sz unless @sz.nil?
                        font[:color] = @color&.rgb unless @color.nil?
                        font[:name] = @font_name unless @font_name.nil?
                        font[:family] = @family unless @family.nil?

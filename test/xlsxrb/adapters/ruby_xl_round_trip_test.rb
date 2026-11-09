@@ -92,7 +92,7 @@ class XlsxrbAdaptersRubyXLRoundTripTest < Test::Unit::TestCase
       Xlsxrb.write(path) do |w|
         w.sheet("A") do |s|
           s.row(["a"])
-          s.sheet_view(:zoom_scale, 150)
+          s.sheet_view(zoom_scale: 150)
         end
       end
 
@@ -134,7 +134,7 @@ class XlsxrbAdaptersRubyXLRoundTripTest < Test::Unit::TestCase
           s.row(%w[A2 B2])
           s.merge("A1:B1")
         end
-        w.defined_name("MyRange", "Sheet1!$A$1:$B$1", sheet: "Sheet1", hidden: false)
+        w.defined_name("MyRange", "Sheet1!$A$1:$B$1", scope: "Sheet1", hidden: false)
       end
 
       wb = Xlsxrb::Adapters::RubyXL::Parser.parse(path)
@@ -225,11 +225,11 @@ class XlsxrbAdaptersRubyXLRoundTripTest < Test::Unit::TestCase
   def test_code_name_and_sheet_pr_roundtrip
     with_tempfile do |path|
       Xlsxrb.write(path) do |w|
-        w.code_name("WorkbookVBA")
+        w.code_name = "WorkbookVBA"
         w.sheet("Sheet1", code_name: "WorksheetVBA") do |s|
           s.row(["Hello"])
-          s.tab_color("FF00AA")
-          s.fit_to_page(true)
+          s.tab_color = "FF00AA"
+          s.fit_to_page = true
         end
       end
 
@@ -278,11 +278,11 @@ class XlsxrbAdaptersRubyXLRoundTripTest < Test::Unit::TestCase
   def test_workbook_views_roundtrip
     with_tempfile do |path|
       Xlsxrb.write(path) do |w|
-        w.tab_ratio(600)
-        w.show_sheet_tabs(true)
+        w.tab_ratio = 600
+        w.show_sheet_tabs = true
         w.sheet("First") { |s| s.row([1]) }
         w.sheet("Second", active: true) { |s| s.row([2]) }
-        w.first_sheet(0)
+        w.first_sheet = 0
       end
 
       wb = Xlsxrb::Adapters::RubyXL::Parser.parse(path)

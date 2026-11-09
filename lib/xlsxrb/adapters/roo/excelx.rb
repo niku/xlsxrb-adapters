@@ -461,7 +461,7 @@ module Xlsxrb
 
               link_url = cell_obj.value.is_a?(Link) ? cell_obj.value.url : s.hyperlinks[[r, c]]
               hl = if link_url
-                     h_entry = { ref: ref, url: link_url }
+                     h_entry = { url: link_url }
                      sheet_hyperlinks[ref] = h_entry
                      h_entry
                    end

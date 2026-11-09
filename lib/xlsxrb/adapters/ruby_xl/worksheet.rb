@@ -1449,7 +1449,7 @@ module Xlsxrb
           @data_validations ||= []
           @data_validations << {
             sqref: ref.to_s,
-            formula: expr,
+            formula1: expr,
             type: "list"
           }
         end

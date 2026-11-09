@@ -20,6 +20,12 @@ module Xlsxrb
         include Utility::CellReference
         include Utility::DateTime
 
+        # Data validation keys that xlsxrb accepts; other write_xlsx options are translated, not passed through.
+        XLSXRB_DATA_VALIDATION_KEYS = %i[
+          type operator formula1 formula2 list allow_blank show_input_message show_error_message
+          show_drop_down ime_mode prompt_title prompt error_title error error_style
+        ].freeze #: Array[Symbol]
+
         # Record representing a single cell entry in the worksheet
         CellRecord = Struct.new(
           :value,
@@ -1126,7 +1132,7 @@ module Xlsxrb
           hl_hash = {}
           @hyperlinks.each do |h|
             ref = h[:ref] || h[:cell]
-            hl_hash[ref] = { cell: ref, ref: ref, url: h[:url], display: h[:display], tooltip: h[:tooltip], location: h[:location] }.compact
+            hl_hash[ref] = { url: h[:url], display: h[:display], tooltip: h[:tooltip], location: h[:location] }.compact
           end
           facade_meta[:hyperlinks] = @hyperlinks unless @hyperlinks.empty?
 
@@ -1208,6 +1214,7 @@ module Xlsxrb
           facade_meta[:selection] = selection_data if selection_data
 
           facade_meta[:views] = [view_props] unless view_props.empty?
+          sheet_view_props = view_props.except(:pane, :selection)
 
           sheet_props = {}
           sheet_props[:code_name] = @vba_codename if @vba_codename
@@ -1255,9 +1262,9 @@ module Xlsxrb
             w_cols = (15 * sx).round
             h_rows = (15 * sy).round
             ch_opts.merge(
-              from_col: ch_c,
+              from_column: ch_c,
               from_row: ch_r,
-              to_col: ch_c + w_cols,
+              to_column: ch_c + w_cols,
               to_row: ch_r + h_rows
             )
           end
@@ -1275,9 +1282,8 @@ module Xlsxrb
             print_area: @clean_print_area,
             print_titles: pt,
             sparkline_groups: sparkline_groups_data,
-            sheet_view: view_props.empty? ? nil : view_props,
-            # Xlsxrb.write accepts one selection per sheet view; keep the last (active pane) one.
-            selection: selection_data&.last,
+            sheet_view: sheet_view_props.empty? ? nil : sheet_view_props,
+            selection: selection_data,
             sheet_properties: sheet_props.empty? ? nil : sheet_props,
             ignored_errors: ignored_errors_data || [],
             background_image: background_image_for_xlsxrb
@@ -1569,7 +1575,7 @@ module Xlsxrb
         # @return [Hash]
         #: (Hash[Symbol, untyped] opts) -> Hash[Symbol, untyped]
         def normalize_write_xlsx_data_validation(opts)
-          dv = opts.dup
+          dv = opts.slice(*XLSXRB_DATA_VALIDATION_KEYS)
 
           type_map = {
             "integer" => "whole",
@@ -1610,7 +1616,7 @@ module Xlsxrb
 
           vals = opts[:value] || opts[:source]
           if vals.is_a?(Array)
-            dv[:in] = vals
+            dv[:list] = vals
           elsif !vals.nil? && !dv[:formula1]
             dv[:formula1] = vals.to_s
           end

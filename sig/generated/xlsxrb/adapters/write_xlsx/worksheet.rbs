@@ -11,6 +11,9 @@ module Xlsxrb
 
         include Utility::DateTime
 
+        # Data validation keys that xlsxrb accepts; other write_xlsx options are translated, not passed through.
+        XLSXRB_DATA_VALIDATION_KEYS: Array[Symbol]
+
         # Record representing a single cell entry in the worksheet
         class CellRecord < Struct[untyped]
           attr_accessor value(): untyped

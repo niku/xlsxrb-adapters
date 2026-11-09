@@ -30,6 +30,12 @@ class XlsxrbAdaptersFastExcelTest < Test::Unit::TestCase
     assert_equal :align_center, Xlsxrb::Adapters::FastExcel::ALIGN_ENUM.find(2)
   end
 
+  def test_close_without_worksheets_adds_a_default_worksheet
+    wb = Xlsxrb::Adapters::FastExcel.open(constant_memory: false)
+
+    assert_equal ["Sheet1"], Xlsxrb.load(wb.read_string).sheets.map(&:name)
+  end
+
   def test_date_num
     t = Time.utc(2026, 1, 1, 12, 0, 0)
     num = Xlsxrb::Adapters::FastExcel.date_num(t)

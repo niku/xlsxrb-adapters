@@ -190,6 +190,12 @@ class XlsxrbAdaptersWriteXLSXTest < Test::Unit::TestCase
     assert_instance_of Xlsxrb::Adapters::WriteXLSX::Chart::Doughnut, wb.add_chart(type: :doughnut)
   end
 
+  def test_read_string_without_worksheets_adds_a_default_worksheet
+    wb = Xlsxrb::Adapters::WriteXLSX.new
+
+    assert_equal ["Sheet1"], Xlsxrb.load(wb.read_string).sheets.map(&:name)
+  end
+
   def test_worksheet_writing_and_features
     wb = Xlsxrb::Adapters::WriteXLSX.new
     ws = wb.add_worksheet("Data")
@@ -273,7 +279,7 @@ class XlsxrbAdaptersWriteXLSXTest < Test::Unit::TestCase
 
       doc = Xlsxrb.load(filepath)
       assert_equal ["Test"], doc.sheets.map(&:name)
-      assert_equal "Test Value", doc.sheets.first.cell(0, 0)&.value
+      assert_equal "Test Value", doc.sheets.first[0, 0]&.value
     end
 
     # Test read_string
@@ -711,7 +717,7 @@ class XlsxrbAdaptersWriteXLSXTest < Test::Unit::TestCase
 
       # Check in-memory to_xlsxrb representation
       xlsxrb_ws = ws.to_xlsxrb
-      cell = xlsxrb_ws.cell(0, 0)
+      cell = xlsxrb_ws[0, 0]
       assert_instance_of Xlsxrb::Elements::RichText, cell.value
       runs = cell.value.runs
       assert_equal 2, runs.size

@@ -174,7 +174,7 @@ module Xlsxrb
           font[:strike] = @strike unless @strike.nil?
           font[:underline] = @u unless @u.nil?
           font[:vert_align] = @vertAlign unless @vertAlign.nil?
-          font[:sz] = @sz unless @sz.nil?
+          font[:size] = @sz unless @sz.nil?
           font[:color] = @color&.rgb unless @color.nil?
           font[:name] = @font_name unless @font_name.nil?
           font[:family] = @family unless @family.nil?

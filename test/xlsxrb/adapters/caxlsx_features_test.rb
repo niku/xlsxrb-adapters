@@ -94,6 +94,21 @@ class XlsxrbAdaptersCaxlsxFeaturesTest < Test::Unit::TestCase
     end
   end
 
+  def test_sheet_view_with_a_selection_per_pane
+    pkg = Xlsxrb::Adapters::Caxlsx::Package.new
+    ws = pkg.workbook.add_worksheet(name: "Panes")
+    ws.add_row(%w[a b c])
+    ws.sheet_view.add_selection(:top_right, active_cell: "B1", sqref: "B1")
+    ws.sheet_view.add_selection(:bottom_right, active_cell: "C3", sqref: "C3:D4")
+
+    with_tempfile do |path|
+      pkg.serialize(path)
+      xml = Xlsxrb::Ooxml::ZipReader.open(path).read_entry("xl/worksheets/sheet1.xml")
+      assert_includes xml, '<selection pane="topRight" activeCell="B1" sqref="B1"/>'
+      assert_includes xml, '<selection pane="bottomRight" activeCell="C3" sqref="C3:D4"/>'
+    end
+  end
+
   def test_data_validation_show_drop_down_and_ime_mode
     pkg = Xlsxrb::Adapters::Caxlsx::Package.new
     ws = pkg.workbook.add_worksheet(name: "DataValidation")
@@ -322,7 +337,7 @@ class XlsxrbAdaptersCaxlsxFeaturesTest < Test::Unit::TestCase
     assert_nil cell_val.runs[0].font
     assert_instance_of Xlsxrb::Elements::RichTextRun, cell_val.runs[1]
     assert_equal "Bold", cell_val.runs[1].text
-    assert_equal({ bold: true, sz: 14, color: "FFFF0000" }, cell_val.runs[1].font)
+    assert_equal({ bold: true, size: 14, color: "FFFF0000" }, cell_val.runs[1].font)
     assert_equal "Normal Bold Italic", cell_val.to_s
 
     # Verify serialization and reading via xlsxrb

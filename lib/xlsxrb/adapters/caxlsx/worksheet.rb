@@ -1305,7 +1305,6 @@ module Xlsxrb
                             type: rule.type,
                             operator: rule.operator,
                             formula: rule.formula,
-                            format_id: rule.dxfId,
                             dxf_id: rule.dxfId,
                             priority: rule.priority,
                             stop_if_true: rule.stopIfTrue,
@@ -1382,7 +1381,7 @@ module Xlsxrb
 
           sheet_comments = if @worksheet_comments&.has_comments?
                              @worksheet_comments.comments.map do |c|
-                               { cell: c.ref, ref: c.ref, author: c.author, text: c.text }
+                               { ref: c.ref, author: c.author, text: c.text }
                              end
                            else
                              []
@@ -1498,8 +1497,7 @@ module Xlsxrb
             dimension: dim_str,
             sheet_view: facade_meta[:sheet_view],
             freeze_pane: facade_meta[:freeze_pane],
-            # Xlsxrb.write accepts one selection per sheet view; keep the last (active pane) one.
-            selection: facade_meta[:selection]&.last,
+            selection: facade_meta[:selection],
             sheet_properties: sheet_props.empty? ? nil : sheet_props
           )
         end

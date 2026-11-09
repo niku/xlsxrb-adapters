@@ -1726,9 +1726,9 @@ module Xlsxrb
 
           anchor = @graphic_frame&.anchor
           if anchor
-            opts[:from_col] = anchor.from.col if anchor.respond_to?(:from) && anchor.from
+            opts[:from_column] = anchor.from.col if anchor.respond_to?(:from) && anchor.from
             opts[:from_row] = anchor.from.row if anchor.respond_to?(:from) && anchor.from
-            opts[:to_col] = anchor.to.col if anchor.respond_to?(:to) && anchor.to
+            opts[:to_column] = anchor.to.col if anchor.respond_to?(:to) && anchor.to
             opts[:to_row] = anchor.to.row if anchor.respond_to?(:to) && anchor.to
           end
 

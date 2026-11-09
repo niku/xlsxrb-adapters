@@ -256,6 +256,10 @@ module Xlsxrb
 
         private
 
+        # write_xlsx adds a default worksheet when none were added.
+        # : () -> void
+        def add_default_worksheet: () -> void
+
         def compile_styles: () -> untyped
 
         def compile_font_key: (untyped fmt) -> untyped

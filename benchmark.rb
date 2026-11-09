@@ -268,7 +268,7 @@ RUNNER_SCRIPT = <<~'RUBY'
   when ["xlsxrb_inmemory", "read"]
     require "xlsxrb"
     measure do
-      wb = Xlsxrb.read(filename).load
+      wb = Xlsxrb.load(filename)
       count = 0
       wb.sheets.each do |sheet|
         sheet.rows.each do |row|

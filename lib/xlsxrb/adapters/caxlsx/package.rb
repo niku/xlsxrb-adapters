@@ -144,7 +144,7 @@ module Xlsxrb
 
           app_props = {
             company: @app.company,
-            application: @app.application,
+            app_name: @app.application,
             app_version: @app.app_version
           }.compact
           facade_meta[:app_properties] = app_props unless app_props.empty?

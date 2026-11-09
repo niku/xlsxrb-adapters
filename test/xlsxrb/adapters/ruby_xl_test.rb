@@ -274,6 +274,7 @@ class XlsxrbAdaptersRubyXLTest < Test::Unit::TestCase
     assert_equal 1, xlsxrb_ws.data_validations.size
     assert_equal "A1:A10", xlsxrb_ws.data_validations.first.to_h[:sqref]
     assert_equal "list", xlsxrb_ws.data_validations.first.to_h[:type]
+    assert_equal '"Apple,Banana,Orange"', xlsxrb_ws.data_validations.first.to_h[:formula1]
 
     reloaded_wb = Xlsxrb::Adapters::RubyXL::Workbook.from_xlsxrb(xlsxrb_wb)
     assert_equal 1, reloaded_wb[0].data_validations.size

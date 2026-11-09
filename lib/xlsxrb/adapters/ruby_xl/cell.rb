@@ -188,7 +188,7 @@ module Xlsxrb
             if workbook
               workbook.date_to_num(@value)
             else
-              Xlsxrb::Ooxml::Utils.datetime_to_serial(@value)
+              Xlsxrb.time_to_serial(@value)
             end
           when RichText
             @value.to_s
@@ -250,7 +250,7 @@ module Xlsxrb
           @value = data
           @raw_value = case data
                        when Date, Time, DateTime
-                         workbook ? workbook.date_to_num(data) : Xlsxrb::Ooxml::Utils.datetime_to_serial(data)
+                         workbook ? workbook.date_to_num(data) : Xlsxrb.time_to_serial(data)
                        when RichText
                          data.to_s
                        else

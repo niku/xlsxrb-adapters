@@ -224,7 +224,7 @@ class XlsxrbAdaptersSimpleXlsxReaderTest < Test::Unit::TestCase
 
     # Check reading cells from Xlsxrb::Elements::Workbook
     ws = wb.sheets.first
-    assert_equal "Medium number", ws.cell(0, 0)&.value
+    assert_equal "Medium number", ws[0, 0]&.value
   end
 
   def test_chunky_utf8_fixture

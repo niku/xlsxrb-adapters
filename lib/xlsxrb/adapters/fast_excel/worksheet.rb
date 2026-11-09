@@ -354,7 +354,7 @@ module Xlsxrb
         def write_url_opt(row, col, url, format = nil, string = nil, tooltip = nil)
           val = string || url
           ref = Xlsxrb.cell_to_ref(row, col)
-          @hyperlinks[ref] = { cell: ref, ref: ref, url: url, display: string, tooltip: tooltip }
+          @hyperlinks[ref] = { url: url, display: string, tooltip: tooltip }
           record_cell(row, col, value: val, url: url, url_display: string, url_tooltip: tooltip, format: format)
           @last_row_number = row if row > @last_row_number
           :no_error

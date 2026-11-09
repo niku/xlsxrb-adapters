@@ -153,7 +153,7 @@ module Xlsxrb
         # @param range [String, nil]
         # @return [String, Object]
         def auto_filter=(range)
-          @stream_writer.auto_filter(range.to_s)
+          @stream_writer.auto_filter = range.to_s
         end
 
         # @return [Object] Auto-filter proxy supporting `.range = ...`
@@ -164,7 +164,7 @@ module Xlsxrb
             end
 
             def range=(val)
-              @writer.auto_filter(val.to_s)
+              @writer.auto_filter = val.to_s
             end
           end.new(@stream_writer)
         end
@@ -211,7 +211,7 @@ module Xlsxrb
             def pane
               pane_obj = Struct.new(:top_left_cell, :state, :x_split, :y_split, :active_pane).new
               yield pane_obj if block_given?
-              @writer.freeze_pane(row: pane_obj.y_split, col: pane_obj.x_split) if pane_obj.y_split || pane_obj.x_split
+              @writer.freeze_pane(row: pane_obj.y_split, column: pane_obj.x_split) if pane_obj.y_split || pane_obj.x_split
               pane_obj
             end
           end.new(@stream_writer)
@@ -247,7 +247,7 @@ module Xlsxrb
           Caxlsx.validate_boolean(v)
           @date1904 = v
           @stream_writer.instance_variable_set(:@date1904, v)
-          @stream_writer.workbook_property(:date1904, v)
+          @stream_writer.workbook_properties(date1904: v)
         end
 
         # Adds a new streaming worksheet to the workbook.
